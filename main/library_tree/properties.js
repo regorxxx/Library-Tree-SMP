@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/12/25
+//19/12/25
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -153,6 +153,13 @@ let properties = [
 	['Custom Font Album Art Line 1 Use', false, 'custAlbumArtGrpFontUse'],
 	['Custom Font Album Art Line 2 Use', false, 'custAlbumArtLotFontUse'],
 	['Custom Font Album Art Line 3 Use', false, 'custAlbumArtDurFontUse'],
+
+	// Regorxxx <- Tooltip font
+	['Custom Font Tooltip', 'Segoe UI,0', 'custTooltipFont'],
+	['Custom Font Album Art Tooltip', 'Segoe UI,0', 'custAlbumArtTooltipFont'],
+	['Custom Font Tooltip Use', false, 'custTooltipFontUse'],
+	['Custom Font Album Art Tooltip Use', false, 'custAlbumArtTooltipFontUse'],
+	// Regorxxx ->
 
 	['Custom Font Node Icon', 'Segoe UI Symbol', 'custIconFont'],
 	['Custom Font Scroll Icon', 'Segoe UI Symbol', 'butCustIconFont'],

@@ -1016,6 +1016,7 @@
 					<div id="useCache"></div>
 					<button id="help_button" name="help_button" style="margin:2em 0 0;" type="button">Show Album Art Help</button>
 				</div>
+
 				<div class="column33">
 					<div class="div_text3">Style</div>
 					<table id="imageFormat" class="table77">
@@ -1097,9 +1098,13 @@
 					<div id="fonts"></div>
 					<div class="info5" style="margin-left:8.5%">Name,Style(0-4)</div>
 					<div id="albumArtFonts"></div>
+					<!-- Regorxxx Tooltip font -->
+					<div class="info5" style="margin-left:8.5%">Name,Style(0-4)</div>
+					<div id="tooltipFonts"></div>
+					<!-- Regorxxx -->
 					<div class="info6"><b>Colours (R,G,B):</b></div>
 					<div id="colours1"></div>
-					<p "><a class="tooltip" id="colorPicker" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_picker_tool#ColorPicker_tool" target="_blank" oncontextmenu="copyToClipboardId('colorPicker')">Colour picker<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a></p>
+					<a class="tooltip" id="colorPicker" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_picker_tool#ColorPicker_tool" target="_blank" oncontextmenu="copyToClipboardId('colorPicker')">Colour picker<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a></p>
 					<div class="info3">Selected colours and fonts will be used.<br>Font style codes: 0 regular, 1 bold, 2 italic, 3 bold italic, 4 underline</div>
 				</div>
 
@@ -1515,7 +1520,7 @@
 			var folderSortingFbLabels = ['Prefer native sorting for library sources'];
 			var sortingTransLabels = ['Transliterate values to Latin', 'Transliterate values to Latin'];
 			// Regorxxx  ->
-			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line'];
+			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
 			var keystrokeLabels = ['Select', 'Send to playlist']
@@ -1605,10 +1610,12 @@
 					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo'],
 					type: ['int', 'int', 'int']
 				},
+				// Regorxxx <- Tooltip font
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
+				// Regorxxx ->
 				advanced: {
 					name: ['scrollStep', 'durationScroll', 'durationTouchFlick', 'flickDistance', 'sbarWidth', 'narrowSbarWidth', 'sbarArrowWidth', 'sbarPad', 'sbarGripHeight', 'arrowSymbol', 'butCustIconFont', 'sbarButPad', 'iconCustom', 'custIconFont', 'iconVerticalPad', 'blurTemp', 'blurAlpha', 'prefix', 'pn_h_max', 'pn_h_min', 'treeExpandLimit'],
 					type: ['float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'text', 'text', 'float', 'text', 'text', 'float', 'float', 'float', 'text', 'int', 'int', 'int']
@@ -1628,8 +1635,8 @@
 				display: ['searchShow', 'filterShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
-				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
-				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'winNode', 'blurAutofill', 'libAutoSync', 'pn_h_auto', 'logLibProfiler'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates ->
+				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse','custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
+				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'winNode', 'blurAutofill', 'libAutoSync', 'pn_h_auto', 'logLibProfiler'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font ->
 			}
 			// Regorxxx <- New search tab
 			box.all = box.behaviour.concat(box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
@@ -2216,6 +2223,9 @@
 			function setCustom() {
 				i = 0; window.fonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>');
 				for (i = 1; i < 4; i++) { window.albumArtFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
+				// Regorxxx <- Tooltip font
+				for (i = 4; i < 6; i++) { window.tooltipFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
+				// Regorxxx ->
 				for (i = 0; i < 6; i++) { window.colours1.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
 				for (i = 6; i < 19; i++) { window.colours2.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
 			}
@@ -2906,11 +2916,11 @@
 			}
 		}
 
-		 // Regorxxx <- Root path
+		// Regorxxx <- Root path
 		window.ltReference1.href = rootPath + '\\' + window.ltReference1.href.replace('about:', '');
 		window.ltReference2.href = rootPath + '\\' + window.ltReference2.href.replace('about:', '');
 		window.ltReference3.href = rootPath + '\\' + window.ltReference3.href.replace('about:', '');
-		 // Regorxxx ->
+		// Regorxxx ->
 
 		window.document.body.focus();
 		textChange(); // Regorxxx <- Fix initial values ->

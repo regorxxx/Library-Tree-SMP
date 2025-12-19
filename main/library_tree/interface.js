@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/11/25
+//19/12/25
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -527,6 +527,18 @@ class UserInterface {
 			const custFont = $.split(ppt.custAlbumArtDurFont, 1);
 			this.font.statistics = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
 		} else this.font.statistics = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);
+
+		// Regorxxx <- Tooltip font
+		if (ppt.custTooltipFontUse && ppt.custTooltipFont.length) {
+			const custFont = $.split(ppt.custTooltipFont, 1);
+			this.font.mainTooltip = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
+		} else this.font.mainTooltip = gdi.Font(this.font.main.Name, this.font.main.Size, this.font.main.Style);
+
+		if (ppt.custAlbumArtTooltipFontUse && ppt.custAlbumArtTooltipFont.length) {
+			const custFont = $.split(ppt.custAlbumArtTooltipFont, 1);
+			this.font.groupTooltip = gdi.Font(custFont[0], this.font.group.Size, Math.round($.value(custFont[1], 1, 0)));
+		} else this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0);
+		// Regorxxx ->
 
 		if (init) return;
 		this.calcText(true);

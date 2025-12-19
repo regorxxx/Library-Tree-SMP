@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/12/25
+//19/12/25
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2623,9 +2623,13 @@ class Populate {
 		return item.reduce((a, b) => a + b.count, 0);
 	}
 
+	// Regorxxx <- Tooltip font
 	treeTooltipFont() {
-		return !panel.imgView ? [ui.font.main.Name, ui.font.main.Size, ui.font.main.Style] : [ui.font.group.Name, ui.font.group.Size, ui.font.group.Style];
+		return !panel.imgView
+			? [ui.font.mainTooltip.Name, ui.font.mainTooltip.Size, ui.font.mainTooltip.Style]
+			: [ui.font.groupTooltip.Name, ui.font.groupTooltip.Size, ui.font.groupTooltip.Style];
 	}
+	// Regorxxx ->
 
 	uniq(arr) {
 		this.sel_items = [...new Set(arr)].sort(this.numSort);
