@@ -98,6 +98,14 @@
 				</tr>
 			</table>
 		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> Regarding date sorting, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern. This way you can easily change and switch sorting without further editing.</div>
+					</li>
+				</ul>
+		</div>
 		<!-- SECTION "Views" -->
 		<!-- SECTION "Filters and Search box" -->
 		<h2><a name="filter_summary" id="filter_summary">Filters and Search box</a></h2>
@@ -142,6 +150,46 @@
 					</td>
 				</tr>
 			</table>
+		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> Search  box also supports added RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Tags used for lookup are those present on the current View TF expression, ignoring those related to track and disc number; on folder view, paths are used instead. </div>
+						</li>
+						<li>
+							<div class="li"> RegExps and queries can not be mixed. </div>
+						</li>
+						<li>
+							<div class="li"> Non-official flag 't' applies transliteration to tag values before matching.<br>Transliteration supports Cyrillic, Greek and Japanese (Katakana and Hiragana), like quick-search and sorting. </div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> Search box expression is applied on top of Filters. i.e. after current View and Filter has been processed.</div>
+					</li>
+					<li>
+						<div class="li"> Search box expression may be updated on playback or selection changes. i.e. functionally equivalent to Filters. <br>
+						</div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Great performance impact, when used, compared to Filters. </div>
+						</li>
+						<li>
+							<div class="li"> It's preferable to directly use a Filter than permanently using the search box with a dynamic expression to do the same. Filters are much faster. </div>
+						</li>
+						<li>
+							<div class="li"> Playback/selection changes automatic evaluation can be switched at 'Search' tab (HTML options panel) or 'Search Auto-refresh TF Expressions' (properties panel). </div>
+						</li>
+						<li>
+							<div class="li"> If automatic evaluation is disabled, then search can be refreshed by pressing 'enter'. </div>
+						</li>
+					</ul>
+				</ul>
 		</div>
 		<!-- SECTION "Filters and Search box" -->
 		<!-- SECTION "Sorting" -->
@@ -227,7 +275,7 @@
 						<br>
 						&emsp;&#x2219; <b>tagName</b> can be set to any tag -<i>ARTIST</i>- or array of tags -<i>["ARTIST","ALBUM ARTIST"]</i>-
 						<br>
-						&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i> Or omitted (<i>random</i> used).
+						&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i> or omitted (<i>random</i> used).
 						<br>
 						&emsp;&#x2219; <b>sortDir</b> can be set to <i>1</i>, <i>-1</i> or omitted (<i>1</i> used).
 					</td>
@@ -250,7 +298,7 @@
 						<br>
 						<br>
 						Shuffles all tracks by GENRE and STYLE, with a key 6A centered bias, putting tracks with a Camelot Key equivalent to 6A first and slowly adding higher/lower keys.
-					 </td>
+					</td>
 				</tr>
 				<tr>
 					<td> <em>$nowplaying{X}</em> </td>
@@ -271,6 +319,26 @@
 					<td> Performs harmonic mixing and when playing or selecting a Rock track applies a random sorting. </td>
 				</tr>
 			</table>
+		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> These 3 functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The special sorting algorithms will then be applied after the standard TF sorting. </div>
+					</li>
+					<li>
+						<div class="li"> Execution order: harmonicsort -> harmonicmix -> shufflebytags -> standard TF </div>
+					</li>
+					<li>
+						<div class="li">
+							Although conditional execution can not be achieved, partial sorting can be performed by using logical TF functions. For example:
+							<br>
+							$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}
+							<br>
+							Performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted.
+						</div>
+					</li>
+				</ul>
 		</div>
 		<!-- SECTION "Sorting" -->
 	</div>
