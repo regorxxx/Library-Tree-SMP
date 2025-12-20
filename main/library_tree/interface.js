@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/25
+//20/12/25
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -528,7 +528,7 @@ class UserInterface {
 			this.font.statistics = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
 		} else this.font.statistics = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);
 
-		// Regorxxx <- Tooltip font
+		// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 		if (ppt.custTooltipFontUse && ppt.custTooltipFont.length) {
 			const custFont = $.split(ppt.custTooltipFont, 1);
 			this.font.mainTooltip = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));

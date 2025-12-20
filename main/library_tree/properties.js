@@ -154,7 +154,7 @@ let properties = [
 	['Custom Font Album Art Line 2 Use', false, 'custAlbumArtLotFontUse'],
 	['Custom Font Album Art Line 3 Use', false, 'custAlbumArtDurFontUse'],
 
-	// Regorxxx <- Tooltip font
+	// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 	['Custom Font Tooltip', 'Segoe UI,0', 'custTooltipFont'],
 	['Custom Font Album Art Tooltip', 'Segoe UI,0', 'custAlbumArtTooltipFont'],
 	['Custom Font Tooltip Use', false, 'custTooltipFontUse'],

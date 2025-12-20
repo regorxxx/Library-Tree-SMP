@@ -2623,7 +2623,7 @@ class Populate {
 		return item.reduce((a, b) => a + b.count, 0);
 	}
 
-	// Regorxxx <- Tooltip font
+	// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 	treeTooltipFont() {
 		return !panel.imgView
 			? [ui.font.mainTooltip.Name, ui.font.mainTooltip.Size, ui.font.mainTooltip.Style]
