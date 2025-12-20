@@ -66,7 +66,7 @@ Not properly following the installation instructions will result in scripts not 
  3. [Wiki](../../wiki).
 
 ## Nightly releases
-Automatic package [built from GitHub](https://nightly.link/regorxxx/Library-Tree-SMP/workflows/build/main/file.zip) (using the latest commit). Unzip 'file.zip' downloaded and load the '*-package.zip' inside as package within your JS host component.
+Automatic package [built from GitHub](https://nightly.link/regorxxx/Library-Tree-SMP/workflows/build/main/file.zip) (using the latest commit). Unzip 'file.zip' downloaded and load the '\*-SMP-\*-\*-\*-package.zip' inside as package within your JS host component.
 
 [changelog]: CHANGELOG.md
 [version_badge]: https://img.shields.io/github/release/regorxxx/Library-Tree-SMP.svg
