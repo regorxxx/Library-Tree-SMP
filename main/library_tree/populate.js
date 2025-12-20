@@ -1720,7 +1720,7 @@ class Populate {
 		let np_item = -1;
 		let pid = -1;
 		const pl_stnd = ppt.libPlaylist.replace(/%view_name%/i, panel.viewName);
-		// Regorxxx <- Default playlist being always created even when unused
+		// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5
 		let pl_stnd_idx;
 		if (ppt.libPlaylistCreate) { pl_stnd_idx = plman.FindOrCreatePlaylist(pl_stnd, true); }
 		if (!bUseDefaultPls && plman.ActivePlaylist != -1) {

@@ -1532,7 +1532,7 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			var nodeLabels = ['Squares', 'Arrows', 'Arrows Light', 'Triangles', 'Triangles Light', 'Signs', 'Custom'];
-			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused ->
+			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 ->
 			var playlistSortLabels = ['Playlist sort order (empty = default)'];
 			var topTracksLabels = ['Custom query filter', 'Custom TF expression for sorting', 'Custom TF for duplicates removal']; // Regorxxx <- Top tracks ->
 			var rememberLabels = ['On exit', 'All views', 'Before search'];
@@ -1630,7 +1630,7 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused ->
+				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2048,7 +2048,7 @@
 				// Regorxxx ->
 				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="playlist_container' + i + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="playlist_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				i = 1; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
-				// Regorxxx <- Default playlist being always created even when unused ->
+				// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				i = 2; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx ->
 				window.playlistSort.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="playlistSort_container1" class="inp_label1">' + playlistSortLabels[0] + '</label><input id="playlistSort_container1" name="behaviour_input" class="input75" /></div>');

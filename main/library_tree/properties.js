@@ -264,7 +264,7 @@ let properties = [
 	['Playlist: Custom Sort', '', 'customSort'],
 	['Playlist: Default', 'Library Viewer Selection', 'libPlaylist'], // Regorxxx <- Default CUI/DUI playlist ->
 	['Playlist: Default Activate on Change', true, 'activateOnChange'],
-	['Playlist: Default Create always', false, 'libPlaylistCreate'], // Regorxxx <- Default playlist being always created even when unused ->
+	['Playlist: Default Create always', false, 'libPlaylistCreate'], // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 	['Playlist: Panel Selection', 'Library Tree Panel Selection', 'panelSelectionPlaylist'],
 	['Playlist: Last Panel Selection', 'Library Tree Panel Selection', 'lastPanelSelectionPlaylist'],
 	['Playlist: Send to Current', false, 'sendToCur'],
