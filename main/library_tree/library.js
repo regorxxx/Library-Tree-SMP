@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/12/25
+//20/12/25
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -100,10 +100,15 @@ class Library {
 		this.full_list.InsertRange(this.full_list.Count, handleList);
 		this.full_list_need_sort = true;
 		switch (true) {
-			case handleList.Count < 100: {
+			case handleList.Count < 100 && (!panel.folderView || ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb): {  // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
 				let lis = ppt.filterBy && !this.filterQuery.includes('$searchtext') ? $.query(handleList, this.filterQuery) : handleList;
 				panel.sort(lis);
 				this.binaryInsert(panel.folderView, lis, this.list, this.libNode);
+				 // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
+				if (panel.folderView && ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb) {
+					panel.sort(this.list);
+				}
+				 // Regorxxx ->
 				if (this.list.Count) this.empty = '';
 				if (panel.search.txt) {
 					let newSearchItems = new FbMetadbHandleList();
@@ -335,7 +340,7 @@ class Library {
 			}
 			case folder:
 				items = insert.GetLibraryRelativePaths();
-				insert.Convert().forEach((h, j) => {
+				insert.Convert().reverse().forEach((h, j) => { // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
 					i = this.bInsert(h);
 					this.format(items[j], '\\', i, n);
 					li.Insert(i, h);
