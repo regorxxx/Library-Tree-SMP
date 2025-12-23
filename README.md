@@ -7,16 +7,17 @@ Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.
 
 ## FEATURES
 - Tree viewer
-- Album art browser
-- New facets
+- Album / Artist art browser + Flow mode
+- Single / Multiple panel modes + Facets
 - Statistics
-- Album art flow mode
 - Library and playlist sources
-- Single panel and multiple panel modes
+- Auto-DJ
+- Top Tracks
+- Duplicates handling and filtering
 - Mode presets
-     - browser: keep playing playlist
-     - player: play without a playlist
-     - default: choice of all actions
+     - Browser: keep playing playlist
+     - Player: play without a playlist
+     - Default: choice of all actions
 
 ### Screenshots
 
