@@ -548,17 +548,21 @@ class Library {
 			}
 			// Regorxxx ->
 			// Regorxxx <- Expand TF support
+			let i = 0;
 			while (s.includes('$harmonicsort{')) {
-				const q = s.match(/\$harmonicsort{.*?}/);
-				s = s.replace(q, '$not(0)');
+				const q = s.match(/\$harmonicsort{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
 			}
 			while (s.includes('$harmonicmix{')) {
-				const q = s.match(/\$harmonicmix{.*?}/);
-				s = s.replace(q, '$not(0)');
+				const q = s.match(/\$harmonicmix{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
 			}
 			while (s.includes('$shufflebytags{')) {
-				const q = s.match(/\$shufflebytags{.*?}/);
-				s = s.replace(q, '$not(0)');
+				const q = s.match(/\$shufflebytags{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
 			}
 		}
 		// Regorxxx ->
@@ -573,18 +577,30 @@ class Library {
 			handleList.OrderByFormat(tf, 1);
 			return handleList;
 		}
-		// Then process special $funcs{}
-		if (tf.includes('$harmonicsort{')) {
+		const tfClean = this.processCustomTf(tf)
+			.replace(/%ISPLAYING%/gi, fb.IsPlaying ? '$not(0)' : '').replace(/%ISPAUSEd%/gi, fb.isPaused ? '$not(0)' : '');
+		const sortMatches = /~#sort\d+/g.exec(tfClean) || [];
+		let tfEval = tfClean;
+		sortMatches.forEach((match) => {
+			tfEval += '$get(' + match + ')';
+		});
+		tfEval = (fb.TitleFormat(tfEval).Eval(true) || '').replace('~#', '$');
+		// First process special $funcs{} if available
+		while (tfEval.includes('$harmonicsort{')) {
 			let [, bShuffleInput] = tf.match(/\$harmonicsort{([^,{}]*)}/) || [, 'true']; // eslint-disable-line no-sparse-arrays
 			bShuffleInput = !!bShuffleInput && !!bShuffleInput.trim().length && !['false', '0'].includes(bShuffleInput.trim().toLowerCase());
 			handleList = harmonicMixingSort({ selItems: handleList, bShuffleInput, bSendToActivePls: false });
+			tfEval = tfEval.replace(tfEval.match(/\$harmonicsort{.*?}/)[0], '');
 		}
-		if (tf.includes('$harmonicmix{') && handleList.Count > 2) {
-			let [, bShuffleInput] = tf.match(/\$harmonicmix{([^,{}]*)}/) || [, 'true']; // eslint-disable-line no-sparse-arrays
-			bShuffleInput = !!bShuffleInput && !!bShuffleInput.trim().length && !['false', '0'].includes(bShuffleInput.trim().toLowerCase());
-			handleList = harmonicMixingCycle({ selItems: handleList, bShuffleInput, bSendToActivePls: false, bDoublePass: true });
+		if (tfEval.includes('$harmonicmix{') && handleList.Count > 2) {
+			while (tfEval.includes('$harmonicmix{')) {
+				let [, bShuffleInput] = tf.match(/\$harmonicmix{([^,{}]*)}/) || [, 'true']; // eslint-disable-line no-sparse-arrays
+				bShuffleInput = !!bShuffleInput && !!bShuffleInput.trim().length && !['false', '0'].includes(bShuffleInput.trim().toLowerCase());
+				handleList = harmonicMixingCycle({ selItems: handleList, bShuffleInput, bSendToActivePls: false, bDoublePass: true });
+				tfEval = tfEval.replace(tfEval.match(/\$harmonicmix{.*?}/)[0], '');
+			}
 		}
-		if (tf.includes('$shufflebytags{')) {
+		while (tfEval.includes('$shufflebytags{')) {
 			let [, tagName, sortBias, sortDir] = tf.match(/\$shufflebytags{((?:\[".*"\])|(?:[^,{}]+)),?([^,{}]*),?([^,{}]*?)}/) || [];
 			if (tagName) {
 				tagName = tagName.trim();
@@ -599,10 +615,10 @@ class Library {
 			} else {
 				console.log(window.PanelName + ': $shufflebytags{tagName,sortBias,sortDir} missing \'tagName\' variable');
 			}
+			tfEval = tfEval.replace(tfEval.match(/\$shufflebytags{.*?}/)[0], '');
 		}
-		// Allow mixing special $funcs{} and standard TF, as long as it's valid, and use that as last step
-		const tfClean = this.processCustomTf(tf);
-		if (tf === tfClean || !tfClean.match(/^( *\$not\(0\) *)*$/)) {
+		// Allow mixing special $funcs{} and standard TF, as long as it's valid
+		if (tf === tfClean || !tfClean.match(/^( *\$not\(0\)\$puts\(.+\) *)*$/)) {
 			handleList.OrderByFormat(fb.TitleFormat(tfClean), 1);
 		}
 		return handleList;

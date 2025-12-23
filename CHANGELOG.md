@@ -51,9 +51,9 @@
 		º 'tagName' can be a single string or a JSON array of strings(i.e. '["ARTIST","ALBUM ARTIST"]')
 		º 'sortBias' can only be one string from: playcount, rating, popularity, lastplayed, key, key6acentered, random, none. Or omitted (random used).
 		º 'sortDir' can be 1, -1 or omitted (1 used).
-	* These 3 functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The special sorting algorithms will then be applied after the standard TF sorting.
+	* These 3 functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The special sorting algorithms will then be applied before the standard TF sorting.
 	* Execution order: harmonicsort ->  harmonicmix -> shufflebytags -> standard TF
-	* Although conditional execution can not be achieved, partial sorting can be performed by using logical TF functions. For ex. '$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}' performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted.
+	* Conditional execution can be partially achieved, but note the special sorting functions are evaluated only once (for all tracks). This means that TF expressions based on tags will probably not work as expected except when evaluating against playback or selection. For conditional execution based on player state is better to use global variables like '%ISPLAYING%'', '%ISPAUSED%', ... For example: '$if(%ISPLAYING%,$harmonicmix{})'. Check Library-Tree-SMP Title format reference for more info.
 - Playlist sort order: sorting TF supports $selected{}, $nowplaying{} and $nowplayingorselected{}. See above. <ins>[new]</ins>
 - Playlist sort order: sorting TF supports $harmonicsort{}, $harmonicmix{} and $shufflebytags{tagName,sortBias,sortDir}. See above. <ins>[new]</ins>
 - Statistics: added number of decimals setting statistics. 1 by default. [from Library-Tree-v2.4.0.mod.21]

@@ -155,7 +155,7 @@
 			<h2>Notes:</h3>
 				<ul>
 					<li>
-						<div class="li"> Search  box also supports added RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
+						<div class="li"> Search  box also supports RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
 					</li>
 					<ul>
 						<li>
@@ -167,9 +167,12 @@
 						<li>
 							<div class="li"> Non-official flag 't' applies transliteration to tag values before matching.<br>Transliteration supports Cyrillic, Greek and Japanese (Katakana and Hiragana), like quick-search and sorting. </div>
 						</li>
+						<li>
+							<div class="li"> RegExp reference: <a href="https://regexr.com/">https://regexr.com/</a> </div>
+						</li>
 					</ul>
 					<li>
-						<div class="li"> Search box expression is applied on top of Filters. i.e. after current View and Filter has been processed.</div>
+						<div class="li"> Search box expression is applied on top of Filters. i.e. after current View and Filter patterns have been processed.</div>
 					</li>
 					<li>
 						<div class="li"> Search box expression may be updated on playback or selection changes. i.e. functionally equivalent to Filters. <br>
@@ -324,20 +327,93 @@
 			<h2>Notes:</h3>
 				<ul>
 					<li>
-						<div class="li"> These 3 functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The special sorting algorithms will then be applied after the standard TF sorting. </div>
+						<div class="li"> Special sorting functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The sorting algorithms will then be applied before the standard TF sorting. </div>
 					</li>
 					<li>
 						<div class="li"> Execution order: harmonicsort -> harmonicmix -> shufflebytags -> standard TF </div>
 					</li>
 					<li>
 						<div class="li">
-							Although conditional execution can not be achieved, partial sorting can be performed by using logical TF functions. For example:
-							<br>
-							$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}
-							<br>
-							Performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted.
+							Conditional execution can be partially achieved, but note the special sorting functions are evaluated only once (for all tracks). This means that TF expressions based on tags will probably not work as expected except when evaluating against playback or selection. For example:
 						</div>
 					</li>
+					<br>
+					<ul>
+						<li>
+							<div class="li">
+								$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}
+								<br>
+								Always does harmonic mixing, then puts now playing artist first, leaving the rest as previously sorted.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0$harmonicmix{},1)
+								<br>
+								Only does harmonic mixing while playing in which case also puts now playing artist first, leaving the rest as previously sorted. When not playing, leaves all tracks as selected from panel.
+								<br>
+								Note this is pretty different to only applying harmonic mixing when tracks' artists match the now playing artist.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1$harmonicmix{})
+								<br>
+								Only does harmonic mixing while not playing. When playing, puts now playing artist first and leaves all other tracks as selected from panel.
+								<br>
+								Note this is pretty different to only applying harmonic mixing when tracks' artists don't match the now playing artist.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($strcmp(%ARTIST%,$nowplaying{$replace(%ARTIST%,',',''',''')}),0,1$harmonicmix{})
+								<br>
+								Instead of the previous examples, the nowplaying part should be sanitized so multi-value tags works by escaping ','.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($nowplaying{%ARTIST%},$harmonicmix{})
+								<br>
+								Will never do harminic mixing, since the evaluated nowplaying part, being a string in any case, is treated as false.
+							</div>
+						</li>
+					</ul>
+					<li>
+						<div class="li">
+							For conditional execution based on player state is better to use global variables like '%ISPLAYING%'', '%ISPAUSED%', ... For example:
+						</div>
+					</li>
+					<br>
+					<ul>
+						<li>
+							<div class="li">
+								$if(%ISPLAYING%,$harmonicmix{})
+								<br>
+								Only does harmonic mixing while playing.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if(%ISPLAYING%,$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1))
+								<br>
+								While playing puts the now playing artist first and leaves all other tracks as selected from panel.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if(%ISPLAYING%,$harmonicmix{}$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1))
+								<br>
+								Only does harmonic mixing while playing and also puts the now playing artist first, leaving the rest as previously sorted.
+							</div>
+						</li>
+					</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Sorting" -->
