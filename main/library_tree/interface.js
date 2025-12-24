@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/12/25
+//24/12/25
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -456,7 +456,15 @@ class UserInterface {
 	}
 
 	getFbImg(handle) {
-		if (!handle) handle = (!ppt.recItemImage || ppt.libSource != 2) ? (fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem()) : this.expandHandle;
+		// Regorxxx <- Add setting to follow/skip selection image
+		if (!handle) handle = (!ppt.recItemImage || ppt.libSource != 2)
+			? fb.IsPlaying
+				? fb.GetNowPlaying()
+				: ppt.themeSelImage
+					? fb.GetFocusItem()
+					: null
+			: this.expandHandle;
+		// Regorxxx ->
 		if (handle) {
 			this.cur_handle = handle;
 			utils.GetAlbumArtAsync(0, handle, 0);

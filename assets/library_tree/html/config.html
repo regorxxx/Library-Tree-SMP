@@ -1557,7 +1557,11 @@
 			// Regorxxx ->
 			var targetPlaylistLabels = ['Default', 'Current'];
 			var tfInput = ['Library View'];
-			var themeLabels = !ppt['themed_internal'].value ? ['User interface', 'Dark', 'Blend', 'Light', 'Random', 'Cover', 'Swap colours', 'Panel source: use received item image'] : ['N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set'];
+			// Regorxxx <- Add setting to follow/skip selection image
+			var themeLabels = !ppt['themed_internal'].value
+				? ['User interface', 'Dark', 'Blend', 'Light', 'Random', 'Cover', 'Swap colours', 'Panel source: use received item image', 'Theme: use selection image while not playing']
+				: ['N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set'];
+			// Regorxxx ->
 			var themeBlurLabels = ['Auto-fill', 'Level (%)', 'Opacity (%)', '%'];
 			var thumbNailGapLabels = ['Thumbnail gap'];
 			var thumbnailSizeLabels = ['Mini', 'Small', 'Regular', 'Medium', 'Large', 'XL', 'XXL', 'Max'];
@@ -1632,7 +1636,7 @@
 			var box = {
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
-				display: ['searchShow', 'filterShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- New statistics tab ->
+				display: ['searchShow', 'filterShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse','custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
@@ -2119,6 +2123,9 @@
 				i = 0; window.coverFormat.insertAdjacentHTML('beforeend', '<div><input id="coverFormat_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="coverFormat_checkbox' + i + '" class="checkbox_label">' + coverFormatLabels[i] + '</label></div>');
 				i = 1; window.coverFormat.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="coverFormat_container' + i + '" name="display_input" class="input3" /><label for="coverFormat_container' + i + '" class="inp_label2">' + coverFormatLabels[i] + '</label></div>');
 				i = 7; window.panelStyle.insertAdjacentHTML('beforeend', '<div><input id="theme_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="theme_checkbox' + i + '" class="checkbox_label">' + themeLabels[i] + '</label></div>');
+				// Regorxxx <- Add setting to follow/skip selection image
+				i = 8; window.panelStyle.insertAdjacentHTML('beforeend', '<div><input id="theme_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="theme_checkbox' + i + '" class="checkbox_label">' + themeLabels[i] + '</label></div>');
+				// Regorxxx ->
 				window.lines.insertAdjacentHTML('beforeend', '<div><input id="lines_checkbox" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="lines_checkbox" class="checkbox_label">Dark</label></div>');
 
 				for (i = 0; i < 2; i++) { window.metrics1.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="metrics_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="metrics_container' + i + '" class="inp_label2">' + metricsLabels[i] + '</label></div>'); }

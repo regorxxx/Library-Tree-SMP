@@ -343,6 +343,7 @@ let properties = [
 	['Theme Background Image', false, 'themeBgImage'],
 	['Theme Colour', 3, 'themeColour'],
 	['Theme Light', false, 'themeLight'],
+	['Theme Follow Selection Item Image', true, 'themeSelImage'], // Regorxxx <- Add setting to follow/skip selection image ->
 	['Themed', false, 'themed'], // reserved: don't enable
 	['Touch Step 1-10', 1, 'touchStep'],
 	['Tree Auto Expand', false, 'treeAutoExpand'],
