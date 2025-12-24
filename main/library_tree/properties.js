@@ -391,8 +391,8 @@ let properties = [
 	['Auto-DJ stop if repeating track', true, 'autoDjStopRepeat'], // Regorxxx <- Auto-DJ feature ->
 	// Regorxxx <- Global duplicates filter
 	['Filter duplicates by', JSON.stringify(globTags.remDupl), 'filterDuplBy'],
-	['Filter duplicates', false, 'filterDupl'],
-	['Show only duplicates', false, 'showDupl']
+	['Filter remove duplicates', false, 'filterDupl'],
+	['Filter show duplicates ', false, 'showDupl']
 	// Regorxxx ->
 ];
 
