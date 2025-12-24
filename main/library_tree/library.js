@@ -1,11 +1,11 @@
 ﻿'use strict';
-//20/12/25
+//24/12/25
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
 /* global globQuery:readable, globTags:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
-/* global removeDuplicates:readable */
+/* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
 
 /* exported Library*/
@@ -625,8 +625,14 @@ class Library {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Global duplicates filter
 	removeDuplicates(handleList, checkKeys = []) {
 		if (checkKeys && checkKeys.length && handleList.Count > 1) { handleList = removeDuplicates({ handleList, checkKeys, sortBias: globQuery.remDuplBias, bAdvTitle: true, bMultipl: true }); }
+		return handleList;
+	}
+
+	removeNonDuplicates(handleList, checkKeys = []) {
+		if (checkKeys && checkKeys.length && handleList.Count > 1) { handleList = showDuplicates({ handleList, checkKeys, sortBias: globQuery.remDuplBias, bAdvTitle: true, bMultipl: true }); }
 		return handleList;
 	}
 	// Regorxxx ->
@@ -674,6 +680,8 @@ class Library {
 		// Regorxxx <- Global duplicates filter
 		if (ppt.filterDupl) {
 			this.list = this.removeDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
+		} else if (ppt.showDupl) {
+			this.list = this.removeNonDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
 		}
 		// Regorxxx ->
 		if (!this.list.Count) {

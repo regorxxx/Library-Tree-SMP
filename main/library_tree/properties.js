@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/25
+//24/12/25
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -390,7 +390,8 @@ let properties = [
 	['Auto-DJ stop if repeating track', true, 'autoDjStopRepeat'], // Regorxxx <- Auto-DJ feature ->
 	// Regorxxx <- Global duplicates filter
 	['Filter duplicates by', JSON.stringify(globTags.remDupl), 'filterDuplBy'],
-	['Filter duplicates', false, 'filterDupl']
+	['Filter duplicates', false, 'filterDupl'],
+	['Show only duplicates', false, 'showDupl']
 	// Regorxxx ->
 ];
 

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/12/25
+//24/12/25
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -466,9 +466,22 @@ class MenuItems {
 		// Regorxxx ->
 		// Regorxxx <- Global duplicates filter
 		fMenu.newItem({
-			str: 'Duplicates removal filter',
-			func: () => { ppt.toggle('filterDupl'); panel.set('Filter', ppt.filterBy); },
-			checkItem: ppt.filterDupl,
+			str: 'Remove Duplicates filter',
+			func: () => {
+				ppt.toggle('filterDupl');
+				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('showDupl'); }
+				panel.set('Filter', ppt.filterBy);
+			},
+			checkItem: ppt.filterDupl
+		});
+		fMenu.newItem({
+			str: 'Show Duplicates filter',
+			func: () => {
+				ppt.toggle('showDupl');
+				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('filterDupl'); }
+				panel.set('Filter', ppt.filterBy);
+			},
+			checkItem: ppt.showDupl,
 			separator: true
 		});
 		// Regorxxx ->
