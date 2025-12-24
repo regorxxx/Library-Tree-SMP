@@ -62,6 +62,7 @@
 - Statistics: added Loved, Hated and Feedback (loved - hated) statistics. Nodes show the sum of loved/hated tracks within its subnodes. [from Library-Tree-v2.4.0.mod.21]
 - Contextual menu: new menu entry to show previously played track. [from Library-Tree-v2.4.0.mod.21]
 - Contextual menu: added new menu entry to show the currently focused item. [from Library-Tree-v2.4.0.mod.21]
+- Sources: added multi-playlist source capabilities, being able to select multiple playlists and merge them as source (previously it only allowed a single playlist). Playlist may also be set by GUID instead of name if JS Host allows it. <ins>[new]</ins>
 - UI: added double click action to scrollbar buttons to jump to top/bottom of the list. [from Library-Tree-v2.4.0.mod.21]
 - UI: added double click action to scrollbar current bar position to show now playing item (while playing) or focused item (while stopped). [from Library-Tree-v2.4.0.mod.21]
 - UI: added new settings to adjust the portion of the art used (x and width) to draw the background. These 2 settings may be used to split the image and draw an art grid. They can be found as properties ('Image Background x-offset (%)', 'Image Background w-offset (%)') but a new menu entry at quick setup allows to easily set every panel via input popups. It will probably look much better using blur, minimizing minor offset errors due to layout differences. As example, to set a 3-panel grid with artwork filling, they must be set as: x: -66%, w: 0% | x: 34%, w: 34% | x: 66%, w: 0% [from Library-Tree-v2.4.0.mod.21]

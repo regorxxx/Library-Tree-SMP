@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/12/25
+//24/12/25
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -508,26 +508,29 @@ addEventListener('on_playback_queue_changed', () => {
 addEventListener('on_playlists_changed', () => {
 	men.playlists_changed();
 	if ($.pl_active != plman.ActivePlaylist) $.pl_active = plman.ActivePlaylist;
-	let fixedPlaylistIndex = -1;
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 	if (ppt.fixedPlaylist) {
-		fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-		if (fixedPlaylistIndex == -1) {
+		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+		if (fixedPlaylistIndex.length === 0) {
 			ppt.fixedPlaylist = false;
 			ppt.libSource = 0;
 			if (panel.imgView) img.clearCache();
 			lib.playlist_update();
 		}
 	}
+	// Regorxxx ->
 });
 
 addEventListener('on_playlist_items_added', (playlistIndex) => {
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 	if (ppt.fixedPlaylist) {
-		const fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-		if (playlistIndex == fixedPlaylistIndex) {
+		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
 			return;
 		}
 	}
+	// Regorxxx ->
 	if (!ppt.libSource && playlistIndex == $.pl_active) {
 		lib.playlist_update(playlistIndex);
 
@@ -536,8 +539,8 @@ addEventListener('on_playlist_items_added', (playlistIndex) => {
 
 addEventListener('on_playlist_items_removed', (playlistIndex) => {
 	if (ppt.fixedPlaylist) {
-		const fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-		if (playlistIndex == fixedPlaylistIndex) {
+		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
 			return;
 		}

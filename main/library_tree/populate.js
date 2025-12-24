@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/12/25
+//24/12/25
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1590,14 +1590,16 @@ class Populate {
 					fb.Play();
 					return;
 				}
-				// Regorxxx <- Fix Double click while using search on playlist sources
+				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 				if (!ppt.libSource) {
-					const plsIdx = ppt.fixedPlaylist ? plman.FindPlaylist(ppt.fixedPlaylistName) : $.pl_active;
-					if (plsIdx !== -1) {
-						const idx = panel.search.txt.length
-							? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
-							: this.range(item.item)[0];
-						if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); }
+					const plsIdxArr = ppt.fixedPlaylist ? lib.getFixedPlaylistSources() : [$.pl_active];
+					if (plsIdxArr.length !== 0) {
+						for (let plsIdx of plsIdxArr) {
+							const idx = panel.search.txt.length
+								? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
+								: this.range(item.item)[0];
+							if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); break; }
+						}
 					}
 					return;
 				}

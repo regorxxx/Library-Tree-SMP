@@ -637,23 +637,45 @@ class Library {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+	getFixedPlaylistSources() {
+		const fixedPlaylistIndex = [];
+		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
+			let idx = plman.FindPlaylist(name);
+			if (idx === -1) { idx = plman.FindByGUID(name); }
+			if (idx !== -1) { fixedPlaylistIndex.push(idx); }
+		});
+		return fixedPlaylistIndex;
+	}
+	// Regorxxx ->
+
 	getLibrary(items) {
 		this.empty = '';
 		this.time.Reset();
 		this.none = '';
-		let fixedPlaylistIndex = -1;
+		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+		const fixedPlaylistIndex = [];
 		if (ppt.fixedPlaylist) {
-			fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-			if (fixedPlaylistIndex == -1) {
+			this.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
+			if (fixedPlaylistIndex.length === 0) {
 				ppt.fixedPlaylist = false;
 				ppt.libSource = 0;
 			}
 		}
+		// Regorxxx ->
 		if (!items) {
-			// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible
+			// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 			switch (ppt.libSource) {
 				case 0: this.list = plman.GetPlaylistItems($.pl_active); break;
-				case 1: this.list = !ppt.fixedPlaylist ? fb.GetLibraryItems() : plman.GetPlaylistItems(fixedPlaylistIndex); break;
+				case 1: {
+					if (ppt.fixedPlaylist) {
+						this.list = fixedPlaylistIndex.reduce((prev, idx) => {
+							prev.AddRange(plman.GetPlaylistItems(idx));
+							return prev;
+						}, new FbMetadbHandleList());
+					} else { this.list = fb.GetLibraryItems(); }
+					break;
+				}
 				case 2: this.list = this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
 			}
 			// Regorxxx ->
@@ -767,18 +789,28 @@ class Library {
 	}
 
 	load(handleList) {
-		let fixedPlaylistIndex = -1;
+		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+		const fixedPlaylistIndex = [];
 		if (ppt.fixedPlaylist) {
-			fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-			if (fixedPlaylistIndex == -1) {
+			this.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
+			if (fixedPlaylistIndex.length === 0) {
 				ppt.fixedPlaylist = false;
 				ppt.libSource = 0;
 			}
 		}
+		// Regorxxx ->
 		// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible
 		switch (ppt.libSource) {
 			case 0: this.list = plman.GetPlaylistItems($.pl_active); break;
-			case 1: this.list = !ppt.fixedPlaylist ? (handleList ? handleList : fb.GetLibraryItems()) : plman.GetPlaylistItems(fixedPlaylistIndex); break;
+			case 1: {
+				if (ppt.fixedPlaylist) {
+					this.list = fixedPlaylistIndex.reduce((prev, idx) => {
+						prev.AddRange(plman.GetPlaylistItems(idx));
+						return prev;
+					}, new FbMetadbHandleList());
+				} else { this.list = fb.GetLibraryItems(); }
+				break;
+			}
 			case 2: this.list = handleList || this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
 		}
 		// Regorxxx ->

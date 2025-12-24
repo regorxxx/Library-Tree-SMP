@@ -376,9 +376,9 @@ class MenuItems {
 			separator: true
 		});
 
-		menu.newMenu({ menuName: 'Select playlist', appendTo: 'Source' });
+		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: 'Source' });
 		menu.newItem({
-			menuName: 'Select playlist',
+			menuName: 'Select playlist(s)',
 			str: 'Active playlist',
 			func: () => this.setActivePlaylist(),
 			checkRadio: ppt.libSource == 0,
@@ -386,19 +386,29 @@ class MenuItems {
 		});
 
 		const pl_no = Math.ceil(this.pl.length / 30);
-		const pl_ix = ppt.fixedPlaylist ? plman.FindPlaylist(ppt.fixedPlaylistName) : -1;
+		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+		const pl_ix = ppt.fixedPlaylist ? lib.getFixedPlaylistSources() : [-1];
 		for (let j = 0; j < pl_no; j++) {
 			const n = '# ' + (j * 30 + 1 + ' - ' + Math.min(this.pl.length, 30 + j * 30) + (30 + j * 30 > pl_ix && ((j * 30) - 1) < pl_ix ? '  >>>' : ''));
-			menu.newMenu({ menuName: n, appendTo: 'Select playlist' });
+			menu.newMenu({ menuName: n, appendTo: 'Select playlist(s)' });
 			for (let i = j * 30; i < Math.min(this.pl.length, 30 + j * 30); i++) {
+				if (i === j * 30) {
+						menu.newItem({
+						menuName: n,
+						str: 'Shift to join / Ctrl to use GUID:',
+						flags: MF_GRAYED,
+						separator: true
+					});
+				}
 				menu.newItem({
 					menuName: n,
 					str: this.pl[i].menuName,
 					func: () => this.setFixedPlaylist(i),
-					checkRadio: i == pl_ix
+					checkRadio: pl_ix.includes(this.pl[i].ix)
 				});
 			}
 		}
+		// Regorxxx ->
 
 		menu.newMenu({ menuName: 'Refresh', appendTo: mainMenu(), separator: true });
 		for (let i = 0; i < 5; i++) menu.newItem({
@@ -623,6 +633,7 @@ class MenuItems {
 		for (let i = 0; i < plman.PlaylistCount; i++) this.pl.push({
 			menuName: plman.GetPlaylistName(i).replace(/&/g, '&&'),
 			name: plman.GetPlaylistName(i),
+			guid: plman.GetGUID(i), // Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID ->
 			ix: i
 		});
 	}
@@ -751,8 +762,16 @@ class MenuItems {
 		}
 	}
 
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 	setFixedPlaylist(i) {
-		ppt.fixedPlaylistName = this.pl[i].name;
+		const id = 	vk.k('ctrl')
+			? this.pl[i].guid || this.pl[i].name
+			: this.pl[i].name;
+		if (vk.k('shift') && ppt.fixedPlaylistName.length) {
+			ppt.fixedPlaylistName += '|' + id;
+		} else {
+			ppt.fixedPlaylistName = id;
+		}
 		ppt.fixedPlaylist = true;
 		ppt.libSource = 1;
 		if (panel.imgView) img.clearCache();
@@ -760,6 +779,7 @@ class MenuItems {
 		lib.searchCache = {};
 		lib.treeState(false, 2);
 	}
+	// Regorxxx ->
 
 	setMode(i) {
 		switch (i) {
@@ -871,8 +891,10 @@ class MenuItems {
 				if (ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) popUpBox.message();
 				break;
 			case 2: {
-				const fixedPlaylistIndex = plman.FindPlaylist(ppt.fixedPlaylistName);
-				if (fixedPlaylistIndex != -1) ppt.fixedPlaylist = true;
+				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+				const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+				if (fixedPlaylistIndex.length !== 0) { ppt.fixedPlaylist = true; }
+				// Regorxxx ->
 				ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
 				if (ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) popUpBox.message();
 				break;
