@@ -10,7 +10,7 @@ Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.
 - Album / Artist art browser + Flow mode
 - Single / Multiple panel modes + Facets
 - Statistics
-- Library and playlist sources
+- Library and multi-playlists sources
 - Auto-DJ
 - Top Tracks
 - Duplicates handling and filtering
