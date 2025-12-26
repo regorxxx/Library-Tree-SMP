@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//25/12/25
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -393,7 +393,7 @@ class MenuItems {
 			menu.newMenu({ menuName: n, appendTo: 'Select playlist(s)' });
 			for (let i = j * 30; i < Math.min(this.pl.length, 30 + j * 30); i++) {
 				if (i === j * 30) {
-						menu.newItem({
+					menu.newItem({
 						menuName: n,
 						str: 'Shift to join / Ctrl to use GUID:',
 						flags: MF_GRAYED,
@@ -764,7 +764,7 @@ class MenuItems {
 
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 	setFixedPlaylist(i) {
-		const id = 	vk.k('ctrl')
+		const id = vk.k('ctrl')
 			? this.pl[i].guid || this.pl[i].name
 			: this.pl[i].name;
 		if (vk.k('shift') && ppt.fixedPlaylistName.length) {
