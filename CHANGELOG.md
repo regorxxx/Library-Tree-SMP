@@ -123,6 +123,7 @@
 - Most settings pointing to tags or queries now use the same default values than all my scripts (https://regorxxx.github.io/foobar2000-SMP.github.io/), which can be found on an auto-generated file at '[foobar profile]\js_data\presets\global\globTags.json' and '[foobar profile]\js_data\presets\global\globQuery.json'. People already using any of my other scripts will have such file already present. If you wish to default tags used on first panel installations, check that file. They also apply when the panel properties are reset. <ins>[new]</ins>
 - Changed how built-in icons paths are handled, using relative paths. [from Library-Tree-v2.4.0.mod.21]
 - Internal changes (for future development). Changed file structure. [from Library-Tree-v2.4.0.mod.21]
+- Code cleanup and performance improvements if panel is disabled or during startup. <ins>[new]</ins>
 - Simplified and unified code at multiple places, replacing hardcoding with easier to maintain alternatives (and less prone to bugs). Multiple console warnings have also been set when errors are found. [from Library-Tree-v2.4.0.mod.21]
 - Moved all licenses to 'assets\licenses'. [from Library-Tree-v2.4.0.mod.28]
 ### Removed
