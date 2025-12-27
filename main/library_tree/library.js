@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//27/12/25
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -427,24 +427,23 @@ class Library {
 		if (avg < (!arrExpanded ? 3 : 2)) panel.lines = 1;
 	}
 
+	// Regorxxx <- Avoid unnecesary sorting while checking statistics which can take more than 1 second on big libraries
 	checkStatistics(handleList) {
-		pop.tree.forEach(v => {
-			delete v.statistics;
-			delete v._statistics;
-		});
-		panel.sort(this.full_list);
-		handleList.Convert().forEach(h => {
-			const i = this.full_list.Find(h);
-			if (i != -1) {
-				['standard', 'search', 'filter'].forEach(w => {
-					let keys = Object.keys(pop.cache[w]);
-					let j = keys.length;
-					while (j--) if (pop.cache[w][keys[j]] && pop.cache[w][keys[j]].items.includes(i)) delete pop.cache[w][keys[j]];
-				});
-			}
-		});
-		panel.treePaint();
+		const bDone =  handleList.Convert().some(h => this.full_list.Find(h) !== -1);
+		if (bDone) {
+			pop.cache = {
+				'standard': {},
+				'search': {},
+				'filter': {}
+			};
+			pop.tree.forEach(v => {
+				delete v.statistics;
+				delete v._statistics;
+			});
+			panel.treePaint();
+		}
 	}
+	// Regorxxx ->
 
 	checkTree() {
 		if (!this.upd) return;

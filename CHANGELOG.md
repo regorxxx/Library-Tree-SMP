@@ -114,6 +114,7 @@
 - UI: cleanup of search history menu. Added RegExp reference. [from Library-Tree-v2.4.0.mod.21]
 - Performance: filters and search expressions using $selected{}, etc. are now only checked to associated changes, instead of playback or selection triggering a check to all of them. [from Library-Tree-v2.4.0.mod.21]
 - Performance: improvements retrieving items from library, playlist or panel source. Previously it always retrieved all and then the selected one was chosen, now only the selected one is computed. In most cases the library is the biggest one, so it may only be noticeable when using the other sources on huge libraries. It should also reduce peak memory usage. [from Library-Tree-v2.4.0.mod.21]
+- Performance: huge improvements when changing any library item tag (for example %RATING%) while using any kind of statistics. Previously to refresh them a panel sorting was triggered, which could easily take more than 1 second for large libraries, therefore blocking the entire UI on every tag change. Instead of that approach, now statistics are entirely recalculated, which takes less time. <ins>[new]</ins>
 - HTML: minor improvements and cleanup at HTML options panel. [from Library-Tree-v2.4.0.mod.21]
 - HTML: minor fixes to HTML options panel. In some cases initial values after opening the window were not properly updated on original script or checkboxes were enabled when they shouldn't. [from Library-Tree-v2.4.0.mod.21]
 - HTML: updated help text at HTML options panel to reflect the new changes. <ins>[new]</ins>
@@ -155,6 +156,7 @@
 - UI: fixed bug, on original script, related to SMP resizing artifacts of Album Art and Artist images, resulting on grey borders in some cases. [from Library-Tree-v2.4.0.mod.34]
 - UI: fixed bug, on original script, related to circular mask producing artifacts in some cases. [from Library-Tree-v2.4.0.mod.34]
 - Assets: fixed multiple inconsistencies, artifacts, size errors, etc. on no artist, no cover and root images used on original script. File sizes has also been greatly improved which could result on performance improvements in some cases. [from Library-Tree-v2.4.0.mod.34]
+- Statistics: some statistics were not being updated unless the entire view was updated on library item tag changes. For example %RATING% if current view TF did not include such tag, but rating statistics was used. Old value was being shown instead. <ins>[new]</ins>
 
 [Unreleased]: ../../compare/ffc967f5...HEAD
 [2.4.0.mod.34]: ../../compare/f2d83e13...ffc967f5
