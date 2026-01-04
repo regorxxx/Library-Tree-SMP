@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/12/25
+//01/01/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '1.0.0', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -50,7 +50,7 @@ if (loadAsync) {
 		globProfiler.Print('helpers'); // Regorxxx <- Init profiler ->
 		if (!window.ID) return; // fix pss issue
 		on_size();
-		window.Repaint();
+		if (window.IsVisible) { window.Repaint(); }
 	});
 } else {
 	files.forEach(v => include(v));
