@@ -1,6 +1,6 @@
 @ECHO off
 REM ------------------------------------------------------------------
-REM Create packages (zip file) from js files v.20/12/2025
+REM Create packages (zip file) from js files v.07/01/2026
 REM Requires 7za.exe on windows to compress (otherwise do it manually)
 REM If it's not provided, can be downloaded from:
 REM 	https://www.7-zip.org/download.html
@@ -648,7 +648,10 @@ CALL :copy_file main\timeline\timeline_helpers.js
 CALL :check_folder main\world_map
 CALL :copy_file main\world_map\world_map_tables.js
 CALL :check_folder main\window
+CALL :copy_file main\window\window_xxx_background.js
+CALL :copy_file main\window\window_xxx_background_menu.js
 CALL :copy_file main\window\window_xxx_dynamic_colors.js
+CALL :copy_file main\window\window_xxx_helpers.js
 REM Buttons
 CALL :copy_folder buttons
 CALL :copy_folder buttons\helpers
