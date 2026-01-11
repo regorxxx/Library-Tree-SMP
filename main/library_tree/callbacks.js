@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/12/25
+//09/01/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -81,7 +81,7 @@ addEventListener('on_key_up', (vkey) => {
 });
 
 addEventListener('on_library_items_added', (handleList) => {
-	if (ppt.libSource == 2) return;
+	if (ppt.libSource === 2 || ppt.libSource === 3) { return; } // Regorxxx <- Queue source ->
 	if (lib.v2_init) {
 		lib.v2_init = false;
 		if (ui.w < 1 || !window.IsVisible) return;
@@ -93,7 +93,7 @@ addEventListener('on_library_items_added', (handleList) => {
 });
 
 addEventListener('on_library_items_removed', (handleList) => {
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource) return;
+	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3) { return; } // Regorxxx <- Queue source ->
 	if (ppt.libSource == 2) {
 		const libList = lib.list.Clone();
 		libList.Sort();
@@ -104,7 +104,7 @@ addEventListener('on_library_items_removed', (handleList) => {
 });
 
 addEventListener('on_library_items_changed', (handleList) => {
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource) return;
+	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3) { return; } // Regorxxx <- Queue source ->
 	if (ppt.libSource == 2) {
 		const libList = lib.list.Clone();
 		libList.Sort();
@@ -504,6 +504,7 @@ addEventListener('on_playback_stop', (reason) => {
 });
 
 addEventListener('on_playback_queue_changed', () => {
+	if (ppt.libSource === 3) { lib.treeState(false, 2); } // Regorxxx <- Queue source ->
 	on_queue_changed();
 });
 

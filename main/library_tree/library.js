@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/12/25
+//09/01/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -104,11 +104,11 @@ class Library {
 				let lis = ppt.filterBy && !this.filterQuery.includes('$searchtext') ? $.query(handleList, this.filterQuery) : handleList;
 				panel.sort(lis);
 				this.binaryInsert(panel.folderView, lis, this.list, this.libNode);
-				 // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
+				// Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
 				if (panel.folderView && ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb) {
 					panel.sort(this.list);
 				}
-				 // Regorxxx ->
+				// Regorxxx ->
 				if (this.list.Count) this.empty = '';
 				if (panel.search.txt) {
 					let newSearchItems = new FbMetadbHandleList();
@@ -429,7 +429,7 @@ class Library {
 
 	// Regorxxx <- Avoid unnecesary sorting while checking statistics which can take more than 1 second on big libraries
 	checkStatistics(handleList) {
-		const bDone =  handleList.Convert().some(h => this.full_list.Find(h) !== -1);
+		const bDone = handleList.Convert().some(h => this.full_list.Find(h) !== -1);
 		if (bDone) {
 			pop.cache = {
 				'standard': {},
@@ -676,6 +676,7 @@ class Library {
 					break;
 				}
 				case 2: this.list = this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
+				case 3: this.list = plman.GetPlaybackQueueHandles(); break; // Regorxxx <- Queue source ->
 			}
 			// Regorxxx ->
 			if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
@@ -684,7 +685,13 @@ class Library {
 		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
 			pop.clearTree();
 			sbar.setRows(0);
-			this.empty = ppt.libSource == 1 ? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n') : 'Nothing received';
+			// Regorxxx <- Queue source
+			this.empty = ppt.libSource === 1
+				? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n')
+				: ppt.libSource === 3
+					? 'Empty playback queue'
+					: 'Nothing received';
+			// Regorxxx ->
 			panel.treePaint();
 			return;
 		}
@@ -811,6 +818,7 @@ class Library {
 				break;
 			}
 			case 2: this.list = handleList || this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
+			case 3: this.list = plman.GetPlaybackQueueHandles(); break; // Regorxxx <- Queue source ->
 		}
 		// Regorxxx ->
 		if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
@@ -818,7 +826,13 @@ class Library {
 		if (this.list.Count) this.v2_init = false;
 
 		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
-			this.empty = ppt.libSource == 1 ? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n') : 'Nothing received';
+			// Regorxxx <- Queue source
+			this.empty = ppt.libSource === 1
+				? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n')
+				: ppt.libSource === 3
+					? 'Empty playback queue'
+					: 'Nothing received';
+			// Regorxxx ->
 			panel.treePaint();
 		}
 	}
@@ -1007,7 +1021,13 @@ class Library {
 		} else panel.list = this.list;
 
 		if (ppt.libSource && !this.full_list.Count) {
-			this.empty = ppt.libSource == 1 ? (!ppt.fixedPlaylist ? 'Nothing to show\n\nClick here to configure the media library' : 'Nothing found\n\n') : 'Nothing received';
+			// Regorxxx <- Queue source
+			this.empty = ppt.libSource == 1
+				? (!ppt.fixedPlaylist ? 'Nothing to show\n\nClick here to configure the media library' : 'Nothing found\n\n')
+				: ppt.libSource === 3
+					? 'Empty playback queue'
+					: 'Nothing received';
+			// Regorxxx ->
 		}
 	}
 

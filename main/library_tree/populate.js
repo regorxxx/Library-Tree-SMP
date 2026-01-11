@@ -1604,6 +1604,7 @@ class Populate {
 					return;
 				}
 				// Regorxxx ->
+
 				if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) return this.send(item, x, y);
 				if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
 					this.expandCollapse(x, y, item, ix);
@@ -1616,8 +1617,35 @@ class Populate {
 					if (ppt.sendToCur) pl_stnd_idx = plman.ActivePlaylist;
 					else plman.ActivePlaylist = pl_stnd_idx;
 					plman.ActivePlaylist = pl_stnd_idx;
-					const c = (plman.PlaybackOrder == 3 || plman.PlaybackOrder == 4) ? Math.ceil(plman.PlaylistItemCount(pl_stnd_idx) * Math.random() - 1) : 0;
-					plman.ExecutePlaylistDefaultAction(pl_stnd_idx, c);
+					// Regorxxx <- Queue source
+					if (ppt.libSource === 3) {
+						let handleList = new FbMetadbHandleList();
+						this.range(item.item).forEach(v => {
+							if (v < panel.list.Count) handleList.Add(panel.list[v]);
+						});
+						handleList = handleList.Convert();
+						if (handleList.length) {
+							const queue = plman.GetPlaybackQueueContents();
+							plman.FlushPlaybackQueue();
+							/** @type {FbPlaybackQueueItem[]} */
+							const head = [];
+							handleList.forEach((handle) => {
+								head.push(queue.splice(queue.findIndex((item) => item.Handle.Compare(handle)), 1)[0]);
+							});
+							[...head, ...queue].forEach((item) => {
+								if (![0xffffffff, -1].includes(item.PlaylistIndex) && ![0xffffffff, -1].includes(item.PlaylistItemIndex)) { // BUG: SMP 1.6.1-mod returns 4294967295 instead of -1
+									plman.AddPlaylistItemToPlaybackQueue(item.PlaylistIndex, item.PlaylistItemIndex);
+								} else {
+									plman.AddItemToPlaybackQueue(item.Handle);
+								}
+							});
+							fb.Play();
+						}
+					} else {
+						const c = (plman.PlaybackOrder == 3 || plman.PlaybackOrder == 4) ? Math.ceil(plman.PlaylistItemCount(pl_stnd_idx) * Math.random() - 1) : 0;
+						plman.ExecutePlaylistDefaultAction(pl_stnd_idx, c);
+					}
+					// Regorxxx ->
 				}
 				break;
 		}
@@ -1729,7 +1757,7 @@ class Populate {
 			pl_stnd_idx = plman.ActivePlaylist;
 		} else {
 			if (!ppt.libPlaylistCreate) { pl_stnd_idx = plman.FindOrCreatePlaylist(pl_stnd, true); }
-			if (ppt.activateOnChange) {	plman.ActivePlaylist = pl_stnd_idx; }
+			if (ppt.activateOnChange) { plman.ActivePlaylist = pl_stnd_idx; }
 		}
 		// Regorxxx ->
 
@@ -2423,7 +2451,7 @@ class Populate {
 
 
 	sort(data) {
-		if (!ppt.libSource && !panel.multiProcess) return;
+		if (!ppt.libSource && !panel.multiProcess || ppt.libSource === 3 && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
@@ -2554,7 +2582,7 @@ class Populate {
 								else if (idxB) { out = 1; }
 							}
 							if (out) { return out; }
-							if (idxA && !idxB && $.isNumeric(charB)) { out =  -1; break; }
+							if (idxA && !idxB && $.isNumeric(charB)) { out = -1; break; }
 							if (out) { return out; }
 						}
 						typeA = $.getTypeWeight(charA, idxA, 'base');

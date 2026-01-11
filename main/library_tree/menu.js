@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/12/25
+//09/01/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -265,9 +265,19 @@ class MenuItems {
 		});
 		// Regorxxx ->
 
+		// Regorxxx <- Queue source
+		if (ppt.libSource === 3) {
+			menu.newItem({
+				menuName: 'Views',
+				str: 'Sort by Queue idx',
+				func: () => { ppt.toggle('queueSorting'); lib.treeState(false, 2); },
+				checkItem: ppt.queueSorting
+			});
+		}
 		const d = {};
 		this.getSortData(d);
-		menu.newMenu({ menuName: d.menuName, appendTo: 'Views', flags: d.sortType ? MF_STRING : MF_GRAYED, separator: true });
+		menu.newMenu({ menuName: d.menuName, appendTo: 'Views', flags: d.sortType && (ppt.libSource !== 3 || !ppt.queueSorting) ? MF_STRING : MF_GRAYED, separator: true });
+		// Regorxxx ->
 		if (d.sortType) {
 			menu.newItem({
 				menuName: d.menuName,
@@ -360,13 +370,20 @@ class MenuItems {
 		// Regorxxx ->
 
 		menu.newMenu({ menuName: 'Source', appendTo: mainMenu(), separator: true });
-		this.sourceTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration ->
+		// Regorxxx <- External integration | Queue source
+		this.sourceTypes().forEach((v, i) => menu.newItem({
 			menuName: 'Source',
 			str: v,
 			func: () => this.setSource(i),
-			checkRadio: i == (ppt.libSource - 1 < 0 || ppt.fixedPlaylist ? 2 : ppt.libSource - 1),
-			separator: i == 2
+			checkRadio: i == (ppt.libSource - 1 < 0 || ppt.fixedPlaylist
+				? 2
+				: ppt.libSource > 2
+					? ppt.libSource
+					: ppt.libSource - 1
+			),
+			separator: i == this.sourceTypes().length - 1
 		}));
+		// Regorxxx ->
 
 		menu.newItem({
 			menuName: 'Source',
@@ -376,7 +393,7 @@ class MenuItems {
 			separator: true
 		});
 
-		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: 'Source' });
+		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: 'Source', flags: ppt.libSource !== 0 ? MF_GRAYED : MF_STRING }); // Regorxxx <- Don't allow playlist selection if source is not playlist ->
 		menu.newItem({
 			menuName: 'Select playlist(s)',
 			str: 'Active playlist',
@@ -899,6 +916,12 @@ class MenuItems {
 				if (ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) popUpBox.message();
 				break;
 			}
+			// Regorxxx <- Queue source
+			case 3: {
+				ppt.libSource = 3;
+				break;
+			}
+			// Regorxxx ->
 		}
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
@@ -1064,7 +1087,7 @@ class MenuItems {
 	}
 
 	sourceTypes() {
-		return ['Library', 'Panel', 'Playlist'];
+		return ['Library', 'Panel', 'Playlist', 'Playback Queue']; // Regorxxx <- Queue source ->
 	}
 	// Regorxxx ->
 }
