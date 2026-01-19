@@ -1,4 +1,4 @@
-### Script should be installed as package, using the package manager at the SMP Configuration window. Old method is still supported anyway.
+### Script should be installed as package, using the package manager at the SMP/JSplitter Configuration window.
 
 **REQUIRES SMP OR JSPLITTER**
 
