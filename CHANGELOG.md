@@ -102,7 +102,7 @@
 - Views: changed default view patterns to create branches for multi-value artist tags and also swap prefixes. i.e. The Rolling Stones -> Rolling Stones, The [from Library-Tree-v2.4.0.mod.21]
 - Views: changed default view patterns to split/sort albums with different %COMMENT% or %MUSICBRAINZ_ALBUMID% (if the first doesn't exist). Previously multiple versions of the same album were just joined together, which was undesirable. Now proper tagging may fix it. [from Library-Tree-v2.4.0.mod.21]
 - Views: changed default view Date pattern to only use the year part of the tag (intended usage). This should only affect people who put full dates on %DATE% tag. [from Library-Tree-v2.4.0.mod.21]
-- Views: changed default prefixes to Strip or Swap setting to 'A|The|Las|Los|Les|La|El|Le'. [from Library-Tree-v2.4.0.mod.31]
+- Views: changed default prefixes to Strip or Swap setting to 'A|An|The|Las|Los|Les|La|El|Le|Lo|Au|Aux|Il|I|L\'|Gli|Una|Uno|Une|Unas|Unos|Unes|Der|Das|Die|Al|Ar|Ul|Ur|Els|Uns|Des|O|Os|As|Um|Uma|Uns|Umas'. <ins>[new]</ins>
 - Filters: all default filter presets using $nowplaying{} have been tweaked to use $nowplayingorselected{} instead, so they always work with selection as fallback. [from Library-Tree-v2.4.0.mod.21]
 - Filters: changed default filter query expressions to be compatible with foo_playcount, foo_enhanced_playcount, foo_playcount_2003 and foo_truepeak. [from Library-Tree-v2.4.0.mod.21]
 - Filters: changed default filter query expressions to be compatible with multi-valued tags (like Nowplaying Artist). [from Library-Tree-v2.4.0.mod.21]
