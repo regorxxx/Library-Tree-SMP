@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/01/26
+//28/01/26
 
 /* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath */
 
@@ -701,13 +701,37 @@ function _exec(command, rate = 50) {
 	const parentId = getProcessID('foobar2000.exe');
 	if (parentId !== null) { WshShell.AppActivate(parentId); }
 	return new Promise((res, rej) => {
+		let stdOut = '';
+		let stdErr = '';
 		const intervalID = setInterval(() => {
 			switch (execObj.Status) {
-				case 2: rej(execObj.StdErr.ReadAll()); break;
-				case 1: res(execObj.StdOut.ReadAll()); break;
+				case 2: {
+					while (!execObj.StdErr.AtEndOfStream) {
+						stdErr += execObj.StdErr.ReadAll();
+					}
+					clearInterval(intervalID);
+					rej(stdErr);
+					break;
+				}
+				case 1: {
+					while (!execObj.StdOut.AtEndOfStream) {
+						stdOut += execObj.StdOut.ReadAll();
+					}
+					clearInterval(intervalID);
+					res(stdOut);
+					break;
+				}
+				case 0: {
+					while (!execObj.StdOut.AtEndOfStream) {
+						stdOut += execObj.StdOut.ReadAll();
+					}
+					while (!execObj.StdErr.AtEndOfStream) {
+						stdErr += execObj.StdErr.ReadAll();
+					}
+					break;
+				}
 				default: return; // do nothing
 			}
-			clearInterval(intervalID);
 		}, rate);
 	});
 }
