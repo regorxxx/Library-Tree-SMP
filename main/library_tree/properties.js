@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//30/01/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -275,7 +275,7 @@ let properties = [
 	['Playlist: Top tracks sorting', '$rand()', 'topTracksSorting'],
 	['Playlist: Top tracks remove duplicates', JSON.stringify(globTags.remDupl), 'topTracksRemDupl'],
 	// Regorxxx ->
-	['Prefixes to Strip or Swap (| Separator)', 'A|An|The|Las|Los|Les|La|El|Le|Lo|Au|Aux|Il|I|L\'|Gli|Una|Uno|Une|Unas|Unos|Unes|Der|Das|Die|Al|Ar|Ul|Ur|Els|Uns|Des|O|Os|As|Um|Uma|Uns|Umas', 'prefix'], // Regorxxx <- separators in other languages ->
+	['Prefixes to Strip or Swap (| Separator)', 'A|An|The|Las|Los|Les|La|El|Le|Lo|Au|Aux|Il|I|L\'\'|Gli|Una|Uno|Une|Unas|Unos|Unes|Der|Das|Die|Al|Ar|Ul|Ur|Els|Uns|Des|O|Os|As|Um|Uma|Uns|Umas', 'prefix'], // Regorxxx <- separators in other languages ->
 	['Preset: Load Current View', false, 'presetLoadCurView'],
 	['Remember.PreSearch', true, 'rememberPreSearch'],
 	['Remember.Proc', false, 'process'],
