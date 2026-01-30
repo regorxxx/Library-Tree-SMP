@@ -2,7 +2,7 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
-- [1.0.0](#100---2026-01-30
+- [1.0.0](#100---2026-01-30)
 - [2.4.0.mod.34]
 
 ## [Unreleased][]
