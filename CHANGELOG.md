@@ -2,9 +2,16 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [1.0.0](#100---2026-01-30
 - [2.4.0.mod.34]
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [1.0.0] - 2026-01-30
 ### Added
 - Syntax: added special Library-Tree-SMP syntax docs which can be opened via 'search menu\Help\Library-Tree-SMP syntax'. These docs show all special functions using on views, filter, search box and sorting. Also added a link to this file at the HTML options panel at relevant places; note that your browser may fail opening it due to security settings, but the link may be copied and pasted on any web/file browser. <ins>[new]</ins>
 - Auto-DJ: added new Auto-DJ feature which will randomly take tracks from current view and add them to the queue. Note whatever affects the tracks shown on panel will also affect Auto-DJ (filters, search box,...). The algorithm tries to never take the same track 2 times, if possible, and stops whenever playback is manually stopped by user or if no more tracks are found. To fully make use of this feature is recommended to enable the global duplicates removal filter, so tracks with same user-chosen tags are also skipped (for ex. to avoid playing live and studio versions). Additionally, using a dynamic filter based on playback will allow Auto-DJ to keep adding new tracks to the queue based on what was played before, similar to Spotify ('Nowplaying similar' default filter is ideal for this use case); alternatively, a personalized query at the search input box could also help ensuring the listening session is limited to specific dates, genres, etc. <ins>[new]</ins>
@@ -158,5 +165,6 @@
 - Assets: fixed multiple inconsistencies, artifacts, size errors, etc. on no artist, no cover and root images used on original script. File sizes has also been greatly improved which could result on performance improvements in some cases. [from Library-Tree-v2.4.0.mod.34]
 - Statistics: some statistics were not being updated unless the entire view was updated on library item tag changes. For example %RATING% if current view TF did not include such tag, but rating statistics was used. Old value was being shown instead. <ins>[new]</ins>
 
-[Unreleased]: ../../compare/ffc967f5...HEAD
+[Unreleased]: ../../compare/v1.0.0...HEAD
+[1.0.0]: ../../compare/ffc967f5...v1.0.0
 [2.4.0.mod.34]: ../../compare/f2d83e13...ffc967f5
