@@ -63,7 +63,7 @@ Not properly following the installation instructions will result in scripts not 
 
 ## Support
  1. [Issues tracker](../../issues).
- 2. [Hydrogenaudio forum](https://hydrogenaudio.org/index.php/topic,111060.new.html#new).
+ 2. [Hydrogenaudio forum](hydrogenaudio.org/index.php/topic,129076).
  3. [Wiki](../../wiki).
 
 ## Nightly releases
