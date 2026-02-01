@@ -9,6 +9,7 @@
 ### Added
 - Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'.
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
+- Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source.
 ### Changed
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/01/26
+//01/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -650,7 +650,7 @@ addEventListener('on_locations_added', (taskId, handleList) => {
 });
 // Regorxxx ->
 
-// Regorxxx <- Drag n' drop to search box
+// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue
 // Drag n drop to copy/move tracks to playlists (only files from foobar2000)
 addEventListener('on_drag_enter', (action, x, y, mask) => { // eslint-disable-line no-unused-vars
 	if (!ui.w || !ui.h || !ppt.searchShow || ppt.searchDragMethod === -1) { return; }
@@ -671,7 +671,7 @@ addEventListener('on_drag_over', (action, x, y, mask) => {
 	on_mouse_move(x, y, mask);
 	// Set effects
 	action.Effect = dropEffect.copy;
-	action.Text = search.getDragDropTooltipText(ppt.searchDragMethod, mask);
+	action.Text = search.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y);
 });
 
 addEventListener('on_drag_drop', (action, x, y, mask) => {
@@ -681,11 +681,15 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 	action.Effect = dropEffect.none; // Forces not sending things to a playlist
 	const selItems = fb.GetSelections(1);
 	if (selItems && selItems.Count) {
-		const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
-		search.clear();
-		if (input.length) {
-			input.split('').forEach((s) => search.on_char(s.charCodeAt(0), true));
-			search.on_char(vk.enter);
+		if (y < panel.search.h || ppt.libSource !== 3) {
+			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
+			search.clear();
+			if (input.length) {
+				input.split('').forEach((s) => search.on_char(s.charCodeAt(0), true));
+				search.on_char(vk.enter);
+			}
+		} else if (ppt.libSource === 3) {
+			selItems.Convert().forEach((handle) => plman.AddItemToPlaybackQueue(handle));
 		}
 	}
 });

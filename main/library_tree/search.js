@@ -45,7 +45,7 @@ class Search {
 			this.tt('');
 		};
 		// Regorxxx ->
-		// Regorxxx <- Drag n' drop to search box
+		// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue
 		this.getDragDropTags = (mask) => {
 			const bCtrl = (mask & MK_CONTROL) === MK_CONTROL;
 			const bAlt = (mask & 32) === 32;
@@ -125,16 +125,20 @@ class Search {
 			return input;
 		};
 
-		this.getDragDropTooltipText = (method, mask) => {
-			if (method === 0 && panel.folderView) { // Auto: tags or path
-				return 'Add paths to search box';
-			} else { // Tags
-				const searchTags = this.getDragDropTags(mask);
-				const operators = this.getDragDropOperators(mask);
-				const tagsDisplay = operators.tag
-					? searchTags.join(' ' + operators.tag + ' ')
-					: searchTags[0];
-				return (operators.query || !panel.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
+		this.getDragDropTooltipText = (method, mask, x, y) => {
+			if (y < panel.search.h || ppt.libSource !== 3) {
+				if (method === 0 && panel.folderView) { // Auto: tags or path
+					return 'Add paths to search box';
+				} else { // Tags
+					const searchTags = this.getDragDropTags(mask);
+					const operators = this.getDragDropOperators(mask);
+					const tagsDisplay = operators.tag
+						? searchTags.join(' ' + operators.tag + ' ')
+						: searchTags[0];
+					return (operators.query || !panel.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
+				}
+			} else if (ppt.libSource === 3) {
+				return 'Add items to queue';
 			}
 		};
 		// Regorxxx ->
