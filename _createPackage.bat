@@ -1,4 +1,4 @@
-@ECHO off
+﻿@ECHO off
 REM ------------------------------------------------------------------
 REM Create packages (zip file) from js files v.28/01/2026
 REM Requires 7za.exe on windows to compress (otherwise do it manually)
@@ -627,6 +627,7 @@ CALL :copy_file _TIPS.txt
 REM main
 CALL :copy_folder main\autobackup
 CALL :copy_folder main\bio
+CALL :copy_folder main\checksum
 CALL :copy_folder main\filter_and_query
 CALL :copy_folder main\fingerprint
 CALL :copy_folder main\last_list
