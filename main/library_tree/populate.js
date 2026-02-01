@@ -2052,8 +2052,12 @@ class Populate {
 					if (!v.root) { v.sel = !v.sel; }
 				});
 				this.getTreeSel();
-				if (!this.sel_items.length) { return; }
-				this.setPlaylist();
+				if (ppt.libSource) {
+					if (!this.sel_items.length) { return; }
+					this.setPlaylist();
+				} else if (this.autoFill.key) {
+					this.setPlaylistSelectionInvert();
+				}
 				break;
 			}
 			// Regorxxx ->
@@ -2339,6 +2343,7 @@ class Populate {
 
 	// Regorxxx <- Select All not working with playlist sources
 	setPlaylistSelectionAll() {
+		if ($.pl_active === -1) { return; }
 		plman.ClearPlaylistSelection($.pl_active);
 		let items = [];
 		if (panel.search.txt || ppt.filterBy || panel.multiProcess) {
@@ -2348,7 +2353,7 @@ class Populate {
 				if (i != -1) { items.push(i); }
 			});
 		} else {
-			items = this.range(panel.list.Count);
+			items = $.range(0, panel.list.Count - 1);
 		}
 		plman.SetPlaylistSelection($.pl_active, items, true);
 		this.setFocus = true;
@@ -2358,10 +2363,20 @@ class Populate {
 	}
 
 	setPlaylistSelectionNone() {
+		if ($.pl_active === -1) { return; }
 		plman.ClearPlaylistSelection($.pl_active);
 	}
 
+	setPlaylistSelectionInvert() {
+		if ($.pl_active === -1) { return; }
+		const toSelect = [];
+		$.range(0, plman.PlaylistItemCount($.pl_active) - 1).forEach((idx) => { if (!plman.IsPlaylistItemSelected($.pl_active, idx)) { toSelect.push(idx); } });
+		plman.ClearPlaylistSelection($.pl_active);
+		plman.SetPlaylistSelection($.pl_active, toSelect, true);
+	}
+
 	setPlaylistSelection(ix, item) {
+		if ($.pl_active === -1) { return; }
 		this.clearSelected();
 		if (!item.sel) { this.setTreeSel(ix, item.sel); }
 		panel.treePaint();
