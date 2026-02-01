@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//01/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2028,14 +2028,30 @@ class Populate {
 				fb.CopyHandleListToClipboard(handleList);
 				break;
 			}
-			case vk.selAll:
+			// Regorxxx <- Extra shortcuts | Select All acts as a toogle | Invert selection
+			case vk.selNone:
+			case vk.selAll: {
+				const bSelected = code === vk.selAll
+					? this.tree.every((v) => v.root || v.sel) ? false : true
+					: false;
 				this.tree.forEach(v => {
-					if (!v.root) v.sel = true;
+					if (!v.root) { v.sel = bSelected; }
 				});
 				this.getTreeSel();
-				if (!this.sel_items.length) return;
+				if (!this.sel_items.length) { return; }
 				this.setPlaylist();
 				break;
+			}
+			case vk.selInvert: {
+				this.tree.forEach(v => {
+					if (!v.root) { v.sel = !v.sel; }
+				});
+				this.getTreeSel();
+				if (!this.sel_items.length) { return; }
+				this.setPlaylist();
+				break;
+			}
+			// Regorxxx ->
 			case vk.eFocusSearch:
 			case vk.lFocusSearch:
 				if (ppt.searchShow) search.focus();

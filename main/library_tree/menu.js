@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/01/26
+//01/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -159,45 +159,78 @@ class MenuItems {
 		menu.newMenu({ hide: !this.settingsBtnDn && ppt.settingsShow && this.validItem });
 
 		if (this.validItem) {
-			// Regorxxx <- Code cleanup
-			['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter', 'Send to new playlist' + '\tCtrl+enter'].forEach((v, i) => menu.newItem({
-				str: v,
-				func: () => this.setPlaylist(i),
-				flags: this.getPaylistFlag(i),
-				separator: i == 2
-			}));
-			// Regorxxx ->
-			// Regorxxx <- Top tracks
-			{
-				const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
+			// Regorxxx <- Queue source
+			if (ppt.libSource === 3) {
 				menu.newItem({
-					str: 'Send top track' + target,
-					func: () => this.setPlaylist(6),
+					str: 'Select all',
+					func: () => pop.on_char(vk.selAll)
 				});
 				menu.newItem({
-					str: 'Add top tracks' + target,
-					func: () => this.setPlaylist(7),
-					separator: true
+					str: 'Select none',
+					func: () => pop.on_char(vk.selNone)
 				});
-			}
-			// Regorxxx ->
-			// Regorxxx <- Code cleanup
-			menu.newItem({
-				str: 'Show nowplaying',
-				func: () => this.setPlaylist(3),
-				flags: this.getPaylistFlag(3),
-			});
-			// Regorxxx ->
-			// Regorxxx <- Show previously playing. Check if item is tracked
-			{
-				const prevPlaying = fb.GetPrevPlaying();
-				const handle = prevPlaying ? prevPlaying.handle : null;
-				const item = handle ? panel.list.Find(handle) : -1;
 				menu.newItem({
-					str: 'Show prev. played' + (handle && item === -1 ? '\tnot found' : ''),
-					func: () => pop.selShow(item),
-					flags: item !== -1 ? MF_STRING : MF_GRAYED
+					str: 'Invert selection',
+					func: () => pop.on_char(vk.selInvert)
 				});
+				menu.newItem({ separator: true });
+				menu.newItem({
+					str: 'Remove from queue',
+					func: () => {
+						const idx = [];
+						const queueHandles = plman.GetPlaybackQueueHandles();
+						for (let i of pop.sel_items) {
+							for (let j = 0; j < queueHandles.Count; j++) {
+								if (panel.list[i].Compare(queueHandles[j])) { idx.push(j); }
+							}
+						}
+						if (idx.length) { plman.RemoveItemsFromPlaybackQueue(idx); }
+					}
+
+				});
+				menu.newItem({ separator: true });
+			} else {
+				// Regorxxx <- Code cleanup
+				['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter', 'Send to new playlist' + '\tCtrl+enter'].forEach((v, i) => menu.newItem({
+					str: v,
+					func: () => this.setPlaylist(i),
+					flags: this.getPaylistFlag(i),
+					separator: i == 2
+				}));
+				// Regorxxx ->
+				// Regorxxx <- Top tracks
+				{
+					const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
+					menu.newItem({
+						str: 'Send top track' + target,
+						func: () => this.setPlaylist(6),
+					});
+					menu.newItem({
+						str: 'Add top tracks' + target,
+						func: () => this.setPlaylist(7),
+						separator: true
+					});
+				}
+				// Regorxxx ->
+				// Regorxxx <- Code cleanup
+				menu.newItem({
+					str: 'Show nowplaying',
+					func: () => this.setPlaylist(3),
+					flags: this.getPaylistFlag(3),
+				});
+				// Regorxxx ->
+				// Regorxxx <- Show previously playing. Check if item is tracked
+				{
+					const prevPlaying = fb.GetPrevPlaying();
+					const handle = prevPlaying ? prevPlaying.handle : null;
+					const item = handle ? panel.list.Find(handle) : -1;
+					menu.newItem({
+						str: 'Show prev. played' + (handle && item === -1 ? '\tnot found' : ''),
+						func: () => pop.selShow(item),
+						flags: item !== -1 ? MF_STRING : MF_GRAYED
+					});
+				}
+				// Regorxxx ->
 			}
 			// Regorxxx ->
 			// Regorxxx <- Show selection. Check if item is tracked

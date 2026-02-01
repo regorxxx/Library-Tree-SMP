@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/12/25
+//01/02/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -1100,6 +1100,10 @@ class Vkeys {
 		this.del = 46;
 		this.expand = 106;
 		this.collapseAll = 109;
+		// Regorxxx <- Extra shortcuts
+		this.selNone = -1;
+		this.selInvert = 28;
+		// Regorxxx ->
 	}
 
 	// Methods
