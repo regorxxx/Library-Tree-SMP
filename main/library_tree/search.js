@@ -644,7 +644,7 @@ class Find {
 		if (this.jSearch) {
 			gr.SetSmoothingMode(4);
 			const text = this.jSearch.length
-				? (this.bAnyPosition ? '*' : '') +  this.jSearch
+				? (this.bAnyPosition ? '*' : '') +  this.jSearch.toUpperCase()
 				: '';
 			this.j.w = gr.CalcTextWidth(text, ui.font.find) + 25;
 			gr.FillRoundRect(this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, this.arc1, this.arc1, 0x96000000);
