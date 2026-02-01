@@ -2038,8 +2038,13 @@ class Populate {
 					if (!v.root) { v.sel = bSelected; }
 				});
 				this.getTreeSel();
-				if (!this.sel_items.length) { return; }
-				this.setPlaylist();
+				if (ppt.libSource) {
+					if (!this.sel_items.length) { return; }
+					this.setPlaylist();
+				} else if (this.autoFill.key) {
+					if (bSelected) { this.setPlaylistSelectionAll(); }
+					else { this.setPlaylistSelectionNone(); }
+				}
 				break;
 			}
 			case vk.selInvert: {
@@ -2073,7 +2078,7 @@ class Populate {
 		if (ppt.libSource) {
 			if (this.autoFill.key) this.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 			this.track(true);
-		} else if (this.autoFill.key) this.setPlaylistSelection(ix, item);
+		} else if (this.autoFill.key && typeof item !== 'undefined' && typeof ix !== 'undefined') { this.setPlaylistSelection(ix, item); } // Regorxxx <- Select All not working with playlist sources ->
 	}
 
 	on_key_down(vkey) {
@@ -2332,9 +2337,33 @@ class Populate {
 		this.dblClickAction = ppt.actionMode == 1 ? 1 : ppt.actionMode == 2 ? 3 : ppt.dblClickAction;
 	}
 
+	// Regorxxx <- Select All not working with playlist sources
+	setPlaylistSelectionAll() {
+		plman.ClearPlaylistSelection($.pl_active);
+		let items = [];
+		if (panel.search.txt || ppt.filterBy || panel.multiProcess) {
+			const hl = this.getHandleList();
+			hl.Convert().forEach(h => {
+				const i = lib.full_list.Find(h);
+				if (i != -1) { items.push(i); }
+			});
+		} else {
+			items = this.range(panel.list.Count);
+		}
+		plman.SetPlaylistSelection($.pl_active, items, true);
+		this.setFocus = true;
+		plman.SetPlaylistFocusItem($.pl_active, items[0]);
+		this.track(false);
+		lib.treeState(false, ppt.rememberTree);
+	}
+
+	setPlaylistSelectionNone() {
+		plman.ClearPlaylistSelection($.pl_active);
+	}
+
 	setPlaylistSelection(ix, item) {
 		this.clearSelected();
-		if (!item.sel) this.setTreeSel(ix, item.sel);
+		if (!item.sel) { this.setTreeSel(ix, item.sel); }
 		panel.treePaint();
 		plman.ClearPlaylistSelection($.pl_active);
 		let items = [];
@@ -2353,6 +2382,7 @@ class Populate {
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
 	}
+	// Regorxxx ->
 
 	setPos(pos) {
 		this.m.i = this.row.i = panel.pos = pos;
