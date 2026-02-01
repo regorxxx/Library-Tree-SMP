@@ -138,7 +138,9 @@ class Search {
 					return (operators.query || !panel.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
 				}
 			} else if (ppt.libSource === 3) {
-				return 'Add items to queue';
+				return (mask & MK_CONTROL) === MK_CONTROL
+					? 'Add items to front of playback queue'
+					: 'Add items to playback queue';
 			}
 		};
 		// Regorxxx ->
