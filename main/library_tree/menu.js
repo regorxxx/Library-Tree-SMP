@@ -186,7 +186,10 @@ class MenuItems {
 						}
 						if (idx.length) { plman.RemoveItemsFromPlaybackQueue(idx); }
 					}
-
+				});
+				menu.newItem({
+					str: 'Flush playback queue',
+					func: () => plman.FlushPlaybackQueue()
 				});
 				menu.newItem({ separator: true });
 			} else {
