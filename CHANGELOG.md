@@ -15,6 +15,7 @@
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
 ### Removed
 ### Fixed
+- Sources: 'Sources\Select playlist(s)' submenu being disabled when it shouldn't.
 - Shortcuts: Fixed bug on original script related to usage of 'Ctrl + A' (select All) shortcut crashing the panel while using Playlist sources if 'Behaviour\Mode\Keystroke' was set to 'Send to playlist'. When set to 'Select' it simply didn't work. Now the shortcut works as intended.
 
 ## [1.0.0] - 2026-01-30

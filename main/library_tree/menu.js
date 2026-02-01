@@ -407,16 +407,16 @@ class MenuItems {
 
 		menu.newMenu({ menuName: 'Source', appendTo: mainMenu(), separator: true });
 		// Regorxxx <- External integration | Queue source
+		const sourceIdx = ppt.libSource - 1 < 0 || ppt.fixedPlaylist
+			? 2
+			: ppt.libSource > 2
+				? ppt.libSource
+				: ppt.libSource - 1;
 		this.sourceTypes().forEach((v, i) => menu.newItem({
 			menuName: 'Source',
 			str: v,
 			func: () => this.setSource(i),
-			checkRadio: i == (ppt.libSource - 1 < 0 || ppt.fixedPlaylist
-				? 2
-				: ppt.libSource > 2
-					? ppt.libSource
-					: ppt.libSource - 1
-			),
+			checkRadio: i == sourceIdx,
 			separator: i == this.sourceTypes().length - 1
 		}));
 		// Regorxxx ->
@@ -428,8 +428,7 @@ class MenuItems {
 			flags: ppt.libSource != 2 ? MF_GRAYED : MF_STRING,
 			separator: true
 		});
-
-		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: 'Source', flags: ppt.libSource !== 0 ? MF_GRAYED : MF_STRING }); // Regorxxx <- Don't allow playlist selection if source is not playlist ->
+		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: 'Source', flags: sourceIdx === 2 ? MF_STRING : MF_GRAYED }); // Regorxxx <- Don't allow playlist selection if source is not playlist ->
 		menu.newItem({
 			menuName: 'Select playlist(s)',
 			str: 'Active playlist',
