@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/12/25
+//01/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -634,25 +634,31 @@ class Find {
 		this.jump_search = true;
 		this.initials = null;
 		this.prevChar = null; // Regorxxx <- Fixed quick-search on same letter
+		this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
 	}
 
 	// Methods
 
+	// Regorxxx <- Quick-search at any position of string
 	draw(gr) {
 		if (this.jSearch) {
 			gr.SetSmoothingMode(4);
-			this.j.w = gr.CalcTextWidth(this.jSearch, ui.font.find) + 25;
+			const text = this.jSearch.length
+				? (this.bAnyPosition ? '*' : '') +  this.jSearch
+				: '';
+			this.j.w = gr.CalcTextWidth(text, ui.font.find) + 25;
 			gr.FillRoundRect(this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, this.arc1, this.arc1, 0x96000000);
 			gr.DrawRoundRect(this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, this.arc1, this.arc1, 1, 0x64000000);
 			gr.DrawRoundRect(this.j.x - this.j.w / 2 + 1, this.j.y + 1, this.j.w - 2, this.j.h - 2, this.arc2, this.arc2, 1, 0x28ffffff);
-			gr.GdiDrawText(this.jSearch, ui.font.find, $.RGB(0, 0, 0), this.j.x - this.j.w / 2 + 1, this.j.y + 1, this.j.w, this.j.h, panel.cc);
-			gr.GdiDrawText(this.jSearch, ui.font.find, this.jump_search ? 0xfffafafa : 0xffff4646, this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, panel.cc);
+			gr.GdiDrawText(text, ui.font.find, $.RGB(0, 0, 0), this.j.x - this.j.w / 2 + 1, this.j.y + 1, this.j.w, this.j.h, panel.cc);
+			gr.GdiDrawText(text, ui.font.find, this.jump_search ? 0xfffafafa : 0xffff4646, this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, panel.cc);
 			gr.SetSmoothingMode(0);
 		}
 	}
+	// Regorxxx ->
 
 	on_char(code) {
-		const text = String.fromCharCode(code);
+		const text = String.fromCharCode(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
 			const char = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase();
@@ -722,6 +728,7 @@ class Find {
 						timer.clear(timer.jsearch2);
 						timer.jsearch2.id = setTimeout(() => {
 							this.jSearch = '';
+							this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
 							panel.treePaint();
 							timer.jsearch2.id = null;
 						}, 1200);
@@ -737,12 +744,16 @@ class Find {
 						case vk.back:
 							this.jSearch = this.jSearch.substr(0, this.jSearch.length - 1);
 							break;
+						// Regorxxx <- Quick-search at any position of string
 						case vk.enter:
 							this.jSearch = '';
+							this.bAnyPosition = false;
 							return;
 						default:
+							if (this.jSearch.length === 0 && (utils.IsKeyPressed(vk.shift) || utils.IsKeyPressed(vk.ctrl))) { this.bAnyPosition = true; }
 							this.jSearch += text;
 							break;
+						// Regorxxx ->
 					}
 					pop.clearSelected();
 					if (!this.jSearch) return;
@@ -753,7 +764,7 @@ class Find {
 					timer.jsearch1.id = setTimeout(() => {
 						pop.tree.some((v, i) => {
 							const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''))); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
-							if (name != panel.rootName && name.substring(0, this.jSearch.length).toLowerCase() == this.jSearch.toLowerCase()) {
+							if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) { // Regorxxx <- Quick-search optimization | Quick-search at any position of string ->
 								found = true;
 								pos = i;
 								v.sel = true;
@@ -773,12 +784,12 @@ class Find {
 					timer.jsearch2.id = setTimeout(() => {
 						if (found) {
 							if (ppt.libSource) {
-								// if (pop.autoFill.key) pop.load(pop.sel_items, true, false, false, !ppt.sendToCur, false);
 								if (pop.autoFill.key) pop.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
 								pop.track(pop.autoFill.key);
 							} else if (pos >= 0 && pos < pop.tree.length) pop.setPlaylistSelection(pos, pop.tree[pos]);
 						}
 						this.jSearch = '';
+						this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
 						panel.treePaint();
 						timer.jsearch2.id = null;
 					}, 1200);

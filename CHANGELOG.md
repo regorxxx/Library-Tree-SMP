@@ -7,6 +7,7 @@
 
 ## [Unreleased][]
 ### Added
+- Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'.
 ### Changed
 ### Removed
 ### Fixed
