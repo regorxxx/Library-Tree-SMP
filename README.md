@@ -6,7 +6,7 @@
 Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.org) and [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel)/[JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378). Improved version of the original Library Tree, which tons of new features, performance optimizations and fixes.
 
 > [!TIP]
-> This version can be installed over old Library Tree, without requiring any special action. Just update to the new package and it will keep using previous settings, all instances will be replaced automatically. 
+> This version can be installed over old Library Tree without requiring any special action. Just update to the new package and existing settings will be maintained; all other instances will also be automatically replaced. 
 
 ## FEATURES
 - Tree viewer
