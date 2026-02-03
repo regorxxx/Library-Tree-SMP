@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/02/26
+//03/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -214,7 +214,7 @@ addEventListener('on_notify_data', (name, info) => {
 			// Note this doesn't survive after panel reload, so source selections must be re-sent
 			if (!lib.listPerSource) { lib.listPerSource = {}; }
 			panelSelectionPlaylists.forEach(v => {
-				if (name == v) {
+				if (name === v) {
 					lib.listPerSource[v] = new FbMetadbHandleList(info);
 					lib.listPerSource[v].Sort();
 				}
@@ -222,7 +222,7 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 		// Regorxxx ->
 		panelSelectionPlaylists.some(v => {
-			if (name == v) {
+			if (name === v) {
 				// Regorxxx <- Merge multiple panel sources
 				if (ppt.libSourceChained && panelSelectionPlaylists.length > 1) {
 					lib.list = new FbMetadbHandleList();
