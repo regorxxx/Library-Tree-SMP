@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/02/26
+//03/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1966,6 +1966,7 @@ class Populate {
 	notifySelection(list) {
 		if (list === undefined) list = this.getHandleList('newItems');
 		window.NotifyOthers(window.Name, list);
+		window.NotifyOthers('Timeline-SMP: panel tracks', { handleList: list, uuid: window.Name }); // Regorxxx <- Timeline-SMP integration ->
 		if (list.Count) return true;
 	}
 

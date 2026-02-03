@@ -10,6 +10,7 @@
 - Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'. Note Ctrl + Key combinations are also used for some shortcuts, so these will be processed instead of quick-search.
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
 - Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source. Pressing 'Ctrl' will also send the tracks to the front of the playback queue (instead of adding them at the end).
+- External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
 ### Changed
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
