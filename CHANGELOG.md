@@ -7,7 +7,7 @@
 
 ## [Unreleased][]
 ### Added
-- Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'.
+- Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'. Note Ctrl + Key combinations are also used for some shortcuts, so these will be processed instead of quick-search.
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
 - Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source. Pressing 'Ctrl' will also send the tracks to the front of the playback queue (instead of adding them at the end).
 ### Changed
