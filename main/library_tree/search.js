@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/02/26
+//03/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -664,6 +664,15 @@ class Find {
 	// Regorxxx ->
 
 	on_char(code) {
+		// Regorxxx <- Quick-search at any position of string
+		const bCtrl = utils.IsKeyPressed(vk.ctrl);
+		const bShift = utils.IsKeyPressed(vk.shift);
+		if (bCtrl || bShift) {
+			if (vk.hasKey(code)) { return; }
+			if (bCtrl) { code += 96; }
+			else { code += 32; }
+		}
+		// Regorxxx <- Quick-search at any position of string
 		const text = String.fromCharCode(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
@@ -742,7 +751,7 @@ class Find {
 				}
 				break;
 			case !advance:
-				if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x11) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
+				if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
 				if (!panel.search.active) {
 					let found = false;
 					let pos = -1;
@@ -756,7 +765,7 @@ class Find {
 							this.bAnyPosition = false;
 							return;
 						default:
-							if (this.jSearch.length === 0 && (utils.IsKeyPressed(vk.shift) || utils.IsKeyPressed(vk.ctrl))) { this.bAnyPosition = true; }
+							if (this.jSearch.length === 0 && (bShift || bCtrl)) { this.bAnyPosition = true; }
 							this.jSearch += text;
 							break;
 						// Regorxxx ->

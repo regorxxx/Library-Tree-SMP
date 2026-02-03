@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/02/26
+//03/02/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -1103,6 +1103,7 @@ class Vkeys {
 		// Regorxxx <- Extra shortcuts
 		this.selNone = -1;
 		this.selInvert = 28;
+		this._keys = new Set(Object.values(this));
 		// Regorxxx ->
 	}
 
@@ -1122,6 +1123,11 @@ class Vkeys {
 				return utils.IsKeyPressed(0x11) && utils.IsKeyPressed(0x12);
 		}
 	}
+	// Regorxxx <- Extra shortcuts
+	hasKey(code) {
+		return this._keys.has(code);
+	}
+	// Regorxxx ->
 }
 
 let colourSelector = {};
