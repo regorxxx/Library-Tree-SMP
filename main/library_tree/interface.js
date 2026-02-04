@@ -1103,6 +1103,7 @@ class Vkeys {
 		// Regorxxx <- Extra shortcuts
 		this.selNone = -1;
 		this.selInvert = 28;
+		this.ctrlEnter = 10;
 		this._keys = new Set(Object.values(this));
 		// Regorxxx ->
 	}
