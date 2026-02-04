@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/02/26
+//04/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -680,7 +680,9 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 	// Avoid things outside foobar2000
 	if (action.Effect === dropEffect.none) { return; }
 	action.Effect = dropEffect.none; // Forces not sending things to a playlist
-	const selItems = fb.GetSelections(1);
+	const selItems = action.IsInternal
+		? pop.sortIfNeeded(pop.getHandleList('newItems'))
+		: fb.GetSelections(1);
 	if (selItems && selItems.Count) {
 		if (y < panel.search.h || ppt.libSource !== 3) {
 			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
