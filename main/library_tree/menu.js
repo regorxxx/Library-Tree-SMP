@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/02/26
+//04/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -423,7 +423,7 @@ class MenuItems {
 
 		menu.newItem({
 			menuName: 'Source',
-			str: 'Select source panel',
+			str: 'Select source panel(s)...',
 			func: () => this.setSourcePanel(),
 			flags: ppt.libSource != 2 ? MF_GRAYED : MF_STRING,
 			separator: true
@@ -495,6 +495,76 @@ class MenuItems {
 				flags: panel.autoDj ? MF_STRING : MF_GRAYED
 			});
 		}
+		// Regorxxx ->
+
+		// Regorxxx <- Quick help
+		menu.newItem({
+			menuName: mainMenu(),
+			str: 'Quick help',
+			func: () => {
+				fb.ShowPopupMessage(
+					'List view:' +
+					'\n-----------------' +
+					[
+						{ key: 'Ctrl + A', action: 'Select all nodes|Select none.' },
+						{ key: 'Ctrl + <', action: 'Invert selected nodes.' },
+						{ key: 'Ctrl + C', action: 'Copy selected tracks.' },
+						{ key: 'Ctrl + V', action: 'Paste selected tracks.' },
+						{ key: 'Ctrl + E', action: 'Set focus at Search box.' },
+						{ key: 'Enter', action: 'Send to current playlist.' },
+						{ key: 'Shift + Enter', action: 'Add to current playlist.' },
+						{ key: 'Ctrl + Enter', action: 'Send to new playlist.' },
+						{ key: 'Page Up', action: 'Scroll up.' },
+						{ key: 'Page Down', action: 'Scroll down.' },
+						{ key: 'Home', action: 'Scroll to top.' },
+						{ key: 'End', action: 'Scroll to bottom.' },
+						{ key: 'Up|Down', action: 'Navigate tree.' },
+						{ key: 'Left|Right', action: 'Navigate tree (subnodes).' },
+						{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
+						{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
+						{ key: 'Num *', action: 'Expand current nodes' },
+						{ key: 'Num -', action: 'Collapse all nodes.' }
+					].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
+					'\n' +
+					'\nDrag n\' drop (tracks):' +
+					'\n----------------------' +
+					'\n• Standard: add selection to playlist.' +
+					'\n• On Search Box: add query based on tracks (Ctrl|Alt modifiers).' +
+					'\n• On Playback Queue: add tracks to playback queue.' +
+					'\n' +
+					'\nSearch Box:' +
+					'\n--------------' +
+					[
+						{ key: 'Ctrl + A', action: 'Select all.' },
+						{ key: 'Ctrl + C', action: 'Copy selected text.' },
+						{ key: 'Ctrl + V', action: 'Paste selected text.' },
+						{ key: 'Ctrl + X', action: 'Cut selected text.' },
+						{ key: 'Back', action: 'Delete left characters.' },
+						{ key: 'Delete', action: 'Delete right characters.' },
+						{ key: 'Ctrl + Back', action: 'Delete left word.' },
+						{ key: 'Enter', action: 'Search.' },
+						{ key: 'Ctrl + Z', action: 'Redo.' },
+						{ key: 'Ctrl + Y', action: 'Undo.' },
+						{ key: 'Esc', action: 'Cancel search (and clean input).' },
+						{ key: 'Home', action: 'Set cursor at left.' },
+						{ key: 'End', action: 'Set cursor at right.' },
+						{ key: 'Left|Right', action: 'Move cursor.' },
+					].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
+					'\n' +
+					'\nUI:' +
+					'\n----------------------' +
+					'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
+					'\n• Double click on scrollbar to show now playing/focused item.' +
+					'\n• Double click on scrollbar buttons to go to top/bottom.' +
+					'\n' +
+					'\nSMP / JSplitter Panel:' +
+					'\n----------------------' +
+					'\n• Shift + Win + R. Click: open SMP panel menu.'
+					, window.PanelName + ': Quick help'
+				);
+			}
+		});
+		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx ->
 
 		for (let i = 0; i < 2; i++) menu.newItem({
