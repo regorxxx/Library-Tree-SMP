@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/02/26
+//05/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -543,8 +543,8 @@ class MenuItems {
 						{ key: 'Delete', action: 'Delete right characters.' },
 						{ key: 'Ctrl + Back', action: 'Delete left word.' },
 						{ key: 'Enter', action: 'Search.' },
-						{ key: 'Ctrl + Z', action: 'Redo.' },
-						{ key: 'Ctrl + Y', action: 'Undo.' },
+						{ key: 'Ctrl + Z', action: 'Undo.' },
+						{ key: 'Ctrl + Y', action: 'Redo.' },
 						{ key: 'Esc', action: 'Cancel search (and clean input).' },
 						{ key: 'Home', action: 'Set cursor at left.' },
 						{ key: 'End', action: 'Set cursor at right.' },
