@@ -12,8 +12,12 @@
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
 - Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source. Pressing 'Ctrl' will also send the tracks to the front of the playback queue (instead of adding them at the end).
 - External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
+- Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
+- Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.
+- Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point.
+- Auto-DJ: submenu entry is now checked while it's running.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.

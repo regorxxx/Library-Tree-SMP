@@ -401,25 +401,44 @@ class MenuItems {
 
 		// Regorxxx <- Auto-DJ feature
 		{
-			menu.newMenu({ menuName: 'Auto-DJ', appendTo: mainMenu(), separator: true });
+			menu.newMenu({ menuName: 'Auto-DJ', appendTo: mainMenu(), separator: true, flags: panel.autoDj.running ? MF_CHECKED : MF_STRING });
 			menu.newItem({
 				menuName: 'Auto-DJ',
-				str: 'Enable (panel selection)',
-				func: () => panel.addToAutoDj(this.items),
-				flags: this.items.Count ? MF_STRING : MF_GRAYED
+				str: 'From panel selection',
+				func: () => panel.startAutoDj(this.items),
+				flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED
 			});
 			menu.newItem({
 				menuName: 'Auto-DJ',
-				str: 'Enable (view)',
-				func: () => panel.addToAutoDj(panel.list),
-				flags: panel.list.Count ? MF_STRING : MF_GRAYED,
-				separator: true
+				str: 'From current view',
+				func: () => panel.startAutoDj(panel.list),
+				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED
 			});
 			menu.newItem({
 				menuName: 'Auto-DJ',
-				str: 'Disable',
+				str: 'From live view',
+				func: () => panel.startAutoDj(),
+				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED
+			});
+			menu.newItem({ menuName: 'Auto-DJ', separator: true });
+			menu.newItem({
+				menuName: 'Auto-DJ',
+				str: 'Append panel selection',
+				func: () => panel.addToAutoDjSource(this.items),
+				flags: this.items.Count && panel.autoDj.source ? MF_STRING : MF_GRAYED
+			});
+			menu.newItem({
+				menuName: 'Auto-DJ',
+				str: 'Append current view',
+				func: () => panel.addToAutoDjSource(panel.list),
+				flags: panel.list.Count && panel.autoDj.source ? MF_STRING : MF_GRAYED
+			});
+			menu.newItem({ menuName: 'Auto-DJ', separator: true });
+			menu.newItem({
+				menuName: 'Auto-DJ',
+				str: 'Stop Auto-DJ',
 				func: () => panel.stopAutoDj(),
-				flags: panel.autoDj ? MF_STRING : MF_GRAYED
+				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
 			});
 		}
 		// Regorxxx ->

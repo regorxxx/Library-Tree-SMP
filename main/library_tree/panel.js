@@ -55,8 +55,11 @@ class Panel {
 		this.viewName = '';
 		this.zoomFilter = Math.max(ppt.zoomFilter / 100, 0.7);
 		// Regorxxx <- Auto-DJ feature
-		this.autoDj = false;
-		this.autoDjCache = [];
+		this.autoDj = {
+			running: false,
+			source: null,
+			cache: []
+		};
 		// Regorxxx ->
 		ppt.zoomFilter = this.zoomFilter * 100;
 
@@ -1369,12 +1372,12 @@ class Panel {
 	}
 
 	// Regorxxx <- Auto-DJ feature
-	addToAutoDj(items) {
-		if (!items || !items.Count) { this.stopAutoDj(); return false; }
+	addToAutoDj(itemsArr) {
+		const count = itemsArr ? itemsArr.length : 0;
+		if (!itemsArr || !count) { this.stopAutoDj(); return false; }
 		// Flush playback queue for filters based on nowplaying or selection, since next tracks would otherwise not match at all tracks between currently playing and Auto-DJ added tracks
 		if (lib.doDynamicFilter(void (0), (bSearch, bFilter) => bSearch || bFilter)) { plman.FlushPlaybackQueue(); }
-		const toAdd = items.Convert().shuffle();
-		const count = items.Count;
+		const toAdd = itemsArr.shuffle();
 		let i = 0;
 		/** @type {FbMetadbHandle} */
 		let handle;
@@ -1382,33 +1385,48 @@ class Panel {
 		let idx;
 		while (i < count) {
 			handle = toAdd[i++];
-			idx = this.autoDjCache.findIndex((h) => handle.Compare(h));
+			idx = this.autoDj.cache.findIndex((h) => handle.Compare(h));
 			if (idx === -1) { break; }
 			else if (idx <= prevIdx || prevIdx === -1) { prevIdx = idx; }
 		}
 		if (idx !== -1 && prevIdx !== -1) {
 			if (ppt.autoDjStopRepeat) { this.stopAutoDj(); return false; }
-			handle = this.autoDjCache[prevIdx];
+			handle = this.autoDj.cache[prevIdx];
 		}
-		if (!this.autoDj) {
+		if (!this.autoDj.running) {
 			const selectionHolder = fb.AcquireUiSelectionHolder();
 			selectionHolder.SetSelection(FbMetadbHandleList(handle), 0);
 		}
 		plman.AddItemToPlaybackQueue(handle);
-		this.autoDjCache.push(handle);
+		this.autoDj.cache.push(handle);
 		if (!fb.IsPlaying) { fb.Play(); }
-		return this.autoDj = true;
+		return this.autoDj.running = true;
 	}
 
-	updateAutoDj() {
-		if (!this.autoDj) { return false; }
-		return this.addToAutoDj(panel.list);
+	updateAutoDj(itemsArr = this.autoDj.source || panel.list.Convert()) {
+		if (!this.autoDj.running) { return false; }
+		return this.addToAutoDj(itemsArr);
 	}
 
 	stopAutoDj() {
-		this.autoDj = false;
-		this.autoDjCache.length = 0;
+		this.autoDj.source = null;
+		this.autoDj.running = false;
+		this.autoDj.cache.length = 0;
 		plman.FlushPlaybackQueue();
+	}
+
+	startAutoDj(items) {
+		this.stopAutoDj();
+		if (items) { this.autoDj.source = items instanceof FbMetadbHandleList ? items.Convert() : items; }
+		return this.addToAutoDj(this.autoDj.source || panel.list.Convert());
+	};
+
+
+	addToAutoDjSource(items) {
+		if (!this.autoDj.running) { return false; }
+		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
+		if (!this.autoDj.source) { this.autoDj.source = [...items]; }
+		else { items.forEach((handle) => this.autoDj.source.push(handle)); }
 	}
 	// Regorxxx ->
 }
