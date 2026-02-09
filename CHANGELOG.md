@@ -17,6 +17,8 @@
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
+- External integration: changed callbacks.
+	* 'Library-Tree-SMP: switch source'		-> { window: [string], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number, sourcePanel: str}, sourceName allows alternate names. i.e. Playlist|Playlists|Playlist(s) and Panel|Panels|Panel(s)
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 ### Removed
 ### Fixed
@@ -109,7 +111,7 @@
 	* 'Library-Tree-SMP: search focus'			-> { window: [string] }
 	* 'Library-Tree-SMP: switch view'		-> { window: [string], viewName: string, viewIdx: number }, viewIdx = -1 for folder view, names follow menu names
 	* 'Library-Tree-SMP: switch filter'		-> { window: [string], filterName: string, filterIdx: number }, filterIdx = -1 or 0 for no filter, names follow menu names
-	* 'Library-Tree-SMP: switch source'		-> { window: [string], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number, sourcePanel: strLibrary-Tree-SMPeIdx = -1 or 0 for library, sourcePlaylistIdx = -1 for active playlist, names follow menu names
+	* 'Library-Tree-SMP: switch source'		-> { window: [string], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number, sourcePanel: string }, sourceIdx = -1 or 0 for library, sourcePlaylistIdx = -1 for active playlist, names follow menu names
 	* 'Library-Tree-SMP: switch art type'	-> { window: [string], artName: string, artIdx: number }, artIdx = -1 or 0 for front art, names follow menu names
 	* 'Library-Tree-SMP: switch statistics'	-> { window: [string], statisticsName: string, statisticsIdx: number }, statisticsIdx = -1 or 0 for default stats (usually # tracks), names follow menu names and can be matched by entire label (all), user label only or 'custom-X (...)' labels (custom entries only)
 - Debug: added profiling logging for library loading. Enabled by default, can be tweaked at 'Advanced' tab within HTML options panel. [from Library-Tree-v2.4.0.mod.21]

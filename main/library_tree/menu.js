@@ -1259,7 +1259,7 @@ class MenuItems {
 	}
 
 	sourceTypes() {
-		return ['Library', 'Panel', 'Playlist', 'Playback Queue']; // Regorxxx <- Queue source ->
+		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue']; // Regorxxx <- Queue source ->
 	}
 	// Regorxxx ->
 }

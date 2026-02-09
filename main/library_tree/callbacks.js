@@ -413,9 +413,12 @@ addEventListener('on_notify_data', (name, info) => {
 			let idx = -1;
 			let plsIdx = -1;
 			// Source type
-			const types = men.sourceTypes();
-			if (typeof info.sourceName !== 'undefined') { idx = types.findIndex((t) => t.toLowerCase() === info.sourceName.toLowerCase()); }
-			else if (typeof info.sourceIdx !== 'undefined' && info.sourceIdx >= -1 && info.sourceIdx < types.length) {
+			const typeCleanRe = /(playlist|panel)(s|\(s\))/i;
+			const types = men.sourceTypes().map((st) => st.toLowerCase().replace(typeCleanRe, '$1'));
+			if (typeof info.sourceName !== 'undefined') {
+				const sourceName = info.sourceName.toLowerCase().replace(typeCleanRe, '$1');
+				idx = types.findIndex((t) => t === sourceName);
+			} else if (typeof info.sourceIdx !== 'undefined' && info.sourceIdx >= -1 && info.sourceIdx < types.length) {
 				if (info.sourceIdx === -1) { idx = 0; }
 				else { idx = info.sourceIdx; }
 			}
