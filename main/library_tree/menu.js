@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/02/26
+//09/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
@@ -100,18 +100,52 @@ class MenuManager {
 			i++;
 		}
 
+		// Regorxxx <- Contextual menu options
 		let Context;
-		if (men.show_context) {
-			Context = fb.CreateContextMenuManager();
-			Context.InitContext(men.items);
-			this.menu[this.baseMenu].AppendMenuSeparator();
-			Context.BuildMenu(this.menu[this.baseMenu], 5000);
+		if (men.show_context && ppt.contextMenuShow > 0) {
+			switch (ppt.contextMenuShow) {
+				case 1: { // On main menu
+					Context = fb.CreateContextMenuManager();
+					Context.InitContext(men.items);
+					this.menu[this.baseMenu].AppendMenuSeparator();
+					Context.BuildMenu(this.menu[this.baseMenu], 5000);
+					break;
+				}
+				case 2: { // On submenu
+					const subMenuName = 'Items (contextual menu)';
+					Context = fb.CreateContextMenuManager();
+					Context.InitContext(men.items);
+					this.menu[this.baseMenu].AppendMenuSeparator();
+					this.createMenu(subMenuName);
+					this.menu[subMenuName].AppendTo(this.menu[this.baseMenu], 0, subMenuName);
+					Context.BuildMenu(this.menu[subMenuName], 5000);
+					break;
+				}
+				case 3: { // On secondary menu
+					const subMenuName = 'Items (contextual menu)...';
+					this.menu[this.baseMenu].AppendMenuSeparator();
+					this.menu[this.baseMenu].AppendMenuItem(0, 4999, subMenuName);
+					this.func[4999] = () => {
+						setTimeout(() => {
+							this.clear();
+							this.createMenu(this.baseMenu);
+							Context = fb.CreateContextMenuManager();
+							Context.InitContext(men.items);
+							Context.BuildMenu(this.menu[this.baseMenu], 5000);
+							const idx = this.menu[this.baseMenu].TrackPopupMenu(x, y);
+							this.run(idx);
+						}, 100);
+					};
+					break;
+				}
+			}
 		}
+		// Regorxxx ->
 
 		const idx = this.menu[this.baseMenu].TrackPopupMenu(x, y);
 		this.run(idx);
 
-		if (men.show_context) {
+		if (men.show_context && ppt.contextMenuShow > 0) { // Regorxxx <- Contextual menu options ->
 			if (idx >= 5000 && idx <= 5800) Context.ExecuteByID(idx - 5000);
 			men.show_context = false;
 		}

@@ -763,6 +763,17 @@
 						<span id="sbarIcon" class="dropdown-content"></span>
 					</span>
 					<div id="scrolling"></div>
+					<!-- Regorxxx Contextual menu options -->
+					<div class="div_text6">Contextual menu (tracks)</div>
+					<span style="margin:0 0 0.31em;" class="dropdown"><a id="contextMenu_dropdown" class="dropbtn" href="#" onclick="toggle('contextMenu');"></a>
+						<span id="contextMenu" class="dropdown-content"></span>
+					</span>
+					<br>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="contextMenu_help" href="#" onclick="showHelp('contextMenu_text');return false;">Contextual menu (tracks) help</a></div>
+					<div id="contextMenu_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">Showing the contextual menu associated to tracks on huge selections will delay menu creation due to heavy processing.<br><br>To avoid this delay, it can be set to disabled or run secondary menu (on click) -processed when needed-.</div>
+					</div>
+					<!-- Regorxxx -->
 				</div>
 
 				<div class="column27">
@@ -1541,6 +1552,7 @@
 			var sbarIconLabels = ['Arrows', 'Triangles', 'Custom'];
 			var sbarShowLabels = ['Hide', 'Auto', 'Show'];
 			var sbarTypeLabels = ['Default', 'Styled', 'Windows'];
+			var contextMenuLabels = ['Hide (disabled)', 'Append to main menu', 'Show as sub-menu', 'Show as secondary menu (on click)']; // Regorxxx <- Contextual menu option ->
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
@@ -1687,6 +1699,14 @@
 				ppt['sbarButType_internal'].value = n;
 				window.sbarIcon.style.display = 'none';
 			}
+
+			// Regorxxx <- Contextual menu options
+			function setContextMenu(n) {
+				window.contextMenu_dropdown.innerHTML = contextMenuLabels[n];
+				ppt['contextMenuShow_internal'].value = n;
+				window.contextMenu.style.display = 'none';
+			}
+			// Regorxxx ->
 
 			function setRootImage(n) {
 				window.rootStub_dropdown.innerHTML = '<b>Root:</b> <img src="' + rootStubLabels[n].path + '" width="' + em + '" height="' + em + '" class="stub"/> ' + rootStubLabels[n].name + '<';
@@ -2032,6 +2052,10 @@
 				for (i = 0; i < 3; i++) { window.sbarIcon.insertAdjacentHTML('beforeend', '<a onclick="setSbarIcon(' + i + ');" >' + sbarIconLabels[i] + '</a>'); }
 				sbar_icon_dropdown.style.display = ppt['sbarType_internal'].value != 2 ? "inline-block" : "none";
 				for (i = 0; i < 3; i++) { window.scrolling.insertAdjacentHTML('beforeend', '<div><input id="scroll_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="scroll_checkbox' + i + '" class="checkbox_label">' + scrollLabels[i] + '</label></div>'); }
+				// Regorxxx <- Contextual menu options
+				window.contextMenu_dropdown.innerHTML = contextMenuLabels[ppt['contextMenuShow_internal'].value];
+				for (i = 0; i < 4; i++) { window.contextMenu.insertAdjacentHTML('beforeend', '<a onclick="setContextMenu(' + i + ');" >' + contextMenuLabels[i] + '</a>'); }
+				// Regorxxx ->
 
 				// Regorxxx <- Search settings to search tab ->
 				for (i = 0; i < 3; i++) { window.expand.insertAdjacentHTML('beforeend', '<div><input id="expand_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="expand_checkbox' + i + '" class="checkbox_label">' + treeLabels[i] + '</label></div>'); }
@@ -2675,6 +2699,7 @@
 				setsbarType(ppt['sbarType_internal'].default_value);
 				setSbarCol(ppt['sbarCol_internal'].default_value);
 				setSbarIcon(ppt['sbarButType_internal'].default_value);
+				setContextMenu(ppt['contextMenuShow_internal'].default_value); // Regorxxx <- Contextual menu options ->
 			}
 			// Regorxxx ->
 			// Regorxxx <- New search tab | Drag n' drop to search box
@@ -2871,6 +2896,7 @@
 			['sbarType_dropdown', 'sbarType'],
 			['sbarCol_dropdown', 'sbarCol'],
 			['sbarIcon_dropdown', 'sbarIcon'],
+			['contextMenu_dropdown', 'contextMenu'], // Regorxxx <- Contextual menu options ->
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views
 			['folderSorting_dropdown', 'folderSorting'],
 			['viewSorting_dropdown', 'viewSorting'],

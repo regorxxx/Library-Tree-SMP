@@ -313,6 +313,7 @@ let properties = [
 	['Show Panel Source Message', true, 'panelSourceMsg'],
 	['Show Search', true, 'searchShow'],
 	['Show Settings', true, 'settingsShow'],
+	['Contextual menu show', 3, 'contextMenuShow'], // Regorxxx <- Contextual menu options ->
 	['Side Marker Width', 0, 'sideMarkerWidth'],
 	['Single-Click Action', 1, 'clickAction'],
 	['Statistics Show', 0, 'itemShowStatistics'],
@@ -321,8 +322,8 @@ let properties = [
 	// Regorxxx <- Default TF for compatibility with all stats components
 	['Statistics Titleformat Added', _b('$date(' + _t(globTags.sortAdded) + ')'), 'tfAdded'],
 	['Statistics Titleformat Date', _b(_t(globTags.date)), 'tfDate'],
-	['Statistics Titleformat First Played', _b('$date(' + _t(globTags.sortFirstPlayed)  + ')'), 'tfFirstPlayed'],
-	['Statistics Titleformat Last Played', _b('$date(' + _t(globTags.sortLastPlayed)  + ')'), 'tfLastPlayed'],
+	['Statistics Titleformat First Played', _b('$date(' + _t(globTags.sortFirstPlayed) + ')'), 'tfFirstPlayed'],
+	['Statistics Titleformat Last Played', _b('$date(' + _t(globTags.sortLastPlayed) + ')'), 'tfLastPlayed'],
 	['Statistics Titleformat Playcount DataPinningScheme|Field', '%ARTIST%%ALBUM%%DISCNUMBER%%TRACKNUMBER%%TITLE%|' + _t(globTags.playCount), 'tfPc'],
 	['Statistics Titleformat Rating', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfRating'],
 	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%)]', 'tfLoved'],
