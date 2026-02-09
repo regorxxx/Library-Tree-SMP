@@ -1090,6 +1090,7 @@ class Panel {
 						break;
 					default:
 						ppt.filterBy = i;
+						but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
 						this.calcText();
 						if (this.search.txt) lib.upd_search = true;
 						if (!ppt.reset) {
