@@ -460,12 +460,10 @@ class MenuItems {
 						{ key: 'Enter', action: 'Send to current playlist.' },
 						{ key: 'Shift + Enter', action: 'Add to current playlist.' },
 						{ key: 'Ctrl + Enter', action: 'Send to new playlist.' },
-						{ key: 'Page Up', action: 'Scroll up.' },
-						{ key: 'Page Down', action: 'Scroll down.' },
-						{ key: 'Home', action: 'Scroll to top.' },
-						{ key: 'End', action: 'Scroll to bottom.' },
+						{ key: 'Page Up|Page Down', action: 'Scroll up|Scroll down.' },
+						{ key: 'Home|End', action: 'Scroll to top|Scroll to bottom.' },
 						{ key: 'Up|Down', action: 'Navigate tree.' },
-						{ key: 'Left|Right', action: 'Navigate tree (subnodes).' },
+						{ key: 'Left|Right', action: 'Collapse|Expand nodes.' },
 						{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
 						{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
 						{ key: 'Num *', action: 'Expand current nodes' },
@@ -500,8 +498,8 @@ class MenuItems {
 					'\nUI:' +
 					'\n----------------------' +
 					'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
-					'\n• Double click on scrollbar to show now playing/focused item.' +
-					'\n• Double click on scrollbar buttons to go to top/bottom.' +
+					'\n• Double click scrollbar thumb to show now playing/focused item.' +
+					'\n• Double click scrollbar buttons to scroll to top/bottom.' +
 					'\n' +
 					'\nSMP / JSplitter Panel:' +
 					'\n----------------------' +
