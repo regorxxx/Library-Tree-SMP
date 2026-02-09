@@ -740,12 +740,13 @@ class Panel {
 	}
 
 	set(n, i, treeArtToggle) {
-		const prompt = 'This changes various options ' + (i < 5 ? 'on the display tab' : i < 12 ? 'on the display and album art tabs' : '') + '\n\nContinue?';
+		// Regorxxx <- Code cleanup | New quicksetup presets
 		switch (n) {
-			case 'quickSetup':
+			case 'quickSetup': {
+				let applySettings, caption, prompt;
 				switch (i) {
 					case 0: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = false;
 								ppt.itemShowStatistics = 0;
@@ -771,13 +772,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Traditional Style';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Traditional Style';
+						prompt = 'This changes various options on the display tab.\n\nContinue?';
 						break;
 					}
 					case 1: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
@@ -803,13 +803,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Modern Style';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Modern Style';
+						prompt = 'This changes various options on the display tab.\n\nContinue?';
 						break;
 					}
 					case 2: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 1;
@@ -842,13 +841,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Ultra Modern Style';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Ultra Modern Style';
+						prompt = 'This changes various options on the display tab.\n\nContinue?';
 						break;
 					}
 					case 3: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
@@ -874,13 +872,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Clean';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Clean';
+						prompt = 'This changes various options on the display tab.\n\nContinue?';
 						break;
 					}
 					case 4: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
@@ -906,13 +903,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Facet';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Facet';
+						prompt = 'This changes various options on the display tab.\n\nContinue?';
 						break;
 					}
 					case 5: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
@@ -939,13 +935,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Covers [Labels Right]';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Covers [Labels Right]';
+						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
 						break;
 					}
 					case 6: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
@@ -972,13 +967,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Covers [Labels Bottom]';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Covers [Labels Bottom]';
+						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
 						break;
 					}
 					case 7: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
@@ -1005,13 +999,12 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Covers [Labels Blend]';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Covers [Labels Blend]';
+						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
 						break;
 					}
 					case 8: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
@@ -1037,15 +1030,14 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Artist Photos [Labels Right]';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Artist Photos [Labels Right]';
+						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
 						break;
 					}
 					case 9: ppt.thumbNailSize++; this.load(); break;
 					case 10: ppt.thumbNailSize--; this.load(); break;
 					case 11: {
-						const continue_confirmation = (status, confirmed) => {
+						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								ppt.countsRight = true;
 								ppt.nodeStyle = 1;
@@ -1066,16 +1058,49 @@ class Panel {
 								this.load();
 							}
 						};
-						const caption = 'Quick Setup: Flow Mode';
-						const wsh = popUpBox.isHtmlDialogSupported() ? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation) : true;
-						if (wsh) continue_confirmation('ok', $.wshPopup(prompt, caption));
+						caption = 'Quick Setup: Flow Mode';
+						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
 						break;
 					}
 					case 12:
 						ppt.toggle('presetLoadCurView');
 						return;
+					case 13: {
+						applySettings = (status, confirmed) => {
+							if (confirmed) {
+								ppt.libSource = 3;
+								ppt.queueSorting = true;
+								ppt.countsRight = true;
+								ppt.itemShowStatistics = 7;
+								ppt.inlineRoot = true;
+								ppt.autoCollapse = false;
+								ppt.treeAutoExpandSingle = false;
+								ppt.facetView = false;
+								if (!ppt.presetLoadCurView) {
+									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
+									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+								}
+								ui.sbar.type = 1;
+								ppt.sbarType = 1;
+								ppt.sbarShow = 1;
+								ppt.rootNode = 0;
+								this.load();
+							}
+						};
+						caption = 'Quick Setup: Playback Queue viewer';
+						prompt = 'This changes various options on the display tab, views and source settings.\n\nContinue?';
+						break;
+					}
+				}
+				if (applySettings) {
+					const wsh = popUpBox.isHtmlDialogSupported()
+						? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', applySettings)
+						: true;
+					if (wsh) { applySettings('ok', $.wshPopup(prompt, caption)); }
 				}
 				break;
+			}
+			// Regorxxx ->
 			case 'Filter':
 				lib.searchCache = {};
 				pop.cache.filter = {};

@@ -13,6 +13,7 @@
 - Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source. Pressing 'Ctrl' will also send the tracks to the front of the playback queue (instead of adding them at the end).
 - External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
+- UI: new quicksetup presets.
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.

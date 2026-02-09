@@ -2,7 +2,7 @@
 //09/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
-/* global MF_STRING:readable, MF_GRAYED:readable, folders:readable */
+/* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -341,24 +341,46 @@ class MenuItems {
 			separator: i == 4 || i == 7 || i == 8
 		}));
 
+		// Regorxxx <- Code cleanup | New quicksetup presets
 		menu.newMenu({ menuName: 'Quick setup', appendTo: mainMenu() });
-		['Traditional', 'Modern [default]', 'Ultra-Modern', 'Clean', 'Facet'].forEach((v, i) => menu.newItem({
+		[
+			{ name: 'Traditional', idx: 0 },
+			{ name: 'Modern [default]', idx: 1 },
+			{ name: 'Ultra-Modern', idx: 2 },
+			{ name: 'Clean', idx: 3, separator: true },
+			{ name: 'Facet', idx: 4, },
+			{ name: 'Playback Queue viewer', idx: 13, separator: true },
+
+		].forEach((v) => menu.newItem({
 			menuName: 'Quick setup',
-			str: v,
-			func: () => panel.set('quickSetup', i),
-			separator: i == 3 || i == 4
+			str: v.name,
+			func: () => panel.set('quickSetup', v.idx),
+			flags: v.flags || MF_STRING,
+			checkItem: v.checkItem || false,
+			separator: v.separator
 		}));
 
 		if (ppt.albumArtOptionsShow) {
-			['Covers [labels right]', 'Covers [labels bottom]', 'Covers [labels blend]', 'Artist photos [labels right]', 'Album art size +', 'Album art size -', 'Flow mode', 'Always load preset with current \'view\' pattern'].forEach((v, i) => menu.newItem({
+			[
+				{ name: 'Covers [labels right]', idx: 5 },
+				{ name: 'Covers [labels bottom]', idx: 6 },
+				{ name: 'Covers [labels blend]', idx: 7, separator: true },
+				{ name: 'Artist photos [labels right]', idx: 8, separator: true },
+				{ name: 'Album art size +', idx: 9, flags: ppt.thumbNailSize == 7 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING },
+				{ name: 'Album art size -', idx: 10, flags: ppt.thumbNailSize == 0 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING, separator: true },
+				{ name: 'Flow mode', idx: 11, separator: true },
+				{ name: 'Always load preset with current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 },
+
+			].forEach((v) => menu.newItem({
 				menuName: 'Quick setup',
-				str: v,
-				func: () => panel.set('quickSetup', i + 5),
-				flags: i == 4 && (ppt.thumbNailSize == 7 || !panel.imgView || ppt.albumArtFlowMode) || i == 5 && (ppt.thumbNailSize == 0 || !panel.imgView || ppt.albumArtFlowMode) ? MF_GRAYED : MF_STRING,
-				checkItem: i == 7 && ppt.presetLoadCurView,
-				separator: i == 2 || i == 3 || i == 5 || i == 6
+				str: v.name,
+				func: () => panel.set('quickSetup', v.idx),
+				flags: v.flags || MF_STRING,
+				checkItem: v.checkItem || false,
+				separator: v.separator
 			}));
 		}
+		// Regorxxx ->
 		// Regorxxx <- Background image position
 		menu.newItem({
 			menuName: 'Quick setup',
