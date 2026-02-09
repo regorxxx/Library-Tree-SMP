@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/01/26
+//09/02/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -313,6 +313,7 @@ let properties = [
 	['Show Panel Source Message', true, 'panelSourceMsg'],
 	['Show Search', true, 'searchShow'],
 	['Show Settings', true, 'settingsShow'],
+	['Show Filter|View|Source multi-button', true, 'multiBtnShow'], // Regorxxx <- Filter / View / Source button ->
 	['Contextual menu show', 3, 'contextMenuShow'], // Regorxxx <- Contextual menu options ->
 	['Side Marker Width', 0, 'sideMarkerWidth'],
 	['Single-Click Action', 1, 'clickAction'],

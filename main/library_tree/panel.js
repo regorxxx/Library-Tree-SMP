@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/01/26
+//09/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -133,7 +133,11 @@ class Panel {
 		ui.style.topBarShow = ppt.filterShow || ppt.searchShow || ppt.settingsShow;
 		if (!ui.style.topBarShow) return;
 		$.gr(1, 1, false, g => {
-			this.filter.w = ppt.filterShow ? g.CalcTextWidth(this.filter.mode[ppt.filterBy].name, this.filter.font) + (ppt.searchShow ? Math.max(ppt.margin * 2 + (!ppt.settingsBtnStyle ? 2 : 0), 12) : 0) : 0;
+			// Regorxxx <- Filter / View / Source button
+			this.filter.w = ppt.filterShow && but && but.multiBtn && but.multiBtn.name
+				? g.CalcTextWidth(but.multiBtn.name, this.filter.font) + (ppt.searchShow ? Math.max(ppt.margin * 2 + (!ppt.settingsBtnStyle ? 2 : 0), 12) : 0)
+				: 0;
+			// Regorxxx ->
 			this.settings.w = ppt.settingsShow ? Math.round(g.MeasureString(this.settings.icon, this.settings.font, 0, 0, 500, 500).Width) : 0;
 		});
 		switch (true) {

@@ -14,6 +14,7 @@
 - External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
+- UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.

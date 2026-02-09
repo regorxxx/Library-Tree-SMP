@@ -1,7 +1,8 @@
 ﻿'use strict';
-//24/11/25
+//06/02/26
 
-/* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, fMenu:readable, sMenu:readable, men:readable */
+/* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
+/* global VK_SHIFT:readable, VK_CONTROL:readable */
 
 /* exported Buttons, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -17,6 +18,13 @@ class Buttons {
 		this.trace = false;
 		this.transition;
 		this.vertical = true;
+		// Regorxxx <- Filter / View / Source button
+		this.multiBtn = {
+			name: 'Filter',
+			tooltip: 'Filter',
+			type: 'filter'
+		};
+		// Regorxxx ->
 
 		this.b = {};
 		this.btns = {};
@@ -188,6 +196,7 @@ class Buttons {
 			if (!this.cur.hide) this.transition.start();
 		}
 		this.cur = null;
+		if (ppt.filterShow && ppt.multiBtnShow && Object.keys(men.multiBtnMenu().menu).length === 0) { this.multiBtnKeyUp(); } // Regorxxx <- Filter / View / Source button ->
 	}
 
 	move(x, y) {
@@ -383,7 +392,7 @@ class Buttons {
 		this.btns.filter = new Btn(ppt.searchShow ? panel.filter.x + this.margin / 2 : panel.filter.x - this.margin / 2, 0, ppt.searchShow ? panel.filter.w - this.margin : panel.filter.w + this.margin, panel.search.sp, 6, panel.filter.x, ppt.searchShow ? panel.cc : panel.lc, panel.filter.w, {
 			normal: ui.col.txt_box,
 			hover: !ui.img.blurDark ? ui.col.txt_box_h : ui.col.text // Regorxxx <- Code cleanup. Remove ui.id.local references
-		}, !ppt.filterShow, '', () => fMenu.load(panel.filter.x, panel.search.h), () => 'Filter', true, 'filter');
+		}, !ppt.filterShow, '', () => men.multiBtnMenu().load(panel.filter.x, panel.search.h), () => this.multiBtn.tooltip, true, 'filter'); // Regorxxx <- Filter / View / Source button
 
 		this.btns.settings = new Btn(this.s.x, panel.settings.offset, this.s.w1, panel.search.sp, 7, this.s.w2, panel.search.sp, panel.settings.y, {
 			normal: ui.col.txt_box,
@@ -408,6 +417,59 @@ class Buttons {
 		tooltip.Text = n;
 		tooltip.Activate();
 	}
+
+	// Regorxxx <- Filter / View / Source button
+	multiBtnKeyDown(vKey) {
+		this.multiBtnSetName(
+			vKey === VK_SHIFT
+				? panel.viewName
+				: vKey === VK_CONTROL
+					? panel.sourceName
+					: panel.filter.mode[ppt.filterBy].name,
+			true
+		);
+		this.multiBtnSetTooltip(
+			vKey === VK_SHIFT
+				? 'View'
+				: vKey === VK_CONTROL
+					? 'Source'
+					: 'Filter'
+		);
+		this.multiBtnSetType(
+			vKey === VK_SHIFT
+				? 'view'
+				: vKey === VK_CONTROL
+					? 'source'
+					: 'filter'
+		);
+	}
+
+	multiBtnKeyUp() {
+		this.multiBtnSetName(panel.filter.mode[ppt.filterBy].name, true);
+		this.multiBtnSetTooltip('Filter');
+		this.multiBtnSetType('filter');
+	}
+
+	multiBtnSetName(name, bRepaint) {
+		this.multiBtn.name = name;
+		if (bRepaint) {
+			panel.calcText();
+			this.refresh(true);
+			panel.searchPaint();
+		}
+	}
+
+	multiBtnSetTooltip(tt) {
+		this.multiBtn.tooltip = tt;
+		if (this.btns.filter.hand) {
+			this.btns.filter.tt.showImmediate(this.btns.filter.tiptext());
+		}
+	}
+
+	multiBtnSetType(type) {
+		this.multiBtn.type = type;
+	}
+	// Regorxxx ->
 }
 
 class Btn {
@@ -492,10 +554,10 @@ class Btn {
 		gr.SetSmoothingMode(2);
 		gr.FillRoundRect(this.x, but.hoverArea, this.w, but.hot_h, but.arc, but.arc, colRect);
 		gr.SetSmoothingMode(0);
-		if (!ui.img.blurDark) gr.GdiDrawText(panel.filter.mode[ppt.filterBy].name, panel.filter.font, colText, this.p1, this.y, this.p3, this.h, this.p2);
+		if (!ui.img.blurDark) gr.GdiDrawText(but.multiBtn.name, panel.filter.font, colText, this.p1, this.y, this.p3, this.h, this.p2); // Regorxxx <- Filter / View / Source button ->
 		else {
 			gr.SetTextRenderingHint(5);
-			gr.DrawString(panel.filter.mode[ppt.filterBy].name, panel.filter.font, colText, this.p1 - 1, this.y - 1, this.p3, this.h, $.stringFormat(1, 1));
+			gr.DrawString(but.multiBtn.name, panel.filter.font, colText, this.p1 - 1, this.y - 1, this.p3, this.h, $.stringFormat(1, 1)); // Regorxxx <- Filter / View / Source button ->
 		}
 	}
 
@@ -572,6 +634,7 @@ class Btn {
 		but.trace = !this.hide && x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
 		return but.trace;
 	}
+
 }
 
 class Tooltip {

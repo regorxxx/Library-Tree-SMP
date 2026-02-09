@@ -1517,7 +1517,7 @@
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
 			var altClickLabels = ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist']; // Regorxxx <- Top tracks ->
-			var barLabels = ['Search', 'Filter Button', 'Settings button*'];
+			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
 			var clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
 			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill'];
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
@@ -1648,7 +1648,7 @@
 			var box = {
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
-				display: ['searchShow', 'filterShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- New statistics tab ->
+				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse','custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
@@ -2139,7 +2139,7 @@
 
 			// Regorxxx <- New statistics
 			function setDisplay() {
-				for (i = 0; i < 3; i++) { window.bar.insertAdjacentHTML('beforeend', '<div><input id="bar_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="bar_checkbox' + i + '" class="checkbox_label">' + barLabels[i] + '</label></div>'); }
+				for (i = 0; i < 4; i++) { window.bar.insertAdjacentHTML('beforeend', '<div><input id="bar_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="bar_checkbox' + i + '" class="checkbox_label">' + barLabels[i] + '</label></div>'); }
 
 				window.theme_dropdown.innerHTML = themeLabels[ppt['theme_internal'].value];
 				for (i = 0; i < 6; i++) { window.themeBg.insertAdjacentHTML('beforeend', '<a onclick="setTheme(' + i + ');">' + themeLabels[i] + '</a>'); }
@@ -2346,6 +2346,7 @@
 			document.getElementById("albumArtCfg").style.display = window.show_checkbox4.checked ? "block" : "none";
 			window.indexLetter_checkbox2.parentNode.disabled = ppt['albumArtLetterNo_internal'].value == 0;
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
+			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
 		}
 
 		function textChange(e) {
@@ -2368,6 +2369,7 @@
 			window.thumbSize_dropdown.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
 			window.thumbNailSize.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
+			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
 			clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
 			dblClickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist & play'] : ppt['actionMode_internal'].value == 2 ? ['Send to playback queue and play'] : ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
 			// Regorxxx <- Top tracks
