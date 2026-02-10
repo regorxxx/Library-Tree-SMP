@@ -411,7 +411,7 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch source': {
 			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
 			let idx = -1;
-			let plsIdx = -1;
+			let plsIdx = [];
 			// Source type
 			const typeCleanRe = /(playlist|panel)(s|\(s\))/i;
 			const types = men.sourceTypes().map((st) => st.toLowerCase().replace(typeCleanRe, '$1'));
@@ -422,19 +422,39 @@ addEventListener('on_notify_data', (name, info) => {
 				if (info.sourceIdx === -1) { idx = 0; }
 				else { idx = info.sourceIdx; }
 			}
-			// Playlists
-			if (typeof info.sourcePlaylistName !== 'undefined') { plsIdx = plman.FindOrCreatePlaylist(info.sourcePlaylistName); }
-			else if (typeof info.sourcePlaylistIdx !== 'undefined' && info.sourcePlaylistIdx >= -1 && info.sourcePlaylistIdx > plman.PlaylistCount) {
-				if (info.sourcePlaylistIdx === -1) { plsIdx = plman.ActivePlaylist; }
-				else { plsIdx = info.sourcePlaylistIdx; }
-			}
 			// Panels
-			if (typeof info.sourcePanel !== 'undefined') {
+			if (idx === 1 && typeof info.sourcePanel !== 'undefined') {
 				ppt.panelSelectionPlaylist = info.sourcePanel;
 			}
+			// Playlists
+			if (idx === 2) {
+				if (typeof info.sourcePlaylistName !== 'undefined') {
+					info.sourcePlaylistName.split('|')
+						.forEach((name) => plsIdx.push(plman.FindOrCreatePlaylist(name)));
+				} else if (typeof info.sourcePlaylistIdx !== 'undefined') {
+					if (Array.isArray(info.sourcePlaylistIdx)) {
+						info.sourcePlaylistIdx.forEach((idx) => {
+							if (idx > -1 && idx < plman.PlaylistCount) { plsIdx.push(idx); }
+						});
+					} else if (info.sourcePlaylistIdx > -1 && info.sourcePlaylistIdx < plman.PlaylistCount) {
+						plsIdx.push(info.sourcePlaylistIdx);
+					}
+				}
+			}
 			// Set all
-			if (plsIdx !== -1) { men.setFixedPlaylist(plsIdx); }
-			if (idx !== -1) { men.setSource(idx); }
+			if (idx === 2) {
+				if (plsIdx.length) { men.setFixedPlaylist(plsIdx); }
+				else if (ppt.libSource !== 0 || ppt.fixedPlaylist) { men.setActivePlaylist(plsIdx); }
+			}
+			if (idx !== -1) {
+				// Don't update unless needed
+				if (idx === 0 && ppt.libSource === 1) { return; }
+				else if (idx === 1 && ppt.libSource === 2) { return; }
+				else if (idx === 2 && plsIdx.length && ppt.libSource === 1 && ppt.fixedPlaylist) { return; }
+				else if (idx === 2 && !plsIdx.length && ppt.libSource === 0 && !ppt.fixedPlaylist) { return; }
+				else if (idx === 3 && ppt.libSource === 3) { return; }
+				men.setSource(idx, true);
+			}
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch statistics': {
@@ -452,7 +472,7 @@ addEventListener('on_notify_data', (name, info) => {
 				if (info.statisticsIdx === -1) { idx = 0; }
 				else { idx = info.statisticsIdx; }
 			}
-			if (idx !== -1) { men.setSource(idx); }
+			if (idx !== -1) { men.setStatistics(idx); }
 			break;
 		}
 		// Regorxxx ->

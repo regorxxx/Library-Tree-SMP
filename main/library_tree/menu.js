@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/02/26
+//10/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -991,19 +991,28 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	setFixedPlaylist(i) {
-		const id = vk.k('ctrl')
-			? this.pl[i].guid || this.pl[i].name
-			: this.pl[i].name;
-		if (vk.k('shift') && ppt.fixedPlaylistName.length) {
-			ppt.fixedPlaylistName += '|' + id;
+	setFixedPlaylist(i, bUseUUID) {
+		if (Array.isArray(i)) {
+			i.forEach((j) => {
+				const id = bUseUUID || typeof bUseUUID === 'undefined' && vk.k('ctrl')
+					? this.pl[j].guid || this.pl[j].name
+					: this.pl[j].name;
+				ppt.fixedPlaylistName = ppt.fixedPlaylistName.length
+					? ppt.fixedPlaylistName + '|' + id
+					: id;
+			});
 		} else {
-			ppt.fixedPlaylistName = id;
+			const id = bUseUUID || typeof bUseUUID === 'undefined' && vk.k('ctrl')
+				? this.pl[i].guid || this.pl[i].name
+				: this.pl[i].name;
+			ppt.fixedPlaylistName = vk.k('shift') && ppt.fixedPlaylistName.length
+				? ppt.fixedPlaylistName + '|' + id
+				: id;
 		}
 		ppt.fixedPlaylist = true;
 		ppt.libSource = 1;
-		if (panel.imgView) img.clearCache();
-		if (ppt.showSource) panel.setRootName();
+		if (panel.imgView) { img.clearCache(); }
+		if (ppt.showSource) { panel.setRootName(); }
 		lib.searchCache = {};
 		lib.treeState(false, 2);
 	}
@@ -1107,7 +1116,7 @@ class MenuItems {
 		}
 	}
 
-	setSource(i) {
+	setSource(i, bOmitMsg) { // Regorxxx <- External integration ->
 		switch (i) {
 			case 0:
 				ppt.libSource = 1;
@@ -1116,7 +1125,7 @@ class MenuItems {
 			case 1:
 				ppt.libSource = 2;
 				ppt.fixedPlaylist = false;
-				if (ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) popUpBox.message();
+				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			case 2: {
 				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
@@ -1124,7 +1133,7 @@ class MenuItems {
 				if (fixedPlaylistIndex.length !== 0) { ppt.fixedPlaylist = true; }
 				// Regorxxx ->
 				ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
-				if (ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) popUpBox.message();
+				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			}
 			// Regorxxx <- Queue source

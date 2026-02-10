@@ -24,7 +24,11 @@
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
 - External integration: changed callbacks.
-	* 'Library-Tree-SMP: switch source'		-> { window: [string], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number, sourcePanel: str}, sourceName allows alternate names. i.e. Playlist|Playlists|Playlist(s) and Panel|Panels|Panel(s)
+	* 'Library-Tree-SMP: switch source'		-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string}
+		- sourceName allows alternate names. i.e. Playlist|Playlists|Playlist(s) and Panel|Panels|Panel(s)
+		- sourcePlaylistIdx can be a number or array of numbers
+		- sourcePanel and sourcePlaylistName allow multiple values, joined with '|'.
+		- performance improvements and code cleanup.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 ### Removed
 ### Fixed
