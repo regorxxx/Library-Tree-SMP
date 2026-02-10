@@ -19,6 +19,7 @@
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
+- Statistics: playback queue index statistics now also show the currently playing track, if available. As '▶' or '0'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point.
 - Auto-DJ: submenu entry is now checked while it's running.
@@ -35,6 +36,7 @@
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 ### Removed
 ### Fixed
+- Statistics: bug on original script related to playback queue index statistics when a track was added multiple times to the queue. Queue index was duplicated in such cases. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Drag n' drop: fixed handling for internal drag n' drop in some cases using Playback queue source. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1076851.html#msg1076851).
 - Sources: 'Sources\Select playlist(s)' submenu being disabled when it shouldn't.
 - Shortcuts: fixed bug on original script related to usage of 'Ctrl + A' (select All) shortcut crashing the panel while using Playlist sources if 'Behaviour\Mode\Keystroke' was set to 'Send to playlist'. When set to 'Select' it simply didn't work. Now the shortcut works as intended.

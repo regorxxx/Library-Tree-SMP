@@ -539,31 +539,43 @@ class Populate {
 				}
 				break;
 			}
+			// Regorxxx <- Now playing index | Duplicated idx bug on original script
 			case 7: {// queue
 				let index = '';
-				let indices = [];
+				let indices = new Set();
 				const queueHandles = plman.GetPlaybackQueueHandles();
-				for (let i = 0; i < handleList.Count; i++) {
-					for (let k = 0; k < queueHandles.Count; k++) {
-						if (handleList[i].Compare(queueHandles[k])) indices.push(k + 1);
+				const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
+				const count = handleList.Count;
+				const queueCount = queueHandles.Count;
+				for (let i = 0; i < count; i++) {
+					if (np && handleList[i].Compare(np)) { indices.add(0); }
+					for (let k = 0; k < queueCount; k++) {
+						if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); }
 					}
 				}
-				ln = indices.length;
+				ln = indices.size;
 				if (ln) {
-					if (ln == 1) index = indices[0];
+					if (ln === 1) { index = indices.values().next().value; }
 					else {
-						index = this.arrayToRange(indices);
+						index = this.arrayToRange([...indices]);
 						index.join();
 					}
 				}
 				if (index) {
+					const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
 					rawValue = index;
 					value = panel.imgView && this.label
-						? 'Queue ' + index
-						: index;
+						? 'Queue ' + (bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index)
+						: bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index;
+				} else if (index === 0) {
+					rawValue = 0;
+					value = panel.imgView && this.label
+						? 'Now playing'
+						: String.fromCharCode(9654) /* ▶ */;
 				}
 				break;
 			}
+			// Regorxxx ->
 			case 8: {// playcount
 				let playcount = this.tf.pc.EvalWithMetadbs(handleList);
 				const played = [...new Set(playcount)];
