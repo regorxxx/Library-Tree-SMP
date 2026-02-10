@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/02/26
+//10/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -499,6 +499,7 @@ addEventListener('on_playback_new_track', (handle) => {
 	lib.checkFilter('playback'); // Regorxxx <- Improve filter checking based on events. Search text also triggers updates to filtering ->
 	pop.getNowplaying(handle);
 	if (!ppt.recItemImage || ppt.libSource != 2) ui.on_playback_new_track(handle);
+	if (ppt.libSource === 3 && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.updateAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 });
 
@@ -506,11 +507,12 @@ addEventListener('on_playback_stop', (reason) => {
 	if (reason == 2) return;
 	pop.getNowplaying('', true);
 	on_item_focus_change();
+	if (ppt.libSource === 3 && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 });
 
 addEventListener('on_playback_queue_changed', () => {
-	if (ppt.libSource === 3) { lib.treeState(false, 2); } // Regorxxx <- Queue source ->
+	if (ppt.libSource === 3) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Throttle library updates ->
 	on_queue_changed();
 });
 

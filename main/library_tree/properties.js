@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/02/26
+//10/02/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -230,6 +230,7 @@ let properties = [
 	['Library Source: Fixed Playlist', false, 'fixedPlaylist'],
 	['Library Source: Fixed Playlist Name', '', 'fixedPlaylistName'],
 	['Library Source: Playback Queue force sorting', true, 'queueSorting'], // Regorxxx <- Queue source ->
+	['Library Source: Playback Queue show now playing', true, 'queueNowPlaying'], // Regorxxx <- Queue source ->
 
 	['Limit Menu Expand: 10-6000', 500, 'treeExpandLimit'],
 	['Limit Tree Auto Expand: 10-1000', 350, 'autoExpandLimit'],

@@ -89,6 +89,8 @@ class Library {
 			pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 		}, 500);
 
+		this.treeState100 = $.debounce((...args) => this.treeState(...args), 100); // Regorxxx <- Throttle library updates ->
+
 		this.checkView();
 		this.readTreeState(true);
 	}
@@ -676,7 +678,19 @@ class Library {
 					break;
 				}
 				case 2: this.list = this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
-				case 3: this.list = plman.GetPlaybackQueueHandles(); break; // Regorxxx <- Queue source ->
+				// Regorxxx <- Queue source
+				case 3: {
+					if (ppt.queueNowPlaying) {
+						this.list = new FbMetadbHandleList();
+						const np = fb.GetNowPlaying();
+						if (np) { this.list.Add(np); }
+						this.list.AddRange(plman.GetPlaybackQueueHandles());
+					} else {
+						this.list = plman.GetPlaybackQueueHandles();
+					}
+					break;
+				}
+				// Regorxxx ->
 			}
 			// Regorxxx ->
 			if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
@@ -818,7 +832,19 @@ class Library {
 				break;
 			}
 			case 2: this.list = handleList || this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
-			case 3: this.list = plman.GetPlaybackQueueHandles(); break; // Regorxxx <- Queue source ->
+			// Regorxxx <- Queue source
+			case 3: {
+				if (ppt.queueNowPlaying) {
+					this.list = new FbMetadbHandleList();
+					const np = fb.GetNowPlaying();
+					if (np) { this.list.Add(np); }
+					this.list.AddRange(plman.GetPlaybackQueueHandles());
+				} else {
+					this.list = plman.GetPlaybackQueueHandles();
+				}
+				break;
+			}
+			// Regorxxx ->
 		}
 		// Regorxxx ->
 		if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
