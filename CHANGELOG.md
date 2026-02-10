@@ -22,6 +22,7 @@
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point.
 - Auto-DJ: submenu entry is now checked while it's running.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
+- UI: cleanup of Quick setup menu.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
 - External integration: changed callbacks.

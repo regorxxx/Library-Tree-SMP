@@ -348,7 +348,7 @@ class MenuItems {
 			{ name: 'Modern [default]', idx: 1 },
 			{ name: 'Ultra-Modern', idx: 2 },
 			{ name: 'Clean', idx: 3, separator: true },
-			{ name: 'Facet', idx: 4, },
+			{ name: 'Facets', idx: 4, },
 			{ name: 'Playback Queue viewer', idx: 13, separator: true },
 
 		].forEach((v) => menu.newItem({
@@ -361,6 +361,7 @@ class MenuItems {
 		}));
 
 		if (ppt.albumArtOptionsShow) {
+			menu.newMenu({ menuName: 'Art options', appendTo: 'Quick setup' });
 			[
 				{ name: 'Covers [labels right]', idx: 5 },
 				{ name: 'Covers [labels bottom]', idx: 6 },
@@ -368,45 +369,55 @@ class MenuItems {
 				{ name: 'Artist photos [labels right]', idx: 8, separator: true },
 				{ name: 'Album art size +', idx: 9, flags: ppt.thumbNailSize == 7 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING },
 				{ name: 'Album art size -', idx: 10, flags: ppt.thumbNailSize == 0 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING, separator: true },
-				{ name: 'Flow mode', idx: 11, separator: true },
-				{ name: 'Always load preset with current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 },
+				{ name: 'Flow mode', idx: 11 }
 
 			].forEach((v) => menu.newItem({
-				menuName: 'Quick setup',
+				menuName: 'Art options',
 				str: v.name,
 				func: () => panel.set('quickSetup', v.idx),
 				flags: v.flags || MF_STRING,
 				checkItem: v.checkItem || false,
 				separator: v.separator
 			}));
+			// Regorxxx <- Background image position
+			menu.newItem({ menuName: 'Art options', separator: true });
+			menu.newItem({
+				menuName: 'Art options',
+				str: 'Background grid mode...',
+				func: () => {
+					let panels = 1;
+					try {
+						panels = utils.InputBox(0, 'Set total number of Library Tree panels:\n\nBackground image will be adjusted to extend over all panels, showing only a portion of the image in every panel.\n\nIt only works on horizontal rows.', 'Background grid mode: number of panels', 1, true);
+					} catch (e) { return; } // eslint-disable-line no-unused-vars
+					if (!panels || panels < 1) { return; }
+					let pos = 1;
+					try {
+						pos = utils.InputBox(0, 'Set panel position within the row:' + '\nFrom 1 to ' + panels, 'Background grid mode: panel position', 1, true);
+					} catch (e) { return; } // eslint-disable-line no-unused-vars
+					if (!pos || pos < 1) { return; }
+					ppt.xOffsetBg = 100 / panels * (pos - 1);
+					ppt.wOffsetBg = 100 / panels * (panels - pos);
+					panel.load();
+				},
+				flags: panel.imgView ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.xOffsetBg !== 0 || ppt.wOffsetBg !== 0
+			});
+			// Regorxxx ->
 		}
 		// Regorxxx ->
-		// Regorxxx <- Background image position
-		menu.newItem({
+		// Regorxxx <- Code cleanup
+		menu.newItem({ menuName: 'Quick setup', separator: true });
+		[
+			{ name: 'Keep current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 }
+
+		].forEach((v) => menu.newItem({
 			menuName: 'Quick setup',
-			separator: true
-		});
-		menu.newItem({
-			menuName: 'Quick setup',
-			str: 'Background grid mode...',
-			func: () => {
-				let panels = 1;
-				try {
-					panels = utils.InputBox(0, 'Set total number of Library Tree panels:\n\nBackground image will be adjusted to extend over all panels, showing only a portion of the image in every panel.\n\nIt only works on horizontal rows.', 'Background grid mode: number of panels', 1, true);
-				} catch (e) { return; } // eslint-disable-line no-unused-vars
-				if (!panels || panels < 1) { return; }
-				let pos = 1;
-				try {
-					pos = utils.InputBox(0, 'Set panel position within the row:' + '\nFrom 1 to ' + panels, 'Background grid mode: panel position', 1, true);
-				} catch (e) { return; } // eslint-disable-line no-unused-vars
-				if (!pos || pos < 1) { return; }
-				ppt.xOffsetBg = 100 / panels * (pos - 1);
-				ppt.wOffsetBg = 100 / panels * (panels - pos);
-				panel.load();
-			},
-			flags: panel.imgView ? MF_GRAYED : MF_STRING,
-			checkItem: ppt.xOffsetBg !== 0 || ppt.wOffsetBg !== 0
-		});
+			str: v.name,
+			func: () => panel.set('quickSetup', v.idx),
+			flags: v.flags || MF_STRING,
+			checkItem: v.checkItem || false,
+			separator: v.separator
+		}));
 		// Regorxxx ->
 
 		this.addSourceEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
