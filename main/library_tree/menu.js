@@ -126,14 +126,16 @@ class MenuManager {
 					this.menu[this.baseMenu].AppendMenuSeparator();
 					this.menu[this.baseMenu].AppendMenuItem(0, 4999, subMenuName);
 					this.func[4999] = () => {
+						let items = men.items;
 						setTimeout(() => {
 							this.clear();
 							this.createMenu(this.baseMenu);
 							Context = fb.CreateContextMenuManager();
-							Context.InitContext(men.items);
-							Context.BuildMenu(this.menu[this.baseMenu], 5000);
+							Context.InitContext(items);
+							items = null;
+							Context.BuildMenu(this.menu[this.baseMenu], 0);
 							const idx = this.menu[this.baseMenu].TrackPopupMenu(x, y);
-							this.run(idx);
+							Context.ExecuteByID(idx);
 						}, 100);
 					};
 					break;
