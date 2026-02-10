@@ -465,10 +465,10 @@ class MenuItems {
 		}
 		// Regorxxx ->
 
-		// Regorxxx <- Quick help
+		// Regorxxx <- Quick help | External integration
 		menu.newItem({
 			menuName: mainMenu(),
-			str: 'Quick help',
+			str: 'Quick help...',
 			func: () => {
 				fb.ShowPopupMessage(
 					'List view:' +
@@ -527,6 +527,16 @@ class MenuItems {
 					'\n----------------------' +
 					'\n• Shift + Win + R. Click: open SMP panel menu.'
 					, window.PanelName + ': Quick help'
+				);
+			}
+		});
+		menu.newItem({
+			menuName: mainMenu(),
+			str: 'External integration...',
+			func: () => {
+				fb.ShowPopupMessage(
+					$.open(folders.xxx + 'helpers\\readme\\library_tree_callbacks.txt'),
+					window.PanelName + ': External integration'
 				);
 			}
 		});

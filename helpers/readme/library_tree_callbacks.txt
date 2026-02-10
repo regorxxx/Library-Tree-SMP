@@ -1,0 +1,95 @@
+﻿Library-Tre-SMP panels can be controlled by third party panels using
+'window.NotifyOthers(callback, arg)' SMP/JSplitter functions.
+
+General notes:
+--------------
+• Example: window.NotifyOthers('Library-Tree-SMP: do it', { window: [] })
+• Window arg should be an array with desired target panel names to control.
+• If not provided or empty, all panels will execute the action.
+• Panel notifications only work within same JS host (no SMP <-> JSplitter).
+
+Callbacks:
+----------
+• 'Library-Tree-SMP: new'
+	-> { window: string[] }
+	- Based on current selection within panel
+
+• 'Library-Tree-SMP: insert'
+	-> { window: string[] }
+	- Based on current selection within panel
+
+• 'Library-Tree-SMP: add'
+	-> { window: string[] }
+	- Based on current selection within panel
+
+• 'Library-Tree-SMP: show now playing'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: show handle'
+	-> { window: string[], handle: FbMetadbHandle }
+
+• 'Library-Tree-SMP: switch show art'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: show art'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: show tree'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: switch show artists / albums'
+	-> { window: string[], forceShowArt: boolean }
+
+• 'Library-Tree-SMP: show artists'
+	-> { window: string[], forceShowArt: boolean }
+
+• 'Library-Tree-SMP: show albums'
+	-> { window: string[], forceShowArt: boolean }
+
+• 'Library-Tree-SMP: collapse all'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: quicksearch'
+	-> { window: string[], search: string }
+
+• 'Library-Tree-SMP: search'
+	-> { window: string[], search: string }
+
+• 'Library-Tree-SMP: search clear'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: search focus'
+	-> { window: string[] }
+
+• 'Library-Tree-SMP: switch view'
+	-> { window: string[], viewName: string, viewIdx: number }
+	- viewIdx = -1 for folder view
+	- viewName follows menu names
+
+• 'Library-Tree-SMP: switch filter'
+	-> { window: string[], filterName: string, filterIdx: number }
+	- filterIdx = -1 or 0 for no filter
+	- filterName follow menu names
+
+• 'Library-Tree-SMP: switch source'
+	-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string }
+	- sourceIdx = -1 or 0 for library
+	- sourcePlaylistIdx = -1 for active playlist
+	- sourceName follows menu names
+	- sourceName allows alternate names:
+	  Playlist|Playlists|Playlist(s)
+	  Panel|Panels|Panel(s)
+	- sourcePanel allows multiples values, joined with '|'
+	- sourcePanel allows multiple values, joined with '|'
+
+• 'Library-Tree-SMP: switch art type'
+	-> { window: string[], artName: string, artIdx: number }
+	- artIdx = -1 or 0 for front art
+	- artName follows menu names
+
+• 'Library-Tree-SMP: switch statistics'
+	-> { window: string[], statisticsName: string, statisticsIdx: number }
+	- statisticsIdx = -1 or 0 for default stats (usually # tracks)
+	- statisticsName follows menu names
+	- statisticsName can be matched by entire label (all), user label
+	  only or 'custom-X (...)' labels (custom entries only)

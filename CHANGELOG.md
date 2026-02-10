@@ -12,6 +12,7 @@
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
 - Sources: drag n' drop while using Playback queue source now sends selection to Playback queue if mouse is anywhere but the search box. At search box it performs the standard query search like any other source. Pressing 'Ctrl' will also send the tracks to the front of the playback queue (instead of adding them at the end).
 - External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
+- External integration: added documentation to settings menu. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077214.html#msg1077214).
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
 - UI: new quicksetup presets.
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
