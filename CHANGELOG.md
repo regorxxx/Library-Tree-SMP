@@ -15,6 +15,7 @@
 - External integration: added documentation to settings menu. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077214.html#msg1077214).
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
 - UI: new quicksetup presets.
+- Views: added new default view patterns.
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).

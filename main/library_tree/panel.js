@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/02/26
+//10/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -480,7 +480,8 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Album // %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album (year) // $year(%DATE%) - %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album (facets) // $nodisplay{$year(%DATE%)}%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} \'[\'$year(%DATE%)\']\'|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Album - Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Style // %<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Style', 'Album', 1],
