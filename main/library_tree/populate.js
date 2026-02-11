@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/02/26
+//11/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2003,7 +2003,7 @@ class Populate {
 		}
 	}
 	// Regorxxx <- Double click scrollbar
-	selShow(item = -1) {
+	selShow(item = -1, bSelect = true) { // Regorxxx <- Scrolling helpers ->
 		if (item === -1 || typeof item === 'undefined') {
 			const handle = fb.GetFocusItem(true);
 			if (handle) { item = panel.list.Find(handle); }
@@ -2020,11 +2020,11 @@ class Populate {
 					}
 				}
 			}
-			if (!panel.imgView && !this.tree[idx].root) {
+			if (bSelect && !panel.imgView && !this.tree[idx].root) { // Regorxxx <- Scrolling helpers ->
 				this.clearSelected();
 				this.tree[idx].sel = true;
 			}
-			if (idx != -1) this.showItem(idx, 'focus');
+			if (idx != -1) { this.showItem(idx, 'focus', bSelect); } // Regorxxx <- Scrolling helpers ->
 		}
 	}
 	// Regorxxx ->
@@ -2488,7 +2488,7 @@ class Populate {
 		this.imgGetItemCount = ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !this.statisticsShow && (this.nodeCounts == 1 || this.nodeCounts == 2);
 	}
 
-	showItem(i, type) {
+	showItem(i, type, bSelect = true) { // Regorxxx <- Scrolling helpers ->
 		if (!panel.imgView) {
 			sbar.checkScroll(i * ui.row.h - Math.round(sbar.rows_drawn / 2 - 1) * ui.row.h, 'full');
 			return;
@@ -2496,7 +2496,7 @@ class Populate {
 		this.m.i = -1;
 		const b = $.clamp(Math.round(sbar.delta / sbar.row.h), 0, panel.rows - 1);
 		const f = Math.min(b + Math.floor(img.panel.h / sbar.row.h), panel.rows);
-		this.setTreeSel(i);
+		if (bSelect) { this.setTreeSel(i); } // Regorxxx <- Scrolling helpers ->
 		panel.treePaint();
 		const row1 = Math.floor(i / (img.style.vertical ? img.columns : 1));
 		if (row1 <= b || row1 >= f) {

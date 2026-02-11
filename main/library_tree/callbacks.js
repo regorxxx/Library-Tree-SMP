@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/02/26
+//11/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -720,20 +720,9 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 			}
 		} else if (ppt.libSource === 3) {
 			if ((mask & MK_CONTROL) === MK_CONTROL) {
-				const queue = plman.GetPlaybackQueueContents();
-				plman.FlushPlaybackQueue();
-				[
-					...selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 }; }),
-					...queue
-				].forEach((item) => {
-					if (![0xffffffff, -1].includes(item.PlaylistIndex) && ![0xffffffff, -1].includes(item.PlaylistItemIndex)) { // BUG: SMP 1.6.1-mod returns 4294967295 instead of -1
-						plman.AddPlaylistItemToPlaybackQueue(item.PlaylistIndex, item.PlaylistItemIndex);
-					} else {
-						plman.AddItemToPlaybackQueue(item.Handle);
-					}
-				});
+				panel.addToFrontQueue(selItems);
 			} else {
-				selItems.Convert().forEach((handle) => plman.AddItemToPlaybackQueue(handle));
+				panel.addToBackQueue(selItems);
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/02/26
+//11/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -479,9 +479,12 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Artist initial // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))|%ARTIST%|$if2(%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%},εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album // %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album (year) // $year(%DATE%) - %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Album (facets) // $nodisplay{$year(%DATE%)}%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} \'[\'$year(%DATE%)\']\'|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album - Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les)|%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Style // %<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Style', 'Album', 1],
@@ -1078,18 +1081,54 @@ class Panel {
 								ppt.treeAutoExpandSingle = false;
 								ppt.facetView = false;
 								if (!ppt.presetLoadCurView) {
-									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
+									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Date - Title (queue)');
 									if (viewBy !== -1) { ppt.viewBy = viewBy; }
 								}
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
 								ppt.sbarShow = 1;
 								ppt.rootNode = 0;
+								ppt.albumArtGrpLevel = 0;
 								this.load();
 							}
 						};
 						caption = 'Quick Setup: Playback Queue viewer';
 						prompt = 'This changes various options on the display tab, views and source settings.\n\nContinue?';
+						break;
+					}
+					case 14: {
+						applySettings = (status, confirmed) => {
+							if (confirmed) {
+								ppt.libSource = 3;
+								ppt.queueSorting = true;
+								ppt.countsRight = true;
+								ppt.nodeStyle = 1;
+								ppt.itemShowStatistics = 7;
+								ppt.inlineRoot = true;
+								ppt.autoCollapse = false;
+								ppt.treeAutoExpandSingle = false;
+								ppt.facetView = false;
+								if (!ppt.presetLoadCurView) {
+									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Artist | Title (queue)');
+									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									ppt.artId = 0;
+								}
+								ui.sbar.type = 1;
+								ppt.sbarType = 1;
+								ppt.sbarShow = 1;
+								ppt.rootNode = 0;
+								ppt.albumArtLabelType = 3;
+								ppt.itemOverlayType = 2;
+								panel.imgView = ppt.albumArtShow = true;
+								ppt.albumArtFlowMode = true;
+								ppt.imgStyleFront = 1;
+								ppt.thumbNailSize = 2;
+								ppt.albumArtGrpLevel = 2;
+								this.load();
+							}
+						};
+						caption = 'Quick Setup: Playback Queue flow';
+						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
 						break;
 					}
 				}
@@ -1454,6 +1493,118 @@ class Panel {
 		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
 		if (!this.autoDj.source) { this.autoDj.source = [...items]; }
 		else { items.forEach((handle) => this.autoDj.source.push(handle)); }
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Drag n' drop to queue | Queue handling
+	fillQueue(queueItems) {
+		queueItems.forEach((item) => {
+			if (![0xffffffff, -1].includes(item.PlaylistIndex) && ![0xffffffff, -1].includes(item.PlaylistItemIndex)) { // BUG: SMP 1.6.1-mod returns 4294967295 instead of -1
+				plman.AddPlaylistItemToPlaybackQueue(item.PlaylistIndex, item.PlaylistItemIndex);
+			} else {
+				plman.AddItemToPlaybackQueue(item.Handle);
+			}
+		});
+		return !!queueItems.length;
+	}
+
+	addToFrontQueue(selItems) {
+		const queue = plman.GetPlaybackQueueContents();
+		plman.FlushPlaybackQueue();
+		return this.fillQueue([
+			...selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 }; }),
+			...queue
+		]);
+	}
+
+	addToBackQueue(selItems) {
+		return this.fillQueue(selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 }; }));
+	}
+
+	extractFromQueue(selItems, bSkipMissing) {
+		const queue = plman.GetPlaybackQueueContents();
+		const selection = selItems.Convert().map((Handle) => {
+			let idx = queue.findIndex((q) => q.Handle.Compare(Handle));
+			if (idx === -1 && bSkipMissing) { return null; }
+			while (idx !== -1) {
+				queue.splice(idx, 1);
+				idx = queue.findIndex((q) => q.Handle.Compare(Handle));
+			}
+			return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 };
+		}).filter(Boolean);
+		return { selection, queue };
+	}
+
+	moveToFrontQueue(selItems, bScroll) {
+		const { selection, queue } = this.extractFromQueue(selItems);
+		plman.FlushPlaybackQueue();
+		const bDone = this.fillQueue([
+			...selection,
+			...queue
+		]);
+		if (bDone && bScroll) {
+			const now = Date.now();
+			const id = setInterval(() => {
+				const item = this.list.Find(selItems[0]);
+				if (item === (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0)) {
+					pop.selShow(item, false);
+					clearInterval(id);
+				} else if (Date.now() - now > 6000) { clearInterval(id); }
+			}, 60);
+		}
+		return bDone;
+	}
+
+	moveToBackQueue(selItems, bScroll) {
+		const { selection, queue } = this.extractFromQueue(selItems);
+		plman.FlushPlaybackQueue();
+		const bDone = this.fillQueue([
+			...queue,
+			...selection
+		]);
+		if (bDone && bScroll) {
+			const now = Date.now();
+			const offset = selection.length;
+			const id = setInterval(() => {
+				const item = this.list.Find(selItems[0]);
+				if (item === this.list.Count - offset) {
+					pop.selShow(item, false);
+					clearInterval(id);
+				} else if (Date.now() - now > 6000) { clearInterval(id); }
+			}, 60);
+		}
+		return bDone;
+	}
+
+	moveToPosQueue(selItems, position, bScroll) {
+		const { selection, queue } = this.extractFromQueue(selItems);
+		plman.FlushPlaybackQueue();
+		queue.splice(position - 1, 0, ...selection);
+		const bDone = this.fillQueue(queue);
+		if (bDone && bScroll) {
+			const now = Date.now();
+			const offset = selection.length;
+			const id = setInterval(() => {
+				const item = this.list.Find(selItems[0]);
+				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position: position - 1, this.list.Count - offset)) {
+					pop.selShow(item, false);
+					clearInterval(id);
+				} else if (Date.now() - now > 6000) { clearInterval(id); }
+			}, 60);
+		}
+		return bDone;
+	}
+
+	removeFromQueue(selItems) {
+		const idx = [];
+		const queueHandles = plman.GetPlaybackQueueHandles();
+		for (let handle of selItems) {
+			for (let j = 0; j < queueHandles.Count; j++) {
+				if (handle.Compare(queueHandles[j])) { idx.push(j); }
+			}
+		}
+		if (idx.length) { plman.RemoveItemsFromPlaybackQueue(idx); return true; }
+		return false;
 	}
 	// Regorxxx ->
 }

@@ -1,8 +1,9 @@
 ﻿'use strict';
-//10/02/26
+//11/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
+/* global Input:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -215,17 +216,25 @@ class MenuItems {
 				});
 				menu.newItem({ separator: true });
 				menu.newItem({
-					str: 'Remove from queue',
+					str: 'Move to front queue',
+					func: () => panel.moveToFrontQueue(this.items, ppt.queueSorting)
+				});
+				menu.newItem({
+					str: 'Move to back queue',
+					func: () => panel.moveToBackQueue(this.items, ppt.queueSorting)
+				});
+				menu.newItem({
+					str: 'Move in queue...',
 					func: () => {
-						const idx = [];
-						const queueHandles = plman.GetPlaybackQueueHandles();
-						for (let i of pop.sel_items) {
-							for (let j = 0; j < queueHandles.Count; j++) {
-								if (panel.list[i].Compare(queueHandles[j])) { idx.push(j); }
-							}
-						}
-						if (idx.length) { plman.RemoveItemsFromPlaybackQueue(idx); }
+						const pos = Input.number('int positive', 1, 'Set queue index:\n(n > 0)', window.ScriptInfo.Name + ': Move in queue', 5, [(n) => n > 0]) || (Input.isLastEqual ? Input.lastInput : null);
+						if (pos === null) { return null; }
+						panel.moveToPosQueue(this.items, pos, ppt.queueSorting);
 					}
+				});
+				menu.newItem({ separator: true });
+				menu.newItem({
+					str: 'Remove from queue',
+					func: () => panel.removeFromQueue(this.items)
 				});
 				menu.newItem({
 					str: 'Flush playback queue',
@@ -351,7 +360,8 @@ class MenuItems {
 			{ name: 'Ultra-Modern', idx: 2 },
 			{ name: 'Clean', idx: 3, separator: true },
 			{ name: 'Facets', idx: 4, },
-			{ name: 'Playback Queue viewer', idx: 13, separator: true },
+			{ name: 'Playback Queue viewer', idx: 13 },
+			{ name: 'Playback Queue flow', idx: 14, separator: true },
 
 		].forEach((v) => menu.newItem({
 			menuName: 'Quick setup',
