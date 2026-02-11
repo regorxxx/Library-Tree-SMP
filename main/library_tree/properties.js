@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/02/26
+//11/02/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -145,9 +145,9 @@ let properties = [
 	['Custom Colour Transparent Fill Use', false, 'bgTransUse'],
 
 	['Custom Font', 'Segoe UI,16,0', 'custFont'],
-	['Custom Font Album Art Line 1', 'Segoe UI,1', 'custAlbumArtGrpFont'],
+	['Custom Font Album Art Line 1', 'Segoe UI,0', 'custAlbumArtGrpFont'], // Regorxxx <- Change default font styles ->
 	['Custom Font Album Art Line 2', 'Segoe UI Semibold,0', 'custAlbumArtLotFont'],
-	['Custom Font Album Art Line 3', 'Segoe UI,0', 'custAlbumArtDurFont'],
+	['Custom Font Album Art Line 3', 'Segoe UI,2', 'custAlbumArtDurFont'], // Regorxxx <- Change default font styles ->
 
 	['Custom Font Use', false, 'custFontUse'],
 	['Custom Font Album Art Line 1 Use', false, 'custAlbumArtGrpFontUse'],

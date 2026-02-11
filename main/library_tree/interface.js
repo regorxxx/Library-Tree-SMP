@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/02/26
+//11/02/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -524,7 +524,7 @@ class UserInterface {
 		if (ppt.custAlbumArtGrpFontUse && ppt.custAlbumArtGrpFont.length) {
 			const custFont = $.split(ppt.custAlbumArtGrpFont, 1);
 			this.font.group = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 1);
+		} else this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0); // Regorxxx <- Change default font styles ->
 
 		if (ppt.custAlbumArtLotFontUse && ppt.custAlbumArtLotFont.length) {
 			const custFont = $.split(ppt.custAlbumArtLotFont, 1);
@@ -534,7 +534,7 @@ class UserInterface {
 		if (ppt.custAlbumArtDurFontUse && ppt.custAlbumArtDurFont.length) {
 			const custFont = $.split(ppt.custAlbumArtDurFont, 1);
 			this.font.statistics = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else this.font.statistics = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);
+		} else this.font.statistics = gdi.Font('Segoe UI', this.font.main.Size, 2); // Regorxxx <- Change default font styles ->
 
 		// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 		if (ppt.custTooltipFontUse && ppt.custTooltipFont.length) {
