@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//13/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -699,7 +699,7 @@ addEventListener('on_drag_over', (action, x, y, mask) => {
 	on_mouse_move(x, y, mask);
 	// Set effects
 	action.Effect = dropEffect.copy;
-	action.Text = search.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y);
+	action.Text = search.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y, action.IsInternal);
 });
 
 addEventListener('on_drag_drop', (action, x, y, mask) => {
@@ -719,10 +719,23 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				search.on_char(vk.enter);
 			}
 		} else if (ppt.libSource === 3) {
-			if ((mask & MK_CONTROL) === MK_CONTROL) {
-				panel.addToFrontQueue(selItems);
+			if (ppt.queueSorting && pop.row.i >= 0) {
+				const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
+				if (idx < 0) {
+					if (action.IsInternal) { panel.moveToFrontQueue(selItems); }
+					else { panel.addToFrontQueue(selItems); }
+				} else {
+					if (action.IsInternal) { panel.moveToPosQueue(selItems, idx + 1); }
+					else { panel.addToPosQueue(selItems, idx + 1); }
+				}
 			} else {
-				panel.addToBackQueue(selItems);
+				if ((mask & MK_CONTROL) === MK_CONTROL) {
+					if (action.IsInternal) { panel.moveToFrontQueue(selItems); }
+					else { panel.addToFrontQueue(selItems); }
+				} else {
+					if (action.IsInternal) { panel.moveToBackQueue(selItems); }
+					else { panel.addToBackQueue(selItems); }
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//13/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -1519,6 +1519,26 @@ class Panel {
 
 	addToBackQueue(selItems) {
 		return this.fillQueue(selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 }; }));
+	}
+
+	addToPosQueue(selItems, position, bScroll) {
+		const queue = plman.GetPlaybackQueueContents();
+		const selection = selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 };	});
+		plman.FlushPlaybackQueue();
+		queue.splice(position - 1, 0, ...selection);
+		const bDone = this.fillQueue(queue);
+		if (bDone && bScroll) {
+			const now = Date.now();
+			const offset = selection.length;
+			const id = setInterval(() => {
+				const item = this.list.Find(selItems[0]);
+				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position: position - 1, this.list.Count - offset)) {
+					pop.selShow(item, false);
+					clearInterval(id);
+				} else if (Date.now() - now > 6000) { clearInterval(id); }
+			}, 60);
+		}
+		return bDone;
 	}
 
 	extractFromQueue(selItems, bSkipMissing) {

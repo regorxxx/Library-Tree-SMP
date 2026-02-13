@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/02/26
+//13/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -125,7 +125,7 @@ class Search {
 			return input;
 		};
 
-		this.getDragDropTooltipText = (method, mask, x, y) => {
+		this.getDragDropTooltipText = (method, mask, x, y, bInternal) => {
 			if (y < panel.search.h || ppt.libSource !== 3) {
 				if (method === 0 && panel.folderView) { // Auto: tags or path
 					return 'Add paths to search box';
@@ -138,9 +138,14 @@ class Search {
 					return (operators.query || !panel.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
 				}
 			} else if (ppt.libSource === 3) {
-				return (mask & MK_CONTROL) === MK_CONTROL
-					? 'Add items to front of playback queue'
-					: 'Add items to playback queue';
+				const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
+				return ppt.queueSorting && pop.row.i >= 0
+					? idx < 0
+						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
+						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + ' pos'
+					: (mask & MK_CONTROL) === MK_CONTROL
+						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
+						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
 			}
 		};
 		// Regorxxx ->

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//13/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2291,6 +2291,13 @@ class Populate {
 				}
 				this.upDnKeyCheckScroll(vkey);
 				break;
+			// Regorxxx <- Queue source
+			case vk.del: {
+				if (ppt.libSource === 3 && this.sel_items.length) {
+					panel.removeFromQueue(pop.getHandleList());
+				}
+			}
+			// Regorxxx ->
 		}
 	}
 
