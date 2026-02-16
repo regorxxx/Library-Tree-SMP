@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/02/26
+//16/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -71,14 +71,14 @@ addEventListener('on_item_focus_change', (playlistIndex) => {
 addEventListener('on_key_down', (vkey) => {
 	pop.on_key_down(vkey);
 	img.on_key_down(vkey);
-	if (ppt.filterShow && ppt.multiBtnShow && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyDown(vkey); } // Regorxxx <- Filter / View / Source button ->
+	if (ppt.filterShow && ppt.multiBtnShow && !panel.search.active && !find.jSearch && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyDown(vkey); } // Regorxxx <- Filter / View / Source button ->
 	if (!ppt.searchShow) return;
 	search.on_key_down(vkey);
 });
 
 addEventListener('on_key_up', (vkey) => {
 	img.on_key_up(vkey);
-	if (ppt.filterShow && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyUp(); } // Regorxxx <- Filter / View / Source button ->
+	if (ppt.filterShow && !panel.search.active && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyUp(); } // Regorxxx <- Filter / View / Source button ->
 	if (!ppt.searchShow) return;
 	search.on_key_up(vkey);
 });
