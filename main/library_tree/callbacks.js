@@ -525,10 +525,12 @@ addEventListener('on_playback_new_track', (handle) => {
 
 addEventListener('on_playback_stop', (reason) => {
 	if (reason == 2) return;
+	lib.checkFilter('playback'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns -	>
 	pop.getNowplaying('', true);
 	on_item_focus_change();
 	if (ppt.libSource === 3 && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
+	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
 
 addEventListener('on_playback_queue_changed', () => {
