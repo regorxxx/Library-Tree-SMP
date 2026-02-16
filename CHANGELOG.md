@@ -18,8 +18,11 @@
 - UI: new quicksetup presets.
 - UI: 'Move to front queue', 'Move to back queue' and 'Move in queue...' menu entries to move tracks within the playback queue while using the associated source.
 - Views: added new default view patterns.
+- Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
 ### Changed
+- Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
+- Views: updated default view TF patterns with above changes related to $prefix.
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Statistics: playback queue index statistics now also show the currently playing track, if available. As '▶' or '0'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.
@@ -40,6 +43,7 @@
 ### Removed
 ### Fixed
 - Statistics: bug on original script related to playback queue index statistics when a track was added multiple times to the queue. Queue index was duplicated in such cases. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
+- Statistics: bug on original script, related to playcount statistics recognition on views TF patterns. It checked only for specific tags by foo_playcount in lowercase form, instead of any other variation. This led to library updates not being triggered in some cases when changing rating, etc.
 - Drag n' drop: fixed handling for internal drag n' drop in some cases using Playback queue source. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1076851.html#msg1076851).
 - Sources: 'Sources\Select playlist(s)' submenu being disabled when it shouldn't.
 - Shortcuts: fixed bug on original script related to usage of 'Ctrl + A' (select All) shortcut crashing the panel while using Playlist sources if 'Behaviour\Mode\Keystroke' was set to 'Send to playlist'. When set to 'Select' it simply didn't work. Now the shortcut works as intended.

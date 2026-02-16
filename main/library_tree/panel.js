@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/02/26
+//16/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -176,91 +176,101 @@ class Panel {
 		window.RepaintRect(0, this.paint_y, ui.w, ui.h - this.paint_y + 1, true);
 	}
 
-	getFields(view, filter, grpsOnly) {
-		this.newView = ppt.viewBy != view;
-		ppt.filterBy = filter;
-		ppt.viewBy = view;
-		const prefix = ppt.prefix.split('|');
-		let grps = [];
-		let ix1 = -1;
-		let ix2 = -1;
-		this.filter.mode = [];
-		this.folder_view = 16;
-		this.grp = [];
-		this.multiPrefix = false;
-		this.multiProcess = false;
-		this.noDisplay = false;
-		this.playlistSort = '';
-		this.statistics = false;
-		this.view = '';
-		this.view_ppt.forEach((v, i) => {
-			if (v.includes('//')) {
-				grps = v.split('//');
-				this.grp[i] = {
-					name: grps[0].trim(),
-					type: grps[1]
-				};
-			}
-		});
-
-		grps = [];
-		this.filter_ppt.forEach((v, i) => {
-			if (v.includes('//')) {
-				grps = v.split('//');
-				this.filter.mode[i] = {
-					name: grps[0].trim(),
-					type: grps[1].trim()
-				};
-			}
-		});
-
-		const findClosingBrace = (str, pos) => {
-			let depth = 1;
-			for (let l = pos + 1; l < str.length; l++) {
-				switch (str[l]) {
-					case '{':
-						depth++;
-						break;
-					case '}':
-						if (--depth == 0) return l;
-						break;
-				}
-			}
-			return -1;
-		};
-		const indexOfAll = (str, item) => {
-			const indices = [];
-			for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
-			return indices.reverse();
-		};
-		const name = v => v.name;
-		const removeEmpty = v => v && v.name != '' && v.type != '';
-
-		this.grp = this.grp.filter(removeEmpty);
-		this.filter.mode = this.filter.mode.filter(removeEmpty);
-		this.folder_view = this.grp.length - 1;
-		ppt.filterBy = Math.min(ppt.filterBy, this.filter.mode.length - 1);
-		ppt.viewBy = Math.min(ppt.viewBy, this.grp.length - 1);
-		this.folderView = ppt.viewBy == this.folder_view;
-		if (grpsOnly) return;
-		this.colMarker = this.grp[ppt.viewBy].type.includes('$colour{');
-		let valid = false;
-		if (ui.img.blurDark && ppt.text_hUse) {
-			const c = ppt.text_h.replace(/[^0-9.,-]/g, '').split(/[,-]/);
-			if (c.length == 3 || c.length == 4) valid = true;
+	// Regorxxx <- Expose TF formatting for arbitrary input
+	eval(n, type) {
+		let handle, tfo;
+		switch (type) {
+			case 'nowplaying':
+				if (!n || !fb.IsPlaying) return '';
+				tfo = FbTitleFormat(n);
+				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
+				handle = fb.GetNowPlaying();
+				return handle ? tfo.EvalWithMetadb(handle) : '';
+			case 'selected':
+				if (!n) return '';
+				tfo = FbTitleFormat(n);
+				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
+				handle = fb.GetFocusItem();
+				return handle ? tfo.EvalWithMetadb(handle) : '';
+			// Regorxxx <- Merge now playing and selected as fallback
+			case 'nowplayingorselected':
+				if (!n) return '';
+				tfo = FbTitleFormat(n);
+				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
+				handle = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
+				return handle ? tfo.EvalWithMetadb(handle) : '';
+			// Regorxxx ->
 		}
-		this.textDiffHighlight = ui.img.blurDark && !ppt.highLightRow && !(ppt.text_hUse && valid) && ppt.highLightText && !this.colMarker;
-		if (this.folderView) {
-			this.samePattern = !this.newView && !this.init;
-		} else {
-			this.sortBy = this.view = this.grp[ppt.viewBy].type;
-			this.samePattern = !this.colMarker && this.curPattern == this.view;
-		}
-		this.curPattern = this.view;
-		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : [2, 2, 2, 1, 1][ppt.artId];
+	}
 
+	processCustomTf(s) {
+		if (typeof s === 'string') {
+			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(',')); // Regorxxx <- Expose custom prefixes as tag ->
+			while (s.includes('$nowplaying{')) {
+				const q = s.match(/\$nowplaying{(.+?)}/);
+				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
+			}
+			while (s.includes('$selected{')) {
+				const q = s.match(/\$selected{(.+?)}/);
+				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
+			}
+			// Regorxxx <- Merge now playing and selected as fallback
+			while (s.includes('$nowplayingorselected{')) {
+				const q = s.match(/\$nowplayingorselected{(.+?)}/);
+				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
+			}
+			// Regorxxx ->
+			// Regorxxx <- Expand TF support
+			let i = 0;
+			while (s.includes('$harmonicsort{')) {
+				const q = s.match(/\$harmonicsort{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
+			}
+			while (s.includes('$harmonicmix{')) {
+				const q = s.match(/\$harmonicmix{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
+			}
+			while (s.includes('$shufflebytags{')) {
+				const q = s.match(/\$shufflebytags{.*?}/)[0];
+				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				i++;
+			}
+		}
+		// Regorxxx ->
+		return s;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Expand TF support on view patterns
+	getView(view) {
+		this.view = view;
 		if (!this.folderView) {
-			this.statistics = /play(_|)count|auto(_|)rating/.test(this.view);
+			let ix1 = -1;
+			let ix2 = -1;
+			const findClosingBrace = (str, pos) => {
+				let depth = 1;
+				for (let l = pos + 1; l < str.length; l++) {
+					switch (str[l]) {
+						case '{':
+							depth++;
+							break;
+						case '}':
+							if (--depth == 0) return l;
+							break;
+					}
+				}
+				return -1;
+			};
+			const indexOfAll = (str, item) => {
+				const indices = [];
+				for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
+				return indices.reverse();
+			};
+			const prefix = ppt.prefix.split('|');
+			this.statistics = /play(_|)count|auto(_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case sensitive ->
+			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
@@ -349,6 +359,72 @@ class Panel {
 			}
 			this.sortBy = this.sortBy.replace(RegExp(this.splitter, 'g'), '  ');
 		}
+		return this.view;
+	}
+	// Regorxxx ->
+
+	getFields(view, filter, grpsOnly) {
+		this.newView = ppt.viewBy != view;
+		ppt.filterBy = filter;
+		ppt.viewBy = view;
+		let grps = [];
+		this.filter.mode = [];
+		this.folder_view = 16;
+		this.grp = [];
+		this.multiPrefix = false;
+		this.multiProcess = false;
+		this.noDisplay = false;
+		this.playlistSort = '';
+		this.statistics = false;
+		this.view = '';
+		this.view_ppt.forEach((v, i) => {
+			if (v.includes('//')) {
+				grps = v.split('//');
+				this.grp[i] = {
+					name: grps[0].trim(),
+					type: grps[1]
+				};
+			}
+		});
+
+		grps = [];
+		this.filter_ppt.forEach((v, i) => {
+			if (v.includes('//')) {
+				grps = v.split('//');
+				this.filter.mode[i] = {
+					name: grps[0].trim(),
+					type: grps[1].trim()
+				};
+			}
+		});
+
+		const name = v => v.name;
+		const removeEmpty = v => v && v.name != '' && v.type != '';
+
+		this.grp = this.grp.filter(removeEmpty);
+		this.filter.mode = this.filter.mode.filter(removeEmpty);
+		this.folder_view = this.grp.length - 1;
+		ppt.filterBy = Math.min(ppt.filterBy, this.filter.mode.length - 1);
+		ppt.viewBy = Math.min(ppt.viewBy, this.grp.length - 1);
+		this.folderView = ppt.viewBy == this.folder_view;
+		if (grpsOnly) return;
+		this.colMarker = this.grp[ppt.viewBy].type.includes('$colour{');
+		let valid = false;
+		if (ui.img.blurDark && ppt.text_hUse) {
+			const c = ppt.text_h.replace(/[^0-9.,-]/g, '').split(/[,-]/);
+			if (c.length == 3 || c.length == 4) valid = true;
+		}
+		this.textDiffHighlight = ui.img.blurDark && !ppt.highLightRow && !(ppt.text_hUse && valid) && ppt.highLightText && !this.colMarker;
+		if (this.folderView) {
+			this.samePattern = !this.newView && !this.init;
+		} else {
+			this.sortBy = this.view = this.grp[ppt.viewBy].type;
+			this.samePattern = !this.colMarker && this.curPattern == this.view;
+		}
+		this.curPattern = this.view;
+		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : [2, 2, 2, 1, 1][ppt.artId];
+
+		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
 		if (this.pn_h_auto) window.MaxHeight = window.MinHeight = ppt.pn_h;
 		else {
@@ -475,16 +551,16 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Artist | Album (year) // $swapbranchprefix{%<ARTIST>%}|$year(%DATE%) - %ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album Artist | Album // $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album Artist | Album (year) // $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|$year(%DATE%) - %ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
-			['View XX: Name // Pattern', 'View by Album Artist - Album // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Artist initial // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))|%ARTIST%|$if2(%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%},εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
+			['View XX: Name // Pattern', 'View by Album Artist - Album // [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Artist initial // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,$prefix),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))|%ARTIST%|$if2(%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%},εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album // %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album (year) // $year(%DATE%) - %ALBUM%[ \'[\'%ALBUM ARTIST%\']\']$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Album (facets) // $nodisplay{$year(%DATE%)}%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} \'[\'$year(%DATE%)\']\'|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Album - Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix(%ARTIST%,A,The,La,El,Los,Las,Le,Les)|%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,A,The,La,El,Los,Las,Le,Les) - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Album - Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,$prefix) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix(%ARTIST%,$prefix)|%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) - ]%TITLE%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Style // %<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Style', 'Album', 1],
@@ -1523,7 +1599,7 @@ class Panel {
 
 	addToPosQueue(selItems, position, bScroll) {
 		const queue = plman.GetPlaybackQueueContents();
-		const selection = selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 };	});
+		const selection = selItems.Convert().map((Handle) => { return { Handle, PlaylistIndex: -1, PlaylistItemIndex: -1 }; });
 		plman.FlushPlaybackQueue();
 		queue.splice(position - 1, 0, ...selection);
 		const bDone = this.fillQueue(queue);
@@ -1532,7 +1608,7 @@ class Panel {
 			const offset = selection.length;
 			const id = setInterval(() => {
 				const item = this.list.Find(selItems[0]);
-				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position: position - 1, this.list.Count - offset)) {
+				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position : position - 1, this.list.Count - offset)) {
 					pop.selShow(item, false);
 					clearInterval(id);
 				} else if (Date.now() - now > 6000) { clearInterval(id); }
@@ -1606,7 +1682,7 @@ class Panel {
 			const offset = selection.length;
 			const id = setInterval(() => {
 				const item = this.list.Find(selItems[0]);
-				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position: position - 1, this.list.Count - offset)) {
+				if (item === Math.min(ppt.queueNowPlaying && fb.IsPlaying ? position : position - 1, this.list.Count - offset)) {
 					pop.selShow(item, false);
 					clearInterval(id);
 				} else if (Date.now() - now > 6000) { clearInterval(id); }

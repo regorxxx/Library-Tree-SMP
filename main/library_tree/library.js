@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/01/26
+//16/02/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -124,7 +124,7 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? this.processCustomTf(panel.search.txt)
+							? panel.processCustomTf(panel.search.txt)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -197,7 +197,7 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? this.processCustomTf(panel.search.txt)
+							? panel.processCustomTf(panel.search.txt)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -368,16 +368,17 @@ class Library {
 		return true;
 	}
 
-	// Regorxxx <- Improve filter checking based on events. Search text also triggers updates to filtering.
+	// Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns
 	doDynamicFilter(type, callback) {
 		return [
 			...(type === 'playback' || !type ? [/\$nowplaying{(.+?)}/] : []),
 			...(type === 'selection' || !type ? [/\$selected{(.+?)}/] : []),
 			/\$nowplayingorselected{(.+?)}/
 		].filter(Boolean).some((re) => {
-			const bSearch = !ppt.searchEnter && ppt.searchRefreshTf && panel.search.txt.match(re);
-			const bFilter = panel.filter.mode[ppt.filterBy].type.match(re);
-			return callback(bSearch, bFilter);
+			const bSearch = !ppt.searchEnter && ppt.searchRefreshTf && re.test(panel.search.txt);
+			const bFilter = re.test(panel.filter.mode[ppt.filterBy].type);
+			const bView = !panel.folderView && re.test(panel.grp[ppt.viewBy].type);
+			return callback(bSearch, bFilter, bView);
 		});
 	}
 
@@ -385,17 +386,21 @@ class Library {
 		pop.cache.filter = {};
 		pop.cache.search = {};
 		this.searchCache = {};
-		// Regorxxx <- Merge now playing and selected as fallback.
-		this.doDynamicFilter(type, (bSearchMatch, bFilterMatch) => {
-			if (bFilterMatch || bSearchMatch) {
+		// Regorxxx <- Merge now playing and selected as fallback | Expand TF support on view patterns
+		this.doDynamicFilter(type, (bSearchMatch, bFilterMatch, bViewMatch) => {
+			if (bFilterMatch || bSearchMatch || bViewMatch) {
 				if (bFilterMatch) { this.getFilterQuery(); }
 				const bFilterChanged = bFilterMatch && this.filterQuery !== this.filterQueryID;
-				const bSearchChanged = bSearchMatch && this.processCustomTf(panel.search.txt) !== this.searchQueryID;
-				if (bFilterChanged || bSearchChanged) {
+				const bSearchChanged = bSearchMatch && panel.processCustomTf(panel.search.txt) !== this.searchQueryID;
+				if (bFilterChanged || bSearchChanged || bViewMatch) {
 					if (!ppt.rememberTree && !ppt.reset) this.logTree();
 					else if (ppt.rememberTree) this.logFilter();
 					if (panel.search.txt) lib.upd_search = true;
-					this.getLibrary();
+					const items = bViewMatch && !bFilterChanged && !bSearchChanged && ppt.libSource != 2
+						? this.full_list
+						: void (0);
+					if (bViewMatch) { panel.getView(panel.grp[ppt.viewBy].type); }
+					this.getLibrary(items);
 					this.rootNodes(!ppt.reset ? 1 : 0, true);
 					if (!pop.notifySelection()) {
 						const list = !panel.search.txt.length || !lib.list.Count ? lib.list : panel.list;
@@ -485,32 +490,6 @@ class Library {
 		});
 	}
 
-	eval(n, type) {
-		let handle, tfo;
-		switch (type) {
-			case 'nowplaying':
-				if (!n || !fb.IsPlaying) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.GetNowPlaying();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
-			case 'selected':
-				if (!n) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.GetFocusItem();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
-			// Regorxxx <- Merge now playing and selected as fallback
-			case 'nowplayingorselected':
-				if (!n) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
-			// Regorxxx ->
-		}
-	}
-
 	flattenArr(arr) {
 		arr.forEach((v, i) => {
 			arr[i][0] = arr[i][0].split('^@^');
@@ -529,45 +508,7 @@ class Library {
 
 	// Regorxxx <- Code cleanup. Expose TF formatting for arbitrary input
 	getFilterQuery() {
-		this.filterQuery = this.processCustomTf(panel.filter.mode[ppt.filterBy].type);
-	}
-
-	processCustomTf(s) {
-		if (typeof s === 'string') {
-			while (s.includes('$nowplaying{')) {
-				const q = s.match(/\$nowplaying{(.+?)}/);
-				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
-			}
-			while (s.includes('$selected{')) {
-				const q = s.match(/\$selected{(.+?)}/);
-				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
-			}
-			// Regorxxx <- Merge now playing and selected as fallback
-			while (s.includes('$nowplayingorselected{')) {
-				const q = s.match(/\$nowplayingorselected{(.+?)}/);
-				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
-			}
-			// Regorxxx ->
-			// Regorxxx <- Expand TF support
-			let i = 0;
-			while (s.includes('$harmonicsort{')) {
-				const q = s.match(/\$harmonicsort{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
-				i++;
-			}
-			while (s.includes('$harmonicmix{')) {
-				const q = s.match(/\$harmonicmix{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
-				i++;
-			}
-			while (s.includes('$shufflebytags{')) {
-				const q = s.match(/\$shufflebytags{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
-				i++;
-			}
-		}
-		// Regorxxx ->
-		return s;
+		this.filterQuery = panel.processCustomTf(panel.filter.mode[ppt.filterBy].type);
 	}
 
 	// Regorxxx <- Expand TF support
@@ -578,7 +519,7 @@ class Library {
 			handleList.OrderByFormat(tf, 1);
 			return handleList;
 		}
-		const tfClean = this.processCustomTf(tf)
+		const tfClean = panel.processCustomTf(tf)
 			.replace(/%ISPLAYING%/gi, fb.IsPlaying ? '$not(0)' : '').replace(/%ISPAUSEd%/gi, fb.isPaused ? '$not(0)' : '');
 		const sortMatches = /~#sort\d+/g.exec(tfClean) || [];
 		let tfEval = tfClean;
@@ -1139,7 +1080,7 @@ class Library {
 						: $.getTagsFromTf(panel.view)
 					: null;
 				const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-					? this.processCustomTf(panel.search.txt)
+					? panel.processCustomTf(panel.search.txt)
 					: panel.search.txt;
 				this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? searchText
@@ -1412,7 +1353,7 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? this.processCustomTf(panel.search.txt)
+							? panel.processCustomTf(panel.search.txt)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -1452,7 +1393,7 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? this.processCustomTf(panel.search.txt)
+							? panel.processCustomTf(panel.search.txt)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
