@@ -43,33 +43,33 @@
 					<th> Comment </th>
 				</tr>
 				<tr>
-					<td> <em>%&ltfield&gt%</em> </td>
+					<td> <em>%&ltFIELD&gt%</em> </td>
 					<td> Splits multiple values into separate items. </td>
-					<td> <em>%&ltartist&gt%</em> </td>
+					<td> <em>%&ltARTISTt&gt%</em> </td>
 					<td> Splits artists into same level. </td>
 				</tr>
 				<tr>
-					<td> <em>$stripbranchprefix{%&ltfield&gt%}</em> </td>
+					<td> <em>$stripbranchprefix{%&ltFIELD&gt%}</em> </td>
 					<td> Same as above, additionally removes prefixes (like leading "The" or "A") from each value. </td>
-					<td> <em>use $stripbranchprefix{%&ltartist&gt%}</em> </td>
+					<td> <em>$stripbranchprefix{%&ltARTIST&gt%}</em> </td>
 					<td> Splits artists and removes prefixes. </td>
 				</tr>
 				<tr>
-					<td> <em>$swapbranchprefix{%&ltfield&gt%}</em> </td>
+					<td> <em>$swapbranchprefix{%&ltFIELD&gt%}</em> </td>
 					<td> Same as above, additionally moves prefixes (like leading "The" or "A") to end of each value. </td>
-					<td> <em>$swapbranchprefix{%&ltartist&gt%}</em> </td>
+					<td> <em>$swapbranchprefix{%&ltARTIST&gt%}</em> </td>
 					<td> Splits artists and swaps prefixes to end. </td>
 				</tr>
 				<tr>
-					<td> <em>%field1%&#166%field2%&#166...</em> </td>
+					<td> <em>%FIELD1%&#166%FIELD2%&#166...</em> </td>
 					<td> &#166 combines different fields into the same branch level </td>
-					<td> <em>%album artist%&#166%artist%</em> </td>
+					<td> <em>%ALBUM ARTIST%&#166%ARTIST%</em> </td>
 					<td> Merges album artists and artists into same level. </td>
 				</tr>
 				<tr>
 					<td> <em>$nodisplay{X}</em> </td>
 					<td> Sorts and groups by X (TF expression) without displaying the result.</td>
-					<td> <em>%artist%|$nodisplay{$sub(99999,%date%)}%album%[ &#39[&#39%date%&#39]&#39]|%tracknumber%. %title%</em> </td>
+					<td> <em>%ARTIST%|$nodisplay{$sub(99999,%DATE%)}%album%[ &#39[&#39%DATE%&#39]&#39]|%TRACKNUMBER%. %TITLE%</em> </td>
 					<td> Sorts latest albums first and displays the date. </td>
 				</tr>
 				<tr>
@@ -96,6 +96,43 @@
 						Sets selected colour to brightest, normal and hover colours to defaults.
 					</td>
 				</tr>
+				<tr>
+					<td> <em>$prefix</em> </td>
+					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
+					<td>
+						<em>
+							$swapprefix(%TAG%,$prefix)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							$swapprefix(%TAG%,A,The,An)
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr></tr>
+					<td> <em>$nowplaying{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing track. </td>
+					<td> <em>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
+					<td> Displays nowplaying artist in red. </td>
+				</tr>
+				<tr>
+					<td> <em>$selected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the selected track. </td>
+					<td> <em>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
+					<td> Displays selected (focused) artist in red. </td>
+				</tr>
+				<tr>
+					<td> <em>$nowplayingorselected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
+					<td> <em>$if($stricmp(%ARTIST%,$nowplayingorselected{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
+					<td> Displays nowplaying or selected (focused) artist in red. </td>
+				</tr>
 			</table>
 		</div>
 		<div class="level2">
@@ -104,6 +141,26 @@
 					<li>
 						<div class="li"> Regarding date sorting, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern. This way you can easily change and switch sorting without further editing.</div>
 					</li>
+					<li>
+						<div class="li"> Prefixes used by $stripbranchprefix{}, $swapbranchprefix{} and $prefix are set at advanced tab (HTML options panel) or 'Prefixes to Strip or Swap (| Separator)' (properties panel).</div>
+					</li>
+					<li>
+						<div class="li"> Support of $nowplaying{}, $selected{} and $nowplayingorselected{} is limited to display purposes. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> May have some performance impact. </div>
+						</li>
+						<li>
+							<div class="li"> View will be updated automatically on Playback/selection changes. </div>
+						</li>
+						<li>
+							<div class="li"> Can be used for things like highlighting currently playing artist. </div>
+						</li>
+						<li>
+							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
+						</li>
+					</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Views" -->
@@ -133,7 +190,7 @@
 					<td> <em>$nowplayingorselected{X}</em> </td>
 					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
 					<td> <em>ARTIST IS $nowplayingorselected{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by nowplaying arist while playing, selected (focused) artist otherwise. </td>
+					<td> Displays tracks by nowplaying artist while playing, selected (focused) artist otherwise. </td>
 				</tr>
 				<tr>
 					<td> <em>$searchtext</em> </td>
@@ -149,13 +206,32 @@
 						Result: "GENRE HAS rock"
 					</td>
 				</tr>
+				<tr></tr>
+					<td> <em>$prefix</em> </td>
+					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
+					<td>
+						<em>
+							$swapprefix(%TAG%,$prefix)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							$swapprefix(%TAG%,A,The,An)
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
 			</table>
 		</div>
 		<div class="level2">
 			<h2>Notes:</h3>
 				<ul>
 					<li>
-						<div class="li"> Search  box also supports RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
+						<div class="li"> Search box also supports RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
 					</li>
 					<ul>
 						<li>

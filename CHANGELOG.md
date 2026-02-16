@@ -40,6 +40,8 @@
 		- sourcePanel and sourcePlaylistName allow multiple values, joined with '|'.
 		- performance improvements and code cleanup.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
+- HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
+- Syntax: updated syntax docs with relevant changes and examples.
 ### Removed
 ### Fixed
 - Statistics: bug on original script related to playback queue index statistics when a track was added multiple times to the queue. Queue index was duplicated in such cases. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).

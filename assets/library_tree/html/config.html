@@ -642,14 +642,15 @@
 						<li>Optionally hide the top bar search, filter button & settings button for the second and third panels</li>
 						<li>It's recommended to leave enabled: remember state on exit and before search; filters auto-manage scroll</li>
 					</ul>
-					<br>* The default album view works best as a tree view; for a facet view, the following is better:<br><input class="input99" value="View by Albums // $if2(%album%,εXtra)|%album artist%|[[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%" />
+					<br>* The default album view works best as a tree view; for a facet view, the following is better:<br><input class="input99" value="View by Albums // $if2(%ALBUM%,εXtra)|%ALBUM ARTIST%|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" />
 					<br><b><i>Extra view patterns, compatible with both facet and tree styles</i></b>
-					<br><input class="input99" value="Track // [%tracknumber%. ]%title%" /><input class="input99" value="Title // %title%" /><input class="input99" value="Folder // $directory(%path%)" /><input class="input99" value="Filename // %filename%" /><input class="input99" value="Filename.ext // %filename_ext%" /><input class="input99" value="Artist Initial // $cut(%artist%,1)|%artist%|$if2(%album%,εXtra)|[[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%" /><input class="input99" value="Album Artist Initial // $cut(%album artist%,1)|%album artist%|$if2(%album%,εXtra)|[[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%" /><input class="input99" value="Year - Album // [$year(%date%) - ]$if2(%album%,εXtra)|%album artist%|[[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%" />
+					<br><input class="input99" value="Track // [%TRACKNUMBER%. ]%TITLE%" /><input class="input99" value="Title // %title%" /><input class="input99" value="Folder // $directory(%PATH%)" /><input class="input99" value="Filename // %FILENAME%" /><input class="input99" value="Filename.ext // %FILENAME_EXT%" /><input class="input99" value="Artist Initial // $cut(%ARTIST%,1)|%ARTIST%|$if2(%ALBUM%,εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" /><input class="input99" value="Album Artist Initial // $cut(%ALBUM ARTIST%,1)|%ALBUM ARTIST%|$if2(%ALBUM%,εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" /><input class="input99" value="Year - Album // [$year(%DATE%) - ]$if2(%ALBUM%,εXtra)|%ALBUM ARTIST%|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" />
 					<br><b><i>Sorting</i></b>
-					<br>Facets works by using the top level of normal tree views. The remainder of the view is used for sorting, which should be sufficient. If extra sorting is required, a playlist sort can be used, for ex:<br><br><input class="input99" value="%album artist%  $if2(%album%,εXtra)  [[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%" /><input class="input99" value="%artist%  $if2(%album%,εXtra)  [[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%">
+					<br>Facets works by using the top level of normal tree views. The remainder of the view is used for sorting, which should be sufficient. If extra sorting is required, a playlist sort can be used, for ex:<br><br><input class="input99" value="%ALBUM ARTIST%  $if2(%ALBUM%,εXtra)  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" /><input class="input99" value="%ARTIST%  $if2(%ALBUM%,εXtra)  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%">
 				</div>
 				<div class="info5"><b>Extended syntax</b></div>
-				<table id="syntax" class="table98">
+				<!-- Regorxxx Filter non-relevant functions at help -->
+				<table id="syntaxView" class="table98">
 					<br>
 					<colgroup>
 						<col span="1" style="width:20%">
@@ -659,11 +660,11 @@
 				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour code until either another $colour code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
 				<div class="info7" style="color:#0066cc;"><i>Hover effect requires that "Hover effect (foreground): Highlight text" is enabled (display tab).</i></div>
 				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
-				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI;" value="$colour{-}%artist%[$colour{+} - %album%][$colour{96-127-127} - '['%date%']'][$colour{111-132-138} - %genre%]$colour{--}|[$colour{--,++,0-192-192}%tracknumber%. ]$colour{-,++,0-228-228}%title%" />
+				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
 				</div>
 				<div class="info7">Item counts are a special case. They don't form part of the view pattern.<br>Align right: drawn separately; not controlled by $colour codes; already dimmed.<br>End of text: effected by $colour codes. Use $colour{} at the end of the line to reset or set to a different colour if desired ($colour{--} is used in the example above).</div>
 				<div class="info7" style="color:#0066cc;"><b>String limitation</b></div>
-				<div class="info7">$nodisplay & $colour are generally unsafe inside string manipulation functions that remove a part of a string or insert a substring by position. Instead, they should be put before the string function, e.g.<br>Use $colour{255-0-0}$substr(str,from,to). Don't use $substr($colour{255-0-0}str,from,to).<br>Use $colour{0-255-0}$swapbranchprefix{%&ltartist&gt%}. Don't use $swapbranchprefix{$colour{0-255-0}%&ltartist&gt%}.</div>
+				<div class="info7">$nodisplay & $colour are generally unsafe inside string manipulation functions that remove a part of a string or insert a substring by position. Instead, they should be put before the string function, e.g.<br>Use $colour{255-0-0}$substr(str,from,to). Don't use $substr($colour{255-0-0}str,from,to).<br>Use $colour{0-255-0}$swapbranchprefix{%&ltARTIST&gt%}. Don't use $swapbranchprefix{$colour{0-255-0}%&ltARTIST&gt%}.</div>
 				<div><br></div>
 			</div>
 		</div>
@@ -1906,26 +1907,35 @@
 						}
 						columnCount = 6;
 						break;
-					case 'syntaxFilter': // Regorxxx <- Add help to filter tab ->
+					case 'syntaxFilter': // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
+					case 'syntaxView': // Regorxxx <- Filter non-relevant functions at help ->
 					case 'syntax':
 						// Regorxxx <- Merge now playing and selected as fallback | Code cleanup
 						var headers = ['Syntax', 'Use\u00A0In\u00A0\u00A0\u00A0', 'Description'];
 						cells.push(headers);
 						var labels = [
-							['%&ltfield&gt%', 'Views', 'Split multiple values into separate items, e.g. use %&ltartist&gt%'],
-							['$stripbranchprefix{%&ltfield&gt%}', 'Views', 'Same as above, additionally removes prefixes (like leading "The" or "A") from each value, e.g. use $stripbranchprefix{%&ltartist&gt%}'],
-							['$swapbranchprefix{%&ltfield&gt%}', 'Views', 'Same as above, additionally moves prefixes (like leading "The" or "A") to end of each value, e.g. use $swapbranchprefix{%&ltartist&gt%}'],
-							['%field1%&#166%field2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g. use %album artist%&#166%artist% or %&ltalbum artist&gt%&#166%&ltartist&gt%'],
-							['$nodisplay{X}', 'Views', "Sorts & groups by X without display of X, e.g. the following sorts latest albums first & displays the date.<br><input class='input75' style='font:1em Segoe UI; border:none; background:none;' value='%artist%|$nodisplay{$sub(99999,%date%)}%album%[ &#39[&#39%date%&#39]&#39]|%tracknumber%. %title%'/>"],
-							['$nowplaying{X}', 'Filters', 'Returns value of X for the playing track, e.g. artist IS $nowplaying{$meta(artist,0)} Displays tracks by nowplaying artist.'],
-							['$selected{X}', 'Filters', 'Returns value of X for the selected track, e.g. artist IS $selected{$meta(artist,0)} Displays tracks by selected (focused) artist.'],
+							['%&ltFIELD&gt%', 'Views', 'Split multiple values into separate items, e.g.<br>%&ltARTIST&gt%'],
+							['$stripbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as above, additionally removes prefixes (like leading "The" or "A") from each value, e.g.<br>$stripbranchprefix{%&ltARTIST&gt%}'],
+							['$swapbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as above, additionally moves prefixes (like leading "The" or "A") to end of each value, e.g.<br>$swapbranchprefix{%&ltARTIST&gt%}'],
+							['%FIELD1%&#166%FIELD2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g.<br>%ALBUM ARTIST%&#166%ARTIST% or %&ltALBUM ARTIST&gt%&#166%&ltARTIST&gt%'],
+							['$nodisplay{X}', 'Views', 'Sorts & groups by X without display of X, e.g. the following sorts latest albums first & displays the date.<br>%ARTIST%|$nodisplay{$sub(99999,%DATE%)}%ALBUM%[ &#39[&#39%DATE%&#39]&#39]|%TRACKNUMBER%. %TITLE%'],
+							['$colour{normal,hover,selected}', 'Views', 'Set different colours for parts of a line of text, see below for more info.'],
+							['%PREFIX%', 'Views|Filters', 'Returns custom prefixes (separated by comma), ready to be used on TF functions. <br>$swapprefix(%TAG%,%PREFIX%)'],
+							['$nowplaying{X}', 'Filters', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by nowplaying artist.'],
+							['$selected{X}', 'Filters', 'Returns value of X for the selected track, e.g.<br>ARTIST IS $selected{$meta(ARTIST,0)}<br>Displays tracks by selected (focused) artist.'],
 							['$nowplayingorselected{X}', 'Filters', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
 							['$searchtext', 'Filters', 'Returns search text, e.g. enter following as a filter "genre HAS $searchtext", then type "rock" in search box: yields query "genre HAS rock"'],
-							['$colour{normal,hover,selected}', 'Views', 'Set different colours for parts of a line of text, see below for more info.']
+							['$nowplaying{X}', 'Views', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays nowplaying artist in red.'],
+							['$selected{X}', 'Views', 'Returns value of X for the selected track, e.g.<br>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays selected (focused) artist in red.'],
+							['$nowplayingorselected{X}', 'Views', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.']
 						];
 						var items = [];
 						for (j = 0; j < labels.length; j++) {
 							items[j] = [];
+							// Regorxxx <- Filter non-relevant functions at help
+							if (id === 'syntaxFilter' && labels[j][1].split('|').indexOf('Filters') === -1) { continue; }
+							else if (id === 'syntaxView' && labels[j][1].split('|').indexOf('Views') === -1) { continue; }
+							// Regorxxx ->
 							for (i = 0; i < labels[j].length; i++) {
 								items[j].push('<div class=info5;">' + labels[j][i] + '</div>');
 								if (i == 2) {
@@ -1984,11 +1994,11 @@
 					for (j = 0; j < columnCount; j++) {
 						var cell = row.insertCell(-1);
 						cell.innerHTML = cells[i][j];
-						if (tb != 'syntax' && tb != 'syntaxFilter' && i % 2 == 1) cell.style.background = '#E8E8E8'; // Regorxxx <- Add help to filter tab ->
+						if (tb != 'syntax' && tb != 'syntaxFilter' && tb != 'syntaxView' && i % 2 == 1) cell.style.background = '#E8E8E8'; // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
 					}
 				}
 
-				if (tb == 'syntax' || tb === 'syntaxFilter') { // Regorxxx <- Add help to filter tab ->
+				if (tb == 'syntax' || tb === 'syntaxFilter'|| tb === 'syntaxView') { // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
 					var els = document.getElementById(tb).getElementsByTagName("th");
 					for (i = 0; i < els.length; i++) {
 						els[i].style.lineHeight = "1.62em";
@@ -2299,7 +2309,7 @@
 			setCheckboxes('all', 'value');
 			setInputs('all', 'value');
 			setRadioBtns('all', 'value');
-			generateTable('syntax');
+			generateTable('syntaxView'); // Regorxxx <- Filter non-relevant functions at help ->
 			generateTable('syntaxFilter');  // Regorxxx <- Add help to filter tab ->
 
 			document.getElementById("btn_delete").disabled = true;
