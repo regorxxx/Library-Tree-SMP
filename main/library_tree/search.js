@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/02/26
+//16/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -142,7 +142,7 @@ class Search {
 				return ppt.queueSorting && pop.row.i >= 0
 					? idx < 0
 						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
-						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + ' pos'
+						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
 					: (mask & MK_CONTROL) === MK_CONTROL
 						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
