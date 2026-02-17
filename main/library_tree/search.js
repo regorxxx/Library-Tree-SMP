@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/02/26
+//17/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -644,7 +644,7 @@ class Find {
 		this.jSearch = '';
 		this.jump_search = true;
 		this.initials = null;
-		this.prevChar = null; // Regorxxx <- Fixed quick-search on same letter
+		this.prevChar = null; // Regorxxx <- Fixed quick-search on same letter ->
 		this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
 	}
 
@@ -655,7 +655,7 @@ class Find {
 		if (this.jSearch) {
 			gr.SetSmoothingMode(4);
 			const text = this.jSearch.length
-				? (this.bAnyPosition ? '*' : '') +  this.jSearch.toUpperCase()
+				? (this.bAnyPosition ? '*' : '') + this.jSearch.toUpperCase()
 				: '';
 			this.j.w = gr.CalcTextWidth(text, ui.font.find) + 25;
 			gr.FillRoundRect(this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, this.arc1, this.arc1, 0x96000000);
@@ -668,6 +668,7 @@ class Find {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Up/down navigation during quicksearch | Code cleanup
 	on_char(code) {
 		// Regorxxx <- Quick-search at any position of string
 		const bCtrl = utils.IsKeyPressed(vk.ctrl);
@@ -682,7 +683,7 @@ class Find {
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
 			const char = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase();
-			// Regorxxx <- Fixed quick-search on same letter. Fix quick-searck for non ascii first char, greek and cyrilic
+			// Regorxxx <- Fixed quick-search on same letter | Fix quick-searck for non ascii first char, greek and cyrilic
 			const normChar = $.asciify(Language.transliterate(char));
 			if (pop.tree[panel.pos].sel && (char === text || normChar === text) && this.prevChar == text) { advance = true; }
 			this.prevChar = text;
@@ -695,127 +696,199 @@ class Find {
 		}
 		switch (true) {
 			case advance:
-				if (utils.IsKeyPressed(0x0A) || utils.IsKeyPressed(0x08) || utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x11) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
-				if (!panel.search.active) {
-					let init = '';
-					let cur = 'currentArr';
-					if (!this.initials) { // reset in buildTree
-						this.initials = {};
-						pop.tree.forEach((v, i) => {
-							if (!v.root) {
-								const nm = v.name.replace(/@!#.*?@!#/g, '');
-								init = $.asciify(Language.transliterate(nm.charAt(0).toLowerCase())); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
-								if (cur != init && !this.initials[init]) {
-									this.initials[init] = [i];
-									cur = init;
-								} else {
-									this.initials[init].push(i);
-								}
-							}
-						});
-					}
-
-					this.jump_search = false;
-					if (panel.pos >= 0 && panel.pos < pop.tree.length) {
-						this.matches = this.initials[text];
-						this.ix = this.matches.indexOf(panel.pos);
-						this.ix++;
-						if (this.ix >= this.matches.length) this.ix = 0;
-						panel.pos = this.matches[this.ix];
-						this.jump_search = true;
-					}
-					if (this.jump_search) {
-						pop.clearSelected();
-						pop.sel_items = [];
-						pop.tree[panel.pos].sel = true;
-						pop.setPos(panel.pos);
-						pop.getTreeSel();
-						lib.treeState(false, ppt.rememberTree);
-						panel.treePaint();
-						if (panel.imgView) pop.showItem(panel.pos, 'focus');
-						else {
-							const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
-							if (sbar.rows_drawn - row < 3 || row < 0) sbar.checkScroll((panel.pos + 3) * ui.row.h - sbar.rows_drawn * ui.row.h);
-						}
-						if (ppt.libSource) {
-							// if (pop.autoFill.key) pop.load(pop.sel_items, true, false, false, !ppt.sendToCur, false);
-							if (pop.autoFill.key) pop.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
-							pop.track(pop.autoFill.key);
-						} else if (panel.pos >= 0 && panel.pos < pop.tree.length) pop.setPlaylistSelection(panel.pos, pop.tree[panel.pos]);
-					} else {
-						this.jSearch = text;
-						panel.treePaint();
-						timer.clear(timer.jsearch2);
-						timer.jsearch2.id = setTimeout(() => {
-							this.jSearch = '';
-							this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
-							panel.treePaint();
-							timer.jsearch2.id = null;
-						}, 1200);
-					}
-				}
+				this.advance(text);
 				break;
 			case !advance:
-				if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
-				if (!panel.search.active) {
-					let found = false;
-					let pos = -1;
-					switch (code) {
-						case vk.back:
-							this.jSearch = this.jSearch.substr(0, this.jSearch.length - 1);
-							break;
-						// Regorxxx <- Quick-search at any position of string
-						case vk.enter:
-							this.jSearch = '';
-							this.bAnyPosition = false;
-							return;
-						default:
-							if (this.jSearch.length === 0 && (bShift || bCtrl)) { this.bAnyPosition = true; }
-							this.jSearch += text;
-							break;
-						// Regorxxx ->
-					}
-					pop.clearSelected();
-					if (!this.jSearch) return;
-					pop.sel_items = [];
-					this.jump_search = true;
-					panel.treePaint();
-					timer.clear(timer.jsearch1);
-					timer.jsearch1.id = setTimeout(() => {
-						pop.tree.some((v, i) => {
-							const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''))); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
-							if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) { // Regorxxx <- Quick-search optimization | Quick-search at any position of string ->
-								found = true;
-								pos = i;
-								v.sel = true;
-								pop.setPos(pos);
-								pop.getTreeSel();
-								lib.treeState(false, ppt.rememberTree);
-								return true;
-							}
-						});
-						if (!found) this.jump_search = false;
-						panel.treePaint();
-						if (found) pop.showItem(pos, 'focus');
-						timer.jsearch1.id = null;
-					}, 500);
-
-					timer.clear(timer.jsearch2);
-					timer.jsearch2.id = setTimeout(() => {
-						if (found) {
-							if (ppt.libSource) {
-								if (pop.autoFill.key) pop.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
-								pop.track(pop.autoFill.key);
-							} else if (pos >= 0 && pos < pop.tree.length) pop.setPlaylistSelection(pos, pop.tree[pos]);
-						}
-						this.jSearch = '';
-						this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
-						panel.treePaint();
-						timer.jsearch2.id = null;
-					}, 1200);
-				}
+				this.match(text, code, bShift || bCtrl);
 		}
 	}
+
+	advance(text) {
+		if (utils.IsKeyPressed(0x0A) || utils.IsKeyPressed(0x08) || utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x11) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
+		if (!panel.search.active) {
+			let init = '';
+			let cur = 'currentArr';
+			if (!this.initials) { // reset in buildTree
+				this.initials = {};
+				pop.tree.forEach((v, i) => {
+					if (!v.root) {
+						const nm = v.name.replace(/@!#.*?@!#/g, '');
+						init = $.asciify(Language.transliterate(nm.charAt(0).toLowerCase())); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
+						if (cur != init && !this.initials[init]) {
+							this.initials[init] = [i];
+							cur = init;
+						} else {
+							this.initials[init].push(i);
+						}
+					}
+				});
+			}
+
+			this.jump_search = false;
+			if (panel.pos >= 0 && panel.pos < pop.tree.length) {
+				this.matches = this.initials[text];
+				this.ix = this.matches.indexOf(panel.pos);
+				this.ix++;
+				if (this.ix >= this.matches.length) { this.ix = 0; }
+				panel.pos = this.matches[this.ix];
+				this.jump_search = true;
+			}
+			if (this.jump_search) {
+				pop.clearSelected();
+				pop.sel_items = [];
+				this.select(panel.pos);
+				panel.treePaint();
+				if (panel.imgView) { pop.showItem(panel.pos, 'focus'); }
+				else {
+					const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
+					if (sbar.rows_drawn - row < 3 || row < 0) sbar.checkScroll((panel.pos + 3) * ui.row.h - sbar.rows_drawn * ui.row.h);
+				}
+				this.send(panel.pos);
+			} else {
+				this.jSearch = text;
+				panel.treePaint();
+				this.sendAndClear();
+			}
+		}
+	}
+
+	match(text, code, bAnyPosition) {
+		if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
+		if (!panel.search.active) {
+			let next = -1;
+			switch (code) {
+				case vk.back:
+					this.jSearch = this.jSearch.substr(0, this.jSearch.length - 1);
+					break;
+				// Regorxxx <- Quick-search at any position of string
+				case vk.enter:
+					this.jSearch = '';
+					this.bAnyPosition = false;
+					return;
+				default:
+					if (this.jSearch.length === 0 && bAnyPosition) { this.bAnyPosition = true; }
+					this.jSearch += text;
+					break;
+				// Regorxxx ->
+			}
+			pop.clearSelected();
+			if (!this.jSearch) return;
+			pop.sel_items = [];
+			this.jump_search = true;
+			panel.treePaint();
+			timer.clear(timer.jsearch1);
+			timer.jsearch1.id = setTimeout(() => {
+				({ next } = this.findMatch());
+				if (next !== -1) { this.select(next); }
+				if (next === -1) { this.jump_search = false; }
+				panel.treePaint();
+				if (next !== -1) pop.showItem(next, 'focus');
+				timer.jsearch1.id = null;
+			}, 500);
+			this.sendAndClear(next);
+		}
+	}
+
+	nextMatch(bReverse) {
+		if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
+		if (!panel.search.active) {
+			const currPos = panel.pos;
+			let next = -1;
+			let first = -1;
+			pop.clearSelected();
+			if (!this.jSearch) { return; }
+			pop.sel_items = [];
+			this.jump_search = true;
+			panel.treePaint();
+			({ first, next } = bReverse
+				? this.findMatchReversed(currPos)
+				: this.findMatch(currPos)
+			);
+			if (next === -1 && first !== -1) { next = first; }
+			if (next !== -1) { this.select(next); }
+			if (next === -1) { this.jump_search = false; }
+			panel.treePaint();
+			if (next !== -1) { pop.showItem(next, 'focus'); }
+			this.sendAndClear(next);
+		}
+	}
+
+	sendAndClear(pos = -1) {
+		timer.clear(timer.jsearch2);
+		timer.jsearch2.id = setTimeout(() => {
+			this.send(pos);
+			this.jSearch = '';
+			this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
+			panel.treePaint();
+			timer.jsearch2.id = null;
+		}, 1200);
+	}
+
+	send(pos) {
+		if (pos === -1) {
+			if (ppt.libSource) {
+				if (pop.autoFill.key) { pop.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false }); }
+				pop.track(pop.autoFill.key);
+			} else if (pos >= 0 && pos < pop.tree.length) { pop.setPlaylistSelection(pos, pop.tree[pos]); }
+		}
+	}
+
+	select(pos = -1) {
+		if (pos === -1) { return false; }
+		pop.tree[pos].sel = true;
+		pop.setPos(pos);
+		pop.getTreeSel();
+		lib.treeState(false, ppt.rememberTree);
+		return true;
+	}
+
+	findMatch(currPos = -1) {
+		let next = -1;
+		let first = -1;
+		pop.tree.some((v, i) => {
+			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, '')));
+			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
+				if (i <= currPos) {
+					if (first === -1) { first = i; }
+					return false;
+				} else {
+					next = i;
+					return true;
+				}
+			}
+		});
+		return { first, next };
+	}
+
+	findMatchReversed(currPos = -1) {
+		let next = -1;
+		let first = -1;
+		const len = pop.tree.length - 1;
+		for (let i = len, v; i >= 0; i--) {
+			v = pop.tree[i];
+			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, '')));
+			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
+				if (i >= currPos) {
+					if (first === -1) { first = i; }
+				} else {
+					next = i;
+					break;
+				}
+			}
+		};
+		return { first, next };
+	}
+
+	on_key_down(vKey) {
+		if (this.jSearch) {
+			if (vKey === vk.dn) {
+				this.nextMatch();
+			} else if (vKey === vk.up) {
+				this.nextMatch(true);
+			}
+		}
+	}
+	// Regorxxx ->
 
 	on_size() {
 		this.j.x = Math.round(ui.w / 2);

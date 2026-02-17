@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/02/26
+//17/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -71,6 +71,7 @@ addEventListener('on_item_focus_change', (playlistIndex) => {
 addEventListener('on_key_down', (vkey) => {
 	pop.on_key_down(vkey);
 	img.on_key_down(vkey);
+	find.on_key_down(vkey); // Regorxxx <- Up/down navigation during quicksearch ->
 	if (ppt.filterShow && ppt.multiBtnShow && !panel.search.active && !find.jSearch && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyDown(vkey); } // Regorxxx <- Filter / View / Source button ->
 	if (!ppt.searchShow) return;
 	search.on_key_down(vkey);

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/02/26
+//17/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2247,6 +2247,7 @@ class Populate {
 				break;
 			case vk.dn:
 			case vk.up:
+				if (find.jSearch) { break; } // Regorxxx <- Up/down navigation during quicksearch ->
 				if (this.tree.length == 0) break;
 				if ((panel.pos == 0 && vkey == vk.up) || (panel.pos == this.tree.length - 1 && vkey == vk.dn) || (panel.pos === -1 && vk.k('alt'))) {
 					this.setTreeSel(-1);
