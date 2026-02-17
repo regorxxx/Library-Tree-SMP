@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//17/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -515,6 +515,15 @@ class MenuItems {
 						{ key: 'Num -', action: 'Collapse all nodes.' }
 					].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
 					'\n' +
+					'\nQuick-Search:' +
+					'\n-------------' +
+					'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.'+
+					'\n• Multiple presses will jump between nodes witch such initial (cycling).' +
+					'\n• Full strings can also be pressed, looking for first match (at start).' +
+					'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
+					'\n• Use Up|Down keys to navigate between all found matches.' +
+					'\n• Asymmetric search and transliteration.' +
+					'\n' +
 					'\nDrag n\' drop (tracks):' +
 					'\n----------------------' +
 					'\n• Standard: add selection to playlist.' +
@@ -523,6 +532,8 @@ class MenuItems {
 					'\n' +
 					'\nSearch Box:' +
 					'\n--------------' +
+					'\n• RegExp support: /[expression]/[flags], flags can be any of \'gimsuyt\'.' +
+					'\n• Flag \'t\' applies transliteration to tag values before matching.' +
 					[
 						{ key: 'Ctrl + A', action: 'Select all.' },
 						{ key: 'Ctrl + C', action: 'Copy selected text.' },
@@ -545,6 +556,10 @@ class MenuItems {
 					'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
 					'\n• Double click scrollbar thumb to show now playing/focused item.' +
 					'\n• Double click scrollbar buttons to scroll to top/bottom.' +
+					'\n' +
+					'\nTransliteration support:' +
+					'\n-----------------------' +
+					'\n• Greek, Cyrillic, Japanese (Katakana and Hiragana).' +
 					'\n' +
 					'\nSMP / JSplitter Panel:' +
 					'\n----------------------' +
