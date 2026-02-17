@@ -41,6 +41,7 @@
 		- performance improvements and code cleanup.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 - HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
+- HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
 - Syntax: updated syntax docs with relevant changes and examples.
 ### Removed
 ### Fixed

@@ -802,6 +802,11 @@
 						<span id="viewSorting" class="dropdown-content"></span>
 					</span>
 					<div style="margin:0.31em 0 0;" id="viewSortingTrans"></div>
+					<!-- Regorxxx -->
+					<!-- Regorxxx Queue source -->
+					<span class="info5600">Playback queue:</span>
+					<div style="margin:0.31em 0 0;" id="queue"></div>
+					<!-- Regorxxx -->
 				</div>
 
 				<div class="column32">
@@ -1166,6 +1171,10 @@
 					<!-- Regorxxx Library profiling -->
 					<div class="div_text1">Logging</div>
 					<div id="logging"></div>
+					<!-- Regorxxx -->
+					 <!-- Regorxxx Auto-DJ feature -->
+					<div class="div_text1">Auto-Dj</div>
+					<div id="autodj"></div>
 					<!-- Regorxxx -->
 				</div>
 			</div>
@@ -1532,6 +1541,9 @@
 			var folderSortingFbLabels = ['Prefer native sorting for library sources'];
 			var sortingTransLabels = ['Transliterate values to Latin', 'Transliterate values to Latin'];
 			// Regorxxx  ->
+			// Regorxxx <- Queue source
+			var queueLabels = ['Show now playing track', 'Force sorting by queue idx'];
+			// Regorxxx ->
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
@@ -1557,6 +1569,7 @@
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
+			var autodjLabels = ['Stop when repeating a track']; // Regorxxx <- Auto-DJ feature ->
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control'];
 			var selectionLabels = ['Full line', 'Play on enter or send from menu'];
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
@@ -1647,13 +1660,13 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
+				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source  ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse','custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
-				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'winNode', 'blurAutofill', 'libAutoSync', 'pn_h_auto', 'logLibProfiler'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
+				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'winNode', 'blurAutofill', 'libAutoSync', 'pn_h_auto', 'logLibProfiler', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			}
 			// Regorxxx <- New search tab
 			box.all = box.behaviour.concat(box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
@@ -2084,6 +2097,9 @@
 				for (i = 0; i < viewSortingLabels.length; i++) { window.viewSorting.insertAdjacentHTML('beforeend', '<a onclick="setViewSorting(' + i + ');">' + viewSortingLabels[i] + '</a>'); }
 				i = 1; window.viewSortingTrans.insertAdjacentHTML('beforeend', '<div><input id="viewSortingTrans_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="viewSortingTrans_checkbox' + i + '" class="checkbox_label">' + sortingTransLabels[i] + '</label></div>');
 				// Regorxxx ->
+				// Regorxxx <- Queue source
+				for (i = 0; i < 2; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
+				// Regorxxx ->
 				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="playlist_container' + i + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="playlist_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				i = 1; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
@@ -2293,6 +2309,9 @@
 				for (i = 0; i < 2; i++) { window.modeInput.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="modeInput_container' + i + '" name="advanced_input" class="input35" /><label for="modeInput_container' + i + '" class="inp_label2">' + modeLabels[i] + '</label></div>'); }
 				// Regorxxx <- Library profiling
 				i = 0; window.logging.insertAdjacentHTML('beforeend', '<div><input id="logging_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="logging_checkbox' + i + '" class="checkbox_label">' + loggingLabels[i] + '</label></div>');
+				// Regorxxx ->
+				// Regorxxx <- Auto-DJ feature
+				i = 0; window.autodj.insertAdjacentHTML('beforeend', '<div><input id="autodj_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="autodj_checkbox' + i + '" class="checkbox_label">' + autodjLabels[i] + '</label></div>');
 				// Regorxxx ->
 			}
 
