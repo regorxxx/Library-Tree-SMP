@@ -1090,7 +1090,7 @@
 						</li>
 					</ul>
 				</div>
-				<div class="info5"><b>Image sources</b>Album art is loaded from the file sources defined at Preferences: Display, and embedded images. Stub images are set above.<br>Artist photos: if biography is used to obtain photos, the pattern below can be entered. To get ...*YOUR PATH*..., use biography > sources > open file location > image. Copy the part required from the windows explorer address bar.</div>
+				<div class="info5"><b>Image sources</b><br><br>Album art is loaded from the file sources defined at foobar2000's main Preferences: Display, and embedded images. Stub images are set at 'Album art' section of the preferences window.<br>Artist photos: if biography is used to obtain photos, the pattern below can be entered. To get ...*YOUR PATH*..., use biography > sources > open file location > image. Copy the part required from the windows explorer address bar.</div>
 				<div id="photoPath"></div>
 				<div class="info5"><b>Views</b></div>
 				<div class="info5">Any view can be used. The image loaded is that of the <i>first item in the group</i>, according to the type set (front cover, artist etc). Views starting with something like <i>%artist%|%album%... or %album artist%|%album%...</i> work well. Always use a full pattern so tracks etc sort properly. By default the number of group levels is automatically determined. Use of the same view for the tree and album art makes toggling between the two more straightforward. Since only one copy of the library is kept in memory, a library reload is also avoided.
@@ -2238,8 +2238,9 @@
 				for (i = 0; i < 3; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
 
 				for (i = 0; i < 2; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox" class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); }
-				var pth = '...*YOUR PATH*...\\art_img\\$cut(%artist%,1)\\%artist%\\*    [CHANGE ...*YOUR PATH*... as required; pattern assumes biography is saving to default folder]';
-				window.photoPath.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_photoPath"><input name="photoPath_view" class="input98" readonly value="' + pth + '" /></div>')
+				var pth = '[*YOUR PATH*]\\art_img\\$lower($cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),1))\\$if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0))\\*';
+				var pthExmpl = '\'C:\\foobar2000\\profile\\foo_spider_monkey_panel\\package_data\\{BA9557CE-7B4B-4E0E-9373-99F511E81252}\\art_img\\$lower($cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),1))\\$if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0))\\*\'';
+				window.photoPath.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_photoPath"><input name="photoPath_view" class="input98" readonly value="' + pth + '" /></div><br>Change \'[*YOUR PATH*]\' as required; pattern assumes biography is saving to default folder]<br><br>i.e. ' + pthExmpl)
 
 				window.rootStub_dropdown.innerHTML = '<b>Root:</b> <img src="' + rootStubLabels[root_ix].path + '" alt="' + rootStubLabels[root_ix].name + '" width="' + em + '" height="' + em + '" class="stub"/> ' + rootStubLabels[root_ix].name + '<';
 				for (i = 0; i < rootStubLabels.length; i++) { window.rootStub.insertAdjacentHTML('beforeend', '<a onclick="setRootImage(' + i + ');"> <img src="' + rootStubLabels[i].path + '" alt="' + rootStubLabels[i].name + '" width="' + em + '" height="' + em + '" style="vertical-align:middle;"/> ' + rootStubLabels[i].name + '</a>'); }
