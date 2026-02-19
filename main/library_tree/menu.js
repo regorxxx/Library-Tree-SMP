@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/02/26
+//19/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -415,10 +415,10 @@ class MenuItems {
 				checkItem: ppt.xOffsetBg !== 0 || ppt.wOffsetBg !== 0
 			});
 			// Regorxxx ->
+			menu.newItem({ menuName: 'Quick setup', separator: true });
 		}
 		// Regorxxx ->
 		// Regorxxx <- Code cleanup
-		menu.newItem({ menuName: 'Quick setup', separator: true });
 		[
 			{ name: 'Keep current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 }
 
@@ -518,7 +518,7 @@ class MenuItems {
 					'\nQuick-Search:' +
 					'\n-------------' +
 					'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.'+
-					'\n• Multiple presses will jump between nodes witch such initial (cycling).' +
+					'\n• Multiple presses will jump between nodes with such initial (cycling).' +
 					'\n• Full strings can also be pressed, looking for first match (at start).' +
 					'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
 					'\n• Use Up|Down keys to navigate between all found matches.' +
@@ -528,7 +528,7 @@ class MenuItems {
 					'\n----------------------' +
 					'\n• Standard: add selection to playlist.' +
 					'\n• On Search Box: add query based on tracks (Ctrl|Alt modifiers).' +
-					'\n• On Playback Queue: add tracks to playback queue.' +
+					'\n• On Playback Queue: add tracks to playback queue (Ctrl modifier).' +
 					'\n' +
 					'\nSearch Box:' +
 					'\n--------------' +
