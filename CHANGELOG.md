@@ -52,7 +52,7 @@
 - Drag n' drop: fixed handling for internal drag n' drop in some cases using Playback queue source. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1076851.html#msg1076851).
 - Sources: 'Sources\Select playlist(s)' submenu being disabled when it shouldn't.
 - Shortcuts: fixed bug on original script related to usage of 'Ctrl + A' (select All) shortcut crashing the panel while using Playlist sources if 'Behaviour\Mode\Keystroke' was set to 'Send to playlist'. When set to 'Select' it simply didn't work. Now the shortcut works as intended.
-- Drag n' drop: workaround for CUI/SMP drag n' drop bug while dragging tracks directly from album list panel, without library view playlist usage. See [here](https://hydrogenaudio.org/index.php/topic,116669.msg1077838.html#msg1077838).
+- Drag n' drop: workaround for CUI/SMP drag n' drop bug while dragging tracks directly from album list panel, without library view playlist usage. See [here](https://hydrogenaudio.org/index.php/topic,116669.msg1077838.html#msg1077838) and [CUI Issue 459](https://github.com/reupen/album_list_panel/issues/459).
 
 ## [1.0.0] - 2026-01-30
 ### Added
