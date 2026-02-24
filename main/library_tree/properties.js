@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//24/02/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -396,8 +396,9 @@ let properties = [
 	// Regorxxx <- Global duplicates filter
 	['Filter duplicates by', JSON.stringify(globTags.remDupl), 'filterDuplBy'],
 	['Filter remove duplicates', false, 'filterDupl'],
-	['Filter show duplicates ', false, 'showDupl']
+	['Filter show duplicates ', false, 'showDupl'],
 	// Regorxxx ->
+	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'] // Regorxxx <- GDI/D2D draw mode ->
 ];
 
 const ppt = new PanelProperties;
@@ -414,4 +415,5 @@ ppt.set('Image Show Index Number', null);
 ppt.set('Image Show Index Year Auto', null);
 ppt.set('Node: Item Show Duration', null);
 ppt.set('Node [Squares]: Windows 0 or 1', null);
+window.DrawMode = ppt.drawMode; // Regorxxx <- GDI/D2D draw mode ->
 properties = undefined;

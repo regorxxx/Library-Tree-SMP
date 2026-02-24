@@ -18,6 +18,7 @@
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
 - UI: new quicksetup presets.
 - UI: 'Move to front queue', 'Move to back queue' and 'Move in queue...' menu entries to move tracks within the playback queue while using the associated source.
+- UI: added support for D2D draw mode if JS Host supports it (currently only JSplitter 3.7.8+ or 4.1.0+). It must be set per instance, at the properties panel ('Draw mode: GDI (0), D2D (1)'). If JS Host doesn't support it, it will fallback to GDI. Note D2D mode may produce UI artifacts under Wine or not be fully equivalent to GDI, use at your own consideration and only report problems to JS host component devs.
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
