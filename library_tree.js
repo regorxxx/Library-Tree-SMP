@@ -1,8 +1,9 @@
 ﻿'use strict';
-//11/02/26
+//26/02/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '1.0.0', features: { drag_n_drop: true, grab_focus: true } }); }
 
+window.DrawMode = Math.max(Math.min(window.GetProperty('- Draw mode: GDI (0), D2D (1)', 0), 1), 0);  // Regorxxx <- GDI/D2D draw mode ->
 
 const loadAsync = window.GetProperty('Load Library Tree Asynchronously', true);
 

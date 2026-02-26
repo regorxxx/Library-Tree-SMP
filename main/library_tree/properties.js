@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/02/26
+//26/02/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -415,5 +415,4 @@ ppt.set('Image Show Index Number', null);
 ppt.set('Image Show Index Year Auto', null);
 ppt.set('Node: Item Show Duration', null);
 ppt.set('Node [Squares]: Windows 0 or 1', null);
-window.DrawMode = ppt.drawMode; // Regorxxx <- GDI/D2D draw mode ->
 properties = undefined;
