@@ -1935,14 +1935,18 @@
 							['%FIELD1%&#166%FIELD2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g.<br>%ALBUM ARTIST%&#166%ARTIST% or %&ltALBUM ARTIST&gt%&#166%&ltARTIST&gt%'],
 							['$nodisplay{X}', 'Views', 'Sorts & groups by X without display of X, e.g. the following sorts latest albums first & displays the date.<br>%ARTIST%|$nodisplay{$sub(99999,%DATE%)}%ALBUM%[ &#39[&#39%DATE%&#39]&#39]|%TRACKNUMBER%. %TITLE%'],
 							['$colour{normal,hover,selected}', 'Views', 'Set different colours for parts of a line of text, see below for more info.'],
-							['$prefix', 'Views|Filters', 'Returns custom prefixes (separated by comma), ready to be used on TF functions. e.g.<br>$swapprefix(%TAG%,$prefix)'],
+							['$prefix', 'Views|Filters', 'Returns custom prefixes (separated by comma), ready to be used on TF functions. e.g.<br>$swapprefix(%TAG%,$prefix)<br>Becomes: $swapprefix(%TAG%,A,The,An)'],
 							['$nowplaying{X}', 'Filters', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by nowplaying artist.'],
 							['$selected{X}', 'Filters', 'Returns value of X for the selected track, e.g.<br>ARTIST IS $selected{$meta(ARTIST,0)}<br>Displays tracks by selected (focused) artist.'],
 							['$nowplayingorselected{X}', 'Filters', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
 							['$searchtext', 'Filters', 'Returns search text, e.g. enter following as a filter "genre HAS $searchtext", then type "rock" in search box: yields query "genre HAS rock"'],
 							['$nowplaying{X}', 'Views', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays nowplaying artist in red.'],
 							['$selected{X}', 'Views', 'Returns value of X for the selected track, e.g.<br>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays selected (focused) artist in red.'],
-							['$nowplayingorselected{X}', 'Views', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.']
+							['$nowplayingorselected{X}', 'Views', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
+							['$randint{max}<br>$randint{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3'],
+							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandint{1,4} AND %LOUDNESS% EQUAL $pseudorandint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 2'],
+							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}<br>%VALENCE% EQUAL 2.85 AND %LOUDNESS% EQUAL 3.43'],
+							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>%VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3']
 						];
 						var items = [];
 						for (j = 0; j < labels.length; j++) {

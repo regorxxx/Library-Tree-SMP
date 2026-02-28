@@ -115,7 +115,7 @@
 						Internally changed to this.
 					</td>
 				</tr>
-				<tr></tr>
+				<tr>
 					<td> <em>$nowplaying{X}</em> </td>
 					<td> Returns value of X (TF expression) for the playing track. </td>
 					<td> <em>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
@@ -132,6 +132,90 @@
 					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
 					<td> <em>$if($stricmp(%ARTIST%,$nowplayingorselected{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
 					<td> Displays nowplaying or selected (focused) artist in red. </td>
+				</tr>
+				<tr>
+					<td> <em>$randint{max}<br>$randint{min,max}</em> </td>
+					<td> Returns a random integer number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br>Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randint{}
+							<br>
+							<br>
+							$randint{5}
+							<br>
+							<br>
+							$randint{3,5}
+							<br>
+							<br>
+							%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						1
+						<br>
+						<br>
+						2
+						<br>
+						<br>
+						4
+						<br>
+						<br>
+						%VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 5
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandint{max}<br>$pseudorandint{min,max}</em> </td>
+					<td> Equal to $randint{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}
+						</em>
+					</td>
+					<td>
+						%VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randfloat{max}<br>$randfloat{min,max}</em> </td>
+					<td> Returns a random float number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br>Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randfloat{}
+							<br>
+							<br>
+							$randfloat{5}
+							<br>
+							<br>
+							$randfloat{3,5}
+							<br>
+							<br>
+							%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						0.98
+						<br>
+						<br>
+						2.45
+						<br>
+						<br>
+						3.78
+						<br>
+						<br>
+						%VALENCE% EQUAL 3.46 AND %LOUDNESS% EQUAL 2.5
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandfloat{max}<br>$pseudorandfloat{min,max}</em> </td>
+					<td> Equal to $randfloat{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						%VALENCE% EQUAL 3.15 AND %LOUDNESS% EQUAL 3.15
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -206,7 +290,7 @@
 						Result: "GENRE HAS rock"
 					</td>
 				</tr>
-				<tr></tr>
+				<tr>
 					<td> <em>$prefix</em> </td>
 					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
 					<td>

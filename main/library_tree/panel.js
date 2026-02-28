@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/02/26
+//28/02/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -206,6 +206,52 @@ class Panel {
 	processCustomTf(s) {
 		if (typeof s === 'string') {
 			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(',')); // Regorxxx <- Expose custom prefixes as tag ->
+			// Regorxxx <- Expand TF support
+			while (s.includes('$randfloat{')) {
+				const q = s.match(/\$randfloat{(.+?),?(.+?)?}/);
+				s = s.replace(
+					q[0],
+					$.round(
+						typeof q[2] !== 'undefined'
+							? Math.randomNum(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, { includeMax: true })
+							: Math.randomNum(0, typeof q[1] !== 'undefined' ? Number(q[1]) : 1, { includeMax: true }),
+						2)
+				);
+			}
+			while (s.includes('$randint{')) {
+				const q = s.match(/\$randint{(.+?),?(.+?)?}/);
+				s = s.replace(
+					q[0],
+					typeof q[2] !== 'undefined'
+						? Math.randomInt(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, true)
+						: Math.randomInt(0, typeof q[1] !== 'undefined' ? Number(q[1]) : 1, true)
+				);
+			}
+			let cache = null;
+			while (s.includes('$pseudorandfloat{')) {
+				const q = s.match(/\$pseudorandfloat{(.+?),?(.+?)?}/);
+				if (cache === null) {
+					cache = $.round(
+						typeof q[2] !== 'undefined'
+							? Math.randomNum(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, { includeMax: true })
+							: Math.randomNum(0, typeof q[1] !== 'undefined' ? Number(q[1]) : 1, { includeMax: true }),
+						2);
+				}
+				s = s.replace(q[0], cache);
+			}
+			cache = null;
+			while (s.includes('$pseudorandint{')) {
+				const q = s.match(/\$pseudorandint{(.+?),?(.+?)?}/);
+				if (cache === null) {
+					cache = typeof q[2] !== 'undefined'
+						? Math.randomInt(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, true)
+						: Math.randomInt(0, typeof q[1] !== 'undefined' ? Number(q[1]) : 1, true);
+				}
+				s = s.replace(q[0], cache);
+			}
+			cache = null;
+			// Regorxxx ->
+			// Regorxxx ->
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
 				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
