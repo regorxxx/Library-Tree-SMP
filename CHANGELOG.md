@@ -27,6 +27,7 @@
 ### Changed
 - Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Views: updated default view TF patterns with above changes related to $prefix.
+- Filters: updated some of the default filter patterns.
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Statistics: playback queue index statistics now also show the currently playing track, if available. As '▶' or '0'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.
