@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/02/26
+//01/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -559,7 +559,7 @@ class MenuItems {
 					'\n' +
 					'\nTransliteration support:' +
 					'\n-----------------------' +
-					'\n• Greek, Cyrillic, Japanese (Katakana and Hiragana).' +
+					'\n• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).' +
 					'\n' +
 					'\nSMP / JSplitter Panel:' +
 					'\n----------------------' +

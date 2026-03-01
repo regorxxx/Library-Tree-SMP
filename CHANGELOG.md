@@ -7,6 +7,7 @@
 
 ## [Unreleased][]
 ### Added
+- Language: added support for transliteration from Chinese language (Pinyin) to Latin script. Works in quick-search, search (RegExp), sorting, etc.
 - Syntax: added $randint{min,max}, $pseudorandint{min,max}, $randfloat{min,max}, $pseudorandfloat{min,max} extended TF functions to easily work with random numbers within queries and filters. See syntax help file for more info.
 - Contextual menu: presence of tree items contextual menu (associated to selected tracks) is now configurable. Can be hidden (disabled), shown at the main R. Click menu, as a submenu or only called on demand (to avoid the performance impact when selecting a huge number of tracks). By default is now set to be called on demand.
 - Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'. Note Ctrl + Key combinations are also used for some shortcuts, so these will be processed instead of quick-search.
