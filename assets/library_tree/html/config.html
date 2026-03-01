@@ -1945,8 +1945,8 @@
 							['$nowplayingorselected{X}', 'Views', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
 							['$randint{max}<br>$randint{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3'],
 							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandint{1,4} AND %LOUDNESS% EQUAL $pseudorandint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 2'],
-							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}<br>%VALENCE% EQUAL 2.85 AND %LOUDNESS% EQUAL 3.43'],
-							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>%VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3']
+							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>Becomes: %VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}<br>%VALENCE% EQUAL 2.85 AND %LOUDNESS% EQUAL 3.43'],
+							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>Becomes: %VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>%VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3']
 						];
 						var items = [];
 						for (j = 0; j < labels.length; j++) {
