@@ -451,7 +451,8 @@ class MenuItems {
 				menuName: 'Auto-DJ',
 				str: 'From panel selection',
 				func: () => panel.startAutoDj(this.items),
-				flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED
+				flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
+				checkItem: panel.autoDj.running && panel.autoDj.source ? true : false
 			});
 			menu.newItem({
 				menuName: 'Auto-DJ',
@@ -463,20 +464,21 @@ class MenuItems {
 				menuName: 'Auto-DJ',
 				str: 'From live view',
 				func: () => panel.startAutoDj(),
-				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED
+				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED,
+				checkItem: panel.autoDj.running && !panel.autoDj.source ? true : false
 			});
 			menu.newItem({ menuName: 'Auto-DJ', separator: true });
 			menu.newItem({
 				menuName: 'Auto-DJ',
 				str: 'Append panel selection',
 				func: () => panel.addToAutoDjSource(this.items),
-				flags: this.items.Count && panel.autoDj.source ? MF_STRING : MF_GRAYED
+				flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
 			});
 			menu.newItem({
 				menuName: 'Auto-DJ',
 				str: 'Append current view',
 				func: () => panel.addToAutoDjSource(panel.list),
-				flags: panel.list.Count && panel.autoDj.source ? MF_STRING : MF_GRAYED
+				flags: panel.list.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
 			});
 			menu.newItem({ menuName: 'Auto-DJ', separator: true });
 			menu.newItem({

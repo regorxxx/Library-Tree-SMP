@@ -31,7 +31,7 @@
 - Statistics: playback queue index statistics now also show the currently playing track, if available. As '▶' or '0'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point.
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point.
-- Auto-DJ: submenu entry is now checked while it's running.
+- Auto-DJ: submenu entry is now checked while it's running. Menu entries are checked according to the source (selection or live view). Note in the case of using the current view, it's transformed internally into 'selection'.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
