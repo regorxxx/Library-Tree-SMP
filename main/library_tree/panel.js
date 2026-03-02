@@ -1,11 +1,11 @@
 ﻿'use strict';
-//01/03/26
+//02/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable */
-/* global queryJoin:readable*/
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable */
 
 /* exported Panel */
 
@@ -1566,7 +1566,53 @@ class Panel {
 		if (!itemsArr || !count) { this.stopAutoDj(); return false; }
 		// Flush playback queue for filters based on nowplaying or selection, since next tracks would otherwise not match at all tracks between currently playing and Auto-DJ added tracks
 		if (lib.doDynamicFilter(void (0), (bSearch, bFilter) => bSearch || bFilter)) { plman.FlushPlaybackQueue(); }
-		const toAdd = itemsArr.shuffle();
+		const handle = this.chooseNextTrackAutoDj(itemsArr);
+		if (!handle) { this.stopAutoDj(); return false; }
+		if (!this.autoDj.running) {
+			const selectionHolder = fb.AcquireUiSelectionHolder();
+			selectionHolder.SetSelection(FbMetadbHandleList(handle), 0);
+		}
+		plman.AddItemToPlaybackQueue(handle);
+		this.autoDj.cache.push(handle);
+		if (!fb.IsPlaying) { fb.Play(); }
+		return this.autoDj.running = true;
+	}
+
+	sortTracksAutoDj(itemsArr, method) {
+		let out;
+		method = (method || 'random').toLowerCase();
+		switch (method.toLowerCase()) {
+			case 'match-genre':
+			case 'match-mood':
+			case 'match': {
+				const prev = this.autoDj.cache[this.autoDj.cache.length - 1];
+				if (!prev) { out = this.sortTracksAutoDj(itemsArr, 'random'); }
+				else {
+					const tags = [
+						['match-genre', 'match'].includes(method)
+							? [globTags.genre, globTags.style]
+							: [],
+						['match-mood', 'match'].includes(method)
+							? [globTags.mood]
+							: []
+					].flat(Infinity).filter(Boolean);
+					const reference = new Set(getHandleTags(prev, tags).flat(Infinity).filter(Boolean));
+					getHandleListTags(new FbMetadbHandleList(itemsArr), tags).forEach((handleTag, i) => {
+						itemsArr[i].weight = (new Set(handleTag.flat(Infinity).filter(Boolean))).intersectionSize(reference);
+					});
+					out = [...itemsArr].sort((a, b) => b.weight - a.weight);
+				}
+				break;
+			}
+			case 'random':
+			default: out = [...itemsArr].shuffle();
+		}
+		return out;
+	}
+
+	chooseNextTrackAutoDj(itemsArr, method = ppt.autoDjTrackPicking) {
+		const toAdd = this.sortTracksAutoDj(itemsArr, method);
+		const count = toAdd.length;
 		let i = 0;
 		/** @type {FbMetadbHandle} */
 		let handle;
@@ -1579,17 +1625,10 @@ class Panel {
 			else if (idx <= prevIdx || prevIdx === -1) { prevIdx = idx; }
 		}
 		if (idx !== -1 && prevIdx !== -1) {
-			if (ppt.autoDjStopRepeat) { this.stopAutoDj(); return false; }
+			if (ppt.autoDjStopRepeat) { return null; }
 			handle = this.autoDj.cache[prevIdx];
 		}
-		if (!this.autoDj.running) {
-			const selectionHolder = fb.AcquireUiSelectionHolder();
-			selectionHolder.SetSelection(FbMetadbHandleList(handle), 0);
-		}
-		plman.AddItemToPlaybackQueue(handle);
-		this.autoDj.cache.push(handle);
-		if (!fb.IsPlaying) { fb.Play(); }
-		return this.autoDj.running = true;
+		return handle;
 	}
 
 	updateAutoDj(itemsArr = this.autoDj.source || panel.list.Convert()) {

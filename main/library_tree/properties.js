@@ -392,7 +392,10 @@ let properties = [
 	['Search Drag n\' Drop Inter-query Operator (none modifier)', '', 'searchDragQueryOp'],
 	['Search Drag n\' Drop Inter-query Operator (shift modifier)', 'OR', 'searchDragQueryOpShift'],
 	// Regorxxx ->
-	['Auto-DJ stop if repeating track', true, 'autoDjStopRepeat'], // Regorxxx <- Auto-DJ feature ->
+	// Regorxxx <- Auto-DJ feature
+	['Auto-DJ stop if repeating track', true, 'autoDjStopRepeat'],
+	['Auto-DJ track picking method', 'match', 'autoDjTrackPicking'],
+	// Regorxxx ->
 	// Regorxxx <- Global duplicates filter
 	['Filter duplicates by', JSON.stringify(globTags.remDupl), 'filterDuplBy'],
 	['Filter remove duplicates', false, 'filterDupl'],

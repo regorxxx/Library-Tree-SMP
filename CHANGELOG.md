@@ -18,6 +18,7 @@
 - External integration: added integration with [Timeline-SMP](https://github.com/regorxxx/Timeline-SMP). If Timeline-SMP panels are set to use panel as source, you can directly send tracks to them for statistics purposes. It works the same than panel source mode on Library-Tree-SMP, just by adding the library tree panel name as source.
 - External integration: added documentation to settings menu. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077214.html#msg1077214).
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time).
+- Auto-DJ: new setting to set how the next track is chosen: randomly, by genre-mood, by genre or mood tag matching.
 - UI: new quicksetup presets.
 - UI: 'Move to front queue', 'Move to back queue' and 'Move in queue...' menu entries to move tracks within the playback queue while using the associated source.
 - UI: added support for D2D draw mode if JS Host supports it (currently only JSplitter 3.7.8+ or 4.1.0+). It must be set per instance, at the properties panel ('Draw mode: GDI (0), D2D (1)'). If JS Host doesn't support it, it will fallback to GDI. Note D2D mode may produce UI artifacts under Wine or not be fully equivalent to GDI, use at your own consideration and only report problems to JS host component devs.

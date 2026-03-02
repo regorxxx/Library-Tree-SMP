@@ -1174,9 +1174,19 @@
 					<div id="mode"></div>
 					<div id="modeInput"></div>
 					<div class="info5"><i>Requires a panel above or below library tree. N/A with panel stack splitter or if root node displayed in line.</i></div>
-					 <!-- Regorxxx Auto-DJ feature -->
+					<!-- Regorxxx Auto-DJ feature -->
 					<div class="div_text1">Auto-Dj</div>
 					<div id="autodj"></div>
+					<span class="info5600">Next track picking method:</span>
+					<span class="dropdown" style="margin-top:0"><a id="autodjPick_dropdown" class="dropbtn" href="#" onclick="toggle('autodjPick');"></a>
+						<span id="autodjPick" class="dropdown-content"></span>
+					</span>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="autodjPick_help" href="#" onclick="showHelp('autodjPick_text');return false;">Track picking help</a></div>
+					<div id="autodjPick_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4"><b><u>Auto-Dj track picking:</b></u><br><br>&#x2022; Auto-Dj wil choose tracks randomly or based on tags<br>&#x2022; On tag-based mode, compares next track against playing track's tags<br>&#x2022; Genre matching looks for genre and style tags<br>&#x2022; Mood matching looks for both mood tag<br>&#x2022; Tags used are based on '[FB2K_PROFILE]\js_data\presets\global\globTags.json'
+						</div>
+						<div><br></div>
+					</div>
 					<!-- Regorxxx -->
 				</div>
 			</div>
@@ -1571,7 +1581,7 @@
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
-			var autodjLabels = ['Stop when repeating a track']; // Regorxxx <- Auto-DJ feature ->
+			var autodjLabels = ['Stop when repeating a track', 'Random', 'By Genre-Mood matching', 'By Genre matching', 'By Mood matching']; // Regorxxx <- Auto-DJ feature ->
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control'];
 			var selectionLabels = ['Full line', 'Play on enter or send from menu'];
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
@@ -1894,6 +1904,16 @@
 				ppt['viewSorting_internal'].value = n;
 				window.viewSorting.style.display = 'none';
 			}
+			// Regorxxx ->
+			// Regorxxx <- Auto-DJ feature
+			function setAutoDjTrackPicking(n) {
+				window.autodjPick_dropdown.innerHTML = autodjLabels[n];
+				ppt['autoDjTrackPicking_internal'].value = getAutoDjTrackPickingValue(n - 1);
+				window.autodjPick.style.display = 'none';
+			}
+			var autoDjTrackPickingValues = ['random', 'match', 'match-genre', 'match-mood'];
+			function getAutoDjTrackPickingIdx(value) { return autoDjTrackPickingValues.indexOf(value.toLowerCase() || 'random'); }
+			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
 			// Regorxxx ->
 
 			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist'];
@@ -2319,6 +2339,9 @@
 				// Regorxxx ->
 				// Regorxxx <- Auto-DJ feature
 				i = 0; window.autodj.insertAdjacentHTML('beforeend', '<div><input id="autodj_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="autodj_checkbox' + i + '" class="checkbox_label">' + autodjLabels[i] + '</label></div>');
+				i = 1;
+				window.autodjPick_dropdown.innerHTML = autodjLabels[getAutoDjTrackPickingIdx(ppt['autoDjTrackPicking_internal'].value) + i];
+				for (i = 1; i < autodjLabels.length; i++) { window.autodjPick.insertAdjacentHTML('beforeend', '<a onclick="setAutoDjTrackPicking(' + i + ');">' + autodjLabels[i] + '</a>'); }
 				// Regorxxx ->
 			}
 
@@ -2955,7 +2978,8 @@
 			// Regorxxx ->
 			['showHl_dropdown', 'showHl'],
 			['theme_dropdown', 'themeBg'],
-			['thumbSize_dropdown', 'thumbSize']
+			['thumbSize_dropdown', 'thumbSize'],
+			['autodjPick_dropdown', 'autodjPick'] // Regorxxx <- Auto-DJ feature ->
 		];
 
 		function hide() {
