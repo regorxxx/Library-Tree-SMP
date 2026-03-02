@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//03/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -634,18 +634,13 @@ class Library {
 				// Regorxxx ->
 				// Regorxxx <- Auto-DJ source
 				case 4: {
-					if (!panel.autoDj.running || !panel.autoDj.source) { this.list = new FbMetadbHandleList(); }
-					else {
-						if (ppt.queueNowPlaying) {
-							this.list = new FbMetadbHandleList();
-							const np = fb.GetNowPlaying();
-							if (np) { this.list.Add(np); }
-							this.list.AddRange(new FbMetadbHandleList(panel.getAutoDjRemaining()));
-						} else {
-							this.list = new FbMetadbHandleList(panel.getAutoDjRemaining());
-						}
+					this.list = new FbMetadbHandleList();
+					if (ppt.queueNowPlaying && fb.IsPlaying) {
+						const np = fb.GetNowPlaying();
+						if (np) { this.list.Add(np); }
+						this.list.AddRange(plman.GetPlaybackQueueHandles());
 					}
-					break;
+					if (panel.autoDj.running || panel.autoDj.source) { this.list.AddRange(new FbMetadbHandleList(panel.getAutoDjRemaining(false))); }
 				}
 				// Regorxxx ->
 			}
@@ -804,17 +799,13 @@ class Library {
 			// Regorxxx ->
 			// Regorxxx <- Auto-DJ source
 			case 4: {
-				if (!panel.autoDj.running || !panel.autoDj.source) { this.list = new FbMetadbHandleList(); }
-				else {
-					if (ppt.queueNowPlaying) {
-						this.list = new FbMetadbHandleList();
-						const np = fb.GetNowPlaying();
-						if (np) { this.list.Add(np); }
-						this.list.AddRange(new FbMetadbHandleList(panel.autoDj.source));
-					} else {
-						this.list = new FbMetadbHandleList(panel.autoDj.source);
-					}
+				this.list = new FbMetadbHandleList();
+				if (ppt.queueNowPlaying && fb.IsPlaying) {
+					const np = fb.GetNowPlaying();
+					if (np) { this.list.Add(np); }
+					this.list.AddRange(plman.GetPlaybackQueueHandles());
 				}
+				if (panel.autoDj.running || panel.autoDj.source) { this.list.AddRange(new FbMetadbHandleList(panel.getAutoDjRemaining(false))); }
 				break;
 			}
 			// Regorxxx ->

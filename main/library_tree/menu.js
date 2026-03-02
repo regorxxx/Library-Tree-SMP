@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//03/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -707,7 +707,7 @@ class MenuItems {
 		// Regorxxx ->
 
 		// Regorxxx <- Queue source
-		if (ppt.libSource === 3) {
+		if (ppt.libSource === 3 || ppt.libSource === 4) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Queue idx',

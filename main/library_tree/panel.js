@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//03/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -1387,7 +1387,7 @@ class Panel {
 	}
 
 	sort(li) {
-		if (ppt.libSource === 3 && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		switch (this.folderView) {
 			case true:
 				li.OrderByRelativePath();
@@ -1655,11 +1655,16 @@ class Panel {
 	};
 
 
-	addToAutoDjSource(items) {
+	addToAutoDjSource(items, bForce) {
 		if (!this.autoDj.running) { return false; }
 		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
 		if (!this.autoDj.source) { this.autoDj.source = [...items]; }
-		else { items.forEach((handle) => this.autoDj.source.push(handle)); }
+		else {
+			items.forEach((handle) => {
+				this.autoDj.source.push(handle);
+				if (bForce) { this.autoDj.cache = this.autoDj.cache.filter((playedHandle) => !handle.Compare(playedHandle)); }
+			});
+		}
 		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
 	}
 
@@ -1679,9 +1684,9 @@ class Panel {
 			: [];
 	}
 
-	getAutoDjRemaining() {
+	getAutoDjRemaining(bAlsoQueued = true) {
 		return this.autoDj.running
-			? this.getAutoDjSource().filter((handle) => !this.autoDj.cache.some((playedHandle) => handle.Compare(playedHandle)) || handle.Compare(this.autoDj.last))
+			? this.getAutoDjSource().filter((handle) => !this.autoDj.cache.some((playedHandle) => handle.Compare(playedHandle)) || bAlsoQueued && handle.Compare(this.autoDj.last))
 			: [];
 	}
 
@@ -1695,7 +1700,7 @@ class Panel {
 	}
 
 	isAnyInAutoDj(items) {
-		if (items instanceof FbMetadbHandleList) {  items = items.Convert(); }
+		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
 		const handleList = new FbMetadbHandleList(ppt.autoDjStopRepeat ? this.getAutoDjRemaining() : this.getAutoDjSource());
 		handleList.Sort();
 		return this.autoDj.running

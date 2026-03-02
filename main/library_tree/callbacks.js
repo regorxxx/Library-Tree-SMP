@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//03/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -750,12 +750,12 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 		} else if (ppt.libSource === 4) {
 			if ((mask & MK_CONTROL) === MK_CONTROL) {
 				if (!action.IsInternal) {
-					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(pop.getTopTracks(selItems)); }
+					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(pop.getTopTracks(selItems), true); }
 					else { panel.startAutoDj(pop.getTopTracks(selItems)); }
 				}
 			} else {
 				if (!action.IsInternal) {
-					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(selItems); }
+					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(selItems, true); }
 					else { panel.startAutoDj(selItems); }
 				}
 			}
