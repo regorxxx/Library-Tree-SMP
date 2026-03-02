@@ -1668,6 +1668,8 @@ class Panel {
 		const handleList = items instanceof FbMetadbHandleList ? items.Clone() : new FbMetadbHandleList(items);
 		handleList.Sort();
 		this.autoDj.source = this.autoDj.source.filter((handle) => handleList.BSearch(handle) === -1);
+		// Update in case the next one is removed
+		if (this.autoDj.source.length > 1 && this.autoDj.last !== null && handleList.BSearch(this.autoDj.last) !== -1) { this.updateAutoDj(); }
 		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
 	}
 
