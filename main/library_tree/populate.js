@@ -2297,10 +2297,11 @@ class Populate {
 				}
 				this.upDnKeyCheckScroll(vkey);
 				break;
-			// Regorxxx <- Queue source
+			// Regorxxx <- Queue source | Auto-DJ source
 			case vk.del: {
-				if (ppt.libSource === 3 && this.sel_items.length) {
-					panel.removeFromQueue(pop.getHandleList());
+				if (this.sel_items.length) {
+					if (ppt.libSource === 3) { panel.removeFromQueue(this.getHandleList()); }
+					else if (ppt.libSource === 4) { panel.removeFromAutoDjSource(this.getHandleList()); }
 				}
 			}
 			// Regorxxx ->
