@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/02/26
+//02/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -162,12 +162,17 @@ class Populate {
 		);
 	}
 
-	loadTopTracks(bAddToPls, bUseDefaultPls) {
-		let items = fb.GetQueryItems(this.getHandleList(), panel.processCustomTf(ppt.topTracksFilter));
+	getTopTracks(handleList = this.getHandleList(), bCustomSort) {
+		let items = fb.GetQueryItems(handleList, panel.processCustomTf(ppt.topTracksFilter));
 		items = lib.removeDuplicates(items, $.jsonParse(ppt.topTracksRemDupl, globTags.remDupl));
-		const bCustomSort = ppt.topTracksSorting.length;
-		if (bCustomSort) { items = lib.processCustomSort(items, ppt.topTracksSorting); }
-		this.load({ handleList: items, bAddToPls, bAutoPlay: false, bUseDefaultPls, bInsertToPls: false, bApplySort: !bCustomSort });
+		if (bCustomSort && ppt.topTracksSorting.length) { items = lib.processCustomSort(items, ppt.topTracksSorting); }
+		return items;
+	}
+
+	loadTopTracks(bAddToPls, bUseDefaultPls) {
+		const bCustomSort = !!ppt.topTracksSorting.length;
+		const handleList = this.getTopTracks(this.getHandleList(), bCustomSort);
+		this.load({ handleList, bAddToPls, bAutoPlay: false, bUseDefaultPls, bInsertToPls: false, bApplySort: !bCustomSort });
 	}
 	// Regorxxx ->
 

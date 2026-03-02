@@ -58,7 +58,8 @@ class Panel {
 		this.autoDj = {
 			running: false,
 			source: null,
-			cache: []
+			cache: [],
+			last: null
 		};
 		// Regorxxx ->
 		ppt.zoomFilter = this.zoomFilter * 100;
@@ -1350,7 +1351,7 @@ class Panel {
 	}
 
 	setRootName() {
-		this.sourceName = ['Active Playlist', !ppt.fixedPlaylist ? 'Library' : ppt.fixedPlaylistName, 'Panel', 'Playback Queue'][ppt.libSource]; // Regorxxx <- Queue source ->
+		this.sourceName = ['Active Playlist', !ppt.fixedPlaylist ? 'Library' : ppt.fixedPlaylistName, 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source ->
 		this.viewName = this.grp[ppt.viewBy].name;
 		switch (ppt.rootNode) {
 			case 1:
@@ -1572,9 +1573,11 @@ class Panel {
 			const selectionHolder = fb.AcquireUiSelectionHolder();
 			selectionHolder.SetSelection(FbMetadbHandleList(handle), 0);
 		}
+		this.autoDj.last = handle;
 		plman.AddItemToPlaybackQueue(handle);
 		this.autoDj.cache.push(handle);
 		if (!fb.IsPlaying) { fb.Play(); }
+		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
 		return this.autoDj.running = true;
 	}
 
@@ -1585,7 +1588,7 @@ class Panel {
 			case 'match-genre':
 			case 'match-mood':
 			case 'match': {
-				const prev = this.autoDj.cache[this.autoDj.cache.length - 1];
+				const prev = this.autoDj.last;
 				if (!prev) { out = this.sortTracksAutoDj(itemsArr, 'random'); }
 				else {
 					const tags = [
@@ -1631,7 +1634,7 @@ class Panel {
 		return handle;
 	}
 
-	updateAutoDj(itemsArr = this.autoDj.source || panel.list.Convert()) {
+	updateAutoDj(itemsArr = this.autoDj.source || this.list.Convert()) {
 		if (!this.autoDj.running) { return false; }
 		return this.addToAutoDj(itemsArr);
 	}
@@ -1640,13 +1643,15 @@ class Panel {
 		this.autoDj.source = null;
 		this.autoDj.running = false;
 		this.autoDj.cache.length = 0;
+		this.autoDj.last = null;
 		plman.FlushPlaybackQueue();
+		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
 	}
 
 	startAutoDj(items) {
 		this.stopAutoDj();
 		if (items) { this.autoDj.source = items instanceof FbMetadbHandleList ? items.Convert() : items; }
-		return this.addToAutoDj(this.autoDj.source || panel.list.Convert());
+		return this.addToAutoDj(this.autoDj.source || this.list.Convert());
 	};
 
 
@@ -1655,6 +1660,45 @@ class Panel {
 		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
 		if (!this.autoDj.source) { this.autoDj.source = [...items]; }
 		else { items.forEach((handle) => this.autoDj.source.push(handle)); }
+		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+	}
+
+	removeFromAutoDjSource(items) {
+		if (!this.autoDj.running || !this.autoDj.source) { return false; }
+		const handleList = items instanceof FbMetadbHandleList ? items.Clone() : new FbMetadbHandleList(items);
+		handleList.Sort();
+		this.autoDj.source = this.autoDj.source.filter((handle) => handleList.BSearch(handle) === -1);
+		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+	}
+
+	getAutoDjSource() {
+		return this.autoDj.running
+			? this.autoDj.source || this.list.Convert()
+			: [];
+	}
+
+	getAutoDjRemaining() {
+		return this.autoDj.running
+			? this.getAutoDjSource().filter((handle) => !this.autoDj.cache.some((playedHandle) => handle.Compare(playedHandle)) || handle.Compare(this.autoDj.last))
+			: [];
+	}
+
+	isInAutoDj(items) {
+		if (items instanceof FbMetadbHandleList) { items = items.Convert(); }
+		const handleList = new FbMetadbHandleList(ppt.autoDjStopRepeat ? this.getAutoDjRemaining() : this.getAutoDjSource());
+		handleList.Sort();
+		return this.autoDj.running
+			? items.every((handle) => handleList.BSearch(handle) !== -1)
+			: false;
+	}
+
+	isAnyInAutoDj(items) {
+		if (items instanceof FbMetadbHandleList) {  items = items.Convert(); }
+		const handleList = new FbMetadbHandleList(ppt.autoDjStopRepeat ? this.getAutoDjRemaining() : this.getAutoDjSource());
+		handleList.Sort();
+		return this.autoDj.running
+			? items.some((handle) => handleList.BSearch(handle) !== -1)
+			: false;
 	}
 	// Regorxxx ->
 

@@ -570,6 +570,7 @@ class Images {
 					count_w = Math.max(gr.CalcTextWidth(count[0], ui.font.tracks), gr.CalcTextWidth(count[1], ui.font.tracks));
 					count_x = x + (this.style.image != 2 ? w - count_w - 3 : (w - count_w - 2) / 2);
 					gr.SetSmoothingMode(2);
+					// TODO Add settings for overlay item count color
 					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, $.RGBA(0, 0, 0, 115));
 					gr.GdiDrawText(count[0], ui.font.tracks, $.RGB(255, 255, 255), count_x + 1, count_y, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
 					gr.GdiDrawText(count[1], ui.font.tracks, $.RGB(255, 255, 255), count_x + 1, count_y + count_h, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);

@@ -517,7 +517,7 @@ class UserInterface {
 
 		this.font.label = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 11 / 14) : this.font.main.Size, this.font.main.Style);
 		this.font.small = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 12 / 14) : this.font.main.Size, this.font.main.Style);
-		this.font.tracks = gdi.Font('Arial', Math.round(this.font.main.Size * 12 / 14), 2);
+		this.font.tracks = gdi.Font('Arial', Math.round(this.font.main.Size * 12 / 14), 2); // TODO Add settings for overlay item font
 		this.sz.sideMarker = ppt.sideMarkerWidth ? Math.max(ppt.sideMarkerWidth, 1) : 4 * this.l.w;
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
 

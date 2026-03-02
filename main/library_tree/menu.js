@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/03/26
+//02/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -264,6 +264,30 @@ class MenuItems {
 					});
 				}
 				// Regorxxx ->
+				// Regorxxx <- Auto-DJ feature
+				if (ppt.libSource !== 4) {
+					menu.newItem({
+						str: 'Start Auto-DJ from panel selection',
+						func: () => panel.startAutoDj(this.items),
+						flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
+						hide: panel.autoDj.running
+					});
+					menu.newItem({
+						str: 'Append panel selection to Auto-DJ',
+						func: () => panel.addToAutoDjSource(this.items),
+						flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED,
+						hide: !panel.autoDj.running
+					});
+					menu.newItem({ separator: true });
+				} else {
+					menu.newItem({
+						str: 'Remove from Auto-DJ',
+						func: () => panel.removeFromAutoDjSource(this.items),
+						flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
+					});
+					menu.newItem({ separator: true });
+				}
+				// Regorxxx ->
 				// Regorxxx <- Code cleanup
 				menu.newItem({
 					str: 'Show nowplaying',
@@ -485,6 +509,12 @@ class MenuItems {
 				menuName: 'Auto-DJ',
 				str: 'Stop Auto-DJ',
 				func: () => panel.stopAutoDj(),
+				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
+			});
+			menu.newItem({
+				menuName: 'Auto-DJ',
+				str: 'Show queue...',
+				func: () => this.setSource(4),
 				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
 			});
 		}
@@ -1192,6 +1222,12 @@ class MenuItems {
 				break;
 			}
 			// Regorxxx ->
+			// Regorxxx <- Auto-DJ source
+			case 4: {
+				ppt.libSource = 4;
+				break;
+			}
+			// Regorxxx ->
 		}
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
@@ -1357,7 +1393,7 @@ class MenuItems {
 	}
 
 	sourceTypes() {
-		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue']; // Regorxxx <- Queue source ->
+		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue', 'Auto-DJ Queue']; // Regorxxx <- Queue source | Auto-DJ source ->
 	}
 	// Regorxxx ->
 }

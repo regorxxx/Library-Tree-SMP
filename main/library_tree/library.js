@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/02/26
+//02/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -632,6 +632,22 @@ class Library {
 					break;
 				}
 				// Regorxxx ->
+				// Regorxxx <- Auto-DJ source
+				case 4: {
+					if (!panel.autoDj.running || !panel.autoDj.source) { this.list = new FbMetadbHandleList(); }
+					else {
+						if (ppt.queueNowPlaying) {
+							this.list = new FbMetadbHandleList();
+							const np = fb.GetNowPlaying();
+							if (np) { this.list.Add(np); }
+							this.list.AddRange(new FbMetadbHandleList(panel.getAutoDjRemaining()));
+						} else {
+							this.list = new FbMetadbHandleList(panel.getAutoDjRemaining());
+						}
+					}
+					break;
+				}
+				// Regorxxx ->
 			}
 			// Regorxxx ->
 			if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
@@ -640,11 +656,11 @@ class Library {
 		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
 			pop.clearTree();
 			sbar.setRows(0);
-			// Regorxxx <- Queue source
+			// Regorxxx <- Queue source | Auto-DJ source
 			this.empty = ppt.libSource === 1
 				? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n')
-				: ppt.libSource === 3
-					? 'Empty playback queue'
+				: ppt.libSource === 3 || ppt.libSource === 4
+					? 'Empty ' + (ppt.libSource === 4 ? 'Auto-DJ' : 'playback') + ' queue'
 					: 'Nothing received';
 			// Regorxxx ->
 			panel.treePaint();
@@ -786,6 +802,22 @@ class Library {
 				break;
 			}
 			// Regorxxx ->
+			// Regorxxx <- Auto-DJ source
+			case 4: {
+				if (!panel.autoDj.running || !panel.autoDj.source) { this.list = new FbMetadbHandleList(); }
+				else {
+					if (ppt.queueNowPlaying) {
+						this.list = new FbMetadbHandleList();
+						const np = fb.GetNowPlaying();
+						if (np) { this.list.Add(np); }
+						this.list.AddRange(new FbMetadbHandleList(panel.autoDj.source));
+					} else {
+						this.list = new FbMetadbHandleList(panel.autoDj.source);
+					}
+				}
+				break;
+			}
+			// Regorxxx ->
 		}
 		// Regorxxx ->
 		if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
@@ -793,11 +825,11 @@ class Library {
 		if (this.list.Count) this.v2_init = false;
 
 		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
-			// Regorxxx <- Queue source
+			// Regorxxx <- Queue source | Auto-DJ source
 			this.empty = ppt.libSource === 1
 				? (!ppt.fixedPlaylist ? (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library') : 'Nothing found\n\n')
-				: ppt.libSource === 3
-					? 'Empty playback queue'
+				: ppt.libSource === 3 || ppt.libSource === 4
+					? 'Empty ' + (ppt.libSource === 4 ? 'Auto-DJ' : 'playback') + ' queue'
 					: 'Nothing received';
 			// Regorxxx ->
 			panel.treePaint();

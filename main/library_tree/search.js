@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/02/26
+//02/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -126,7 +126,7 @@ class Search {
 		};
 
 		this.getDragDropTooltipText = (method, mask, x, y, bInternal) => {
-			if (y < panel.search.h || ppt.libSource !== 3) {
+			if (y < panel.search.h || (ppt.libSource !== 3 && ppt.libSource !== 4)) {
 				if (method === 0 && panel.folderView) { // Auto: tags or path
 					return 'Add paths to search box';
 				} else { // Tags
@@ -146,6 +146,10 @@ class Search {
 					: (mask & MK_CONTROL) === MK_CONTROL
 						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
+			} else if (ppt.libSource === 4) {
+				return (mask & MK_CONTROL) === MK_CONTROL
+					? 'Add items to Auto-DJ (top tracks)'
+					: 'Add items to Auto-DJ';
 			}
 		};
 		// Regorxxx ->
