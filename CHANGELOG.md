@@ -52,6 +52,7 @@
 - HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
 - HTML: minor improvements to Album Art help and updated Biography default settings (to match latest versions).
 - Syntax: updated syntax docs with relevant changes and examples.
+- Code cleanup.
 ### Removed
 ### Fixed
 - Statistics: bug on original script related to playback queue index statistics when a track was added multiple times to the queue. Queue index was duplicated in such cases. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).

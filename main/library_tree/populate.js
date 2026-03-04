@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/03/26
+//04/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -756,7 +756,11 @@ class Populate {
 			w: w
 		};
 		item.stats_tt = {
-			needed: !this.tooltipStatistics || !this.statisticsShow || item.root ? false : this.statisticsTooltip[this.statisticsShow] && item.statistics !== undefined, // Regorxxx <- New statistics
+			// Regorxxx <- New statistics | Code cleanup
+			needed: !this.tooltipStatistics || !this.statisticsShow || item.root
+				? false
+				: this.statistics[this.statisticsShow].showTooltip && typeof item.statistics !== 'undefined',
+			// Regorxxx ->
 			x: x,
 			y: y + ui.row.h * 0.1,
 			w: w
@@ -1469,8 +1473,8 @@ class Populate {
 					if (this.countsRight && !this.statisticsShow) v.count = v.count.replace(/[()]/g, '');
 				}
 			} else {
-				// Regorxxx <- New statistics
-				if (this.statisticsGetTracks[ppt.itemShowStatistics]) {
+				// Regorxxx <- New statistics | Code cleanup
+				if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
 					v.count = this.trackCount(v.item);
 					v.count += v.count > 1 ? ' tracks' : ' track';
 				}
@@ -2483,17 +2487,31 @@ class Populate {
 		this.rowStripes = ppt.rowStripes;
 		this.sbarShow = ppt.sbarShow;
 		this.showTracks = !ppt.facetView ? ppt.showTracks : false;
-		// Regorxxx <- New statistics
-		this.statistics = ['', 'Bitrate', 'Duration', 'Total size', 'Rating', 'Popularity', 'Date', 'Queue', 'Playcount', 'First played', 'Last played', 'Added', 'Loved', 'Hated', 'Feedback'];
+		// Regorxxx <- New statistics | Code cleanup
+		this.statistics = [
+			{ name: '', showTrackCount: true, showTooltip: false },
+			{ name: 'Bitrate', showTrackCount: true, showTooltip: true },
+			{ name: 'Duration', showTrackCount: true, showTooltip: false },
+			{ name: 'Total size', showTrackCount: true, showTooltip: true },
+			{ name: 'Rating', showTrackCount: false, showTooltip: true },
+			{ name: 'Popularity', showTrackCount: false, showTooltip: true },
+			{ name: 'Date', showTrackCount: true, showTooltip: true },
+			{ name: 'Queue', showTrackCount: false, showTooltip: true },
+			{ name: 'Playcount', showTrackCount: false, showTooltip: true },
+			{ name: 'First played', showTrackCount: false, showTooltip: true },
+			{ name: 'Last played', showTrackCount: false, showTooltip: true },
+			{ name: 'Added', showTrackCount: false, showTooltip: true },
+			{ name: 'Loved', showTrackCount: true, showTooltip: true },
+			{ name: 'Hated', showTrackCount: true, showTooltip: true },
+			{ name: 'Feedback', showTrackCount: true, showTooltip: true }
+		];
 		{
 			const userCustomTypes = ppt.tfCustomLabels.split('|');
 			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)']
 				.forEach((t, i) => {
-					this.statistics.push(!userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i]);
+					this.statistics.push({ name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i], showTrackCount: true, showTooltip: true });
 				});
 		}
-		this.statisticsGetTracks = [true, true, true, true, false, false, true, false, false, false, false, false, true, true, true, true, true, true, true, true];
-		this.statisticsTooltip = [false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true];
 		// Regorxxx ->
 		this.statisticsShow = ppt.itemShowStatistics;
 		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow] : '';
@@ -2539,7 +2557,7 @@ class Populate {
 
 
 	sort(data) {
-		if (!ppt.libSource && !panel.multiProcess || (ppt.libSource === 3 || ppt.libSource === 4)  && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if (!ppt.libSource && !panel.multiProcess || (ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
