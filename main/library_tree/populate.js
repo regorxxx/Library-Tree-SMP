@@ -701,7 +701,7 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (item.statistics !== undefined ? this.statistics[this.statisticsShow] + ': ' + item.statistics : '')
+						? (item.statistics !== undefined ? this.statistics[this.statisticsShow].name + ': ' + item.statistics : '') // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 
 				} else if (trace1) {
@@ -2512,9 +2512,9 @@ class Populate {
 					this.statistics.push({ name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i], showTrackCount: true, showTooltip: true });
 				});
 		}
-		// Regorxxx ->
 		this.statisticsShow = ppt.itemShowStatistics;
-		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow] : '';
+		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow].name: '';
+		// Regorxxx ->
 		this.tooltipStatistics = ppt.tooltipStatistics;
 		this.treeIndent = ppt.treeIndent;
 		this.imgGetItemCount = ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !this.statisticsShow && (this.nodeCounts == 1 || this.nodeCounts == 2);
