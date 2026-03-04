@@ -733,6 +733,10 @@ class UserInterface {
 			if (this.col.bg === '') this.col.bg = this.themeColour.background;
 			if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : this.themeColour.selection;
 			this.col.txt_h = this.themeColour.highlight;
+			// Regorxxx <- Custom album art overlay track count
+			this.col.textTrackCount = this.themeColour.textTrackCount;
+			this.col.bgTrackCount = this.themeColour.bgTrackCount;
+			// Regorxxx ->
 		} else {
 			switch (this.dui) {
 				case 0:
@@ -740,12 +744,20 @@ class UserInterface {
 					if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : window.GetColourCUI(4);
 					this.col.txt = window.GetColourCUI(0);
 					this.col.txt_h = window.GetColourCUI(2);
+					// Regorxxx <- Custom album art overlay track count
+					this.col.textTrackCount = window.GetColourCUI(1);
+					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourCUI(4), 115);
+					// Regorxxx ->
 					break;
 				case 1:
 					if (this.col.bg === '') this.col.bg = this.img.blurLight ? $.RGB(245, 247, 255) : window.GetColourDUI(1);
 					if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : window.GetColourDUI(3);
 					this.col.txt = window.GetColourDUI(0);
 					this.col.txt_h = window.GetColourDUI(2);
+					// Regorxxx <- Custom album art overlay track count
+					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourDUI(3), 115);
+					this.col.textTrackCount = this.isLightCol(window.GetColourDUI(3)) ? $.RGB(0, 0, 0) : $.RGB(255, 255, 255);
+					// Regorxxx ->
 					break;
 			}
 		}
