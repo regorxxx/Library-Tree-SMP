@@ -471,52 +471,64 @@ class MenuItems {
 		// Regorxxx <- Auto-DJ feature
 		{
 			menu.newMenu({ menuName: 'Auto-DJ', appendTo: mainMenu(), separator: true, flags: panel.autoDj.running ? MF_CHECKED : MF_STRING });
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'From panel selection',
-				func: () => panel.startAutoDj(this.items),
-				flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
-				checkItem: panel.autoDj.running && panel.autoDj.source ? true : false
-			});
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'From current view',
-				func: () => panel.startAutoDj(panel.list),
-				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED
-			});
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'From live view',
-				func: () => panel.startAutoDj(),
-				flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED,
-				checkItem: panel.autoDj.running && !panel.autoDj.source ? true : false
-			});
-			menu.newItem({ menuName: 'Auto-DJ', separator: true });
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'Append panel selection',
-				func: () => panel.addToAutoDjSource(this.items, true),
-				flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
-			});
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'Append current view',
-				func: () => panel.addToAutoDjSource(panel.list, true),
-				flags: panel.list.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
-			});
-			menu.newItem({ menuName: 'Auto-DJ', separator: true });
+			if (ppt.libSource !== 4) {
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'From panel selection',
+					func: () => panel.startAutoDj(this.items),
+					flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
+					checkItem: panel.autoDj.running && panel.autoDj.source ? true : false
+				});
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'From current view',
+					func: () => panel.startAutoDj(panel.list),
+					flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED
+				});
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'From live view',
+					func: () => panel.startAutoDj(),
+					flags: panel.list.Count > 1 ? MF_STRING : MF_GRAYED,
+					checkItem: panel.autoDj.running && !panel.autoDj.source ? true : false
+				});
+				menu.newItem({ menuName: 'Auto-DJ', separator: true });
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'Append panel selection',
+					func: () => panel.addToAutoDjSource(this.items, true),
+					flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
+				});
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'Append current view',
+					func: () => panel.addToAutoDjSource(panel.list, true),
+					flags: panel.list.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED
+				});
+				menu.newItem({ menuName: 'Auto-DJ', separator: true });
+			}
 			menu.newItem({
 				menuName: 'Auto-DJ',
 				str: 'Stop Auto-DJ',
 				func: () => panel.stopAutoDj(),
 				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
 			});
-			menu.newItem({
-				menuName: 'Auto-DJ',
-				str: 'Show queue...',
-				func: () => this.setSource(4),
-				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
-			});
+			menu.newItem({ menuName: 'Auto-DJ', separator: true });
+			if (ppt.libSource !== 4) {
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'Show queue...',
+					func: () => this.setSource(4),
+					flags: panel.autoDj.running || fb.IsPlaying ? MF_STRING : MF_GRAYED
+				});
+			} else {
+				menu.newItem({
+					menuName: 'Auto-DJ',
+					str: 'Show library...',
+					func: () => this.setSource(0),
+					flags: MF_STRING
+				});
+			}
 		}
 		// Regorxxx ->
 
@@ -549,7 +561,7 @@ class MenuItems {
 					'\n' +
 					'\nQuick-Search:' +
 					'\n-------------' +
-					'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.'+
+					'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.' +
 					'\n• Multiple presses will jump between nodes with such initial (cycling).' +
 					'\n• Full strings can also be pressed, looking for first match (at start).' +
 					'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
