@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/02/26
+//04/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -143,6 +143,13 @@ let properties = [
 	['Custom Colour Separators Use', false, 's_lineUse'],
 	['Custom Colour Side Marker Use', false, 'sideMarkerUse'],
 	['Custom Colour Transparent Fill Use', false, 'bgTransUse'],
+
+	// Regorxxx <- Custom album art overlay track count
+	['Custom Colour Art Track Count Text', '255,255,255', 'textTrackCount'],
+	['Custom Colour Art Track Count Text Use', false, 'textTrackCountUse'],
+	['Custom Colour Art Track Count Overlay', '0,0,0,0.45', 'bgTrackCount'],
+	['Custom Colour Art Track Count Overlay Use', false, 'bgTrackCountUse'],
+	// Regorxxx ->
 
 	['Custom Font', 'Segoe UI,16,0', 'custFont'],
 	['Custom Font Album Art Line 1', 'Segoe UI,0', 'custAlbumArtGrpFont'], // Regorxxx <- Change default font styles ->

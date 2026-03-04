@@ -1542,7 +1542,7 @@
 			var altClickLabels = ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist']; // Regorxxx <- Top tracks ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
 			var clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
-			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill'];
+			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
 			var cusNodeLabels = ['Custom icon expand|collapse', 'Custom icon font name', 'Custom icon padding (+/-)', 'Square nodes: use windows'];
 			var cusScrollLabels = ['Step (0 = page)', 'Smooth duration max (ms)', 'Touch duration max (ms)', 'Touch sensitivity 0-10'];
@@ -1655,8 +1655,8 @@
 				},
 				// Regorxxx <- Tooltip font
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'], // Regorxxx <- Custom album art overlay track count ->
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Custom album art overlay track count ->
 				},
 				// Regorxxx ->
 				advanced: {
@@ -1678,7 +1678,7 @@
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
-				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse'],
+				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			}
 			// Regorxxx <- New search tab
@@ -2294,7 +2294,7 @@
 			var bg = [];
 			var fg = [];
 			function setCustomColours(value) {
-				var items = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans'];
+				var items = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->
 				for (var i = 0; i < items.length; i++) {
 					bg[i] = assign(ppt[items[i] + '_internal'][value], i < 6 ? 0 : 1);
 					fg[i] = getSelCol(bg[i]);
@@ -2312,7 +2312,7 @@
 				for (i = 4; i < 6; i++) { window.tooltipFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				for (i = 0; i < 6; i++) { window.colours1.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
-				for (i = 6; i < 19; i++) { window.colours2.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
+				for (i = 6; i < 21; i++) { window.colours2.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
 			}
 
 			function setAdvanced() {

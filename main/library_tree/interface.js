@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/02/26
+//04/03/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -141,7 +141,7 @@ class UserInterface {
 	// Methods
 
 	assignColours() {
-		const prop = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans'];
+		const prop = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->
 		this.col.txt = '';
 		this.col.txt_h = '';
 		this.icon.col_c = '';
@@ -677,6 +677,11 @@ class UserInterface {
 		}
 		this.col.t = this.style.bg ? this.getButCol(this.col.bg) : 200;
 		this.col.topBarUnderlay = this.col.bg;
+
+		// Regorxxx <- Custom album art overlay track count
+		if (this.col.textTrackCount === '') { this.col.textTrackCount = $.RGB(255, 255, 255); }
+		if (this.col.bgTrackCount === '') { this.col.bgTrackCount = $.RGBA(0, 0, 0, 115); }
+		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup. Remove ui.id.local references ->
 

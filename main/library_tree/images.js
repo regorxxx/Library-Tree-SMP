@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/12/25
+//04/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -564,23 +564,24 @@ class Images {
 				const count_y = y + (this.style.image != 2 ? 0 : count_h / 1.67);
 				let count = item.count;
 				let count_h2 = count_h;
+				// Regorxxx <- Custom album art overlay track count
 				if (count_w > this.im.w) {
 					count = item.count.split(' ');
 					count_h2 = count_h * 2;
 					count_w = Math.max(gr.CalcTextWidth(count[0], ui.font.tracks), gr.CalcTextWidth(count[1], ui.font.tracks));
 					count_x = x + (this.style.image != 2 ? w - count_w - 3 : (w - count_w - 2) / 2);
 					gr.SetSmoothingMode(2);
-					// TODO Add settings for overlay item count color
-					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, $.RGBA(0, 0, 0, 115));
-					gr.GdiDrawText(count[0], ui.font.tracks, $.RGB(255, 255, 255), count_x + 1, count_y, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
-					gr.GdiDrawText(count[1], ui.font.tracks, $.RGB(255, 255, 255), count_x + 1, count_y + count_h, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
+					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
+					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
+					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
 					gr.SetSmoothingMode(0);
 				} else {
 					gr.SetSmoothingMode(2);
-					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, $.RGBA(0, 0, 0, 115));
-					gr.GdiDrawText(count, ui.font.tracks, $.RGB(255, 255, 255), count_x + 1, count_y, count_w, count_h, panel.cc);
+					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
+					gr.GdiDrawText(count, ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, panel.cc);
 					gr.SetSmoothingMode(0);
 				}
+				// Regorxxx ->
 				break;
 			}
 			case 2: {
