@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/03/26
+//06/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT */
@@ -124,34 +124,6 @@ class Search {
 			}
 			return input;
 		};
-
-		this.getDragDropTooltipText = (method, mask, x, y, bInternal) => {
-			if (y < panel.search.h || (ppt.libSource !== 3 && ppt.libSource !== 4)) {
-				if (method === 0 && panel.folderView) { // Auto: tags or path
-					return 'Add paths to search box';
-				} else { // Tags
-					const searchTags = this.getDragDropTags(mask);
-					const operators = this.getDragDropOperators(mask);
-					const tagsDisplay = operators.tag
-						? searchTags.join(' ' + operators.tag + ' ')
-						: searchTags[0];
-					return (operators.query || !panel.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
-				}
-			} else if (ppt.libSource === 3) {
-				const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
-				return ppt.queueSorting && pop.row.i >= 0
-					? idx < 0
-						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
-						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
-					: (mask & MK_CONTROL) === MK_CONTROL
-						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
-						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
-			} else if (ppt.libSource === 4) {
-				return (mask & MK_CONTROL) === MK_CONTROL
-					? 'Add items to Auto-DJ (top tracks)'
-					: 'Add items to Auto-DJ';
-			}
-		};
 		// Regorxxx ->
 		// Regorxxx <- RegExp library search
 		const isRegExp = /^\/.+\/[gimsuy]?/;
@@ -274,7 +246,7 @@ class Search {
 	}
 
 	lbtn_dblclk(x, y) {
-		if (y < panel.search.h && x > but.q.h + but.margin && x < panel.search.x + panel.search.w && panel.search.txt.length) {
+		if (this.trace(x, y, 'input') && panel.search.txt.length) { // Regorxxx <- Code cleanup ->
 			panel.search.cursor = false;
 			this.start = 0;
 			this.end = panel.search.txt.length;
@@ -284,7 +256,7 @@ class Search {
 
 	lbtn_dn(x, y) {
 		panel.searchPaint();
-		this.lbtnDn = panel.search.active = (y < panel.search.h && x > but.q.x - but.margin / 2 + but.q.h + but.margin && x < panel.search.x + panel.search.w);
+		this.lbtnDn = panel.search.active = this.trace(x, y, 'button'); // Regorxxx <- Code cleanup ->
 		if (!this.lbtnDn) {
 			this.offset = this.start = this.end = this.cx = 0;
 			timer.clear(timer.cursor);
@@ -307,11 +279,19 @@ class Search {
 		this.lbtnDn = false;
 	}
 
+	// Regorxxx <- Tooltip over search input box | Code cleanup
+	trace(x, y, element) {
+		switch((element || '').toLowerCase()) {
+			case 'input': return y < panel.search.h && x > (but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
+			case 'button': return y < panel.search.h && x >(but.q.x - but.margin / 2 + but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
+			default: return y < panel.search.h && x > panel.search.x && x < (panel.search.w + panel.search.x);
+		}
+	}
+	// Regorxxx ->
+
 	move(x, y) {
 		// Regorxxx <- Tooltip over search input box
-		if (y < panel.search.h && x > panel.search.x && x < (panel.search.w + panel.search.x)) {
-			this.tt(this.searchTooltipText());
-		}
+		if (this.trace(x, y, 'input')) { this.tt(this.searchTooltipText()); }
 		// Regorxxx ->
 		if (y > panel.search.h || !this.lbtnDn) return;
 		const cursorChrPos = this.getCursorChrPos(x);

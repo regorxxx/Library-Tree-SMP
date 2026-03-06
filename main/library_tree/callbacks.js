@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/03/26
+//06/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -683,45 +683,51 @@ addEventListener('on_locations_added', (taskId, handleList) => {
 
 // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source
 // Drag n drop to copy/move tracks to playlists (only files from foobar2000)
-const dragDrop = { effect: -1 };
-addEventListener('on_drag_enter', (action, x, y, mask) => { // eslint-disable-line no-unused-vars
-	if (!ui.w || !ui.h || ((!ppt.searchShow || ppt.searchDragMethod === -1) && (ppt.libSource !== 3 && ppt.libSource !== 4))) { return; }
-	dragDrop.effect = -1;
+const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unused-vars
+	if (ppt.libSource !== 3 && ppt.libSource !== 4) {
+		if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
+	}
 	// Avoid things outside foobar2000
-	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { dragDrop.effect = action.Effect = dropEffect.none; }
-	if (ppt.libSource === 4 && (action.IsInternal || panel.isInAutoDj(fb.GetSelections(1)))) { dragDrop.effect = action.Effect = dropEffect.none; }
+	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { return false; }
+	// Avoid adding invalid things to Auto-DJ
+	if (ppt.libSource === 4) {
+		if (action.IsInternal) {
+			if ((!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y))) { return false; }
+		} else if (panel.isInAutoDj(fb.GetSelections(1))) { return false; }
+	}
+	return true;
+};
+
+addEventListener('on_drag_enter', (action, x, y, mask) => { // eslint-disable-line no-unused-vars
+	if (!ui.w || !ui.h) { return; }
+	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 });
 
-addEventListener('on_drag_leave', (action, x, y, mask) => {
-	if (!ui.w || !ui.h || ((!ppt.searchShow || ppt.searchDragMethod === -1) && (ppt.libSource !== 3 && ppt.libSource !== 4))) { return; }
-	on_mouse_leave(x, y, mask);
+addEventListener('on_drag_leave', () => {
+	if (!ui.w || !ui.h) { return; }
+	on_mouse_leave();
 });
 
 addEventListener('on_drag_over', (action, x, y, mask) => {
-	if (!ui.w || !ui.h || ((!ppt.searchShow || ppt.searchDragMethod === -1) && (ppt.libSource !== 3 && ppt.libSource !== 4))) { return; }
+	if (!ui.w || !ui.h) { return; }
 	// Avoid invalid inputs
-	if (dragDrop.effect === dropEffect.none) { action.Effect = dropEffect.none; return; }
-	// Avoid things outside foobar2000
-	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { action.Effect = dropEffect.none; return; }
+	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 	// Move playlist index only while not pressing alt
 	on_mouse_move(x, y, mask);
 	// Set effects
 	action.Effect = dropEffect.copy;
-	action.Text = search.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y, action.IsInternal);
+	action.Text = panel.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y, action.IsInternal);
 });
 
 addEventListener('on_drag_drop', (action, x, y, mask) => {
-	if (!ui.w || !ui.h || ((!ppt.searchShow || ppt.searchDragMethod === -1) && (ppt.libSource !== 3 && ppt.libSource !== 4))) { return; }
-	// Avoid invalid inputs
-	if (dragDrop.effect === dropEffect.none) { return; }
-	// Avoid things outside foobar2000
-	if (action.Effect === dropEffect.none) { return; }
+	if (!ui.w || !ui.h) { return; }
+	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 	action.Effect = dropEffect.none; // Forces not sending things to a playlist
 	const selItems = action.IsInternal
 		? pop.sortIfNeeded(pop.getHandleList('newItems'))
 		: fb.GetSelections(1);
 	if (selItems && selItems.Count) {
-		if (y < panel.search.h || (ppt.libSource !== 3 && ppt.libSource !== 4)) {
+		if (search.trace(x, y)) {
 			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
 			search.clear();
 			if (input.length) {
