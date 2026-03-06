@@ -94,10 +94,11 @@ addEventListener('on_library_items_added', (handleList) => {
 	}
 	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource) return;
 	lib.treeState(false, 2, handleList, 0);
+	lib.flushViewCache([1]); // Regorxxx <- Internal cache of views ->
 });
 
 addEventListener('on_library_items_removed', (handleList) => {
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3  || ppt.libSource === 4) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
+	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3 || ppt.libSource === 4) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
 	if (ppt.libSource == 2) {
 		const libList = lib.list.Clone();
 		libList.Sort();
@@ -105,6 +106,7 @@ addEventListener('on_library_items_removed', (handleList) => {
 		handleList.MakeIntersection(libList);
 	}
 	lib.treeState(false, 2, handleList, 2);
+	lib.flushViewCache([1]); // Regorxxx <- Internal cache of views ->
 });
 
 addEventListener('on_library_items_changed', (handleList) => {
@@ -116,6 +118,7 @@ addEventListener('on_library_items_changed', (handleList) => {
 		handleList.MakeIntersection(libList);
 	}
 	lib.treeState(false, 2, handleList, 1);
+	lib.flushViewCache([1]); // Regorxxx <- Internal cache of views ->
 });
 
 addEventListener('on_main_menu', (index) => {
@@ -129,7 +132,10 @@ addEventListener('on_metadb_changed', (handleList, isDatabase) => {
 			const i = lib.full_list.Find(h);
 			if (i != -1) {
 				const isMainChanged = lib.isMainChanged(handleList);
-				if (isMainChanged) lib.treeState(false, 2);
+				if (isMainChanged) {
+					lib.treeState(false, 2);
+					lib.flushViewCache([1]); // Regorxxx <- Internal cache of views ->
+				}
 				ui.focus_changed();
 				return true;
 			}
@@ -522,6 +528,7 @@ addEventListener('on_playback_new_track', (handle) => {
 	if (!ppt.recItemImage || ppt.libSource != 2) ui.on_playback_new_track(handle);
 	if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.updateAutoDj(); } // Regorxxx <- Auto-DJ feature ->
+	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 });
 
 addEventListener('on_playback_stop', (reason) => {
@@ -531,11 +538,13 @@ addEventListener('on_playback_stop', (reason) => {
 	on_item_focus_change();
 	if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
+	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
 
 addEventListener('on_playback_queue_changed', () => {
 	if (ppt.libSource === 3 || ppt.libSource === 4) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
+	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed();
 });
 
@@ -550,6 +559,7 @@ addEventListener('on_playlists_changed', () => {
 			ppt.libSource = 0;
 			if (panel.imgView) img.clearCache();
 			lib.playlist_update();
+			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 		}
 	}
 	// Regorxxx ->
@@ -561,13 +571,14 @@ addEventListener('on_playlist_items_added', (playlistIndex) => {
 		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
 		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
+			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 			return;
 		}
 	}
 	// Regorxxx ->
 	if (!ppt.libSource && playlistIndex == $.pl_active) {
 		lib.playlist_update(playlistIndex);
-
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
@@ -576,18 +587,21 @@ addEventListener('on_playlist_items_removed', (playlistIndex) => {
 		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
 		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
+			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 			return;
 		}
 	}
 
 	if (!ppt.libSource && playlistIndex == $.pl_active) {
 		lib.playlist_update(playlistIndex);
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
 addEventListener('on_playlist_items_reordered', (playlistIndex) => {
 	if (!ppt.libSource && playlistIndex == $.pl_active) {
 		lib.playlist_update(playlistIndex);
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
@@ -595,6 +609,7 @@ addEventListener('on_playlist_switch', () => {
 	$.pl_active = plman.ActivePlaylist;
 	if (!ppt.libSource) {
 		lib.playlist_update();
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 	ui.focus_changed();
 });

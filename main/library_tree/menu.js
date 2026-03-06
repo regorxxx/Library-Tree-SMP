@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/03/26
+//06/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -518,14 +518,14 @@ class MenuItems {
 				menu.newItem({
 					menuName: 'Auto-DJ',
 					str: 'Show queue...',
-					func: () => this.setSource(4),
+					func: () => this.setCachedSource(4, 'Prev. Source', void (0), true), // Regorxxx <- Internal cache of views ->
 					flags: panel.autoDj.running || fb.IsPlaying ? MF_STRING : MF_GRAYED
 				});
 			} else {
 				menu.newItem({
 					menuName: 'Auto-DJ',
-					str: 'Show library...',
-					func: () => this.setSource(0),
+					str: 'Show prev. source...',
+					func: () => this.setCachedSource(0, void (0), 'Prev. Source', true), // Regorxxx <- Internal cache of views ->
 					flags: MF_STRING
 				});
 			}
@@ -772,7 +772,18 @@ class MenuItems {
 		this.sourceTypes().forEach((v, i) => menu.newItem({
 			menuName: appendTo ? 'Source' : void (0),
 			str: v,
-			func: () => this.setSource(i),
+			func: () => {
+				// Regorxxx <- Internal cache of views
+				const toCache = new Set([3, 4]);
+				if (toCache.has(i) && !toCache.has(ppt.libSource)) {
+					this.setCachedSource(i, 'Prev. Source', void (0));
+				} else if (!toCache.has(i) && toCache.has(ppt.libSource)) {
+					this.setCachedSource(i, void (0), 'Prev. Source');
+				} else {
+					this.setSource(i);
+				}
+				// Regorxxx ->
+			},
 			checkRadio: i == sourceIdx,
 			separator: i == this.sourceTypes().length - 1
 		}));
@@ -1208,18 +1219,18 @@ class MenuItems {
 		}
 	}
 
-	setSource(i, bOmitMsg) { // Regorxxx <- External integration ->
+	setSource(i, bOmitMsg, bProcessTree = true) { // Regorxxx <- External integration | Internal cache of views ->
 		switch (i) {
-			case 0:
+			case 0: // Library
 				ppt.libSource = 1;
 				ppt.fixedPlaylist = false;
 				break;
-			case 1:
+			case 1: // Panel
 				ppt.libSource = 2;
 				ppt.fixedPlaylist = false;
 				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
-			case 2: {
+			case 2: { // Playlist
 				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 				const fixedPlaylistIndex = lib.getFixedPlaylistSources();
 				if (fixedPlaylistIndex.length !== 0) { ppt.fixedPlaylist = true; }
@@ -1244,7 +1255,7 @@ class MenuItems {
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
 		if (ppt.showSource) panel.setRootName();
-		lib.treeState(false, 2);
+		if (bProcessTree) { lib.treeState(false, 2); } // Regorxxx <- Internal cache of views ->
 	}
 
 	setSourcePanel() {
@@ -1270,6 +1281,18 @@ class MenuItems {
 			ok_callback(status, ns);
 		}
 	}
+
+	// Regorxxx <- Internal cache of views
+	setCachedSource(i, from, to, bOmitMsg) {
+		if (ppt.libSourceCache) {
+			if (typeof from !== 'undefined') { lib.setViewCache(from); }
+			if (lib.getViewCache(to)) {
+				return this.setSource(i, bOmitMsg, false);
+			}
+		}
+		return this.setSource(i, bOmitMsg);
+	}
+	// Regorxxx ->
 
 	setStatistics(i) {
 		if (i < pop.statistics.length) { // Regorxxx <- New statistics

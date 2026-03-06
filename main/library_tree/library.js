@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/03/26
+//06/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1464,4 +1464,68 @@ class Library {
 				break;
 		}
 	}
+
+	// Regorxxx <- Internal cache of views
+	setViewCache(id) {
+		if (!this.viewCache) { this.viewCache = {}; }
+		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: ppt.fixedPlaylist ? -1 :  ppt.libSource };
+		const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
+		// ['exp', 'expand', 'full_list', 'list', 'full_list_need_sort', 'libNode', 'cacheId', 'cache', 'node', 'root']
+		Object.keys(this).filter((k) => !filterKeys.has(k))
+			.forEach((key) => this.viewCache[id].lib[key] = this[key]);
+		['cur_ix', 'expandedTracks', 'id', 'last_sel', 'nd', 'rows', 'sel_items', 'selList', 'tree']
+			.forEach((key) => this.viewCache[id].pop[key] = pop[key]);
+		['list']
+			.forEach((key) => this.viewCache[id].panel[key] = panel[key]);
+		['treeViewBy', 'albumArtViewBy']
+			.forEach((key) => this.viewCache[id].ppt[key] = ppt[key]);
+	}
+
+	getViewCache(id, bDelete = true) {
+		if (this.hasViewCache(id)) {
+			const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
+			Object.keys(this).filter((k) => !filterKeys.has(k))
+				.forEach((key) => this[key] = this.viewCache[id].lib[key]);
+			['cur_ix', 'expandedTracks', 'id', 'last_sel', 'nd', 'rows', 'sel_items', 'selList', 'tree']
+				.forEach((key) => pop[key] = this.viewCache[id].pop[key]);
+			['list']
+				.forEach((key) => panel[key] = this.viewCache[id].panel[key]);
+			['treeViewBy', 'albumArtViewBy']
+				.forEach((key) => ppt[key] = this.viewCache[id].ppt[key]);
+			if (bDelete) { delete this.viewCache[id]; }
+			return true;
+		}
+		return false;
+	}
+
+	getViewCacheBySource(source, bDelete = true) {
+		if (this.viewCache) {
+			const sources = new Set(Array.isArray(source) ? source : [source]);
+			for (let id in this.viewCache) {
+				if (sources.has(this.viewCache[id].source)) {
+					return this.getViewCache(id, bDelete);
+				}
+			}
+		}
+		return false;
+	}
+
+	hasViewCache(id) {
+		return this.viewCache && !!this.viewCache[id];
+	}
+
+	flushViewCache(source) {
+		let bDone = false;
+		if (this.viewCache) {
+			const sources = new Set(Array.isArray(source) ? source : [source]);
+			for (let id in this.viewCache) {
+				if (sources.has(this.viewCache[id].source)) {
+					delete this.viewCache[id];
+					bDone = true;
+				}
+			}
+		}
+		return bDone;
+	}
+	// Regorxxx ->
 }
