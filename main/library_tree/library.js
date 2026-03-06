@@ -592,6 +592,7 @@ class Library {
 	// Regorxxx ->
 
 	getLibrary(items) {
+		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
 		this.empty = '';
 		this.time.Reset();
 		this.none = '';
@@ -663,6 +664,7 @@ class Library {
 		}
 		pop.libItems = true;
 		panel.forcePaint();
+		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
 		if (ppt.filterBy) {
 			this.getFilterQuery();
 			this.filterQueryID = this.filterQuery;
@@ -671,12 +673,15 @@ class Library {
 			this.filterQuery = '';
 			this.filterQueryID = 'N/A';
 		}
+		if (profiler) { profiler.Print('Search filter'); } // Regorxxx <- Library profiling ->
 		// Regorxxx <- Global duplicates filter
+		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
 		if (ppt.filterDupl) {
 			this.list = this.removeDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
 		} else if (ppt.showDupl) {
 			this.list = this.removeNonDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
 		}
+		if (profiler) { profiler.Print('Duplicates filter'); profiler.Reset(); }	 // Regorxxx <- Library profiling ->
 		// Regorxxx ->
 		if (!this.list.Count) {
 			pop.clearTree();
@@ -686,6 +691,7 @@ class Library {
 			return;
 		}
 		this.rootNames('', 0, ppt.libSource == 2 ? false : items);
+		if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
 	}
 
 	getSearchList(n) {
@@ -702,13 +708,13 @@ class Library {
 	}
 
 	initialise(handleList, bNotify) { // Regorxxx <- Don't create cache playlists if possible
-		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling
+		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
 		lib.initialised = true;
 		this.load(handleList);
 		this.getLibrary(true);
 		this.rootNodes(ppt.rememberTree, ppt.process);
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
-		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling
+		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 	}
 
 	isMainChanged(handleList) {
