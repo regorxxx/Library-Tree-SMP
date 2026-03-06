@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/03/26
+//05/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
@@ -1591,17 +1591,27 @@ class Panel {
 				const prev = this.autoDj.last;
 				if (!prev) { out = this.sortTracksAutoDj(itemsArr, 'random'); }
 				else {
+					// Match genre, style and mood while trying to scatter same artists
 					const tags = [
 						['match-genre', 'match'].includes(method)
 							? [globTags.genre, globTags.style]
 							: [],
 						['match-mood', 'match'].includes(method)
 							? [globTags.mood]
-							: []
+							: [],
+						['album artist', 'artist']
 					].flat(Infinity).filter(Boolean);
-					const reference = new Set(getHandleTags(prev, tags).flat(Infinity).filter(Boolean));
+					const temp = getHandleTags(prev, tags);
+					const reference = new Set(temp.slice(0, -2).flat(Infinity).filter(Boolean));
+					const refSize = reference.size;
+					const id = new Set(temp.slice(-2).flat(Infinity).filter(Boolean));
 					getHandleListTags(new FbMetadbHandleList(itemsArr), tags).forEach((handleTag, i) => {
-						itemsArr[i].weight = (new Set(handleTag.flat(Infinity).filter(Boolean))).intersectionSize(reference);
+						itemsArr[i].weight = (new Set(handleTag.slice(0, -2).flat(Infinity).filter(Boolean)))
+							.intersectionSize(reference) / refSize +
+							(
+								(new Set(handleTag.slice(-2).flat(Infinity).filter(Boolean)))
+									.isEqual(id) ? -0.5 : 0.5
+							);
 					});
 					out = [...itemsArr].sort((a, b) => b.weight - a.weight);
 				}
