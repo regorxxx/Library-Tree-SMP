@@ -255,8 +255,40 @@ class Panel {
 				}
 				s = s.replace(q[0], cache);
 			}
-			cache = null;
-			// Regorxxx ->
+			while (s.includes('$iterate{')) {
+				const q = s.match(/\$iterate{'(.+?)',?(.+?)?,?(.+?)?}/);
+				if (!q) { s = s.replace(/\$iterate{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				cache = q[3];
+				s = s.replace(
+					q[0],
+					logicDic.includes(cache)
+						? queryJoin(Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
+						: Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
+							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
+				);
+			}
+			while (s.includes('$meta_branch_remap(')) {
+				const q = s.match(/\$meta_branch_remap\((.+?)?\)/);
+				if (!q) { s = s.replace(/\$meta_branch_remap(.*?)?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				cache = (q[1] || '').toUpperCase();
+				s = s.replace(
+					q[0],
+					cache === 'ARTIST'
+						? '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)'
+						: cache === 'ALBUM ARTIST'
+							? '$if3(%<ALBUM ARTIST>%,%<ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)'
+							: cache === 'ALBUM'
+								? '$if2(%<ALBUM>%,%<VENUE>%)'
+								: cache === 'TRACK ARTIST'
+									? '$if($strcmp(%ARTIST%,%ALBUM ARTIST%),$char(8203),%<TRACK ARTIST>%)'
+									: '$if($meta_test(' + q[1] + '),%<' + cache + '>%,$char(8203))'
+				);
+			}
+			while (s.includes('$meta_branch(')) {
+				const q = s.match(/\$meta_branch\((.+?)?\)/);
+				if (!q) { s = s.replace(/\$meta_branch(.*?)?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				s = s.replace(q[0], '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
+			}
 			// Regorxxx ->
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
@@ -372,7 +404,7 @@ class Panel {
 					const qMark = baseTag[i];
 					this.view = this.view.replace(RegExp(v), '$if2(' + v + ',' + qMark + ')');
 				});
-				this.view = this.view.replace(/%<album artist>%/i, '$if3(%<#album artist#>%,%<#artist#>%,%<#composer#>%,%<#performer#>%)').replace(/%<album>%/i, '$if2(%<#album#>%,%<#venue#>%)').replace(/%<artist>%/i, '$if3(%<artist>%,%<album artist>%,%<composer>%,%<performer>%)').replace(/<#/g, '<').replace(/#>/g, '>');
+				this.view = this.view.replace(/%<album artist>%/i, '$if3(%<#ALBUM ARTIST#>%,%<#ARTIST#>%,%<#COMPOSER#>%,%<#PERFORMER#>%)').replace(/%<album>%/i, '$if2(%<#ALBUM#>%,%<#VENUE#>%)').replace(/%<artist>%/i, '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)').replace(/<#/g, '<').replace(/#>/g, '>');
 			}
 			if (this.multiProcess) this.view = this.view.replace(/%</g, '#!#$meta_sep(').replace(/>%/g, ',@@)#!#');
 			this.sortBy = this.sortBy.replace(/\|/g, this.splitter);

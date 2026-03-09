@@ -45,26 +45,52 @@
 				<tr>
 					<td> <em>%&ltFIELD&gt%</em> </td>
 					<td> Splits multiple values into separate items. </td>
-					<td> <em>%&ltARTISTt&gt%</em> </td>
+					<td> <em>%&ltARTIST&gt%</em> </td>
 					<td> Splits artists into same level. </td>
 				</tr>
 				<tr>
+					<td> <em>%FIELD1%&#124%FIELD2%&#124...</em> </td>
+					<td> &#124 separates different fields into different branch levels </td>
+					<td>
+						<em>%GENRE%&#124%ARTIST%</em>
+						<br>
+						<br>
+						<em>%&ltGENRE&gt%&#124%&ltARTIST&gt%</em>
+					</td>
+					<td>
+						Puts genres and artists into different levels.
+						<br>
+						<br>
+						Same but multi-valued tags are also separated into different nodes within every branch level.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>%FIELD1%&#166%FIELD2%&#166...</em> </td>
+					<td> &#166 combines different fields into the same branch level </td>
+					<td>
+						<em>%ALBUM ARTIST%&#166%ARTIST%</em>
+						<br>
+						<br>
+						<em>%&ltALBUM ARTIS&gt%&#166%&ltARTIST&gt%</em>
+					</td>
+					<td>
+						Merges album artists and artists into same level.
+						<br>
+						<br>
+						Same but multi-valued tags are also separated into different nodes within same level.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$stripbranchprefix{%&ltFIELD&gt%}</em> </td>
-					<td> Same as above, additionally removes prefixes (like leading "The" or "A") from each value. </td>
+					<td> Same as %&ltFIELD&gt%, additionally removes prefixes (like leading "The" or "A") from each value. </td>
 					<td> <em>$stripbranchprefix{%&ltARTIST&gt%}</em> </td>
 					<td> Splits artists and removes prefixes. </td>
 				</tr>
 				<tr>
 					<td> <em>$swapbranchprefix{%&ltFIELD&gt%}</em> </td>
-					<td> Same as above, additionally moves prefixes (like leading "The" or "A") to end of each value. </td>
+					<td> Same as %&ltFIELD&gt%, additionally moves prefixes (like leading "The" or "A") to end of each value. </td>
 					<td> <em>$swapbranchprefix{%&ltARTIST&gt%}</em> </td>
 					<td> Splits artists and swaps prefixes to end. </td>
-				</tr>
-				<tr>
-					<td> <em>%FIELD1%&#166%FIELD2%&#166...</em> </td>
-					<td> &#166 combines different fields into the same branch level </td>
-					<td> <em>%ALBUM ARTIST%&#166%ARTIST%</em> </td>
-					<td> Merges album artists and artists into same level. </td>
 				</tr>
 				<tr>
 					<td> <em>$nodisplay{X}</em> </td>
@@ -132,6 +158,229 @@
 					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
 					<td> <em>$if($stricmp(%ARTIST%,$nowplayingorselected{%ARTIST%}),$colour{255-0-0},)%ARTIST%</em> </td>
 					<td> Displays nowplaying or selected (focused) artist in red. </td>
+				</tr>
+				<tr>
+					<td> <em>$iterate{'X',N,C}</em> </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td>
+						<em>$iterate{'$meta(ARTIST,$counter)',2,&#166}</em>
+						<br>
+						<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;->
+						<br>
+						<br>
+						$meta(ARTIST,0)&#166$meta(ARTIST,1)
+					</td>
+					<td>
+						Splits 2 first artists into same level. This example is equivalent to '%&ltARTIST&gt%', but only using N first values, instead of all.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randint{max}<br>$randint{min,max}</em> </td>
+					<td> Returns a random integer number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br> Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randint{}
+							<br>
+							<br>
+							$randint{5}
+							<br>
+							<br>
+							$randint{3,5}
+							<br>
+							<br>
+							$colour{$randint{0,255}-$randint{0,255}-$randint{0,255}}%ARTIST%|$colour{$randint{0,255}-$randint{0,255}-$randint{0,255}}%ALBUM%
+						</em>
+					</td>
+					<td>
+						1
+						<br>
+						<br>
+						2
+						<br>
+						<br>
+						4
+						<br>
+						<br>
+						Displays all artist with a random color and all albums with another random color.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandint{max}<br>$pseudorandint{min,max}</em> </td>
+					<td> Equal to $randint{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$colour{$pseudorandint{0,255}-$pseudorandint{0,255}-$pseudorandint{0,255}}%ARTIST%|$colour{$randint{0,255}-$randint{0,255}-$randint{0,255}}%ALBUM%
+						</em>
+					</td>
+					<td>
+						Displays all artist with a random shade of gray and all albums with another random color.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randfloat{max}<br>$randfloat{min,max}</em> </td>
+					<td> Returns a random float number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br>Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randfloat{}
+							<br>
+							<br>
+							$randfloat{5}
+							<br>
+							<br>
+							$randfloat{3,5}
+						</em>
+					</td>
+					<td>
+						0.98
+						<br>
+						<br>
+						2.45
+						<br>
+						<br>
+						3.78
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandfloat{max}<br>$pseudorandfloat{min,max}</em> </td>
+					<td> Equal to $randfloat{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$randfloat{1,4} - $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						0.98 - 0.98
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> Supports all TF expressions natively found on foobar2000: </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Foobar2000 Title Formatting reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference</a> </div>
+						</li>
+						<li>
+							<div class="li"> Foobar2000 Album List reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Titleformat_Album_List">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Titleformat_Album_List</a> </div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> Regarding date sorting, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern. This way you can easily change and switch sorting without further editing.</div>
+					</li>
+					<li>
+						<div class="li"> Prefixes used by $stripbranchprefix{}, $swapbranchprefix{} and $prefix are set at advanced tab (HTML options panel) or 'Prefixes to Strip or Swap (| Separator)' (properties panel).</div>
+					</li>
+					<li>
+						<div class="li"> Rand functions are evaluated once for the entire view (TF expression), not per node. This is relevant for color usage for ex, since the same value will be applied across all the list. </div>
+					</li>
+					<li>
+						<div class="li"> Hard splitters (|) and Soft splitters (¦) don't filter empty valued tags by default, thus creating blank or '?' nodes. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Expressions like '%TAG%¦%FIELD%' will show a '?' node if %FIELD% does not exist, unless you use something like '%TAG%[¦%FIELD%]'. </div>
+						</li>
+						<li>
+							<div class="li"> Similarly, '%TAG%¦$meta(FIELD)' expressions should be replaced with '%TAG%[¦$meta(FIELD)]' to avoid blank nodes. </div>
+						</li>
+						<li>
+							<div class="li"> '$iterate{'$meta(FIELD,$counter)',2,&#166}' expressions behave the same and they should be replaced with '$iterate{'[$meta(FIELD,$counter)]',X,&#166}' which are then expanded to [$meta(FIELD,0)][&#166$meta(FIELD,1)][&#166...]</div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> Support of $nowplaying{}, $selected{} and $nowplayingorselected{} is limited to display purposes. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> May have some performance impact. </div>
+						</li>
+						<li>
+							<div class="li"> View will be updated automatically on Playback/selection changes. </div>
+						</li>
+						<li>
+							<div class="li"> Can be used for things like highlighting currently playing artist. </div>
+						</li>
+						<li>
+							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
+						</li>
+					</ul>
+				</ul>
+		</div>
+		<!-- SECTION "Views" -->
+		<!-- SECTION "Filters and Search box" -->
+		<h2><a name="filter_summary" id="filter_summary">Filters and Search box</a></h2>
+		<div class="level2">
+			<table class="inline" style="width: 99%;">
+				<tr>
+					<th> Function </th>
+					<th> Description </th>
+					<th> Example </th>
+					<th> Comment </th>
+				</tr>
+				<tr>
+					<td> <em>$nowplaying{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing track. </td>
+					<td> <em>ARTIST IS $nowplaying{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by nowplaying artist. </td>
+				</tr>
+				<tr>
+					<td> <em>$selected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the selected track. </td>
+					<td> <em>ARTIST IS $selected{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by selected (focused) artist. </td>
+				</tr>
+				<tr>
+					<td> <em>$nowplayingorselected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
+					<td> <em>ARTIST IS $nowplayingorselected{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by nowplaying artist while playing, selected (focused) artist otherwise. </td>
+				</tr>
+				<tr>
+					<td> <em>$searchtext</em> </td>
+					<td> Returns search text into the filter pattern.</td>
+					<td>
+						Filter: <em>GENRE HAS $searchtext</em>
+						<br>
+						Search box: <em>rock</em>
+					</td>
+					<td>
+						Use example as filter, then type "rock" in search box.
+						<br>
+						Result: "GENRE HAS rock"
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$prefix</em> </td>
+					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
+					<td>
+						<em>
+							$swapprefix(%TAG%,$prefix)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							$swapprefix(%TAG%,A,The,An)
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$iterate{'X',N,C}</em> </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (OR, AND, ...). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td> <em>$iterate{'ARTIST IS $nowplaying{$meta(ARTIST,$counter)}',2,OR}</em> </td>
+					<td> (ARTIST IS $nowplaying{$meta(ARTIST,0)}) OR (ARTIST IS $nowplaying{$meta(ARTIST,1)}) </td>
 				</tr>
 				<tr>
 					<td> <em>$randint{max}<br>$randint{min,max}</em> </td>
@@ -223,97 +472,19 @@
 			<h2>Notes:</h3>
 				<ul>
 					<li>
-						<div class="li"> Regarding date sorting, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern. This way you can easily change and switch sorting without further editing.</div>
-					</li>
-					<li>
-						<div class="li"> Prefixes used by $stripbranchprefix{}, $swapbranchprefix{} and $prefix are set at advanced tab (HTML options panel) or 'Prefixes to Strip or Swap (| Separator)' (properties panel).</div>
-					</li>
-					<li>
-						<div class="li"> Support of $nowplaying{}, $selected{} and $nowplayingorselected{} is limited to display purposes. </div>
+						<div class="li"> Supports all TF expressions and Query syntax natively found on foobar2000: </div>
 					</li>
 					<ul>
 						<li>
-							<div class="li"> May have some performance impact. </div>
+							<div class="li"> Foobar2000 Title Formatting reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference</a> </div>
 						</li>
 						<li>
-							<div class="li"> View will be updated automatically on Playback/selection changes. </div>
+							<div class="li"> Foobar2000 Query Syntax reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax</a> </div>
 						</li>
 						<li>
-							<div class="li"> Can be used for things like highlighting currently playing artist. </div>
-						</li>
-						<li>
-							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
+							<div class="li"> SORT BY expressions are not allowed. </a> </div>
 						</li>
 					</ul>
-				</ul>
-		</div>
-		<!-- SECTION "Views" -->
-		<!-- SECTION "Filters and Search box" -->
-		<h2><a name="filter_summary" id="filter_summary">Filters and Search box</a></h2>
-		<div class="level2">
-			<table class="inline" style="width: 99%;">
-				<tr>
-					<th> Function </th>
-					<th> Description </th>
-					<th> Example </th>
-					<th> Comment </th>
-				</tr>
-				<tr>
-					<td> <em>$nowplaying{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing track. </td>
-					<td> <em>ARTIST IS $nowplaying{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by nowplaying artist. </td>
-				</tr>
-				<tr>
-					<td> <em>$selected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the selected track. </td>
-					<td> <em>ARTIST IS $selected{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by selected (focused) artist. </td>
-				</tr>
-				<tr>
-					<td> <em>$nowplayingorselected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
-					<td> <em>ARTIST IS $nowplayingorselected{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by nowplaying artist while playing, selected (focused) artist otherwise. </td>
-				</tr>
-				<tr>
-					<td> <em>$searchtext</em> </td>
-					<td> Returns search text into the filter pattern.</td>
-					<td>
-						Filter: <em>GENRE HAS $searchtext</em>
-						<br>
-						Search box: <em>rock</em>
-					</td>
-					<td>
-						Use example as filter, then type "rock" in search box.
-						<br>
-						Result: "GENRE HAS rock"
-					</td>
-				</tr>
-				<tr>
-					<td> <em>$prefix</em> </td>
-					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
-					<td>
-						<em>
-							$swapprefix(%TAG%,$prefix)
-							<br>
-							&nbsp;&nbsp;&nbsp;&nbsp;->
-							<br>
-							$swapprefix(%TAG%,A,The,An)
-						</em>
-					</td>
-					<td>
-						Expression used on view TF pattern.
-						<br>
-						<br>
-						Internally changed to this.
-					</td>
-				</tr>
-			</table>
-		</div>
-		<div class="level2">
-			<h2>Notes:</h3>
-				<ul>
 					<li>
 						<div class="li"> Search box also supports RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>
 					</li>
@@ -481,11 +652,135 @@
 					<td> <em>$if($strcmp(Rock,$nowplayingorselected{$meta(GENRE,0)}),$rand(),0)$harmonicmix{}</em> </td>
 					<td> Performs harmonic mixing and when playing or selecting a Rock track applies a random sorting. </td>
 				</tr>
+				<tr>
+					<td> <em>$prefix</em> </td>
+					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
+					<td>
+						<em>
+							$swapprefix(%TAG%,$prefix)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							$swapprefix(%TAG%,A,The,An)
+						</em>
+					</td>
+					<td>
+						Expression used on TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$iterate{'X',N,C}</em> </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td>
+						<em>$iterate{'$meta(ARTIST,$counter)',2,-}</em>
+						<br>
+						<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;->
+						<br>
+						<br>
+						$meta(ARTIST,0)-$meta(ARTIST,1)
+					</td>
+					<td>
+						Uses 2 first artists for sorting. This example is equivalent to '%ARTIST%', but only using N first values, instead of all.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randint{max}<br>$randint{min,max}</em> </td>
+					<td> Returns a random integer number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br> Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randint{}
+							<br>
+							<br>
+							$randint{5}
+							<br>
+							<br>
+							$randint{3,5}
+							<br>
+							<br>
+							$ifgreater($len(%TITLE%),$randint(10,30),0,1)
+						</em>
+					</td>
+					<td>
+						1
+						<br>
+						<br>
+						2
+						<br>
+						<br>
+						4
+						<br>
+						<br>
+						Sorts all tracks with a title longer than a random number first, and then the rest (both in no particular order).
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandint{max}<br>$pseudorandint{min,max}</em> </td>
+					<td> Equal to $randint{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$ifgreater($len(%TITLE%),$pseudorandint(10,30),$sub($len(%TITLE%),$pseudorandint(10,30)),0)
+						</em>
+					</td>
+					<td>
+						Sorts all tracks with a title shorter than a random number first (in no particular order), and then the longer ones sorted by it's length (from min to max).
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randfloat{max}<br>$randfloat{min,max}</em> </td>
+					<td> Returns a random float number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br>Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randfloat{}
+							<br>
+							<br>
+							$randfloat{5}
+							<br>
+							<br>
+							$randfloat{3,5}
+						</em>
+					</td>
+					<td>
+						0.98
+						<br>
+						<br>
+						2.45
+						<br>
+						<br>
+						3.78
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandfloat{max}<br>$pseudorandfloat{min,max}</em> </td>
+					<td> Equal to $randfloat{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$randfloat{1,4} - $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						0.98 - 0.98
+					</td>
+				</tr>
 			</table>
 		</div>
 		<div class="level2">
 			<h2>Notes:</h3>
 				<ul>
+					<li>
+						<div class="li"> Supports all TF expressions natively found on foobar2000: </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Foobar2000 Title Formatting reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference</a> </div>
+						</li>
+					</ul>
 					<li>
 						<div class="li"> Special sorting functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The sorting algorithms will then be applied before the standard TF sorting. </div>
 					</li>
