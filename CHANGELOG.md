@@ -30,7 +30,8 @@
 - UI: added new setting for custom Art track count color overlay and text. Found at 'Custom' tab (HTML options panel) or 'Custom Colour Art Track Count [...]' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078585.html#msg1078585).
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
-- Readme: added Quick help entry, at settings menu, which will show a popup with the most basic functions of the panel.
+- Readme: added help submenu, at settings menu, showing all available docs.
+- Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel.
 ### Changed
 - Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Views: updated default view TF patterns with above changes related to $prefix.

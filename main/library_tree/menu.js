@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/03/26
+//09/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -533,95 +533,115 @@ class MenuItems {
 		// Regorxxx ->
 
 		// Regorxxx <- Quick help | External integration
-		menu.newItem({
-			menuName: mainMenu(),
-			str: 'Quick help...',
-			func: () => {
-				fb.ShowPopupMessage(
-					'List view:' +
-					'\n-----------------' +
-					[
-						{ key: 'Ctrl + A', action: 'Select all nodes|Select none.' },
-						{ key: 'Ctrl + <', action: 'Invert selected nodes.' },
-						{ key: 'Ctrl + C', action: 'Copy selected tracks.' },
-						{ key: 'Ctrl + V', action: 'Paste selected tracks.' },
-						{ key: 'Ctrl + E', action: 'Set focus at Search box.' },
-						{ key: 'Enter', action: 'Send to current playlist.' },
-						{ key: 'Shift + Enter', action: 'Add to current playlist.' },
-						{ key: 'Ctrl + Enter', action: 'Send to new playlist.' },
-						{ key: 'Page Up|Page Down', action: 'Scroll up|Scroll down.' },
-						{ key: 'Home|End', action: 'Scroll to top|Scroll to bottom.' },
-						{ key: 'Up|Down', action: 'Navigate tree.' },
-						{ key: 'Left|Right', action: 'Collapse|Expand nodes.' },
-						{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
-						{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
-						{ key: 'Num *', action: 'Expand current nodes' },
-						{ key: 'Num -', action: 'Collapse all nodes.' }
-					].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
-					'\n' +
-					'\nQuick-Search:' +
-					'\n-------------' +
-					'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.' +
-					'\n• Multiple presses will jump between nodes with such initial (cycling).' +
-					'\n• Full strings can also be pressed, looking for first match (at start).' +
-					'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
-					'\n• Use Up|Down keys to navigate between all found matches.' +
-					'\n• Asymmetric search and transliteration.' +
-					'\n' +
-					'\nDrag n\' drop (tracks):' +
-					'\n----------------------' +
-					'\n• Standard: add selection to playlist.' +
-					'\n• On Search Box: add query based on tracks (Ctrl|Alt modifiers).' +
-					'\n• On Playback Queue: add tracks to playback queue (Ctrl modifier).' +
-					'\n' +
-					'\nSearch Box:' +
-					'\n--------------' +
-					'\n• RegExp support: /[expression]/[flags], flags can be any of \'gimsuyt\'.' +
-					'\n• Flag \'t\' applies transliteration to tag values before matching.' +
-					[
-						{ key: 'Ctrl + A', action: 'Select all.' },
-						{ key: 'Ctrl + C', action: 'Copy selected text.' },
-						{ key: 'Ctrl + V', action: 'Paste selected text.' },
-						{ key: 'Ctrl + X', action: 'Cut selected text.' },
-						{ key: 'Back', action: 'Delete left characters.' },
-						{ key: 'Delete', action: 'Delete right characters.' },
-						{ key: 'Ctrl + Back', action: 'Delete left word.' },
-						{ key: 'Enter', action: 'Search.' },
-						{ key: 'Ctrl + Z', action: 'Undo.' },
-						{ key: 'Ctrl + Y', action: 'Redo.' },
-						{ key: 'Esc', action: 'Cancel search (and clean input).' },
-						{ key: 'Home', action: 'Set cursor at left.' },
-						{ key: 'End', action: 'Set cursor at right.' },
-						{ key: 'Left|Right', action: 'Move cursor.' },
-					].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
-					'\n' +
-					'\nUI:' +
-					'\n----------------------' +
-					'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
-					'\n• Double click scrollbar thumb to show now playing/focused item.' +
-					'\n• Double click scrollbar buttons to scroll to top/bottom.' +
-					'\n' +
-					'\nTransliteration support:' +
-					'\n-----------------------' +
-					'\n• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).' +
-					'\n' +
-					'\nSMP / JSplitter Panel:' +
-					'\n----------------------' +
-					'\n• Shift + Win + R. Click: open SMP panel menu.'
-					, window.PanelName + ': Quick help'
-				);
-			}
-		});
-		menu.newItem({
-			menuName: mainMenu(),
-			str: 'External integration...',
-			func: () => {
-				fb.ShowPopupMessage(
-					$.open(folders.xxx + 'helpers\\readme\\library_tree_callbacks.txt'),
-					window.PanelName + ': External integration'
-				);
-			}
-		});
+		{
+			menu.newMenu({ menuName: 'Help', appendTo: mainMenu() });
+			menu.newItem({
+				menuName: 'Help',
+				str: 'Quick help',
+				func: () => {
+					fb.ShowPopupMessage(
+						'List view:' +
+						'\n-----------------' +
+						[
+							{ key: 'Ctrl + A', action: 'Select all nodes|Select none.' },
+							{ key: 'Ctrl + <', action: 'Invert selected nodes.' },
+							{ key: 'Ctrl + C', action: 'Copy selected tracks.' },
+							{ key: 'Ctrl + V', action: 'Paste selected tracks.' },
+							{ key: 'Ctrl + E', action: 'Set focus at Search box.' },
+							{ key: 'Enter', action: 'Send to current playlist.' },
+							{ key: 'Shift + Enter', action: 'Add to current playlist.' },
+							{ key: 'Ctrl + Enter', action: 'Send to new playlist.' },
+							{ key: 'Page Up|Page Down', action: 'Scroll up|Scroll down.' },
+							{ key: 'Home|End', action: 'Scroll to top|Scroll to bottom.' },
+							{ key: 'Up|Down', action: 'Navigate tree.' },
+							{ key: 'Left|Right', action: 'Collapse|Expand nodes.' },
+							{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
+							{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
+							{ key: 'Num *', action: 'Expand current nodes' },
+							{ key: 'Num -', action: 'Collapse all nodes.' }
+						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
+						'\n' +
+						'\nQuick-Search:' +
+						'\n-------------' +
+						'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.' +
+						'\n• Multiple presses will jump between nodes with such initial (cycling).' +
+						'\n• Full strings can also be pressed, looking for first match (at start).' +
+						'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
+						'\n• Use Up|Down keys to navigate between all found matches.' +
+						'\n• Asymmetric search and transliteration.' +
+						'\n' +
+						'\nDrag n\' drop (tracks):' +
+						'\n----------------------' +
+						'\n• Standard: add selection to playlist.' +
+						'\n• On Search Box: add query based on tracks (Ctrl|Alt modifiers).' +
+						'\n• On Playback Queue: add tracks to playback queue (Ctrl modifier).' +
+						'\n' +
+						'\nSearch Box:' +
+						'\n--------------' +
+						'\n• RegExp support: /[expression]/[flags], flags can be any of \'gimsuyt\'.' +
+						'\n• Flag \'t\' applies transliteration to tag values before matching.' +
+						[
+							{ key: 'Ctrl + A', action: 'Select all.' },
+							{ key: 'Ctrl + C', action: 'Copy selected text.' },
+							{ key: 'Ctrl + V', action: 'Paste selected text.' },
+							{ key: 'Ctrl + X', action: 'Cut selected text.' },
+							{ key: 'Back', action: 'Delete left characters.' },
+							{ key: 'Delete', action: 'Delete right characters.' },
+							{ key: 'Ctrl + Back', action: 'Delete left word.' },
+							{ key: 'Enter', action: 'Search.' },
+							{ key: 'Ctrl + Z', action: 'Undo.' },
+							{ key: 'Ctrl + Y', action: 'Redo.' },
+							{ key: 'Esc', action: 'Cancel search (and clean input).' },
+							{ key: 'Home', action: 'Set cursor at left.' },
+							{ key: 'End', action: 'Set cursor at right.' },
+							{ key: 'Left|Right', action: 'Move cursor.' },
+						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
+						'\n' +
+						'\nUI:' +
+						'\n----------------------' +
+						'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
+						'\n• Double click scrollbar thumb to show now playing/focused item.' +
+						'\n• Double click scrollbar buttons to scroll to top/bottom.' +
+						'\n' +
+						'\nTransliteration support:' +
+						'\n-----------------------' +
+						'\n• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).' +
+						'\n' +
+						'\nSMP / JSplitter Panel:' +
+						'\n----------------------' +
+						'\n• Shift + Win + R. Click: open SMP panel menu.'
+						, window.PanelName + ': Quick help'
+					);
+				}
+			});
+			menu.newItem({ menuName: 'Help', separator: true });
+			menu.newItem({
+				menuName: 'Help',
+				str: 'foobar2000 Query syntax',
+				func: () => this.setSearchHistory(0),
+			});
+			menu.newItem({
+				menuName: 'Help',
+				str: window.ScriptInfo.Name + ' syntax',
+				func: () => this.setSearchHistory(-2),
+			});
+			menu.newItem({
+				menuName: 'Help',
+				str: 'RegExp reference',
+				func: () => this.setSearchHistory(-1)
+			});
+			menu.newItem({ menuName: 'Help', separator: true });
+			menu.newItem({
+				menuName: 'Help',
+				str: 'External integration',
+				func: () => {
+					fb.ShowPopupMessage(
+						$.open(folders.xxx + 'helpers\\readme\\library_tree_callbacks.txt'),
+						window.PanelName + ': External integration'
+					);
+				}
+			});
+		}
 		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx ->
 
