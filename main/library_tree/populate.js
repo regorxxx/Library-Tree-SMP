@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/03/26
+//09/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2513,7 +2513,7 @@ class Populate {
 				});
 		}
 		this.statisticsShow = ppt.itemShowStatistics;
-		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow].name: '';
+		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow].name : '';
 		// Regorxxx ->
 		this.tooltipStatistics = ppt.tooltipStatistics;
 		this.treeIndent = ppt.treeIndent;
@@ -2591,7 +2591,8 @@ class Populate {
 			default:
 			case 0: {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
-					data.sort((a, b) => this.collator.compare(Language.transliterate(a.srt[2]), Language.transliterate(b.srt[2])) || (a.srt[3] && !b.srt[3] ? 1 : 0));
+					if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2])); }
+					data.sort((a, b) => this.collator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
 				} else {
 					data.sort((a, b) => this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
 				}
@@ -2602,8 +2603,9 @@ class Populate {
 				switch (type) {
 					case 'standard':
 						if (ppt.viewSortingTrans) {
+							if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2])); }
 							data.sort((a, b) => {
-								return this.folderCollator.compare(Language.transliterate(a.srt[2]), Language.transliterate(b.srt[2])) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+								return this.folderCollator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 							});
 						} else {
 							data.sort((a, b) => {
@@ -2613,8 +2615,14 @@ class Populate {
 						break;
 					case 'folders':
 						if (ppt.folderSortingTrans) {
+							if (data[0] && typeof data[0].srt[4] === 'undefined') {
+								data.forEach((v) => {
+									v.srt[4] = Language.transliterate(v.srt[0]);
+									v.srt[5] = Language.transliterate(v.srt[2]);
+								});
+							}
 							data.sort((a, b) => {
-								return this.folderCollator.compare(Language.transliterate(a.srt[0]), Language.transliterate(b.srt[0])) || this.collator.compare(Language.transliterate(a.srt[2]), Language.transliterate(b.srt[2])) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+								return this.folderCollator.compare(a.srt[4], b.srt[4]) || this.collator.compare(a.srt[5], b.srt[5]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 							});
 						} else {
 							data.sort((a, b) => {
@@ -2627,84 +2635,170 @@ class Populate {
 			}
 			case 2: {
 				const idx = type === 'standard' ? 2 : 0;
-				let srtA, typeA, srtB, idxA, typeB, idxB;
-				data.sort((a, b) => {
-					srtA = a.srt[idx];
-					srtB = b.srt[idx];
-					if (srtA.startsWith(' ') && !srtB.startsWith(' ')) { return -1; }
-					else if (!srtA.startsWith(' ') && srtB.startsWith(' ')) { return 1; }
-					srtA = srtA.trim();
-					srtB = srtB.trim();
-					typeA = $.getTypeWeight(srtA[0]);
-					typeB = $.getTypeWeight(srtB[0]);
-					if (typeA !== typeB) { return typeA - typeB; }
-					else if (typeA === typeB && typeA === 0) {
-						idxA = $.getSymbolIndex(srtA[0]);
-						idxB = $.getSymbolIndex(srtB[0]);
-						if (idxA !== idxB) { return idxA - idxB; }
+				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
+					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+						data.forEach((v) => {
+							v.srt[4] = Language.transliterate(v.srt[idx].trim());
+							v.srt[5] = $.getTypeWeight(v.srt[4]);
+							v.srt[6] = $.getSymbolIndex(v.srt[4][0]);
+							v.srt[7] = Language.transliterate(v.srt[2]);
+						});
 					}
-					return ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders'
-						? this.folderCollator.compare(Language.transliterate(srtA), Language.transliterate(srtB)) || this.collator.compare(Language.transliterate(a.srt[2]), Language.transliterate(b.srt[2])) || (a.srt[3] && !b.srt[3] ? 1 : 0)
-						: this.folderCollator.compare(srtA, srtB) || this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
-				});
+					data.sort((a, b) => {
+						if (a.srt[idx].startsWith(' ') && !b.srt[idx].startsWith(' ')) { return -1; }
+						else if (!a.srt[idx].startsWith(' ') && b.srt[idx].startsWith(' ')) { return 1; }
+						if (a.srt[5] !== b.srt[5]) { return a.srt[5] - b.srt[5]; }
+						else if (a.srt[5] === b.srt[5] && a.srt[5] === 0) {
+							if (a.srt[6] !== b.srt[6]) { return a.srt[6] - b.srt[6]; }
+						}
+						return this.folderCollator.compare(a.srt[4], b.srt[4]) || this.collator.compare(a.srt[7], b.srt[7]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+					});
+				} else {
+					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+						data.forEach((v) => {
+							v.srt[4] = v.srt[idx].trim();
+							v.srt[5] = $.getTypeWeight(v.srt[4]);
+							v.srt[6] = $.getSymbolIndex(v.srt[4][0]);
+						});
+					}
+					data.sort((a, b) => {
+						if (a.srt[idx].startsWith(' ') && !b.srt[idx].startsWith(' ')) { return -1; }
+						else if (!a.srt[idx].startsWith(' ') && b.srt[idx].startsWith(' ')) { return 1; }
+						if (a.srt[5] !== b.srt[5]) { return a.srt[5] - b.srt[5]; }
+						else if (a.srt[5] === b.srt[5] && a.srt[5] === 0) {
+							if (a.srt[6] !== b.srt[6]) { return a.srt[6] - b.srt[6]; }
+						}
+						return this.folderCollator.compare(a.srt[4], b.srt[4]) || this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+					});
+				}
 				break;
 			}
 			case 3: {
 				const idx = type === 'standard' ? 2 : 0;
-				let srtA, charA, lenA, typeA, idxA, srtB, charB, lenB, typeB, idxB, out, i;
-				data.sort((a, b) => {
-					out = 0;
-					srtA = a.srt[idx];
-					srtB = b.srt[idx];
-					if (srtA === srtB) { return 0; }
-					lenA = srtA.length;
-					lenB = srtB.length;
-					for (i = 0; i < lenA; i++) {
-						if (i >= lenB) { out = 1; break; }
-						charA = srtA[i];
-						charB = srtB[i];
-						if (charA !== ' ' && charB !== ' ') { break; }
-						else if (charA === ' ' && charB !== ' ') { out = -1; break; }
-						else if (charA !== ' ' && charB === ' ') { out = 1; break; }
-						else if (charA === ' ' && charB === ' ') { continue; }
+				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
+					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+						data.forEach((v) => {
+							v.srt[4] = Language.transliterate(v.srt[idx].trim());
+							v.srt[5] = v.srt[4].length;
+							v.srt[6] = v.srt[4].split('').map((c) => $.getSymbolIndex(c));
+							v.srt[7]  =v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
+							v.srt[8] = Language.transliterate(v.srt[2]);
+						});
 					}
-					if (out) { return out; }
-					else if (i === lenA) { return -1; }
-					srtA = srtA.trim();
-					srtB = srtB.trim();
-					lenA = srtA.length;
-					lenB = srtB.length;
-					for (i = 0; i < lenA; i++) {
-						if (i >= lenB) { out = 1; break; }
-						charA = srtA[i];
-						charB = srtB[i];
-						if (charA === ' ' || charB === ' ') { break; }
-						if ($.isNumeric(charA) && $.isNumeric(charB)) { break; }
-						idxA = $.getSymbolIndex(charA);
-						idxB = $.getSymbolIndex(charB);
-						if (!idxA || !idxB) {
-							if (!idxA) {
-								if ($.isNumeric(charA)) { out = idxB ? 1 : $.isNumeric(charB) ? 0 : -1; }
-								else if (idxB) { out = 1; }
+					let srtA, charA, lenA, typeA, idxA, srtB, charB, lenB, typeB, idxB, out, i;
+					data.sort((a, b) => {
+						out = 0;
+						srtA = a.srt[idx];
+						srtB = b.srt[idx];
+						if (srtA === srtB) { return 0; }
+						lenA = srtA.length;
+						lenB = srtB.length;
+						for (i = 0; i < lenA; i++) {
+							if (i >= lenB) { out = 1; break; }
+							charA = srtA[i];
+							charB = srtB[i];
+							if (charA !== ' ' && charB !== ' ') { break; }
+							else if (charA === ' ' && charB !== ' ') { out = -1; break; }
+							else if (charA !== ' ' && charB === ' ') { out = 1; break; }
+							else if (charA === ' ' && charB === ' ') { continue; }
+						}
+						if (out) { return out; }
+						else if (i === lenA) { return -1; }
+						srtA = a.srt[4];
+						srtB = b.srt[4];
+						lenA = a.srt[5];
+						lenB = b.srt[5];
+						for (i = 0; i < lenA; i++) {
+							if (i >= lenB) { out = 1; break; }
+							charA = srtA[i];
+							charB = srtB[i];
+							if (charA === ' ' || charB === ' ') { break; }
+							if ($.isNumeric(charA) && $.isNumeric(charB)) { break; }
+							idxA = a.srt[6][i];
+							idxB = b.srt[6][i];
+							if (!idxA || !idxB) {
+								if (!idxA) {
+									if ($.isNumeric(charA)) { out = idxB ? 1 : $.isNumeric(charB) ? 0 : -1; }
+									else if (idxB) { out = 1; }
+								}
+								if (out) { return out; }
+								if (idxA && !idxB && $.isNumeric(charB)) { out = -1; break; }
+								if (out) { return out; }
 							}
-							if (out) { return out; }
-							if (idxA && !idxB && $.isNumeric(charB)) { out = -1; break; }
-							if (out) { return out; }
+							typeA = a.srt[7][i];
+							typeB = b.srt[7][i];
+							if (typeA !== typeB) { out = typeA - typeB; break; }
+							else if (typeA === typeB) {
+								if (typeA === 0) {
+									if (idxA !== idxB) { out = idxA - idxB; break; }
+								} else if (typeA === 1 || typeA === 2 || typeA === 3) { break; }
+							}
 						}
-						typeA = $.getTypeWeight(charA, idxA, 'base');
-						typeB = $.getTypeWeight(charB, idxB, 'base');
-						if (typeA !== typeB) { out = typeA - typeB; break; }
-						else if (typeA === typeB) {
-							if (typeA === 0) {
-								if (idxA !== idxB) { out = idxA - idxB; break; }
-							} else if (typeA === 1 || typeA === 2 || typeA === 3) { break; }
-						}
+						if (out) { return out; }
+						return this.folderCollator.compare(srtA, srtB) || this.collator.compare(a.srt[8], b.srt[8]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+					});
+				} else {
+					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+						data.forEach((v) => {
+							v.srt[4] = v.srt[idx].trim();
+							v.srt[5] = v.srt[4].length;
+							v.srt[6] = v.srt[4].split('').map((c) => $.getSymbolIndex(c));
+							v.srt[7]  =v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
+						});
 					}
-					if (out) { return out; }
-					return ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders'
-						? this.folderCollator.compare(Language.transliterate(srtA), Language.transliterate(srtB)) || this.collator.compare(Language.transliterate(a.srt[2]), Language.transliterate(b.srt[2])) || (a.srt[3] && !b.srt[3] ? 1 : 0)
-						: this.folderCollator.compare(srtA, srtB) || this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
-				});
+					let srtA, charA, lenA, typeA, idxA, srtB, charB, lenB, typeB, idxB, out, i;
+					data.sort((a, b) => {
+						out = 0;
+						srtA = a.srt[idx];
+						srtB = b.srt[idx];
+						if (srtA === srtB) { return 0; }
+						lenA = srtA.length;
+						lenB = srtB.length;
+						for (i = 0; i < lenA; i++) {
+							if (i >= lenB) { out = 1; break; }
+							charA = srtA[i];
+							charB = srtB[i];
+							if (charA !== ' ' && charB !== ' ') { break; }
+							else if (charA === ' ' && charB !== ' ') { out = -1; break; }
+							else if (charA !== ' ' && charB === ' ') { out = 1; break; }
+							else if (charA === ' ' && charB === ' ') { continue; }
+						}
+						if (out) { return out; }
+						else if (i === lenA) { return -1; }
+						srtA = a.srt[4];
+						srtB = b.srt[4];
+						lenA = a.srt[5];
+						lenB = b.srt[5];
+						for (i = 0; i < lenA; i++) {
+							if (i >= lenB) { out = 1; break; }
+							charA = srtA[i];
+							charB = srtB[i];
+							if (charA === ' ' || charB === ' ') { break; }
+							if ($.isNumeric(charA) && $.isNumeric(charB)) { break; }
+							idxA = a.srt[6][i];
+							idxB = b.srt[6][i];
+							if (!idxA || !idxB) {
+								if (!idxA) {
+									if ($.isNumeric(charA)) { out = idxB ? 1 : $.isNumeric(charB) ? 0 : -1; }
+									else if (idxB) { out = 1; }
+								}
+								if (out) { return out; }
+								if (idxA && !idxB && $.isNumeric(charB)) { out = -1; break; }
+								if (out) { return out; }
+							}
+							typeA = a.srt[7][i];
+							typeB = b.srt[7][i];
+							if (typeA !== typeB) { out = typeA - typeB; break; }
+							else if (typeA === typeB) {
+								if (typeA === 0) {
+									if (idxA !== idxB) { out = idxA - idxB; break; }
+								} else if (typeA === 1 || typeA === 2 || typeA === 3) { break; }
+							}
+						}
+						if (out) { return out; }
+						return this.folderCollator.compare(srtA, srtB) || this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
+					});
+				}
 				break;
 			}
 		}

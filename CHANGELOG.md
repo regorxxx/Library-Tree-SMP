@@ -45,6 +45,7 @@
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
+- Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
 - Drag n' drop: drag n' drop to perform a search is now only allowed within the input box for all sources.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
@@ -88,7 +89,7 @@
 - Search: added non-official flag 't' to search RegExp support (see above), which will apply transliteration to tag values before matching. Transliteration supports Cyrillic, Greek and Japanese (Katakana and Hiragana), like quick-search and sorting. Note it only works for RegExp because standard searches uses queries, so they are directly processed by foobar2000. [from Library-Tree-v2.4.0.mod.33]
 - Search: drag n' drop tooltip over search box text is now modified according to action being used, indicating if query will be joined or replaced and the tags used. Note multi-value tag and inter-tracks operators are not displayed, only inter-tag operator. [from Library-Tree-v2.4.0.mod.21]
 - Search: drag n' drop support into search box. Dropping any selection will now perform a search based on file tags (or filenames) and modified by keyboard key pressed, according to your settings. The modifiers can be adjusted with different tags, multi-value tag, inter-tags, inter-tracks and inter-query operators at the HTML options panel (or looking for 'Search Drag n' Drop ... ' at the properties panel). [from Library-Tree-v2.4.0.mod.21]
-- Full rework of sorting logic for tree view.  [from Library-Tree-v2.4.0.mod.33]
+- Sorting: Full rework of sorting logic for tree view.  [from Library-Tree-v2.4.0.mod.33]
   - 4 custom sorting methods: 
     * library tree (original): original behaviour of Library Tree (2023 version).
     * library tree (updated): modified behaviour following TT's Georgia Reborn logic.
