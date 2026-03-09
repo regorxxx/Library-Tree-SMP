@@ -578,7 +578,8 @@ class Panel {
 							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.sbdSimilarArtist + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR'),
 							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.lfmSimilarArtist + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR'),
 							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.related + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR')
-						]
+						],
+						'OR'
 					),
 					queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.unrelated + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR')
 				],
