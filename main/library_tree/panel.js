@@ -6,7 +6,7 @@
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable */
-/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable */
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable */
 
 /* exported Panel */
 
@@ -553,13 +553,49 @@ class Panel {
 			['Filter XX: Name // Query', 'Top Rated // ' + queryJoin([globQuery.fav, '%2003_RATING% EQUAL 10'], 'OR')],
 			['Filter XX: Name // Query', 'Not Rated // ' + queryJoin([globQuery.noRating, '%2003_RATING% MISSING'], 'AND')],
 			['Filter XX: Name // Query', 'separator // .'],
-			['Filter XX: Name // Query', 'Nowplaying Artist // ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,1),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,2),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,3),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,4),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,5),DUMMY)}'],
-			['Filter XX: Name // Query', 'Nowplaying Genre // (GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,0)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,1)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,2)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,3)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,4)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,5)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}) AND NOT ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)}'],
-			['Filter XX: Name // Query', 'Nowplaying Style // (STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,0)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,1)),female vocal,,live,,hi-fi,,instrumental,)),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,2)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,3)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,4)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,5)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}) AND NOT ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)}'],
+			['Filter XX: Name // Query', 'Nowplaying Artist // ' + queryCombinationsExpand('$nowplayingorselected{$if2($meta(ARTIST,$counter),DUMMY)}', 'ARTIST', 5, 'OR')],
+			['Filter XX: Name // Query', 'Nowplaying Genre // ' + queryJoin(
+				[
+					queryCombinationsExpand('$nowplayingorselected{$if2($replace($lower($meta(' + globTags.genre + ',$counter)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}', globTags.genre, 5, 'OR'),
+					'ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)}'
+				],
+				'AND NOT'
+			)],
+			['Filter XX: Name // Query', 'Nowplaying Style // ' + queryJoin(
+				[
+					queryCombinationsExpand('$nowplayingorselected{$if2($replace($lower($meta(' + globTags.style + ',$counter)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}', globTags.style, 5, 'OR'),
+					'ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)}'
+				],
+				'AND NOT'
+			)],
 			['Filter XX: Name // Query', 'Nowplaying Decade // "$replace($sub($year(%DATE%),$nowplayingorselected{$year(%DATE%)}),-,)" LESS 10'],
 			['Filter XX: Name // Query', 'separator // .'],
-			['Filter XX: Name // Query', 'Nowplaying Similar Artists // ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,0),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,1),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,2),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,3),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,4),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,5),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,6),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,7),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,8),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS LISTENBRAINZ,9),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,0),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,1),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,2),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,3),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,4),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,5),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,6),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,7),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,8),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,9),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,0),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,1),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,2),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,3),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,4),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,5),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,6),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,7),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(RELATED,8),DUMMY)} OR ARTIST IS $nowplayingorselected{$if2($meta(SIMILAR ARTISTS SEARCHBYDISTANCE,9),DUMMY)}'],
-			['Filter XX: Name // Query', 'Nowplaying Similar // (GENRE MISSING OR (GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,0)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,1)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,2)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,3)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,4)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR GENRE IS $nowplayingorselected{$if2($replace($lower($meta(GENRE,5)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)})) AND (STYLE MISSING OR (STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,0)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,1)),female vocal,,live,,hi-fi,,instrumental,)),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,2)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,3)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,4)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)} OR STYLE IS $nowplayingorselected{$if2($replace($lower($meta(STYLE,5)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)})) AND NOT ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)} AND "$replace($sub($year(%DATE%),$nowplayingorselected{$year(%DATE%)}),-,)" LESS 10'],
+			['Filter XX: Name // Query', 'Nowplaying Similar Artists // ' + queryJoin(
+				[
+					queryJoin(
+						[
+							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.lbSimilarArtist + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR'),
+							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.sbdSimilarArtist + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR'),
+							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.lfmSimilarArtist + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR'),
+							queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.related + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR')
+						]
+					),
+					queryCombinationsExpand('$nowplayingorselected{$if2($meta(' + globTags.unrelated + ',$counter),DUMMY)}', 'ARTIST', 10, 'OR')
+				],
+				'AND NOT'
+			)],
+			['Filter XX: Name // Query', 'Nowplaying Similar // ' + queryJoin(
+				[
+					queryJoin(
+						[
+							globTags.genre + ' MISSING OR (' + queryCombinationsExpand('$nowplayingorselected{$if2($replace($lower($meta(' + globTags.genre + ',$counter)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}', globTags.genre, 5, 'OR') + ')',
+							globTags.style + ' MISSING OR (' + queryCombinationsExpand('$nowplayingorselected{$if2($replace($lower($meta(' + globTags.style + ',$counter)),female vocal,,live,,hi-fi,,instrumental,),DUMMY)}', globTags.style, 5, 'OR') + ')'
+						]
+					),
+					'ARTIST IS $nowplayingorselected{$if2($meta(ARTIST,0),DUMMY)} AND "$replace($sub($year(%DATE%),$nowplayingorselected{$year(%DATE%)}),-,)" LESS 10'
+				],
+				'AND NOT'
+			)],
 		].filter(Boolean).map((entry, i) => [entry[0].replace('Filter XX', 'Filter ' + (i + 1).toString().padStart(2, '0')), entry[1]]);;
 		// Regorxxx ->
 
