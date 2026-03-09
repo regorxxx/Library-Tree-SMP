@@ -14,9 +14,10 @@ Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.
 - Single / Multiple panel modes + Facets
 - Statistics
 - Library and multi-playlists sources
+- Playback Queue management
 - Auto-DJ
 - Top Tracks
-- Duplicates handling and filtering
+- Duplicates handling and filtering (& find library duplicates)
 - Mode presets
      - Browser: keep playing playlist
      - Player: play without a playlist
