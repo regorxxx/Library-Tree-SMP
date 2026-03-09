@@ -61,6 +61,7 @@
 - Code cleanup.
 ### Removed
 ### Fixed
+- Syntax: bug on original script related to usage of $selected{}, $nowplaying{}, ... when the function was not properly closed.
 - Statistics: bug on original script related to playback queue index statistics when a track was added multiple times to the queue. Queue index was duplicated in such cases. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Statistics: bug on original script, related to playcount statistics recognition on views TF patterns. It checked only for specific tags by foo_playcount in lowercase form, instead of any other variation. This led to library updates not being triggered in some cases when changing rating, etc.
 - Drag n' drop: fixed handling for internal drag n' drop in some cases using Playback queue source. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1076851.html#msg1076851).

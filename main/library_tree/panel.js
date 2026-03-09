@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/03/26
+//09/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -210,7 +210,8 @@ class Panel {
 			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(',')); // Regorxxx <- Expose custom prefixes as tag ->
 			// Regorxxx <- Expand TF support
 			while (s.includes('$randfloat{')) {
-				const q = s.match(/\$randfloat{(.+?),?(.+?)?}/);
+				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
+				if (!q) { s = s.replace(/\$randfloat{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
 					$.round(
@@ -221,7 +222,8 @@ class Panel {
 				);
 			}
 			while (s.includes('$randint{')) {
-				const q = s.match(/\$randint{(.+?),?(.+?)?}/);
+				const q = s.match(/\$randint{(.*?),?(.+?)?}/);
+				if (!q) { s = s.replace(/\$randint{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
 					typeof q[2] !== 'undefined'
@@ -231,7 +233,8 @@ class Panel {
 			}
 			let cache = null;
 			while (s.includes('$pseudorandfloat{')) {
-				const q = s.match(/\$pseudorandfloat{(.+?),?(.+?)?}/);
+				const q = s.match(/\$pseudorandfloat{(.*?),?(.+?)?}/);
+				if (!q) { s = s.replace(/\$pseudorandfloat{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = $.round(
 						typeof q[2] !== 'undefined'
@@ -243,7 +246,8 @@ class Panel {
 			}
 			cache = null;
 			while (s.includes('$pseudorandint{')) {
-				const q = s.match(/\$pseudorandint{(.+?),?(.+?)?}/);
+				const q = s.match(/\$pseudorandint{(.*?),?(.+?)?}/);
+				if (!q) { s = s.replace(/\$pseudorandint{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = typeof q[2] !== 'undefined'
 						? Math.randomInt(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, true)
@@ -256,33 +260,39 @@ class Panel {
 			// Regorxxx ->
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
+				if (!q) { s = s.replace(/\$nowplaying{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
 			}
 			while (s.includes('$selected{')) {
 				const q = s.match(/\$selected{(.+?)}/);
+				if (!q) { s = s.replace(/\$selected{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
 			}
 			// Regorxxx <- Merge now playing and selected as fallback
 			while (s.includes('$nowplayingorselected{')) {
 				const q = s.match(/\$nowplayingorselected{(.+?)}/);
+				if (!q) { s = s.replace(/\$nowplayingorselected{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
 			}
 			// Regorxxx ->
 			// Regorxxx <- Expand TF support
 			let i = 0;
 			while (s.includes('$harmonicsort{')) {
-				const q = s.match(/\$harmonicsort{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				const q = s.match(/\$harmonicsort{.*?}/);
+				if (!q) { s = s.replace(/\$harmonicsort{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$harmonicmix{')) {
-				const q = s.match(/\$harmonicmix{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				const q = s.match(/\$harmonicmix{.*?}/);
+				if (!q) { s = s.replace(/\$harmonicmix{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$shufflebytags{')) {
-				const q = s.match(/\$shufflebytags{.*?}/)[0];
-				s = s.replace(q, '$not(0)$puts(~#sort' + i + ',' + q.replace('$', '~#') + ')');
+				const q = s.match(/\$shufflebytags{.*?}/);
+				if (!q) { s = s.replace(/\$shufflebytags{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 		}
