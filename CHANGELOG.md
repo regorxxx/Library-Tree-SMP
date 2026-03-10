@@ -30,16 +30,16 @@
 - UI: added new setting for custom Art track count color overlay and text. Found at 'Custom' tab (HTML options panel) or 'Custom Colour Art Track Count [...]' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078585.html#msg1078585).
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
-- Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel).
-- Readme: added help submenu, at settings menu, showing all available docs.
-- Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel.
+- Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
+- Readme: added help submenu, at settings menu, showing all available docs. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
+- Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 ### Changed
 - Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Views: updated default view TF patterns with above changes related to $prefix.
 - Filters: updated some of the default filter patterns.
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Statistics: playback queue index statistics now also show the currently playing track, if available. As '▶' or '0'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
-- Statistics: improved tooltip info over statics.
+- Statistics: improved tooltip info over statistics. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 - Auto-DJ: 'From panel selection' option plays tracks from the tree selection at the moment Auto-DJ started, ignoring any further selection  or view changes. There are additional entries to append further tracks at any point. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: submenu entry is now checked while it's running. Menu entries are checked according to the source (selection or live view). Note in the case of using the current view, it's transformed internally into 'selection'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
