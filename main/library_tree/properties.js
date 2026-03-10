@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/03/26
+//10/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -338,7 +338,7 @@ let properties = [
 	['Statistics Titleformat Rating', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfRating'],
 	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%)]', 'tfLoved'],
 	// Regorxxx ->
-	// Regorxxx <- New statistics
+	// Regorxxx <- New statistics | Improve statistics tooltip
 	['Statistics Titleformat Custom-1 (sum)', '$if($or($meta_test(LYRICS),$meta_test(UNSYNCEDLYRICS)),1,0)', 'tfCustom1Sum'],
 	['Statistics Titleformat Custom-2 (sum)', '$ifequal(' + _t(globTags.rating) + ',5,1,0)', 'tfCustom2Sum'],
 	['Statistics Titleformat Custom-3 (sum)', '$ifgreater($if2($strstr($lower(' + globTags.genreStyle.map((t) => _t(t)).join('\', \'') + '),instrumental),$strstr($lower(%LANGUAGE%),zxx)),0,0,1)', 'tfCustom3Sum'],
@@ -346,6 +346,7 @@ let properties = [
 	['Statistics Titleformat Custom-2 (avg)', '[' + _t(globTags.bpm) + ']', 'tfCustom2Avg'],
 	['Statistics Titleformat Custom-3 (avg)', '$min($add($select($add(' + _t(globTags.feedback) + ',%2003_LOVED%,2),-10,0,10),$select(' + _t(globTags.rating) + ',0,2,5,7,10)),10)', 'tfCustom3Avg'],
 	['Statistics Titleformat Custom labels', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score', 'tfCustomLabels'],
+	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|', 'tfCustomTooltip'],
 	// Regorxxx ->
 	['Statistics Titleformat Popularity', '[$meta(Track Statistics Last.fm,5[score])]', 'tfPopularity'],
 	['Statistics Tooltips Show', true, 'tooltipStatistics'],

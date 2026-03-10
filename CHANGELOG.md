@@ -30,6 +30,7 @@
 - UI: added new setting for custom Art track count color overlay and text. Found at 'Custom' tab (HTML options panel) or 'Custom Colour Art Track Count [...]' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078585.html#msg1078585).
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
+- Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel).
 - Readme: added help submenu, at settings menu, showing all available docs.
 - Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel.
 ### Changed
@@ -129,7 +130,7 @@
 - Playlist sort order: sorting TF supports $selected{}, $nowplaying{} and $nowplayingorselected{}. See above. <ins>[new]</ins>
 - Playlist sort order: sorting TF supports $harmonicsort{}, $harmonicmix{} and $shufflebytags{tagName,sortBias,sortDir}. See above. <ins>[new]</ins>
 - Statistics: added number of decimals setting for statistics. 1 by default. [from Library-Tree-v2.4.0.mod.21]
-- Statistics: added 6 customizable statistics slots, 3 for averaged values and 3 for summed ones. it uses the decimals setting (see above). Slots and labelscan be modified easily at the HTML options panel or at 'Statistics Titleformat Custom-X (sum)' and 'Statistics Titleformat Custom-X (avg)' and 'Statistics Titleformat Custom labels' (properties panel). By default the panel includes custom expressions as example. [from Library-Tree-v2.4.0.mod.21]
+- Statistics: added 6 customizable statistics slots, 3 for averaged values and 3 for summed ones. it uses the decimals setting (see above). Slots and labels can be modified easily at the HTML options panel or at 'Statistics Titleformat Custom-X (sum)' and 'Statistics Titleformat Custom-X (avg)' and 'Statistics Titleformat Custom labels' (properties panel). By default the panel includes custom expressions as example. [from Library-Tree-v2.4.0.mod.21]
 - Statistics: added Loved, Hated and Feedback (loved - hated) statistics. Nodes show the sum of loved/hated tracks within their subnodes. [from Library-Tree-v2.4.0.mod.21]
 - Contextual menu: new menu entry to show previously played track. [from Library-Tree-v2.4.0.mod.21]
 - Contextual menu: new menu entry to show the currently focused item. [from Library-Tree-v2.4.0.mod.21]

@@ -2501,16 +2501,17 @@ class Populate {
 			{ name: 'Added', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
 			{ name: 'Loved', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' tracks'; } },
 			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : 'tracks'; } },
-			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' Loved - Hated tracks'; } }
+			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks'; } }
 		];
 		{
 			const userCustomTypes = ppt.tfCustomLabels.split('|');
+			const userCustomTooltip = ppt.tfCustomTooltip.split('|');
 			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)']
 				.forEach((t, i) => {
 					this.statistics.push({
 						name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i],
 						showTrackCount: true, showTooltip: true,
-						ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; }
+						ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || ''); }
 					});
 				});
 		}
