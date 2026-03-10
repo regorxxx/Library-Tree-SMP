@@ -335,8 +335,9 @@ class Populate {
 					let n = '';
 					let n_o = '#condense#';
 					let nU = '';
+					const splitter = panel.softSplitter;
 					br.forEach((v, i) => {
-						if (v.nm.includes('@@') || v.nm.includes(panel.softSplitter)) {
+						if (v.nm.includes('@@') || v.nm.includes(splitter)) {
 							multi = this.getAllCombinations(v.nm);
 							multi_rem.push(i);
 							multi.forEach(w => {
@@ -473,7 +474,7 @@ class Populate {
 				}
 				if (typeof value !== 'undefined') {
 					rawValue = value;
-					value += (panel.imgView? ' kbps' : '');
+					value += (panel.imgView ? ' kbps' : '');
 				}
 				break;
 			}
