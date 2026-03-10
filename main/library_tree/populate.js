@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/03/26
+//10/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -460,9 +460,8 @@ class Populate {
 		switch (ppt.itemShowStatistics) {
 			case 1: {// bitrate
 				values = this.tf.bitrate.EvalWithMetadbs(handleList);
-				let bitrate;
 				if (values.length == 1) {
-					bitrate = Number(values[0]) || '';
+					value = Number(values[0]) || '';
 				} else {
 					let lengths = FbTitleFormat('%LENGTH_SECONDS_FP%').EvalWithMetadbs(handleList);
 					const total = values.map((v, i) => v * lengths[i]);
@@ -470,13 +469,11 @@ class Populate {
 					totals = totals.filter((v, i) => v && lengths[i] ? v : lengths.splice(i, 1));
 					totals = totals.reduce((a, b) => a + b, 0);
 					lengths = lengths.map(v => parseFloat(v)).reduce((a, b) => a + b, 0);
-					bitrate = Number(Math.round(totals / lengths)) || '';
+					value = Number(Math.round(totals / lengths)) || '';
 				}
-				if (value) {
-					rawValue = bitrate;
-					value = panel.imgView
-						? bitrate + ' kbps'
-						: bitrate;
+				if (typeof value !== 'undefined') {
+					rawValue = value;
+					value += (panel.imgView? ' kbps' : '');
 				}
 				break;
 			}
