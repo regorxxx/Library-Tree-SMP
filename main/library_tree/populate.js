@@ -700,7 +700,7 @@ class Populate {
 					text = this.statisticsShow
 						? (item.statistics !== undefined ? this.statistics[this.statisticsShow].name + ': ' + item.statistics : '') // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
-
+					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
 					text = (!panel.colMarker ? item.name : item.name.replace(/@!#.*?@!#/g, '')) + (!this.countsRight || this.statisticsShow ? item.count : '');
 					text = text.replace(/&/g, '&&');
@@ -2484,29 +2484,33 @@ class Populate {
 		this.rowStripes = ppt.rowStripes;
 		this.sbarShow = ppt.sbarShow;
 		this.showTracks = !ppt.facetView ? ppt.showTracks : false;
-		// Regorxxx <- New statistics | Code cleanup
+		// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
 		this.statistics = [
 			{ name: '', showTrackCount: true, showTooltip: false },
-			{ name: 'Bitrate', showTrackCount: true, showTooltip: true },
-			{ name: 'Duration', showTrackCount: true, showTooltip: false },
-			{ name: 'Total size', showTrackCount: true, showTooltip: true },
-			{ name: 'Rating', showTrackCount: false, showTooltip: true },
-			{ name: 'Popularity', showTrackCount: false, showTooltip: true },
-			{ name: 'Date', showTrackCount: true, showTooltip: true },
-			{ name: 'Queue', showTrackCount: false, showTooltip: true },
-			{ name: 'Playcount', showTrackCount: false, showTooltip: true },
-			{ name: 'First played', showTrackCount: false, showTooltip: true },
-			{ name: 'Last played', showTrackCount: false, showTooltip: true },
-			{ name: 'Added', showTrackCount: false, showTooltip: true },
-			{ name: 'Loved', showTrackCount: true, showTooltip: true },
-			{ name: 'Hated', showTrackCount: true, showTooltip: true },
-			{ name: 'Feedback', showTrackCount: true, showTooltip: true }
+			{ name: 'Bitrate', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += ' kbps'; } },
+			{ name: 'Duration', showTrackCount: true, showTooltip: false, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Total size', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Rating', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Popularity', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Date', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Queue', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-not queued-' : ''; } },
+			{ name: 'Playcount', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' listens'; } },
+			{ name: 'First played', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Last played', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Added', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
+			{ name: 'Loved', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' tracks'; } },
+			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : 'tracks'; } },
+			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' Loved - Hated tracks'; } }
 		];
 		{
 			const userCustomTypes = ppt.tfCustomLabels.split('|');
 			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)']
 				.forEach((t, i) => {
-					this.statistics.push({ name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i], showTrackCount: true, showTooltip: true });
+					this.statistics.push({
+						name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i],
+						showTrackCount: true, showTooltip: true,
+						ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; }
+					});
 				});
 		}
 		this.statisticsShow = ppt.itemShowStatistics;
@@ -2678,7 +2682,7 @@ class Populate {
 							v.srt[4] = Language.transliterate(v.srt[idx].trim());
 							v.srt[5] = v.srt[4].length;
 							v.srt[6] = v.srt[4].split('').map((c) => $.getSymbolIndex(c));
-							v.srt[7]  =v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
+							v.srt[7] = v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
 							v.srt[8] = Language.transliterate(v.srt[2]);
 						});
 					}
@@ -2740,7 +2744,7 @@ class Populate {
 							v.srt[4] = v.srt[idx].trim();
 							v.srt[5] = v.srt[4].length;
 							v.srt[6] = v.srt[4].split('').map((c) => $.getSymbolIndex(c));
-							v.srt[7]  =v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
+							v.srt[7] = v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
 						});
 					}
 					let srtA, charA, lenA, typeA, idxA, srtB, charB, lenB, typeB, idxB, out, i;
