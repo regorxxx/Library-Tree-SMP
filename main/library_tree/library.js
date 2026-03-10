@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/03/26
+//10/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -7,6 +7,7 @@
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
+/* global stripSort:readable, getSortObj:readable */
 
 /* exported Library*/
 
@@ -116,15 +117,16 @@ class Library {
 					let newSearchItems = new FbMetadbHandleList();
 					this.validSearch = true;
 					try {
-						// Regorxxx <- RegExp library search. Support for custom TF expression
+						// Regorxxx <- RegExp library search | Support for custom TF expression | Support SORT BY query sorting
 						const isRegExp = search.isSearchRegExp();
 						const tags = isRegExp
 							? panel.folderView
 								? ['%PATH%']
 								: $.getTagsFromTf(panel.view)
 							: null;
+						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? panel.processCustomTf(panel.search.txt)
+							? stripSort(processed)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -189,15 +191,16 @@ class Library {
 					let newSearchItems = new FbMetadbHandleList();
 					this.validSearch = true;
 					try {
-						// Regorxxx <- RegExp library search. Support for custom TF expression
+						// Regorxxx <- RegExp library search | Support for custom TF expression | Support SORT BY query sorting
 						const isRegExp = search.isSearchRegExp();
 						const tags = isRegExp
 							? panel.folderView
 								? ['%PATH%']
 								: $.getTagsFromTf(panel.view)
 							: null;
+						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? panel.processCustomTf(panel.search.txt)
+							? stripSort(processed)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -313,13 +316,13 @@ class Library {
 		}
 	}
 
-	bInsert(item) {
+	bInsert(item, sortObj) { // Regorxxx <- Support SORT BY query sorting ->
 		let min = 0;
 		let max = panel.list.Count;
 		let index = Math.floor((min + max) / 2);
 		while (max > min) {
 			let tmp = new FbMetadbHandleList([item, panel.list[index]]);
-			panel.sort(tmp);
+			panel.sort(tmp, sortObj); // Regorxxx <- Support SORT BY query sorting ->
 			if (item.Compare(tmp[0])) max = index;
 			else min = index + 1;
 			index = Math.floor((min + max) / 2);
@@ -327,14 +330,14 @@ class Library {
 		return index;
 	}
 
-	binaryInsert(folder, insert, li, n) {
+	binaryInsert(folder, insert, li, n, sortObj) { // Regorxxx <- Support SORT BY query sorting ->
 		let i, items;
 		switch (true) {
 			case !folder: {
 				const tfo = FbTitleFormat(panel.view);
 				items = tfo.EvalWithMetadbs(insert);
 				insert.Convert().forEach((h, j) => {
-					i = this.bInsert(h);
+					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
 					this.format(items[j], panel.splitter, i, n);
 					li.Insert(i, h);
 				});
@@ -343,7 +346,7 @@ class Library {
 			case folder:
 				items = insert.GetLibraryRelativePaths();
 				insert.Convert().reverse().forEach((h, j) => { // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
-					i = this.bInsert(h);
+					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
 					this.format(items[j], '\\', i, n);
 					li.Insert(i, h);
 				});
@@ -1069,7 +1072,8 @@ class Library {
 			switch (tree_type) {
 				case 0: {
 					let tfo = FbTitleFormat(panel.view);
-					tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(panel.splitter));
+					const splitter = panel.splitter;
+					tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(splitter));
 					break;
 				}
 				case 1:
@@ -1101,15 +1105,16 @@ class Library {
 			this.validSearch = true;
 			this.none = '';
 			try {
-				// Regorxxx <- RegExp library search. Support for custom TF expression
+				// Regorxxx <- RegExp library search | Support for custom TF expression | Support SORT BY query sorting
 				const isRegExp = search.isSearchRegExp();
 				const tags = isRegExp
 					? panel.folderView
 						? ['%PATH%']
 						: $.getTagsFromTf(panel.view)
 					: null;
+				const processed = panel.processCustomTf(panel.search.txt);
 				const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-					? panel.processCustomTf(panel.search.txt)
+					? stripSort(processed)
 					: panel.search.txt;
 				this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? searchText
@@ -1374,15 +1379,16 @@ class Library {
 					// addns
 					this.validSearch = true;
 					try {
-						// Regorxxx <- RegExp library search. Support for custom TF expression
+						// Regorxxx <- RegExp library search | Support for custom TF expression | Support SORT BY query sorting
 						const isRegExp = search.isSearchRegExp();
 						const tags = isRegExp
 							? panel.folderView
 								? ['%PATH%']
 								: $.getTagsFromTf(panel.view)
 							: null;
+						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? panel.processCustomTf(panel.search.txt)
+							? stripSort(processed)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -1414,15 +1420,16 @@ class Library {
 					removeSearchItems.MakeIntersection(origSearch); // handles in origSearch (present in any filter)
 					this.validSearch = true;
 					try {
-						// Regorxxx <- RegExp library search. Support for custom TF expression
+						// Regorxxx <- RegExp library search | Support for custom TF expression | Support SORT BY query sorting
 						const isRegExp = search.isSearchRegExp();
 						const tags = isRegExp
 							? panel.folderView
 								? ['%PATH%']
 								: $.getTagsFromTf(panel.view)
 							: null;
+						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? panel.processCustomTf(panel.search.txt)
+							? stripSort(processed)
 							: panel.search.txt;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
@@ -1468,7 +1475,7 @@ class Library {
 	// Regorxxx <- Internal cache of views
 	setViewCache(id) {
 		if (!this.viewCache) { this.viewCache = {}; }
-		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: ppt.fixedPlaylist ? -1 :  ppt.libSource };
+		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: ppt.fixedPlaylist ? -1 : ppt.libSource };
 		const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
 		// ['exp', 'expand', 'full_list', 'list', 'full_list_need_sort', 'libNode', 'cacheId', 'cache', 'node', 'root']
 		Object.keys(this).filter((k) => !filterKeys.has(k))

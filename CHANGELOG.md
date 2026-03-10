@@ -43,6 +43,7 @@
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: submenu entry is now checked while it's running. Menu entries are checked according to the source (selection or live view). Note in the case of using the current view, it's transformed internally into 'selection'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: improved track selection by trying to choose different artists than currently playing one if possible. Note this greatly depends on variability of available tracks and if a track from same artist is still the overall best choice, it will probably be chosen over the rest.
+- Search: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed, the sorting part is simply ignored. Previously they returned an invalid search warning.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/03/26
+//10/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -211,7 +211,7 @@ class Panel {
 			// Regorxxx <- Expand TF support
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
-				if (!q) { s = s.replace(/\$randfloat{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$randfloat{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
 					$.round(
@@ -223,7 +223,7 @@ class Panel {
 			}
 			while (s.includes('$randint{')) {
 				const q = s.match(/\$randint{(.*?),?(.+?)?}/);
-				if (!q) { s = s.replace(/\$randint{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$randint{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
 					typeof q[2] !== 'undefined'
@@ -234,7 +234,7 @@ class Panel {
 			let cache = null;
 			while (s.includes('$pseudorandfloat{')) {
 				const q = s.match(/\$pseudorandfloat{(.*?),?(.+?)?}/);
-				if (!q) { s = s.replace(/\$pseudorandfloat{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$pseudorandfloat{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = $.round(
 						typeof q[2] !== 'undefined'
@@ -247,7 +247,7 @@ class Panel {
 			cache = null;
 			while (s.includes('$pseudorandint{')) {
 				const q = s.match(/\$pseudorandint{(.*?),?(.+?)?}/);
-				if (!q) { s = s.replace(/\$pseudorandint{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$pseudorandint{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = typeof q[2] !== 'undefined'
 						? Math.randomInt(Number(q[1]) || 0, typeof q[1] !== 'undefined' ? Number(q[2]) || Infinity : 1, true)
@@ -257,7 +257,7 @@ class Panel {
 			}
 			while (s.includes('$iterate{')) {
 				const q = s.match(/\$iterate{'(.+?)',?(.+?)?,?(.+?)?}/);
-				if (!q) { s = s.replace(/\$iterate{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$iterate{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				cache = q[3];
 				s = s.replace(
 					q[0],
@@ -269,7 +269,7 @@ class Panel {
 			}
 			while (s.includes('$meta_branch_remap(')) {
 				const q = s.match(/\$meta_branch_remap\((.+?)?\)/);
-				if (!q) { s = s.replace(/\$meta_branch_remap(.*?)?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$meta_branch_remap(.*?)?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				cache = (q[1] || '').toUpperCase();
 				s = s.replace(
 					q[0],
@@ -286,24 +286,24 @@ class Panel {
 			}
 			while (s.includes('$meta_branch(')) {
 				const q = s.match(/\$meta_branch\((.+?)?\)/);
-				if (!q) { s = s.replace(/\$meta_branch(.*?)?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$meta_branch(.*?)?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
 			}
 			// Regorxxx ->
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
-				if (!q) { s = s.replace(/\$nowplaying{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$nowplaying{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
 			}
 			while (s.includes('$selected{')) {
 				const q = s.match(/\$selected{(.+?)}/);
-				if (!q) { s = s.replace(/\$selected{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$selected{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
 			}
 			// Regorxxx <- Merge now playing and selected as fallback
 			while (s.includes('$nowplayingorselected{')) {
 				const q = s.match(/\$nowplayingorselected{(.+?)}/);
-				if (!q) { s = s.replace(/\$nowplayingorselected{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$nowplayingorselected{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
 			}
 			// Regorxxx ->
@@ -311,19 +311,19 @@ class Panel {
 			let i = 0;
 			while (s.includes('$harmonicsort{')) {
 				const q = s.match(/\$harmonicsort{.*?}/);
-				if (!q) { s = s.replace(/\$harmonicsort{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$harmonicsort{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$harmonicmix{')) {
 				const q = s.match(/\$harmonicmix{.*?}/);
-				if (!q) { s = s.replace(/\$harmonicmix{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$harmonicmix{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$shufflebytags{')) {
 				const q = s.match(/\$shufflebytags{.*?}/);
-				if (!q) { s = s.replace(/\$shufflebytags{.*?}?/,'\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				if (!q) { s = s.replace(/\$shufflebytags{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
@@ -1466,19 +1466,21 @@ class Panel {
 		this.settings.offset = Math.round(1 * this.settings.font.Size / 17);
 	}
 
-	sort(li) {
-		if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
-		switch (this.folderView) {
-			case true:
+	// Regorxxx <- Support SORT BY query sorting
+	sort(li, sortObj) {
+		if (sortObj) {
+			li.OrderByFormat(sortObj.tf, sortObj.direction);
+		} else {
+			if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+			if (this.folderView) {
 				li.OrderByRelativePath();
-				break;
-			default: {
-				let tfo = FbTitleFormat(this.sortBy);
+			} else {
+				const tfo = FbTitleFormat(this.sortBy);
 				li.OrderByFormat(tfo, 1);
-				break;
 			}
 		}
 	}
+	// Regorxxx ->
 
 	treePaint() {
 		window.RepaintRect(0, this.paint_y, ui.w, ui.h - this.paint_y + 1);
