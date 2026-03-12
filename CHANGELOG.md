@@ -50,6 +50,7 @@
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
+- Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
 - Drag n' drop: drag n' drop to perform a search is now only allowed within the input box for all sources.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.

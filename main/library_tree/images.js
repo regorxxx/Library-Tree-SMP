@@ -3,6 +3,7 @@
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
+/* global InterpolationMode:readable */
 
 /* exported img */
 
@@ -271,7 +272,12 @@ class Images {
 		o = this.cache[key];
 		o.img = $.gr(this.cellWidth * n, this.cellWidth * n, true, g => this.createCollage(g, this.cellWidth, this.cellWidth, n, n, cells));
 		if (this.style.image == 2) this.circularMask(o.img, o.img.Width, o.img.Height);
-		o.img = o.img.Resize(this.im.w, this.im.w, 6); // Regorxxx <- Improve img to avoid artifacts at borders. Use bilinear interpolation ->
+		// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+		if (o.img.Width !== this.im.w || o.img.Height !== this.im.w) {
+			o.img = o.img.Resize(this.im.w + 2, this.im.w + 2, InterpolationMode.HighQualityBicubic);
+			o.img = o.img.Clone(2, 2, this.im.w, this.im.w);
+		}
+		// Regorxxx ->
 		if (ppt.albumArtLabelType == 3) this.fadeMask(o.img, o.img.Width, o.img.Height);
 		panel.treePaint();
 	}
@@ -666,7 +672,12 @@ class Images {
 					}
 					image = image.Clone(ix, iy, iw, ih);
 				}
-				image = image.Resize(w, h, 6); // Regorxxx <- Improve img to avoid artifacts at borders. Use bilinear interpolation ->
+				// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+				if (w !== iw || h !== ih) {
+					image = image.Resize(w + 2, h + 2, InterpolationMode.HighQualityBicubic);
+					image = image.Clone(2, 2, w, h);
+				}
+				// Regorxxx ->
 				if (type == 'circular') this.circularMask(image, image.Width, image.Height);
 				break;
 			}
@@ -675,7 +686,12 @@ class Images {
 				const sc = caller != 'save' ? Math.min(h / ih, w / iw) : Math.max(h / ih, w / iw);
 				const im_w = Math.round(iw * sc);
 				const im_h = Math.round(ih * sc);
-				image = image.Resize(im_w, im_h, 6); // Regorxxx <- Improve img to avoid artifacts at borders. Use bilinear interpolation ->
+				// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+				if (im_w !== iw || im_h !== ih) {
+					image = image.Resize(im_w + 2, im_h + 2, InterpolationMode.HighQualityBicubic);
+					image = image.Clone(2, 2, im_w, im_h);
+				}
+				// Regorxxx ->
 				break;
 			}
 		}
