@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/03/26
+//12/03/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 
@@ -141,7 +141,7 @@ class UserInterface {
 	// Methods
 
 	assignColours() {
-		const prop = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->
+		const prop = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count/year ->
 		this.col.txt = '';
 		this.col.txt_h = '';
 		this.icon.col_c = '';
@@ -678,7 +678,7 @@ class UserInterface {
 		this.col.t = this.style.bg ? this.getButCol(this.col.bg) : 200;
 		this.col.topBarUnderlay = this.col.bg;
 
-		// Regorxxx <- Custom album art overlay track count
+		// Regorxxx <- Custom album art overlay track count/year
 		if (this.col.textTrackCount === '') { this.col.textTrackCount = $.RGB(255, 255, 255); }
 		if (this.col.bgTrackCount === '') { this.col.bgTrackCount = $.RGBA(0, 0, 0, 115); }
 		// Regorxxx ->
@@ -733,7 +733,7 @@ class UserInterface {
 			if (this.col.bg === '') this.col.bg = this.themeColour.background;
 			if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : this.themeColour.selection;
 			this.col.txt_h = this.themeColour.highlight;
-			// Regorxxx <- Custom album art overlay track count
+			// Regorxxx <- Custom album art overlay track count/year
 			this.col.textTrackCount = this.themeColour.textTrackCount;
 			this.col.bgTrackCount = this.themeColour.bgTrackCount;
 			// Regorxxx ->
@@ -744,7 +744,7 @@ class UserInterface {
 					if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : window.GetColourCUI(4);
 					this.col.txt = window.GetColourCUI(0);
 					this.col.txt_h = window.GetColourCUI(2);
-					// Regorxxx <- Custom album art overlay track count
+					// Regorxxx <- Custom album art overlay track count/year
 					this.col.textTrackCount = window.GetColourCUI(1);
 					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourCUI(4), 115);
 					// Regorxxx ->
@@ -754,7 +754,7 @@ class UserInterface {
 					if (this.col.bgSel === '') this.col.bgSel = this.img.blurDark ? $.RGBA(255, 255, 255, 36) : this.img.blurLight ? $.RGBA(50, 50, 50, 36) : window.GetColourDUI(3);
 					this.col.txt = window.GetColourDUI(0);
 					this.col.txt_h = window.GetColourDUI(2);
-					// Regorxxx <- Custom album art overlay track count
+					// Regorxxx <- Custom album art overlay track count/year
 					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourDUI(3), 115);
 					this.col.textTrackCount = this.isLightCol(window.GetColourDUI(3)) ? $.RGB(0, 0, 0) : $.RGB(255, 255, 255);
 					// Regorxxx ->

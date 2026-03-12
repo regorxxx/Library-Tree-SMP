@@ -564,7 +564,7 @@ class Images {
 				const count_y = y + (this.style.image != 2 ? 0 : count_h / 1.67);
 				let count = item.count;
 				let count_h2 = count_h;
-				// Regorxxx <- Custom album art overlay track count
+				// Regorxxx <- Custom album art overlay track count/year
 				if (count_w > this.im.w) {
 					count = item.count.split(' ');
 					count_h2 = count_h * 2;
@@ -591,8 +591,10 @@ class Images {
 				let year_x = x + (this.style.image != 2 ? 0 : (w - year_w - 2) / 2);
 				const year_y = y + (this.style.image != 2 ? 0 : year_h / 1.67);
 				gr.SetSmoothingMode(2);
-				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, $.RGBA(0, 0, 0, 115));
-				gr.GdiDrawText(item.year, ui.font.tracks, $.RGB(255, 255, 255), year_x + 1, year_y, year_w, year_h, panel.cc);
+				// Regorxxx <- Custom album art overlay track count/year
+				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, ui.col.bgTrackCount);
+				gr.GdiDrawText(item.year, ui.font.tracks, ui.col.textTrackCount, year_x + 1, year_y, year_w, year_h, panel.cc);
+				// Regorxxx ->
 				gr.SetSmoothingMode(0);
 				break;
 			}

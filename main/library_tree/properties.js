@@ -144,7 +144,7 @@ let properties = [
 	['Custom Colour Side Marker Use', false, 'sideMarkerUse'],
 	['Custom Colour Transparent Fill Use', false, 'bgTransUse'],
 
-	// Regorxxx <- Custom album art overlay track count
+	// Regorxxx <- Custom album art overlay track count/year
 	['Custom Colour Art Track Count Text', '255,255,255', 'textTrackCount'],
 	['Custom Colour Art Track Count Text Use', false, 'textTrackCountUse'],
 	['Custom Colour Art Track Count Overlay', '0,0,0,0.45', 'bgTrackCount'],
