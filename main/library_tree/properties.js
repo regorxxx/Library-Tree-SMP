@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/03/26
+//11/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -312,6 +312,7 @@ let properties = [
 	['Scrollbar Width', Math.round(11 * $.scale), 'sbarWidth'],
 	['Scrollbar Width Bar', 11, 'sbarBase_w'],
 	['Scrollbar Windows Metrics', false, 'sbarWinMetrics'],
+	['Scrollbar Windows style dark theme fix', window.IsDark, 'sbarWinDarkThemeFix'], // Regorxxx <- Scrollbar on windows style improvements ->
 
 	['Search Enter', false, 'searchEnter'],
 	['Search History', JSON.stringify([]), 'searchHistory'],
