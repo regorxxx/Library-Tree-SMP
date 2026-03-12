@@ -1,8 +1,9 @@
 ﻿'use strict';
-//09/03/26
+//12/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
+/* global _explorer:readable */
 /* global Input:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
@@ -375,6 +376,18 @@ class MenuItems {
 			checkRadio: i == ppt.artId || i - 5 == ppt.albumArtGrpLevel,
 			separator: i == 4 || i == 7 || i == 8
 		}));
+		// Regorxxx <- Art cache folder
+		menu.newItem({ menuName: 'Album art', separator: true });
+		menu.newItem({
+			menuName: 'Album art',
+			str: 'Open cache',
+			flags: ppt.albumArtDiskCache ? MF_STRING : MF_GRAYED,
+			func: () => {
+				if (!$.folder(img.cachePath)) { $.buildPth(img.cachePath); }
+				else { _explorer(img.cachePath); }
+			}
+		});
+		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | New quicksetup presets
 		menu.newMenu({ menuName: 'Quick setup', appendTo: mainMenu() });
@@ -459,14 +472,39 @@ class MenuItems {
 		this.addSourceEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
 
 		menu.newMenu({ menuName: 'Refresh', appendTo: mainMenu(), separator: true });
-		for (let i = 0; i < 5; i++) menu.newItem({
+
+		// Regorxxx <- Code cleanup | Art cache folder
+		if (panel.imgView) {
+			['Refresh selected images', 'Refresh all images'].forEach((str, i) => {
+				menu.newItem({
+					menuName: 'Refresh',
+					str,
+					func: () => this.setMode(i),
+					flags: this.items.Count ? MF_STRING : MF_GRAYED
+				});
+			});
+			menu.newItem({ menuName: 'Refresh', separator: true });
+		}
+		if (!ppt.libAutoSync) {
+			menu.newItem({
+				menuName: 'Refresh',
+				str: 'Refresh library',
+				func: () => this.setMode(3)
+			});
+			menu.newItem({ menuName: 'Refresh', separator: true });
+		}
+		menu.newItem({
 			menuName: 'Refresh',
-			str: ['Refresh selected images...', 'Refresh all images...', 'Reset zoom...', 'Refresh library...', 'Reload...'][i],
-			func: () => this.setMode(i),
-			flags: panel.imgView && !i && this.items.Count || !panel.imgView || i ? MF_STRING : MF_GRAYED,
-			separator: i == 1 && panel.imgView,
-			hide: i < 2 && !panel.imgView || i == 3 && ppt.libAutoSync
+			str: 'Reset zoom',
+			func: () => this.setMode(2),
 		});
+		menu.newItem({ menuName: 'Refresh', separator: true });
+		menu.newItem({
+			menuName: 'Refresh',
+			str: 'Reload panel',
+			func: () => this.setMode(4),
+		});
+		// Regorxxx ->
 
 		// Regorxxx <- Auto-DJ feature
 		{

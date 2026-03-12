@@ -31,6 +31,7 @@
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
+- Album art: added menu entry to open the art cache folder (if used).
 - Readme: added help submenu, at settings menu, showing all available docs. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 - Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 ### Changed
