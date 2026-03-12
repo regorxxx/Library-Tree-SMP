@@ -745,8 +745,8 @@ class UserInterface {
 					this.col.txt = window.GetColourCUI(0);
 					this.col.txt_h = window.GetColourCUI(2);
 					// Regorxxx <- Custom album art overlay track count/year
-					this.col.textTrackCount = window.GetColourCUI(1);
-					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourCUI(4), 115);
+					if (this.col.textTrackCount === '') { this.col.textTrackCount = window.GetColourCUI(1); }
+					if (this.col.bgTrackCount === '') { this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourCUI(4), 115); }
 					// Regorxxx ->
 					break;
 				case 1:
@@ -755,8 +755,8 @@ class UserInterface {
 					this.col.txt = window.GetColourDUI(0);
 					this.col.txt_h = window.GetColourDUI(2);
 					// Regorxxx <- Custom album art overlay track count/year
-					this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourDUI(3), 115);
-					this.col.textTrackCount = this.isLightCol(window.GetColourDUI(3)) ? $.RGB(0, 0, 0) : $.RGB(255, 255, 255);
+					if (this.col.bgTrackCount === '') { this.col.bgTrackCount = $.RGBtoRGBA(window.GetColourDUI(3), 115); }
+					if (this.col.textTrackCount === '') { this.col.textTrackCount = this.isLightCol(window.GetColourDUI(3)) ? $.RGB(0, 0, 0) : $.RGB(255, 255, 255); }
 					// Regorxxx ->
 					break;
 			}
