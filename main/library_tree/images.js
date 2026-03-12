@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/03/26
+//12/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -11,7 +11,7 @@ class Images {
 		this.accessed = 0;
 		this.asyncBypass = 0;
 		this.blockWidth = 150;
-		this.cachePath = folders.dataPackage + '\\librarytreeCache\\';
+		this.cachePath = folders.dataPackage + 'librarytreeCache\\';
 		this.cellWidth = 200;
 		this.column = 0;
 		this.columnWidth = 150;

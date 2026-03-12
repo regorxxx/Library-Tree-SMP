@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/03/26
+//12/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -246,8 +246,8 @@ addEventListener('on_notify_data', (name, info) => {
 				// Regorxxx <- Don't create cache playlists if possible
 				if (ppt.panelInternalCache) {
 					if (lib.list.SaveAs) {
-						$.buildPth(folders.dataPackage + '\\librarytreeSel\\');
-						lib.list.SaveAs(folders.dataPackage + '\\librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl');
+						$.buildPth(folders.dataPackage + 'librarytreeSel\\');
+						lib.list.SaveAs(folders.dataPackage + 'librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl');
 					}
 				} else {
 					const pln = plman.FindOrCreatePlaylist(ppt.lastPanelSelectionPlaylist, false);
@@ -493,7 +493,7 @@ addEventListener('on_paint', (gr) => {
 	// Regorxxx <- Don't create cache playlists if possible
 	if (!lib.initialised) {
 		if (ppt.libSource === 2 && ppt.panelInternalCache) {
-			const cache = folders.dataPackage + '\\librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl';
+			const cache = folders.dataPackage + 'librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl';
 			if (utils.IsFile(cache)) {
 				lib.cacheId = fb.AddLocationsAsync([cache]);
 			} else {
