@@ -2421,8 +2421,7 @@
 			if (window.search_checkbox3.checked) { window.search_checkbox4.checked = false; }
 			window.search_checkbox4.parentNode.disabled = window.search_checkbox3.checked;
 			// Regorxxx ->
-			window.thumbSize_dropdown.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
-			window.thumbNailSize.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
+			window.thumbSize_dropdown.disabled = window.flowMode_checkbox.checked; // Regorxxx <- Disable thumbnail size using flow mode instead of hiding it ->
 			window.checkbox_folderView.disabled = true;
 			window.checkbox_menuName.disabled = true;
 			document.getElementById("albumArtCfg").style.display = window.show_checkbox4.checked ? "block" : "none";
@@ -2449,8 +2448,7 @@
 			window.showH2_checkbox5.parentNode.disabled = window.cusNode_checkbox3.checked && (ppt['nodeStyle_internal'].value == 0 || ppt['nodeStyle_internal'].value == 7);
 			document.getElementById("albumArtCfg").style.display = window.show_checkbox4.checked ? "block" : "none";
 			window.albumArtLabelType2.parentNode.disabled = window.flowMode_checkbox.checked;
-			window.thumbSize_dropdown.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
-			window.thumbNailSize.style.visibility = window.flowMode_checkbox.checked ? 'hidden' : 'visible';
+			window.thumbSize_dropdown.disabled = window.flowMode_checkbox.checked; // Regorxxx <- Disable thumbnail size using flow mode instead of hiding it ->
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
 			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
 			clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];

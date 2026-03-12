@@ -63,6 +63,7 @@
 - HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
 - HTML: minor improvements to Album Art help and updated Biography default settings (to match latest versions).
 - HTML: minor improvements and cleanup at HTML options panel.
+- HTML: disable thumbnail size dropdown using flow mode instead of hiding it.
 - Syntax: updated syntax docs with relevant changes and examples.
 - Syntax: updated syntax docs favicon for html page.
 - Debug: improvements to profiling logging for library loading.
