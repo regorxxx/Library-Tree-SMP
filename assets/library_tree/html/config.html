@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿<!DOCTYPE html> <!-- 11/03/26 -->
 <html>
 
 <head>
@@ -1589,7 +1589,7 @@
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
 			var autodjLabels = ['Stop when repeating a track', 'Random', 'By Genre-Mood matching', 'By Genre matching', 'By Mood matching']; // Regorxxx <- Auto-DJ feature ->
-			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control'];
+			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control', 'Windows style dark theme fix'];  // Regorxxx <- Scrollbar on windows style improvements ->
 			var selectionLabels = ['Full line', 'Play on enter or send from menu'];
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
 			var showLabels = ['Row stripes', 'Nowplaying in highlight', 'Nowplaying sidemarker (tree / text)', 'Nowplaying indicator (tree / text)', 'Album art options', 'Facet view', 'Tracks (tree)'];
@@ -1679,7 +1679,7 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source ->
+				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2107,7 +2107,9 @@
 				window.sbarIcon_dropdown.innerHTML = sbarIconLabels[ppt['sbarButType_internal'].value];
 				for (i = 0; i < 3; i++) { window.sbarIcon.insertAdjacentHTML('beforeend', '<a onclick="setSbarIcon(' + i + ');" >' + sbarIconLabels[i] + '</a>'); }
 				sbar_icon_dropdown.style.display = ppt['sbarType_internal'].value != 2 ? "inline-block" : "none";
-				for (i = 0; i < 3; i++) { window.scrolling.insertAdjacentHTML('beforeend', '<div><input id="scroll_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="scroll_checkbox' + i + '" class="checkbox_label">' + scrollLabels[i] + '</label></div>'); }
+				 // Regorxxx <- Scrollbar on windows style improvements
+				for (i = 0; i < 4; i++) { window.scrolling.insertAdjacentHTML('beforeend', '<div><input id="scroll_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="scroll_checkbox' + i + '" class="checkbox_label">' + scrollLabels[i] + '</label></div>'); }
+				 // Regorxxx ->
 				// Regorxxx <- Contextual menu options
 				window.contextMenu_dropdown.innerHTML = contextMenuLabels[ppt['contextMenuShow_internal'].value];
 				for (i = 0; i < 4; i++) { window.contextMenu.insertAdjacentHTML('beforeend', '<a onclick="setContextMenu(' + i + ');" >' + contextMenuLabels[i] + '</a>'); }
@@ -2420,6 +2422,7 @@
 			window.indexLetter_checkbox2.parentNode.disabled = ppt['albumArtLetterNo_internal'].value == 0;
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
 			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
+			window.scroll_checkbox3.disabled = ppt['sbarType_internal'][value] !== 2; // Regorxxx <- Scrollbar on windows style improvements
 		}
 
 		function textChange(e) {
@@ -2450,6 +2453,7 @@
 				? ['Add to playback queue (middle dblclk removes)']
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
+			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
 
 			if (ppt['actionMode_internal'].value) {
 				window.click_dropdown.innerHTML = clickLabels[0];

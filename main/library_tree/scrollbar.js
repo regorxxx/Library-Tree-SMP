@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/11/25
+//11/03/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -215,11 +215,13 @@ class Scrollbar {
 						if (!this.narrow.show || ppt.sbarShow != 1) ui.theme.DrawThemeBackground(gr, sbar_x, this.y, sbar_w, this.h);
 						ui.theme.SetPartAndStateID(3, this.narrow.show ? 2 : !this.hover && !this.bar.isDragging ? 1 : this.hover && !this.bar.isDragging ? 2 : 3);
 						ui.theme.DrawThemeBackground(gr, sbar_x, this.y + this.bar.y, sbar_w, this.bar.h);
+						if (ppt.sbarWinDarkThemeFix) { gr.FillSolidRect(sbar_x, this.y, sbar_w, this.h, $.RGBA(15, 15, 15, 190)); } // Regorxxx <- Scrollbar on windows style improvements ->
 					} else {
 						ui.theme.SetPartAndStateID(4, 1);
 						if (!this.narrow.show || ppt.sbarShow != 1) ui.theme.DrawThemeBackground(gr, this.x, sbar_y, this.w, sbar_h);
 						ui.theme.SetPartAndStateID(2, this.narrow.show ? 2 : !this.hover && !this.bar.isDragging ? 1 : this.hover && !this.bar.isDragging ? 2 : 3);
 						ui.theme.DrawThemeBackground(gr, this.x + this.bar.x, sbar_y, this.bar.h, sbar_h);
+						if (ppt.sbarWinDarkThemeFix) { gr.FillSolidRect(this.x, sbar_y, this.w, sbar_h, $.RGBA(15, 15, 15, 190)); } // Regorxxx <- Scrollbar on windows style improvements ->
 					}
 					break;
 			}

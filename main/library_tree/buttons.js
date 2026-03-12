@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/02/26
+//11/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable */
@@ -342,24 +342,24 @@ class Buttons {
 					switch (true) {
 						case this.vertical:
 							this.btns.scrollUp = new Btn(this.scr.x1, this.scr.yUp1, ui.sbar.but_h, ui.sbar.but_h, 3, '', '', '', {
-								normal: 1,
+								normal: 4, // Regorxxx <- Scrollbar on windows style improvements ->
 								hover: 2,
 								down: 3
 							}, ppt.sbarShow == 1 && sbar.narrow.show || sbar.scrollable_lines < 1, () => sbar.but(1), '', '', false, 'scrollUp', () => sbar.but(Infinity)); // Regorxxx <- Double click scrollbar
 							this.btns.scrollDn = new Btn(this.scr.x1, this.scr.yDn1, ui.sbar.but_h, ui.sbar.but_h, 3, '', '', '', {
-								normal: 5,
+								normal: 8, // Regorxxx <- Scrollbar on windows style improvements ->
 								hover: 6,
 								down: 7
 							}, ppt.sbarShow == 1 && sbar.narrow.show || sbar.scrollable_lines < 1, () => sbar.but(-1), '', '', false, 'scrollDn', () => sbar.but(-Infinity)); // Regorxxx <- Double click scrollbar
 							break;
 						case !this.vertical:
 							this.btns.scrollUp = new Btn(this.scr.xLeft1, this.scr.y1, ui.sbar.but_h, ui.sbar.but_h, 3, '', '', '', {
-								normal: 9,
+								normal: 12, // Regorxxx <- Scrollbar on windows style improvements ->
 								hover: 10,
 								down: 11
 							}, ppt.sbarShow == 1 && sbar.narrow.show || sbar.scrollable_lines < 1, () => sbar.but(1), '', '', false, 'scrollUp', () => sbar.but(Infinity)); // Regorxxx <- Double click scrollbar
 							this.btns.scrollDn = new Btn(this.scr.xRight1, this.scr.y1, ui.sbar.but_h, ui.sbar.but_h, 3, '', '', '', {
-								normal: 13,
+								normal: 16, // Regorxxx <- Scrollbar on windows style improvements ->
 								hover: 14,
 								down: 15
 							}, ppt.sbarShow == 1 && sbar.narrow.show || sbar.scrollable_lines < 1, () => sbar.but(-1), '', '', false, 'scrollDn', () => sbar.but(-Infinity)); // Regorxxx <- Double click scrollbar
@@ -512,6 +512,7 @@ class Btn {
 			case 3:
 				ui.theme.SetPartAndStateID(1, this.item[this.state]);
 				ui.theme.DrawThemeBackground(gr, this.x, this.y, this.w, this.h);
+				if (ppt.sbarWinDarkThemeFix) { gr.FillSolidRect(this.x, this.y, this.w, this.h, $.RGBA(15, 15, 15, 150)); } // Regorxxx <- Scrollbar on windows style improvements ->
 				break;
 			case 4:
 				this.drawSearch(gr);
