@@ -1956,38 +1956,45 @@
 						var headers = ['Syntax', 'Use\u00A0In\u00A0\u00A0\u00A0', 'Description'];
 						cells.push(headers);
 						var labels = [
-							['%&ltFIELD&gt%', 'Views', 'Split multiple values into separate items, e.g.<br>%&ltARTIST&gt%'],
-							['$stripbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as above, additionally removes prefixes (like leading "The" or "A") from each value, e.g.<br>$stripbranchprefix{%&ltARTIST&gt%}'],
-							['$swapbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as above, additionally moves prefixes (like leading "The" or "A") to end of each value, e.g.<br>$swapbranchprefix{%&ltARTIST&gt%}'],
-							['%FIELD1%&#166%FIELD2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g.<br>%ALBUM ARTIST%&#166%ARTIST% or %&ltALBUM ARTIST&gt%&#166%&ltARTIST&gt%'],
-							['$nodisplay{X}', 'Views', 'Sorts & groups by X without display of X, e.g. the following sorts latest albums first & displays the date.<br>%ARTIST%|$nodisplay{$sub(99999,%DATE%)}%ALBUM%[ &#39[&#39%DATE%&#39]&#39]|%TRACKNUMBER%. %TITLE%'],
-							['$colour{normal,hover,selected}', 'Views', 'Set different colours for parts of a line of text, see below for more info.'],
-							['$prefix', 'Views|Filters', 'Returns custom prefixes (separated by comma), ready to be used on TF functions. e.g.<br>$swapprefix(%TAG%,$prefix)<br>Becomes: $swapprefix(%TAG%,A,The,An)'],
-							['$nowplaying{X}', 'Filters', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by nowplaying artist.'],
-							['$selected{X}', 'Filters', 'Returns value of X for the selected track, e.g.<br>ARTIST IS $selected{$meta(ARTIST,0)}<br>Displays tracks by selected (focused) artist.'],
-							['$nowplayingorselected{X}', 'Filters', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
-							['$searchtext', 'Filters', 'Returns search text, e.g. enter following as a filter "genre HAS $searchtext", then type "rock" in search box: yields query "genre HAS rock"'],
-							['$nowplaying{X}', 'Views', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays nowplaying artist in red.'],
-							['$selected{X}', 'Views', 'Returns value of X for the selected track, e.g.<br>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays selected (focused) artist in red.'],
-							['$nowplayingorselected{X}', 'Views', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.'],
-							['$randint{max}<br>$randint{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3'],
-							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandint{1,4} AND %LOUDNESS% EQUAL $pseudorandint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 2'],
-							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>Becomes: %VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}<br>%VALENCE% EQUAL 2.85 AND %LOUDNESS% EQUAL 3.43'],
-							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>Becomes: %VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>%VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3']
+							['%&ltFIELD&gt%', 'Views', 'Split multiple values into separate items, e.g.<br>%&ltARTIST&gt%', 'Views'],
+							['%FIELD1%&#124%FIELD2%&#124...', 'Views', '&#124 separates different fields into different branch levels , e.g.<br>%ARTIST%&#124%ALBUM% or %&ltARTIST&gt%&#124%ALBUM%', 'Views'],
+							['%FIELD1%&#166%FIELD2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g.<br>%ALBUM ARTIST%&#166%ARTIST% or %&ltALBUM ARTIST&gt%&#166%&ltARTIST&gt%', 'Views'],
+							['$stripbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as %&ltFIELD&gt%, additionally removes prefixes (like leading "The" or "A") from each value, e.g.<br>$stripbranchprefix{%&ltARTIST&gt%}', 'Views'],
+							['$swapbranchprefix{%&ltFIELD&gt%}', 'Views', 'Same as %&ltFIELD&gt%, additionally moves prefixes (like leading "The" or "A") to end of each value, e.g.<br>$swapbranchprefix{%&ltARTIST&gt%}', 'Views'],
+							['$nodisplay{X}', 'Views', 'Sorts & groups by X without display of X, e.g. the following sorts latest albums first & displays the date.<br>%ARTIST%|$nodisplay{$sub(99999,%DATE%)}%ALBUM%[ &#39[&#39%DATE%&#39]&#39]|%TRACKNUMBER%. %TITLE%', 'Views'],
+							['$colour{normal,hover,selected}', 'Views', 'Set different colours for parts of a line of text, see below for more info.', 'Views'],
+							['$prefix', 'Views|Filters', 'Returns custom prefixes (separated by comma), ready to be used on TF functions. e.g.<br>$swapprefix(%TAG%,$prefix)<br>Becomes: $swapprefix(%TAG%,A,The,An)', 'Views|Filters'],
+							['$nowplaying{X}', 'Views|Filters', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays nowplaying artist in red.', 'Views'],
+							['$nowplaying{X}', 'Views|Filters', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by nowplaying artist.', 'Filters'],
+							['$selected{X}', 'Views|Filters', 'Returns value of X for the selected track, e.g.<br>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays selected (focused) artist in red.', 'Views'],
+							['$selected{X}', 'Views|Filters', 'Returns value of X for the selected track, e.g.<br>ARTIST IS $selected{$meta(ARTIST,0)}<br>Displays tracks by selected (focused) artist.', 'Filters'],
+							['$nowplayingorselected{X}', 'Views|Filters', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.', 'Views'],
+							['$nowplayingorselected{X}', 'Views|Filters', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.', 'Filters'],
+							['$searchtext', 'Filters', 'Returns search text, e.g. enter following as a filter "genre HAS $searchtext", then type "rock" in search box: yields query "genre HAS rock"', 'Filters'],
+							['$iterate{\'X\',N,C}', 'Views|Filters', 'Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). Note X TF expression must be enclosed on single quotes \'X\' and contain the string $counter, to be replaced on every step. e.g.<br>$iterate{\'$meta(ARTIST,$counter)\',2,¦}<br>Becomes: $meta(ARTIST,0)¦$meta(ARTIST,1)', 'Views'],
+							['$iterate{\'X\',N,C}', 'Views|Filters', 'Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). Note X TF expression must be enclosed on single quotes \'X\' and contain the string $counter, to be replaced on every step. e.g.<br>$iterate{\'ARTIST IS $nowplaying{$meta(ARTIST,$counter)}\',2,OR}<br>Becomes: (ARTIST IS $nowplaying{$meta(ARTIST,0)}) OR (ARTIST IS $nowplaying{$meta(ARTIST,1)})', 'Filters'],
+							['$randint{max}<br>$randint{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>$colour{$randint{255}-$randint{255}-$randint{255}}%ARTIST%|$colour{$randint{255}-$randint{255}-$randint{255}}%ALBUM%<br>Displays all artist with a random color and all albums with another random color.', 'Views'],
+							['$randint{max}<br>$randint{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3', 'Filters'],
+							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>$colour{$pseudorandint{255}-$pseudorandint{255}-$pseudorandint{255}}%ARTIST%|$colour{$randint{255}-$randint{255}-$randint{255}}%ALBUM%<br>Displays all artist with a random shade of gray and all albums with another random color.', 'Views'],
+							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandint{1,4} AND %LOUDNESS% EQUAL $pseudorandint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 2', 'Filters'],
+							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>$randfloat{3,5}<br>Becomes: 3.78', 'Views'],
+							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randfloat{1,4} AND %LOUDNESS% EQUAL $randfloat{1,4}<br>Becomes: %VALENCE% EQUAL 2.85 AND %LOUDNESS% EQUAL 3.43', 'Filters'],
+							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>$randfloat{1,4} - $randfloat{1,4}<br>Becomes: 1.98 - 1.98', 'Views'],
+							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>Becomes: %VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3', 'Filters']
 						];
 						var items = [];
 						for (j = 0; j < labels.length; j++) {
 							items[j] = [];
 							// Regorxxx <- Filter non-relevant functions at help
-							if (id === 'syntaxFilter' && labels[j][1].split('|').indexOf('Filters') === -1) { continue; }
-							else if (id === 'syntaxView' && labels[j][1].split('|').indexOf('Views') === -1) { continue; }
-							// Regorxxx ->
-							for (i = 0; i < labels[j].length; i++) {
+							if (id === 'syntaxFilter' && labels[j][3].split('|').indexOf('Filters') === -1) { continue; }
+							else if (id === 'syntaxView' && labels[j][3].split('|').indexOf('Views') === -1) { continue; }
+							for (i = 0; i < 3; i++) {
 								items[j].push('<div class=info5;">' + labels[j][i] + '</div>');
 								if (i == 2) {
 									cells.push(items[j]);
 								}
 							}
+							// Regorxxx ->
 						}
 						columnCount = 3;
 						// Regorxxx ->
