@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/03/26
+//12/03/26
 
 /* exported extendGR, checkCompatible */
 
@@ -501,6 +501,9 @@ if (FbProfiler) {
 		}).bind(that);
 		that.HasCheckPoint = (function HasCheckPoint(name) {
 			return !!this.CheckPoints.find((check) => check.name.toLowerCase() === name.toLowerCase());
+		}).bind(that);
+		that.GetCheckPoint = (function GetCheckPoint(name) {
+			return this.CheckPoints.find((check) => check.name.toLowerCase() === name.toLowerCase());
 		}).bind(that);
 		that.CheckPointReset = (function CheckPointReset(name) {
 			const point = this.CheckPoints.find((check) => check.name.toLowerCase() === name.toLowerCase());
