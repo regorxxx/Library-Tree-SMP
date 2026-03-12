@@ -433,7 +433,7 @@ class Images {
 						if (item.sel || nowp) gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, $.RGBA(150, 150, 150, 150));
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
 					}
-					if (!item.sel || !this.labels.overlay || this.style.image != 2) {
+					if (ppt.albumArtBorderShow && (!item.sel || !this.labels.overlay || this.style.image != 2)) { // Regorxxx <-  Image frame setting ->
 						if (this.style.image != 2) gr.DrawRect(x1, y1, iw - 1, ih - 1, 1, ui.col.imgBor);
 						else {
 							gr.SetSmoothingMode(2);

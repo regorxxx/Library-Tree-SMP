@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 11/03/26 -->
+﻿<!DOCTYPE html> <!-- 12/03/26 -->
 <html>
 
 <head>
@@ -1052,8 +1052,11 @@
 							<div id="gap"></div>
 							<div style="padding:1.01em 0 0.31em;" class="div_text2">Flow mode</div>
 							<div id="flowMode"></div>
-							<div style="padding:1.01em 0 0.31em;" class="div_text2">Thumbnail drop shadow</div>
+							<!-- Regorxxx Image border setting -->
+							<div style="padding:1.01em 0 0.31em;" class="div_text2">Thumbnail effects</div>
 							<div id="dropShadow"></div>
+							<div id="albumArtBorderShow"></div>
+							<!-- Regorxxx -->
 						</div>
 						<div class="column50">
 							<div id="thumbNailSize" class="div_text7">Thumbnail Size</div>
@@ -1683,7 +1686,7 @@
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
+				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
 			}
@@ -2300,7 +2303,10 @@
 				generateTable('imageFormat');
 				for (i = 0; i < 2; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
 				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
-				window.dropShadow.insertAdjacentHTML('beforeend', '<div><input id="dropShadow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="dropShadow_checkbox" class="checkbox_label">Enable</label></div>');
+				// Regorxxx <- Image border setting
+				window.dropShadow.insertAdjacentHTML('beforeend', '<div><input id="dropShadow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="dropShadow_checkbox" class="checkbox_label">Drop shadow</label></div>');
+				window.albumArtBorderShow.insertAdjacentHTML('beforeend', '<div><input id="albumArtBorderShow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="albumArtBorderShow_checkbox" class="checkbox_label">Gray frame border</label></div>');
+				// Regorxxx ->
 				window.sameAsTree.insertAdjacentHTML('beforeend', '<div><input id="sameAsTree_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="sameAsTree_checkbox" class="checkbox_label">Same As Tree</label></div>');
 
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[ppt['thumbNailSize_internal'].value];

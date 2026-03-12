@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/03/26
+//12/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -225,6 +225,7 @@ let properties = [
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
+	['Image Frame Border', true, 'albumArtBorderShow'], // Regorxxx <-  Image border setting ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],
