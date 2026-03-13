@@ -25,6 +25,7 @@ class Populate {
 		this.inlineRoot = ppt.rootNode && (ppt.inlineRoot || ppt.facetView);
 		this.is_focused = false;
 		this.last_sel = -1;
+		this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 		this.lbtnDn = false;
 		this.libItems = false;
 		this.mbtn_dbl_clicked = false;
@@ -39,6 +40,18 @@ class Populate {
 		this.sy_sz = 8;
 		this.tree = [];
 		this.tf = {}; // Regorxxx <- New statistics ->
+		// Regorxxx <- Rectangle selection on art view
+		this.selRect = {
+			down: false,
+			x: void (0),
+			w: void (0),
+			y: void (0),
+			h: void (0),
+			mx: void (0),
+			my: void (0),
+			over: new Set()
+		};
+		// Regorxxx ->
 
 		this.cache = {
 			'standard': {},
@@ -990,10 +1003,7 @@ class Populate {
 				if (ui.id.dragDrop != ix || ix >= this.tree.length || ix < 0) return;
 				if (!item.sel && !vk.k('ctrl')) this.setTreeSel(ix, item.sel);
 			}
-			this.last_pressed_coord = {
-				x: undefined,
-				y: undefined
-			};
+			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
 			// Regorxxx <- Expand TF support
 			const handleList = this.sortIfNeeded(this.getHandleList('newItems'));
 			// Regorxxx ->
@@ -1005,6 +1015,13 @@ class Populate {
 	draw(gr) {
 		if (lib.empty) return gr.GdiDrawText(lib.empty, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
 		if (!this.tree.length || !panel.draw) return gr.GdiDrawText(this.libItems && !panel.search.txt && !ppt.filterBy && ppt.libSource ? 'Loading...\n\n' : lib.none, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
+		// Regorxxx <- Rectangle selection on art view
+		if (ppt.selRectArt && (this.selRect.down && this.selRect.x !== this.selRect.w && this.selRect.y !== this.selRect.h)) {
+			const [x, y, w, h] = [this.selRect.x, this.selRect.y, this.selRect.w - this.selRect.x, this.selRect.h - this.selRect.y];
+			gr.FillSolidRect(x, y, w, h, ui.col.frameImgSel);
+			gr.DrawRect(x, y, w, h, 1, ui.col.frameImg);
+		}
+		// Regorxxx ->
 		if (panel.imgView) return;
 		const b = $.clamp(Math.round(sbar.delta / ui.row.h + 0.4), 0, this.tree.length - 1);
 		const bar_x = this.nodeStyle && this.nodeStyle < 5 ? 0 : ui.sz.pad;
@@ -1550,14 +1567,20 @@ class Populate {
 		return Math.round((y - panel.tree.y - ui.row.h * 0.5) / ui.row.h);
 	}
 
+	// Regorxxx <- Rectangle selection on art view ->
 	getTreeSel() {
 		panel.treePaint();
 		this.sel_items = [];
-		this.tree.forEach(v => {
-			if (v.sel) this.addItems(this.sel_items, v.item);
+		this.lastSelMul = [];
+		this.tree.forEach((v, idx) => {
+			if (v.sel) {
+				this.addItems(this.sel_items, v.item);
+				this.lastSelMul.push(idx);
+			}
 		});
 		this.uniq(this.sel_items);
 	}
+	// Regorxxx ->
 
 	imgView(n) {
 		let a, b, c = [];
@@ -1670,6 +1693,7 @@ class Populate {
 		}
 	}
 
+	// Regorxxx <- Rectangle selection on art view
 	lbtn_dn(x, y) {
 		this.lbtnDn = false;
 		this.dbl_clicked = false;
@@ -1680,6 +1704,26 @@ class Populate {
 		if (ppt.touchControl) {
 			ui.id.dragDrop = ui.id.touch_dn = ix;
 		}
+		// Regorxxx <- Rectangle selection on art view
+		if (ppt.selRectArt && panel.imgView) {
+			if (this.lastSelMul.length && !this.lastSelMul.includes(ix)) {
+				this.selRect.down = true;
+				this.last_pressed_coord.x = this.selRect.mx = x;
+				this.last_pressed_coord.y = this.selRect.my = y;
+				this.selRect.x = this.selRect.w = x;
+				this.selRect.y = this.selRect.h = y;
+				return;
+			} else {
+				this.selRect.down = false;
+				this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
+				this.selRect.over.clear();
+			}
+		}
+		// Regorxxx ->
+		this.itemClickDown(ix, x, y);
+	}
+
+	itemClickDown(ix, x, y) {
 		const item = this.tree[ix];
 		this.clicked_on = this.clickedOn(x, y, item);
 		switch (this.clicked_on) {
@@ -1709,10 +1753,29 @@ class Populate {
 
 	lbtn_up(x, y) {
 		if (lib.empty && ppt.libSource == 1 && !ppt.fixedPlaylist && y > panel.search.h) fb.RunMainMenuCommand('Library/Configure');
-		this.last_pressed_coord = {
-			x: undefined,
-			y: undefined
-		};
+		// Regorxxx <- Rectangle selection on art view
+		if (ppt.selRectArt && panel.imgView) {
+			if (this.selRect.down) {
+				const bSel = this.last_pressed_coord.x !== x || this.last_pressed_coord.y !== y;
+				this.selRect.down = false;
+				if (bSel) {
+					this.clearSelected();
+					this.selRect.over.forEach((idx) => { if (idx !== -1) { this.tree[idx].sel = true; } });
+					this.getTreeSel();
+					this.last_pressed_coord.x = this.last_pressed_coord.y = void (0);
+					this.lbtnDn = false;
+					this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
+					this.selRect.over.clear();
+					panel.treePaint();
+					lib.treeState(false, ppt.rememberTree);
+					return;
+				} else {
+					this.itemClickDown(this.get_ix(x, y, true, false), x, y);
+				}
+			}
+		}
+		// Regorxxx ->
+		this.last_pressed_coord.x = this.last_pressed_coord.y = void (0); // Regorxxx <- Code cleanup ->
 		this.lbtnDn = false;
 		if (y < panel.search.h || this.dbl_clicked || but.Dn) return;
 		const ix = this.get_ix(x, y, true, false);
@@ -1739,6 +1802,7 @@ class Populate {
 		this.track(this.autoFill.mouse || this.autoPlay.click);
 		lib.treeState(false, ppt.rememberTree);
 	}
+	// Regorxxx ->
 
 	leave() {
 		this.deactivateTooltip();
@@ -1751,6 +1815,11 @@ class Populate {
 		this.cur_ix = 0;
 		this.row.i = -1;
 		this.row.cur = 0;
+		// Regorxxx <- Rectangle selection on art view
+		this.selRect.down = false;
+		this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
+		this.selRect.over.clear();
+		// Regorxxx  ->
 		panel.treePaint();
 	}
 
@@ -1959,6 +2028,31 @@ class Populate {
 
 	move(x, y) {
 		if (but.Dn) return;
+		// Regorxxx <- Rectangle selection on art view
+		if (ppt.selRectArt && panel.imgView && this.selRect.down) {
+			if (this.last_pressed_coord.x !== x || this.last_pressed_coord.y !== y) {
+				if (x > this.selRect.x && x < this.selRect.w) {
+					if (x < this.selRect.mx) { this.selRect.w = 0; }
+					else { this.selRect.x = this.selRect.w; }
+				}
+				if (y > this.selRect.y && y < this.selRect.h) {
+					if (y < this.selRect.my) { this.selRect.h = 0; }
+					else { this.selRect.y = this.selRect.h; }
+				}
+				[this.selRect.x, this.selRect.w] = [Math.min(this.selRect.x, x), Math.max(this.selRect.x, x, this.selRect.w)];
+				[this.selRect.y, this.selRect.h] = [Math.min(this.selRect.y, y), Math.max(this.selRect.y, y, this.selRect.h)];
+				this.selRect.over.clear();
+				for (let ix = this.selRect.x; ix <= this.selRect.w; ix += 2) {
+					for (let iy = this.selRect.y; iy <= this.selRect.h; iy += 2) {
+						this.selRect.over.add(this.get_ix(ix, iy, true, false));
+					}
+				}
+			}
+			panel.treePaint();
+			this.selRect.mx = x;
+			this.selRect.my = y;
+		}
+		// Regorxxx ->
 		const ix = this.get_ix(x, y, false, false);
 		this.row.i = this.checkRow(x, y);
 		this.m.i = -1;
@@ -2438,6 +2532,7 @@ class Populate {
 			case 0:
 				this.clearSelected();
 				this.sel_items = [];
+				this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 				break;
 			case 1: {
 				const direction = (idx > this.last_sel) ? 1 : -1;
@@ -2462,6 +2557,7 @@ class Populate {
 				this.addItems(this.sel_items, this.tree[idx].item);
 				this.uniq(this.sel_items);
 				this.last_sel = idx;
+				this.lastSelMul = [idx]; // Regorxxx <- Rectangle selection on art view ->
 				break;
 		}
 	}

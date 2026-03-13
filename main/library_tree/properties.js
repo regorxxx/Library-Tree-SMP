@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/03/26
+//13/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -412,7 +412,8 @@ let properties = [
 	['Filter remove duplicates', false, 'filterDupl'],
 	['Filter show duplicates ', false, 'showDupl'],
 	// Regorxxx ->
-	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'] // Regorxxx <- GDI/D2D draw mode ->
+	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'], // Regorxxx <- GDI/D2D draw mode ->
+	['Image mouse rectangle selection on album art', true, 'selRectArt']  // Regorxxx <- Selection rectangle on art view ->
 ];
 
 const ppt = new PanelProperties;

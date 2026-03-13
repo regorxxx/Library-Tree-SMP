@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/03/26
+//13/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -628,7 +628,7 @@ class Images {
 						break;
 				}
 				break;
-			case pop.highlight.row == 2 && i == pop.m.i:
+			case pop.highlight.row == 2 && i == pop.m.i || ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.bg_h;
 				if ((this.labels.overlay || this.labels.hide) && this.style.image == 2) {
 					x = box_x + Math.round((this.box.w - (cur_img ? cur_img.Width : this.im.w)) / 2);

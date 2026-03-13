@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 12/03/26 -->
+﻿<!DOCTYPE html> <!-- 13/03/26 -->
 <html>
 
 <head>
@@ -1067,6 +1067,16 @@
 							<div id="sameAsTree"></div>
 						</div>
 					</div>
+					<!-- Regorxxx Rectangle selection on art view -->
+					<div style="padding:1.01em 0 0.31em;" class="div_text2">Other settings</div>
+					<div id="selRectArt"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="selRectArt_help" href="#" onclick="showHelp('selRectArt_text');return false;">Rectangle selection help</a></div>
+					<div id="selRectArt_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4"><br>&#x2022; Mouse rectangle selection will disable drag n' drop unless the item(s) were already selected before clicking down and dragging.<br>&#x2022; Instead draws a selection rectangle, which works across rows/columns. <br>&#x2022; To use drag n' drop, first select the desired items and then drag.<br>&#x2022; To select, always start from a point outside any current selection.
+						</div>
+						<div><br></div>
+					</div>
+					<!-- Regorxxx -->
 				</div>
 
 				<div class="column41">
@@ -1686,7 +1696,7 @@
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'],
+				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'selRectArt', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
 			}
@@ -2117,9 +2127,9 @@
 				window.sbarIcon_dropdown.innerHTML = sbarIconLabels[ppt['sbarButType_internal'].value];
 				for (i = 0; i < 3; i++) { window.sbarIcon.insertAdjacentHTML('beforeend', '<a onclick="setSbarIcon(' + i + ');" >' + sbarIconLabels[i] + '</a>'); }
 				sbar_icon_dropdown.style.display = ppt['sbarType_internal'].value != 2 ? "inline-block" : "none";
-				 // Regorxxx <- Scrollbar on windows style improvements
+				// Regorxxx <- Scrollbar on windows style improvements
 				for (i = 0; i < 4; i++) { window.scrolling.insertAdjacentHTML('beforeend', '<div><input id="scroll_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="scroll_checkbox' + i + '" class="checkbox_label">' + scrollLabels[i] + '</label></div>'); }
-				 // Regorxxx ->
+				// Regorxxx ->
 				// Regorxxx <- Contextual menu options
 				window.contextMenu_dropdown.innerHTML = contextMenuLabels[ppt['contextMenuShow_internal'].value];
 				for (i = 0; i < 4; i++) { window.contextMenu.insertAdjacentHTML('beforeend', '<a onclick="setContextMenu(' + i + ');" >' + contextMenuLabels[i] + '</a>'); }
@@ -2306,6 +2316,9 @@
 				// Regorxxx <- Image border setting
 				window.dropShadow.insertAdjacentHTML('beforeend', '<div><input id="dropShadow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="dropShadow_checkbox" class="checkbox_label">Drop shadow</label></div>');
 				window.albumArtBorderShow.insertAdjacentHTML('beforeend', '<div><input id="albumArtBorderShow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="albumArtBorderShow_checkbox" class="checkbox_label">Gray frame border</label></div>');
+				// Regorxxx ->
+				// Regorxxx <- Rectangle selection on art view
+				window.selRectArt.insertAdjacentHTML('beforeend', '<div><input id="selRectArt_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="selRectArt_checkbox" class="checkbox_label">Allow mouse rectangle selection </label></div>');
 				// Regorxxx ->
 				window.sameAsTree.insertAdjacentHTML('beforeend', '<div><input id="sameAsTree_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="sameAsTree_checkbox" class="checkbox_label">Same As Tree</label></div>');
 
