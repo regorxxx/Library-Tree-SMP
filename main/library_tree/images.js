@@ -611,7 +611,7 @@ class Images {
 		if (this.labels.hide && (this.style.image != 2 || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
-			case nowpOrSel:
+			case nowpOrSel && !(ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i)): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.imgBgSel;
 				switch (this.labels.overlay || this.labels.hide) {
 					case true:
