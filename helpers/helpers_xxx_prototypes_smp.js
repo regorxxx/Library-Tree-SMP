@@ -588,6 +588,11 @@ window.Bugs.SetPlaylistLockedActions = ![
 	{ version: '3.6.1.2', target: 'jsplitter' }
 ].some((host) => isCompatible(host.version, host.target));
 
+window.Bugs.GetPlaybackQueueContents = ![
+	{ version: '1.7.26.1.11', target: 'smp' },
+	{ version: '3.7.6', target: 'jsplitter' }
+].some((host) => isCompatible(host.version, host.target));
+
 /* Helpers */
 
 function compareVersions(from, to) {
