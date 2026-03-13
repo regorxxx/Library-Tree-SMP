@@ -643,7 +643,7 @@ class Images {
 				}
 				break;
 		}
-		gr.FillSolidRect(x, y, w, h, col);
+		if (typeof col !== 'undefined') { gr.FillSolidRect(x, y, w, h, col); } // Regorxxx <- Code cleanup don't call method if unused! ->
 	}
 
 	fadeMask(image, w, h) {
