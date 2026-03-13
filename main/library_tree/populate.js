@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/03/26
+//13/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2775,7 +2775,7 @@ class Populate {
 			case 3: {
 				const idx = type === 'standard' ? 2 : 0;
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 						data.forEach((v) => {
 							v.srt[4] = Language.transliterate(v.srt[idx].trim());
 							v.srt[5] = v.srt[4].length;
@@ -2837,7 +2837,7 @@ class Populate {
 						return this.folderCollator.compare(srtA, srtB) || this.collator.compare(a.srt[8], b.srt[8]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 					});
 				} else {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 						data.forEach((v) => {
 							v.srt[4] = v.srt[idx].trim();
 							v.srt[5] = v.srt[4].length;
