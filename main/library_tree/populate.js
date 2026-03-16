@@ -1,8 +1,9 @@
 ﻿'use strict';
-//13/03/26
+//16/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
+/* global SmoothingMode:readable*/
 /* global globTags:readable*/
 /* global Language:readable*/
 
@@ -895,20 +896,20 @@ class Populate {
 
 			const sz = Math.max(Math.round(this.sy_sz * 1.666667), 1);
 			this.triangle.highlight = $.gr(sz, sz, true, g => {
-				g.SetSmoothingMode(4);
+				g.SetSmoothingMode(SmoothingMode.AntiAlias);
 				g.FillPolygon(ui.col.icon_h, 1, [sz, 0, sz, sz, 0, sz]);
-				g.SetSmoothingMode(0);
+				g.SetSmoothingMode();
 			});
 			lightCol = ui.isLightCol(ui.col.icon_e);
 			this.triangle.expand = $.gr(sz, sz, true, g => {
-				g.SetSmoothingMode(4);
+				g.SetSmoothingMode(SmoothingMode.AntiAlias);
 				g.FillPolygon(ui.col.icon_e & (lightCol ? 0xC0ffffff : 0xBAffffff), 1, [sz, 0, sz, sz, 0, sz]);
-				g.SetSmoothingMode(0);
+				g.SetSmoothingMode();
 			});
 			this.triangle.select = $.gr(sz, sz, true, g => {
-				g.SetSmoothingMode(4);
+				g.SetSmoothingMode(SmoothingMode.AntiAlias);
 				g.FillPolygon(ui.col.textSel & (lightCol ? 0xC0ffffff : 0xBAffffff), 1, [sz, 0, sz, sz, 0, sz]);
-				g.SetSmoothingMode(0);
+				g.SetSmoothingMode();
 			});
 		}
 	}
@@ -1226,7 +1227,7 @@ class Populate {
 			case 3: case 4: {
 				if (!this.highlight.row && this.fullLineSelection) x += ui.l.w;
 				const y3 = Math.round(y + (ui.row.h - this.sy_sz) / 2 - 2);
-				gr.SetSmoothingMode(4);
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 				if (parent) {
 					if (hover) {
 						if (this.highlight.node) gr.DrawString(ui.icon.expand2, ui.icon.font, !selCol ? ui.col.icon_h : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
@@ -1237,7 +1238,7 @@ class Populate {
 					}
 				} else if (hover && this.highlight.node) gr.DrawImage(!selCol ? this.triangle.highlight : this.triangle.select, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.highlight.Width, this.triangle.highlight.Height);
 				else gr.DrawImage(!selCol ? this.triangle.expand : this.triangle.select, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.expand.Width, this.triangle.expand.Height);
-				gr.SetSmoothingMode(0);
+				gr.SetSmoothingMode();
 				break;
 			}
 			case 5:

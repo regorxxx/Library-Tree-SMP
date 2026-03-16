@@ -1,7 +1,8 @@
 ﻿'use strict';
-//13/03/26
+//16/03/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
+/* global SmoothingMode:readable */
 
 /* exported UserInterface, Vkeys, sync */
 
@@ -247,7 +248,7 @@ class UserInterface {
 		const tcol = this.col.text;
 		for (let i = 0; i < 2; i++) {
 			this.img.stub[i] = $.gr(500, 500, true, g => {
-				g.SetSmoothingMode(2);
+				g.SetSmoothingMode(SmoothingMode.HighQuality);
 				if (!this.img.blurDark && !this.img.blurLight) {
 					g.FillSolidRect(0, 0, 500, 500, tcol);
 					g.FillGradRect(-1, 0, 505, 500, 90, this.col.bg & 0xbbffffff, this.col.bg, 1.0);
@@ -256,7 +257,7 @@ class UserInterface {
 				g.DrawString('NO', i ? font3 : font1, tcol & 0x25ffffff, 0, 0, 500, 275, cc);
 				g.DrawString(['COVER', 'SELECTION'][i], i ? font4 : font2, tcol & 0x20ffffff, 2.5, 175, 500, 275, cc);
 				g.FillSolidRect(60, 388, 380, 50, tcol & 0x15ffffff);
-				g.SetSmoothingMode(0);
+				g.SetSmoothingMode();
 			});
 		}
 		this.get = true;
@@ -325,7 +326,7 @@ class UserInterface {
 		this.img.cur = $.gr(this.w, this.h, true, (g, gi) => {
 			switch (true) {
 				case this.img.isBlur:
-					g.SetInterpolationMode(0);
+					g.SetInterpolationMode();
 					if (ppt.blurAutofill) image = image.Clone(imgx, imgy, imgw, imgh);
 					if (this.img.blurBlend) {
 						if (ppt.blurTemp) {

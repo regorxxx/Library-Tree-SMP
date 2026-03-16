@@ -1,8 +1,8 @@
 ﻿'use strict';
-//06/03/26
+//16/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
-/* global MK_CONTROL:readable, MK_SHIFT */
+/* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
 /* global globTags:readable */
 /* global Language:readable */
 
@@ -637,7 +637,7 @@ class Find {
 	// Regorxxx <- Quick-search at any position of string
 	draw(gr) {
 		if (this.jSearch) {
-			gr.SetSmoothingMode(4);
+			gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 			const text = this.jSearch.length
 				? (this.bAnyPosition ? '*' : '') + this.jSearch.toUpperCase()
 				: '';
@@ -647,7 +647,7 @@ class Find {
 			gr.DrawRoundRect(this.j.x - this.j.w / 2 + 1, this.j.y + 1, this.j.w - 2, this.j.h - 2, this.arc2, this.arc2, 1, 0x28ffffff);
 			gr.GdiDrawText(text, ui.font.find, $.RGB(0, 0, 0), this.j.x - this.j.w / 2 + 1, this.j.y + 1, this.j.w, this.j.h, panel.cc);
 			gr.GdiDrawText(text, ui.font.find, this.jump_search ? 0xfffafafa : 0xffff4646, this.j.x - this.j.w / 2, this.j.y, this.j.w, this.j.h, panel.cc);
-			gr.SetSmoothingMode(0);
+			gr.SetSmoothingMode();
 		}
 	}
 	// Regorxxx ->

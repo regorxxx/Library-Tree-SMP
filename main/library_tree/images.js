@@ -3,7 +3,7 @@
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
-/* global InterpolationMode:readable */
+/* global InterpolationMode:readable, SmoothingMode:readable */
 
 /* exported img */
 
@@ -374,9 +374,9 @@ class Images {
 	createImages() {
 		this.mask.circular = $.gr(500, 500, true, g => {
 			g.FillSolidRect(0, 0, 500, 500, $.RGB(255, 255, 255));
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			g.FillEllipse(3, 3, 496, 496, $.RGBA(0, 0, 0, 255)); // Regorxxx <- Improve img mask to avoid rough edges ->
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 		this.mask.fade = $.gr(500, 500, true, g => {
 			g.FillSolidRect(0, 0, 500, 500, $.RGB(175, 175, 175));
@@ -429,9 +429,9 @@ class Images {
 							gr.FillGradRect(x1 + w, y1, 4 * $.scale, h, 0, $.RGBA(0, 0, 0, 56), 0);
 							gr.FillGradRect(x1, y1 + h, w, 4 * $.scale, 90, $.RGBA(0, 0, 0, 56), 0);
 						} else {
-							gr.SetSmoothingMode(4);
+							gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 							gr.DrawEllipse(x1, y1, iw, ih, 4 * $.scale, $.RGBA(0, 0, 0, 32));
-							gr.SetSmoothingMode(0);
+							gr.SetSmoothingMode();
 						}
 					}
 					gr.DrawImage(cur_img, x1, y1, w, h, 0, 0, iw, ih);
@@ -442,9 +442,9 @@ class Images {
 					if (ppt.albumArtBorderShow && (!item.sel || !this.labels.overlay || this.style.image != 2)) { // Regorxxx <-  Image frame setting ->
 						if (this.style.image != 2) gr.DrawRect(x1, y1, iw - 1, ih - 1, 1, ui.col.imgBor);
 						else {
-							gr.SetSmoothingMode(2);
+							gr.SetSmoothingMode(SmoothingMode.HighQuality);
 							gr.DrawEllipse(x1 + 1, y1 + 1, iw - 2, ih - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
-							gr.SetSmoothingMode(0);
+							gr.SetSmoothingMode();
 						}
 					}
 				} else {
@@ -460,9 +460,9 @@ class Images {
 								gr.FillGradRect(x1 + iw - 2 * $.scale, y1, 6 * $.scale, ih, 0, $.RGBA(0, 0, 0, 56), 0);
 								gr.FillGradRect(x1, y1 + ih - 2 * $.scale, iw, 6 * $.scale, 90, $.RGBA(0, 0, 0, 56), 0);
 							} else {
-								gr.SetSmoothingMode(2);
+								gr.SetSmoothingMode(SmoothingMode.HighQuality);
 								gr.DrawEllipse(x1, y1, iw, ih, 4 * $.scale, $.RGBA(0, 0, 0, 32));
-								gr.SetSmoothingMode(0);
+								gr.SetSmoothingMode();
 							}
 						}
 						this.stub.noImg && gr.DrawImage(this.stub.noImg, x1, y1, iw, ih, 0, 0, iw, ih);
@@ -553,10 +553,10 @@ class Images {
 
 	drawImageFrame(gr, x, y, w, h, col) {
 		const l_w = 3;
-		gr.SetSmoothingMode(2);
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		if (this.style.image != 2) gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
 		else gr.DrawEllipse(x, y, w - l_w / 2, h - l_w / 2, l_w, col);
-		gr.SetSmoothingMode(0);
+		gr.SetSmoothingMode();
 	}
 
 	drawItemOverlay(gr, item, x, y, w) {
@@ -576,16 +576,16 @@ class Images {
 					count_h2 = count_h * 2;
 					count_w = Math.max(gr.CalcTextWidth(count[0], ui.font.tracks), gr.CalcTextWidth(count[1], ui.font.tracks));
 					count_x = x + (this.style.image != 2 ? w - count_w - 3 : (w - count_w - 2) / 2);
-					gr.SetSmoothingMode(2);
+					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
 					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
 					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, this.style.image != 2 ? panel.rc : panel.cc);
-					gr.SetSmoothingMode(0);
+					gr.SetSmoothingMode();
 				} else {
-					gr.SetSmoothingMode(2);
+					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
 					gr.GdiDrawText(count, ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, panel.cc);
-					gr.SetSmoothingMode(0);
+					gr.SetSmoothingMode();
 				}
 				// Regorxxx ->
 				break;
@@ -596,12 +596,12 @@ class Images {
 				let year_h = Math.max(gr.CalcTextHeight(item.year, ui.font.tracks), 8);
 				let year_x = x + (this.style.image != 2 ? 0 : (w - year_w - 2) / 2);
 				const year_y = y + (this.style.image != 2 ? 0 : year_h / 1.67);
-				gr.SetSmoothingMode(2);
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				// Regorxxx <- Custom album art overlay track count/year
 				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, ui.col.bgTrackCount);
 				gr.GdiDrawText(item.year, ui.font.tracks, ui.col.textTrackCount, year_x + 1, year_y, year_w, year_h, panel.cc);
 				// Regorxxx ->
-				gr.SetSmoothingMode(0);
+				gr.SetSmoothingMode();
 				break;
 			}
 		}

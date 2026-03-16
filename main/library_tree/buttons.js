@@ -1,8 +1,8 @@
 ﻿'use strict';
-//11/03/26
+//16/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
-/* global VK_SHIFT:readable, VK_CONTROL:readable */
+/* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
 
 /* exported Buttons, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -91,41 +91,41 @@ class Buttons {
 		const hovAlpha = (!ui.sbar.col ? 75 : (!ui.sbar.type ? 68 : 51)) * 0.4;
 		this.scr.hover = !ui.sbar.col ? $.RGBA(ui.col.t, ui.col.t, ui.col.t, hovAlpha) : ui.col.text & $.RGBA(255, 255, 255, hovAlpha);
 		this.q.s_img = $.gr(100, 100, true, g => {
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			// Regorxxx <- Code cleanup. Remove ui.id.local references
 			g.DrawLine(59, 59, 90, 90, 10, ui.col.txt_box_h);
 			g.DrawEllipse(10, 10, 54, 54, 10, ui.col.txt_box_h);
 			// Regorxxx ->
 			g.FillEllipse(16, 16, 42, 42, 0x0AFAFAFA);
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 		this.q.s_img.RotateFlip(4);
 		this.scr.img = $.gr(sz, sz, true, g => {
 			g.SetTextRenderingHint(3);
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			if (ui.sbar.col) {
 				this.scr.arrow == 0 ? g.FillPolygon(ui.col.text, 1, [50 * sc, 0, 100 * sc, 76 * sc, 0, 76 * sc]) : g.DrawString(this.scr.arrow, iconFont, ui.col.text, 0, sz * this.scr.pad, sz, sz, $.stringFormat(1, 1));
 			} else {
 				this.scr.arrow == 0 ? g.FillPolygon($.RGBA(ui.col.t, ui.col.t, ui.col.t, 255), 1, [50 * sc, 0, 100 * sc, 76 * sc, 0, 76 * sc]) :
 					g.DrawString(this.scr.arrow, iconFont, $.RGBA(ui.col.t, ui.col.t, ui.col.t, 255), 0, sz * this.scr.pad, sz, sz, $.stringFormat(1, 1));
 			}
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 		this.scr.bg = $.gr(sz, sz, true, g => {
 			g.SetTextRenderingHint(3);
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			if (ui.sbar.col) {
 				this.scr.arrow == 0 ? g.FillPolygon(ui.col.bg, 1, [50 * sc, 0, 100 * sc, 76 * sc, 0, 76 * sc]) : g.DrawString(this.scr.arrow, iconFont, ui.col.bg, 0, sz * this.scr.pad, sz, sz, $.stringFormat(1, 1));
 			} else {
 				this.scr.arrow == 0 ? g.FillPolygon(ui.col.bg, 1, [50 * sc, 0, 100 * sc, 76 * sc, 0, 76 * sc]) :
 					g.DrawString(this.scr.arrow, iconFont, ui.col.bg, 0, sz * this.scr.pad, sz, sz, $.stringFormat(1, 1));
 			}
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 		sz = 100;
 		this.cross.normal = $.gr(sz, sz, true, g => {
 			g.SetTextRenderingHint(3);
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let nn = 31;
 			let offset1 = 12;
 			let offset2 = 2;
@@ -133,11 +133,11 @@ class Buttons {
 			g.DrawLine(offset1, nn - offset2, 100 - nn * 2 + offset1, 100 - nn - offset2, 5, ui.col.txt_box_h);
 			g.DrawLine(offset1, 100 - nn - offset2, 100 - nn * 2 + offset1, nn - offset2, 5, ui.col.txt_box_h);
 			// Regorxxx ->
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 		this.cross.hover = $.gr(sz, sz, true, g => {
 			g.SetTextRenderingHint(3);
-			g.SetSmoothingMode(2);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let nn = 28;
 			let offset1 = 9;
 			let offset2 = 2;
@@ -145,7 +145,7 @@ class Buttons {
 			g.DrawLine(offset1, nn - offset2, 100 - nn * 2 + offset1, 100 - nn - offset2, 5, ui.col.txt_box_h);
 			g.DrawLine(offset1, 100 - nn - offset2, 100 - nn * 2 + offset1, nn - offset2, 5, ui.col.txt_box_h);
 			// Regorxxx ->
-			g.SetSmoothingMode(0);
+			g.SetSmoothingMode();
 		});
 	}
 
@@ -537,12 +537,12 @@ class Btn {
 		// Regorxxx ->
 		const crossIm = this.state === 'normal' || !panel.search.txt ? this.item.normal : this.item.hover;
 		const colRect = this.state !== 'down' ? ui.getBlend(ui.col.bg4, ui.col.bg5, this.transition_factor, true) : ui.col.bg4;
-		gr.SetSmoothingMode(2);
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		gr.FillRoundRect(this.x, this.y, this.w, this.h, but.arc, but.arc, colRect);
-		gr.SetSmoothingMode(0);
-		gr.SetInterpolationMode(2);
+		gr.SetSmoothingMode();
+		gr.SetInterpolationMode(InterpolationMode.HighQuality);
 		if (crossIm) gr.DrawImage(crossIm, this.p1, this.p2, this.p3, this.p3, 0, 0, crossIm.Width, crossIm.Height, 0, a);
-		gr.SetInterpolationMode(0);
+		gr.SetInterpolationMode();
 	}
 
 	drawFilter(gr) {
@@ -552,9 +552,9 @@ class Btn {
 			: this.item.hover;
 		// Regorxxx ->
 		const colRect = this.state !== 'down' ? ui.getBlend(ui.col.bg4, ui.col.bg5, this.transition_factor, true) : ui.col.bg4;
-		gr.SetSmoothingMode(2);
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		gr.FillRoundRect(this.x, but.hoverArea, this.w, but.hot_h, but.arc, but.arc, colRect);
-		gr.SetSmoothingMode(0);
+		gr.SetSmoothingMode();
 		if (!ui.img.blurDark) gr.GdiDrawText(but.multiBtn.name, panel.filter.font, colText, this.p1, this.y, this.p3, this.h, this.p2); // Regorxxx <- Filter / View / Source button ->
 		else {
 			gr.SetTextRenderingHint(5);
@@ -585,12 +585,12 @@ class Btn {
 			: 255;
 		// Regorxxx ->
 		const colRect = this.state !== 'down' ? ui.getBlend(ui.col.bg4, ui.col.bg5, this.transition_factor, true) : ui.col.bg4;
-		gr.SetSmoothingMode(2);
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		gr.FillRoundRect(this.x, this.y, this.w, this.h, but.arc, but.arc, colRect);
-		gr.SetSmoothingMode(0);
-		gr.SetInterpolationMode(2);
+		gr.SetSmoothingMode();
+		gr.SetInterpolationMode(InterpolationMode.HighQuality);
 		if (this.item.normal) gr.DrawImage(this.item.normal, this.p1, this.p2, this.p3, this.p3, 0, 0, this.item.normal.Width, this.item.normal.Height, 0, a);
-		gr.SetInterpolationMode(0);
+		gr.SetInterpolationMode();
 	}
 
 	drawSettings(gr) {
@@ -600,9 +600,9 @@ class Btn {
 			: this.item.hover;
 		// Regorxxx ->
 		const colRect = this.state !== 'down' ? ui.getBlend(ui.col.bg4, ui.col.bg5, this.transition_factor, true) : ui.col.bg4;
-		gr.SetSmoothingMode(2);
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		gr.FillRoundRect(this.x, but.hoverArea, this.w, but.hot_h, but.arc, but.arc, colRect);
-		gr.SetSmoothingMode(0);
+		gr.SetSmoothingMode();
 		if (!ui.img.blurDark) gr.GdiDrawText(panel.settings.icon, panel.settings.font, colText, 0, this.y, this.p1, this.p2, panel.rc);
 		else {
 			gr.SetTextRenderingHint(5);
