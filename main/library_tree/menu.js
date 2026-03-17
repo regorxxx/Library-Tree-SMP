@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/03/26
+//17/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -1086,7 +1086,7 @@ class MenuItems {
 		ppt.fixedPlaylistName = 'ActivePlaylist';
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
-		if (ppt.showSource) panel.setRootName();
+		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		lib.treeState(false, 2);
 	}
 
@@ -1173,7 +1173,7 @@ class MenuItems {
 		ppt.fixedPlaylist = true;
 		ppt.libSource = 1;
 		if (panel.imgView) { img.clearCache(); }
-		if (ppt.showSource) { panel.setRootName(); }
+		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		lib.searchCache = {};
 		lib.treeState(false, 2);
 	}
@@ -1312,7 +1312,7 @@ class MenuItems {
 		}
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
-		if (ppt.showSource) panel.setRootName();
+		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		if (bProcessTree) { lib.treeState(false, 2); } // Regorxxx <- Internal cache of views ->
 	}
 
