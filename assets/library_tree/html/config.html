@@ -814,7 +814,6 @@
 				<div class="column32">
 					<div class="div_text1">Playlist</div>
 					<div id="playlist"></div>
-					<div class="info4">Use %view_name% for name of current view</div>
 					<div id="playlistSort"></div>
 					<div class="div_text4">Target playlist for send to playlist:</div>
 					<div id="targetPlaylist"></div>
@@ -2156,6 +2155,7 @@
 				for (i = 0; i < 2; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="playlist_container' + i + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="playlist_container' + i + '" name="behaviour_input" class="input75" /></div>');
+				window.playlist.insertAdjacentHTML('beforeend', '<div class="info4">Use %VIEW_NAME% for name of current view</div>');
 				i = 1; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				i = 2; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
