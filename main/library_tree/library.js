@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/03/26
+//18/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -43,6 +43,7 @@ class Library {
 		this.upd_search = false;
 		this.v2_init = fb.Version.startsWith('2') && fb.IsLibraryEnabled();
 		this.validSearch = true;
+		this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
@@ -128,6 +129,9 @@ class Library {
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? stripSort(processed)
 							: panel.search.txt;
+						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+							? getSortObj(processed)
+							: null;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
 							: 'N/A';
@@ -142,8 +146,9 @@ class Library {
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
 						this.validSearch = false;
+						this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 					}
-					this.binaryInsert(panel.folderView, newSearchItems, panel.list, this.searchNode);
+					this.binaryInsert(panel.folderView, newSearchItems, panel.list, this.searchNode, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
 					if (!panel.list.Count) {
 						pop.clearTree();
 						sbar.setRows(0);
@@ -154,6 +159,7 @@ class Library {
 				} else {
 					panel.list = this.list;
 					this.searchQueryID = 'N/A'; // Regorxxx <- Don't update search if possible ->
+					this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 				}
 				break;
 			}
@@ -202,6 +208,9 @@ class Library {
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? stripSort(processed)
 							: panel.search.txt;
+						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+							? getSortObj(processed)
+							: null;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
 							: 'N/A';
@@ -216,10 +225,13 @@ class Library {
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
 						this.validSearch = false;
+						this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 					}
 					panel.list.InsertRange(panel.list.Count, newSearchItems);
-					panel.sort(panel.list);
-					panel.sort(newSearchItems);
+					// Regorxxx <- Support SORT BY query sorting
+					panel.sort(panel.list, this.searchSort);
+					panel.sort(newSearchItems, this.searchSort);
+					// Regorxxx ->
 					switch (true) {
 						case !panel.folderView: {
 							const tfo = FbTitleFormat(panel.view);
@@ -290,11 +302,11 @@ class Library {
 		let i, items;
 		switch (true) {
 			case handleList.Count < 100:
-				this.binaryInsert(panel.folderView, handleList, panel.list, this.searchNode);
+				this.binaryInsert(panel.folderView, handleList, panel.list, this.searchNode, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
 				break;
 			default:
 				panel.list.InsertRange(panel.list.Count, handleList);
-				panel.sort(panel.list);
+				panel.sort(panel.list, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
 				switch (true) {
 					case !panel.folderView: {
 						const tfo = FbTitleFormat(panel.view);
@@ -1116,6 +1128,10 @@ class Library {
 				const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? stripSort(processed)
 					: panel.search.txt;
+				this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+					? getSortObj(processed)
+					: null;
+				console.log(searchText, processed);
 				this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? searchText
 					: 'N/A';
@@ -1131,9 +1147,11 @@ class Library {
 				// Regorxxx ->
 			} catch (e) { // eslint-disable-line no-unused-vars
 				this.list = this.list.Clone();
+				this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 				panel.list.RemoveAll();
 				this.validSearch = false;
 			}
+			if (this.searchSort) { panel.sort(panel.list, this.searchSort); } // Regorxxx <- Support SORT BY query sorting ->
 			if (!panel.list.Count) {
 				pop.clearTree();
 				sbar.setRows(0);
@@ -1146,6 +1164,7 @@ class Library {
 			this.upd_search = false;
 		} else if (!panel.search.txt) {
 			this.searchQueryID = 'N/A'; // Regorxxx <- Don't update search if possible ->
+			this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 			panel.list = this.list;
 			this.node = this.libNode;
 			this.searchNode = [];
@@ -1390,6 +1409,9 @@ class Library {
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? stripSort(processed)
 							: panel.search.txt;
+						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+							? getSortObj(processed)
+							: null;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
 							: 'N/A';
@@ -1404,6 +1426,7 @@ class Library {
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
 						this.validSearch = false;
+						this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 					}
 					origSearch.Sort();
 					newSearchItems.Sort();
@@ -1431,6 +1454,9 @@ class Library {
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? stripSort(processed)
 							: panel.search.txt;
+						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+							? getSortObj(processed)
+							: null;
 						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? searchText
 							: 'N/A';
@@ -1445,6 +1471,7 @@ class Library {
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
 						this.validSearch = false;
+						this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 					}
 					handlesInSearch.Sort();
 					removeSearchItems.MakeDifference(handlesInSearch); // handles to remove
@@ -1460,7 +1487,10 @@ class Library {
 						if (ui.w < 1 || !window.IsVisible) this.upd = 2;
 						else this.lib_update();
 					}
-				} else { this.searchQueryID = 'N/A'; } // Regorxxx <- Don't update search if possible ->
+				} else {
+					this.searchQueryID = 'N/A'; // Regorxxx <- Don't update search if possible ->
+					this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
+				}
 				break;
 			}
 			case 2:

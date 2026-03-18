@@ -334,7 +334,7 @@ class Populate {
 		return b.length;
 	}
 
-	// Regorxxx <- Code cleanup
+	// Regorxxx <- Support SORT BY query sorting | Code cleanup
 	buildTree(br, level, node, full, block) {
 		const l = !this.rootNode ? level : level - 1;
 		let j = 0;
@@ -347,6 +347,7 @@ class Populate {
 					const multi_cond = [];
 					const multi_obj = [];
 					const multi_rem = [];
+					const multi_pos = new Map();
 					const nm_arr = [];
 					let h = -1;
 					let multi = [];
@@ -354,55 +355,114 @@ class Populate {
 					let n_o = '#condense#';
 					let nU = '';
 					const splitter = panel.softSplitter;
-					br.forEach((v, i) => {
-						if (v.nm.includes('@@') || v.nm.includes(splitter)) {
-							multi = this.getAllCombinations(v.nm);
-							multi_rem.push(i);
-							multi.forEach(w => {
-								multi_obj.push({
-									nm: w.join(''),
+					if (lib.searchSort) {
+						br.forEach((v, i) => {
+							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
+								multi = this.getAllCombinations(v.nm);
+								multi_rem.push(i);
+								multi.forEach(w => {
+									const obj = {
+										nm: w.join(''),
+										item: this.copy(v.item),
+										track: v.track,
+										srt: lib.sort(w.join(''))
+									};
+									multi_obj.push(obj);
+									multi_pos.set(obj, i);
+								});
+							} else {
+								v.nm = v.nm.replace(/#!#/g, '');
+								nm_arr.push(v.nm);
+							}
+						});
+						let i = multi_rem.length;
+						while (i--) { br.splice(multi_rem[i], 1); }
+						this.sort(multi_obj);
+						multi_obj.forEach((v) => {
+							n = v.nm;
+							nU = n.toUpperCase();
+							if (n_o != nU) {
+								n_o = nU;
+								multi_cond[j] = {
+									nm: n,
 									item: this.copy(v.item),
 									track: v.track,
-									srt: lib.sort(w.join(''))
-								});
-							});
-						} else {
-							v.nm = v.nm.replace(/#!#/g, '');
-							nm_arr.push(v.nm);
-						}
-					});
-					let i = multi_rem.length;
-					while (i--) { br.splice(multi_rem[i], 1); }
-					this.sort(multi_obj);
-					multi_obj.forEach((v) => {
-						n = v.nm;
-						nU = n.toUpperCase();
-						if (n_o != nU) {
-							n_o = nU;
-							multi_cond[j] = {
-								nm: n,
-								item: this.copy(v.item),
+									srt: v.srt
+								};
+								multi_pos.set(multi_cond[j], multi_pos.get(v));
+								multi_pos.delete(v);
+								j++;
+							} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
+						});
+						multi_cond.forEach((v, i) => {
+							h = nm_arr.indexOf(v.nm);
+							if (h != -1) {
+								v.item.forEach(v => br[h].item.push(v));
+								multi_cond.splice(i, 1);
+								multi_pos.delete(v);
+							}
+						});
+						multi_pos.forEach((idx, v) => {
+							br.splice(idx + 1, 0, {
+								nm: v.nm,
+								sel: false,
 								track: v.track,
+								child: [],
+								item: this.copy(v.item),
 								srt: v.srt
-							};
-							j++;
-						} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
-					});
-					multi_cond.forEach((v, i) => {
-						h = nm_arr.indexOf(v.nm);
-						if (h != -1) {
-							v.item.forEach(v => br[h].item.push(v));
-							multi_cond.splice(i, 1);
-						}
-					});
-					multi_cond.forEach((v, i) => br.splice(i + 1, 0, {
-						nm: v.nm,
-						sel: false,
-						track: v.track,
-						child: [],
-						item: this.copy(v.item),
-						srt: v.srt
-					}));
+							});
+						});
+					} else {
+						br.forEach((v, i) => {
+							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
+								multi = this.getAllCombinations(v.nm);
+								multi_rem.push(i);
+								multi.forEach(w => {
+									multi_obj.push({
+										nm: w.join(''),
+										item: this.copy(v.item),
+										track: v.track,
+										srt: lib.sort(w.join(''))
+									});
+								});
+							} else {
+								v.nm = v.nm.replace(/#!#/g, '');
+								nm_arr.push(v.nm);
+							}
+						});
+						let i = multi_rem.length;
+						while (i--) { br.splice(multi_rem[i], 1); }
+						this.sort(multi_obj);
+						multi_obj.forEach((v) => {
+							n = v.nm;
+							nU = n.toUpperCase();
+							if (n_o != nU) {
+								n_o = nU;
+								multi_cond[j] = {
+									nm: n,
+									item: this.copy(v.item),
+									track: v.track,
+									srt: v.srt
+								};
+								j++;
+							} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
+						});
+						multi_cond.forEach((v, i) => {
+							h = nm_arr.indexOf(v.nm);
+							if (h != -1) {
+								v.item.forEach(v => br[h].item.push(v));
+								multi_cond.splice(i, 1);
+							}
+						});
+						multi_cond.forEach((v, i) => br.splice(i + 1, 0, {
+							nm: v.nm,
+							sel: false,
+							track: v.track,
+							child: [],
+							item: this.copy(v.item),
+							srt: v.srt
+						}));
+					}
 					this.merge(br);
 					break;
 				}
@@ -2655,6 +2715,7 @@ class Populate {
 
 	sort(data) {
 		if (!ppt.libSource && !panel.multiProcess || (ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if (lib.searchSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
@@ -2673,9 +2734,11 @@ class Populate {
 
 	}
 
-	// Regorxxx <- Preserve tree sorting at selection
+	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection
 	sortIfNeeded(items) {
-		if (panel.multiProcess && !ppt.customSort.length && panel.playlistSort) {
+		if (lib.searchSort) {
+			panel.sort(items, lib.searchSort);
+		} else if (panel.multiProcess && !ppt.customSort.length && panel.playlistSort) {
 			items = lib.processCustomSort(items, panel.playlistSort);
 		} else if (ppt.customSort.length) {
 			items = lib.processCustomSort(items, this.customSort);
