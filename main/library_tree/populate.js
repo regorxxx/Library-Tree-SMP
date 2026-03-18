@@ -334,14 +334,14 @@ class Populate {
 		return b.length;
 	}
 
+	// Regorxxx <- Code cleanup
 	buildTree(br, level, node, full, block) {
 		const l = !this.rootNode ? level : level - 1;
-		let i = 0;
 		let j = 0;
 		if (!br[0].sorted) {
 			switch (panel.multiProcess) {
 				case false:
-					if (!node || node && !full) this.merge(br);
+					if (!node || node && !full) { this.merge(br); }
 					break;
 				case true: {
 					const multi_cond = [];
@@ -366,12 +366,15 @@ class Populate {
 									srt: lib.sort(w.join(''))
 								});
 							});
+						} else {
+							v.nm = v.nm.replace(/#!#/g, '');
+							nm_arr.push(v.nm);
 						}
 					});
-					i = multi_rem.length;
-					while (i--) br.splice(multi_rem[i], 1);
+					let i = multi_rem.length;
+					while (i--) { br.splice(multi_rem[i], 1); }
 					this.sort(multi_obj);
-					multi_obj.forEach(v => {
+					multi_obj.forEach((v) => {
 						n = v.nm;
 						nU = n.toUpperCase();
 						if (n_o != nU) {
@@ -384,10 +387,6 @@ class Populate {
 							};
 							j++;
 						} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
-					});
-					br.forEach(v => {
-						v.nm = v.nm.replace(/#!#/g, '');
-						nm_arr.push(v.nm);
 					});
 					multi_cond.forEach((v, i) => {
 						h = nm_arr.indexOf(v.nm);
@@ -417,19 +416,21 @@ class Populate {
 		br.forEach((v, i) => {
 			j = this.tree.length;
 			const item = this.tree[j] = v;
-			item.top = !i ? true : false;
-			item.bot = i == br_l - 1 ? true : false;
+			item.top = !i;
+			item.bot = i === br_l - 1;
 			item.count = '';
 			item.ix = j;
 			item.level = level;
 			item.par = par;
 			switch (true) {
 				case ppt.facetView:
-					if (!item.root) item.track = true;
+					if (!item.root) { item.track = true; }
 					break;
 				case l != -1 && !this.showTracks:
-					this.range(item.item).some(v => {
-						if (lib.node[v] && (lib.node[v].length == l + 1 || lib.node[v].length == l + 2)) return item.track = true;
+					this.range(item.item).some((v) => {
+						if (lib.node[v] && (lib.node[v].length == l + 1 || lib.node[v].length == l + 2)) {
+							return item.track = true;
+						}
 					});
 					break;
 				case l == 0 && lib.node[item.item[0].start] && lib.node[item.item[0].start].length == 1:
@@ -438,25 +439,30 @@ class Populate {
 			}
 			if (ui.col.counts && (!item.track || !this.showTracks)) {
 				const str = '@!#' + ui.col.counts + '`' + (this.highlight.text ? ui.col.text_h : ui.col.counts) + '`' + ui.col.textSel + '@!#';
-				if (!item.nm.endsWith(str)) item.nm += str;
+				if (!item.nm.endsWith(str)) { item.nm += str; }
 			}
 			item.name = !panel.noDisplay ? item.nm : item.nm.replace(/#@#.*?#@#/g, '');
-			if (v.child.length > 0) this.buildTree(v.child, level + 1, node, !item.root ? false : true);
+			if (v.child.length > 0) { this.buildTree(v.child, level + 1, node, !!item.root); }
 		});
 		if (ui.style.squareNode && ui.col.line) {
 			this.row.lineMax = [];
-			this.tree.forEach(v => {
+			this.tree.forEach((v) => {
 				const depth = !this.inlineRoot ? v.level : Math.max(v.level - 1, 0);
 				this.row.lineMax[depth] = v.ix;
 			});
 		}
-		if (this.rootNode == 3) this.tree[0].name = this.tree[0].child.length > 1 ? panel.rootName.replace('#^^^^#', this.tree[0].child.length) : panel.rootName1;
+		if (this.rootNode === 3) {
+			this.tree[0].name = this.tree[0].child.length > 1
+				? panel.rootName.replace('#^^^^#', this.tree[0].child.length)
+				: panel.rootName1;
+		}
 		find.initials = null;
 		if (!block) {
 			sbar.setRows(this.tree.length);
 			panel.treePaint();
 		}
 	}
+	// Regorxxx ->
 
 	butTooltipFont() {
 		return [globFonts.tooltip.name, Math.round(globFonts.tooltip.size * $.scale * 96 / 72 * ppt.zoomTooltipBut / 100), 0]; // Regorxxx <- Make tooltip text smaller and use global fonts setting ->
@@ -470,7 +476,7 @@ class Populate {
 		let items = [];
 		this.addItems(items, v); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
-		const handleList = this.getHandleList(void(0), items);
+		const handleList = this.getHandleList(void (0), items);
 		let ln, n, tf, value, rawValue, values;
 		switch (ppt.itemShowStatistics) {
 			case 1: {// bitrate
@@ -1624,7 +1630,7 @@ class Populate {
 			case 'text':
 				if (!this.check_ix(item, x, y, false)) return;
 				if (this.dblClickAction == 3) {
-					const handleList = this.getHandleList(void(0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
+					const handleList = this.getHandleList(void (0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
 					if (handleList.Count) plman.FlushPlaybackQueue();
 					for (let i = 0; i < handleList.Count; i++) {
 						plman.AddItemToPlaybackQueue(handleList[i]);
@@ -1661,7 +1667,7 @@ class Populate {
 					plman.ActivePlaylist = pl_stnd_idx;
 					// Regorxxx <- Queue source
 					if (ppt.libSource === 3) {
-						const handleList = this.getHandleList(void(0), this.range(item.item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
+						const handleList = this.getHandleList(void (0), this.range(item.item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
 						if (handleList.length) {
 							const queue = plman.GetPlaybackQueueContents();
 							plman.FlushPlaybackQueue();
@@ -1949,7 +1955,7 @@ class Populate {
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			const ix = this.get_ix(x, y, true, false);
 			if (ix < this.tree.length && ix >= 0) {
-				const handleList = this.getHandleList(void(0), this.range(this.tree[ix].item)); // Regorxxx <- Preserve tree sorting at selection ->
+				const handleList = this.getHandleList(void (0), this.range(this.tree[ix].item)); // Regorxxx <- Preserve tree sorting at selection ->
 				const queueHandles = plman.GetPlaybackQueueHandles();
 				let remove = [];
 				for (let i = 0; i < handleList.Count; i++) {
@@ -1972,7 +1978,7 @@ class Populate {
 				if (this[`${type}_dbl_clicked`]) return;
 				const ix = this.get_ix(x, y, true, false);
 				if (ix < this.tree.length && ix >= 0) {
-					const handleList = this.getHandleList(void(0), this.range(this.tree[ix].item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
+					const handleList = this.getHandleList(void (0), this.range(this.tree[ix].item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
 					let add = new FbMetadbHandleList();
 					handleList.forEach(h => {
 						let found = false;
