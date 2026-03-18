@@ -489,8 +489,22 @@
 							<div class="li"> Foobar2000 Query Syntax reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax</a> </div>
 						</li>
 						<li>
-							<div class="li"> SORT BY expressions are not allowed. </a> </div>
+							<div class="li"> SORT BY expressions are also allowed: </a> </div>
 						</li>
+						<ul>
+							<li>
+								<div class="li"> Ascending: [...] SORT BY [...] </div>
+							</li>
+							<li>
+								<div class="li"> Ascending: [...] SORT ASCENDING BY [...] </div>
+							</li>
+							<li>
+								<div class="li"> Descending: [...] SORT DESCENDING BY [...] </div>
+							</li>
+							<li>
+								<div class="li"> To apply sorting without filtering: ALL SORT BY [...] </div>
+							</li>
+						</ul>
 					</ul>
 					<li>
 						<div class="li"> Search box also supports RegExp. They must be written in /[expression]/[flags] form, where flags can be any of 'gimsuyt'. </div>

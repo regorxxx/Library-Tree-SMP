@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/03/26
+//18/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -617,7 +617,12 @@ class MenuItems {
 						'\nSearch Box:' +
 						'\n--------------' +
 						'\n• RegExp support: /[expression]/[flags], flags can be any of \'gimsuyt\'.' +
-						'\n• Flag \'t\' applies transliteration to tag values before matching.' +
+						'\n\t∙ Flag \'t\' applies transliteration to tag values before matching.' +
+						'\n• Query sorting support: sorting expressions can be used along queries.' +
+						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...] | [...] SORT BY [...]' +
+						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...]' +
+						'\n\t∙ Descending:  [...] SORT DESCENDING BY [...]' +
+						'\n\t∙ Sorting without filtering: ALL SORT BY [...]' +
 						[
 							{ key: 'Ctrl + A', action: 'Select all.' },
 							{ key: 'Ctrl + C', action: 'Copy selected text.' },
