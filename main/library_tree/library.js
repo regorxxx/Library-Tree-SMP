@@ -75,7 +75,7 @@ class Library {
 			else if (!panel.search.txt.length) pop.notifySelection();
 			if (ppt.searchSend != 2) return;
 			if (panel.search.txt) pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
-			else plman.ClearPlaylist(plman.FindOrCreatePlaylist(ppt.libPlaylist.replace(/%view_name%/i, panel.viewName), false));
+			else plman.ClearPlaylist(plman.FindOrCreatePlaylist(ppt.libPlaylist.replace(/%VIEW_NAME%/i, panel.viewName), false));
 		}, 333);
 
 		this.search500 = $.debounce(() => {
