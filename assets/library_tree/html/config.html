@@ -1587,8 +1587,8 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			var nodeLabels = ['Squares', 'Arrows', 'Arrows Light', 'Triangles', 'Triangles Light', 'Signs', 'Custom'];
-			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 ->
-			var playlistSortLabels = ['Playlist sort order (empty = default)'];
+			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Preserve tree sorting at selection ->
+			var playlistSortLabels = ['Playlist sort order (empty = default)', 'Use smart sorting based on current view']; // Regorxxx <- Preserve tree sorting at selection ->
 			var topTracksLabels = ['Custom query filter', 'Custom TF expression for sorting', 'Custom TF for duplicates removal <a class="tooltip">([] to skip)<span class="tooltiptext">[] to skip processing<br><br>Empty to use default settings</span></a>']; // Regorxxx <- Top tracks ->
 			var rememberLabels = ['On exit', 'All views', 'Before search'];
 			var rootLabels = ['Hide', 'All Music', 'View name', 'Summary item', 'Display in line (tree)', 'Show source'];
@@ -1691,7 +1691,7 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements ->
+				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2161,6 +2161,9 @@
 				i = 2; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx ->
 				window.playlistSort.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="playlistSort_container1" class="inp_label1">' + playlistSortLabels[0] + '</label><input id="playlistSort_container1" name="behaviour_input" class="input75" /></div>');
+				// Regorxxx <- Preserve tree sorting at selection
+				i = 0; window.playlistSort.insertAdjacentHTML('beforeend', '<div><input id="playlistSort_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlistSort_checkbox' + i + '" class="checkbox_label">' + playlistSortLabels[1 + i] + '</label></div>');
+				// Regorxxx ->
 				for (i = 0; i < 2; i++) {
 					window.targetPlaylist.insertAdjacentHTML('beforeend', '<div><input id="sendToCur' + i + '" name="sendToCur" style="' + cbox + '" type="radio" /><label for="sendToCur' + i + '" class="checkbox_label">' + targetPlaylistLabels[i] + '</label></div>');
 				}
@@ -2448,6 +2451,14 @@
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
 			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'][value] !== 2; // Regorxxx <- Scrollbar on windows style improvements
+			// Regorxxx <- Preserve tree sorting at selection
+			if (window.playlistSort_container1.value.length) {
+				window.playlistSort_checkbox0.checked = false;
+				window.playlistSort_checkbox0.disabled = true;
+			} else {
+				window.playlistSort_checkbox0.disabled = false;
+			}
+			// Regorxxx ->
 		}
 
 		function textChange(e) {
@@ -2478,6 +2489,14 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
+			// Regorxxx <- Preserve tree sorting at selection
+			if (window.playlistSort_container1.value.length) {
+				window.playlistSort_checkbox0.checked = false;
+				window.playlistSort_checkbox0.disabled = true;
+			} else {
+				window.playlistSort_checkbox0.disabled = false;
+			}
+			// Regorxxx ->
 
 			if (ppt['actionMode_internal'].value) {
 				window.click_dropdown.innerHTML = clickLabels[0];

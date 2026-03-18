@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/03/26
+//18/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -273,6 +273,7 @@ let properties = [
 
 	['Play on Enter or Send from Menu', false, 'autoPlay'],
 	['Playlist: Custom Sort', '', 'customSort'],
+	['Playlist: Smart Sort by view', false, 'smartSort'], // Regorxxx <- Preserve tree sorting at selection ->
 	['Playlist: Default', 'Library Viewer Selection', 'libPlaylist'], // Regorxxx <- Default CUI/DUI playlist ->
 	['Playlist: Default Activate on Change', true, 'activateOnChange'],
 	['Playlist: Default Create always', false, 'libPlaylistCreate'], // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->

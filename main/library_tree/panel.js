@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/03/26
+//18/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -364,7 +364,12 @@ class Panel {
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				this.playlistSort = FbTitleFormat((this.view.includes('album artist') || !this.view.includes('%artist%') && !this.view.includes('%<artist>%') && !this.view.includes('$meta(artist') ? '%album artist%' : '%artist%') + '  %album%  [[%discnumber%.]%tracknumber%. ][%track artist% - ]%title%');
+				 // Regorxxx <-  Preserve tree sorting at selection
+				if (ppt.smartSort) {
+					const view = this.view.toUpperCase();
+					this.playlistSort = FbTitleFormat((view.includes('ALBUM ARTIST') || !view.includes('%ARTIST%') && !view.includes('%<ARTIST>%') && !view.includes('$META(ARTIST') ? '%ALBUM ARTIST%' : '%ARTIST%') + '  %ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%');
+				}
+				 // Regorxxx ->
 			}
 			while (this.view.includes('$stripbranchprefix{')) {
 				ix1 = this.view.indexOf('$stripbranchprefix{');
@@ -464,7 +469,7 @@ class Panel {
 		this.multiPrefix = false;
 		this.multiProcess = false;
 		this.noDisplay = false;
-		this.playlistSort = '';
+		this.playlistSort = null;  // Regorxxx <-  Preserve tree sorting at selection ->
 		this.statistics = false;
 		this.view = '';
 		this.view_ppt.forEach((v, i) => {

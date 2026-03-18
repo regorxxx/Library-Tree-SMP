@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/03/26
+//18/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -190,11 +190,15 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	addItems(arr, item) {
-		item.forEach(v => {
-			for (let i = v.start; i <= v.end; i++) arr.push(i);
-		});
+	// Regorxxx <- Preserve tree sorting at selection
+	addItems(arr, node) {
+		if (node.child && node.child.length) {
+			node.child.forEach((subNode) => this.addItems(arr, subNode));
+		} else {
+			$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
+		}
 	}
+	// Regorxxx ->
 
 	arrayToRange(array) {
 		return array.slice().sort((a, b) => { return a - b; }).reduce((ranges, value) => {
@@ -463,14 +467,10 @@ class Populate {
 		const key = 'stat' + this.getKey(v);
 		const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
 		if (this.cache[type][key]) { return this.cache[type][key]; }
-		const handleList = new FbMetadbHandleList();
 		let items = [];
-		this.addItems(items, v.item);
+		this.addItems(items, v); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
-		items.some(w => {
-			if (w >= panel.list.Count) { return true; }
-			handleList.Add(panel.list[w]);
-		});
+		const handleList = this.getHandleList(void(0), items);
 		let ln, n, tf, value, rawValue, values;
 		switch (ppt.itemShowStatistics) {
 			case 1: {// bitrate
@@ -1506,15 +1506,17 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	getHandleList(n) {
-		if (n == 'newItems') this.getTreeSel();
+	// Regorxxx <- Preserve tree sorting at selection
+	getHandleList(n, selection) {
+		if (n == 'newItems') { this.getTreeSel(); }
 		let handleList = new FbMetadbHandleList();
-		this.sel_items.some(v => {
-			if (v >= panel.list.Count) return true;
+		(selection || this.sel_items).forEach(v => {
+			if (v >= panel.list.Count) { return; }
 			handleList.Add(panel.list[v]);
 		});
 		return handleList;
 	}
+	// Regorxxx ->
 
 	get_ix(x, y, simple, type) {
 		let ix;
@@ -1568,18 +1570,18 @@ class Populate {
 		return Math.round((y - panel.tree.y - ui.row.h * 0.5) / ui.row.h);
 	}
 
-	// Regorxxx <- Rectangle selection on art view ->
+	// Regorxxx <- Rectangle selection on art view | Preserve tree sorting at selection ->
 	getTreeSel() {
 		panel.treePaint();
 		this.sel_items = [];
 		this.lastSelMul = [];
 		this.tree.forEach((v, idx) => {
 			if (v.sel) {
-				this.addItems(this.sel_items, v.item);
+				this.addItems(this.sel_items, v);
 				this.lastSelMul.push(idx);
 			}
 		});
-		this.uniq(this.sel_items);
+		this.sel_items = [...new Set(this.sel_items)];
 	}
 	// Regorxxx ->
 
@@ -1622,10 +1624,7 @@ class Populate {
 			case 'text':
 				if (!this.check_ix(item, x, y, false)) return;
 				if (this.dblClickAction == 3) {
-					let handleList = new FbMetadbHandleList();
-					this.range(item.item).forEach(v => {
-						if (v < panel.list.Count) handleList.Add(panel.list[v]);
-					});
+					const handleList = this.getHandleList(void(0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
 					if (handleList.Count) plman.FlushPlaybackQueue();
 					for (let i = 0; i < handleList.Count; i++) {
 						plman.AddItemToPlaybackQueue(handleList[i]);
@@ -1662,11 +1661,7 @@ class Populate {
 					plman.ActivePlaylist = pl_stnd_idx;
 					// Regorxxx <- Queue source
 					if (ppt.libSource === 3) {
-						let handleList = new FbMetadbHandleList();
-						this.range(item.item).forEach(v => {
-							if (v < panel.list.Count) handleList.Add(panel.list[v]);
-						});
-						handleList = handleList.Convert();
+						const handleList = this.getHandleList(void(0), this.range(item.item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
 						if (handleList.length) {
 							const queue = plman.GetPlaybackQueueContents();
 							plman.FlushPlaybackQueue();
@@ -1954,10 +1949,7 @@ class Populate {
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			const ix = this.get_ix(x, y, true, false);
 			if (ix < this.tree.length && ix >= 0) {
-				let handleList = new FbMetadbHandleList();
-				this.range(this.tree[ix].item).forEach(v => {
-					if (v < panel.list.Count) handleList.Add(panel.list[v]);
-				});
+				const handleList = this.getHandleList(void(0), this.range(this.tree[ix].item)); // Regorxxx <- Preserve tree sorting at selection ->
 				const queueHandles = plman.GetPlaybackQueueHandles();
 				let remove = [];
 				for (let i = 0; i < handleList.Count; i++) {
@@ -1980,12 +1972,9 @@ class Populate {
 				if (this[`${type}_dbl_clicked`]) return;
 				const ix = this.get_ix(x, y, true, false);
 				if (ix < this.tree.length && ix >= 0) {
-					let handleList = new FbMetadbHandleList();
-					this.range(this.tree[ix].item).forEach(v => {
-						if (v < panel.list.Count) handleList.Add(panel.list[v]);
-					});
+					const handleList = this.getHandleList(void(0), this.range(this.tree[ix].item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
 					let add = new FbMetadbHandleList();
-					handleList.Convert().forEach(h => {
+					handleList.forEach(h => {
 						let found = false;
 						plman.GetPlaybackQueueHandles().Convert().forEach(q => {
 							if (h.Compare(q)) found = true;
@@ -2555,8 +2544,10 @@ class Populate {
 				this.sel_items = [];
 				this.clearSelected();
 				this.tree[idx].sel = true;
-				this.addItems(this.sel_items, this.tree[idx].item);
-				this.uniq(this.sel_items);
+				// Regorxxx <- Preserve tree sorting at selection
+				this.addItems(this.sel_items, this.tree[idx]);
+				this.sel_items = [...new Set(this.sel_items)];
+				// Regorxxx ->
 				this.last_sel = idx;
 				this.lastSelMul = [idx]; // Regorxxx <- Rectangle selection on art view ->
 				break;
@@ -2676,14 +2667,16 @@ class Populate {
 
 	}
 
+	// Regorxxx <- Preserve tree sorting at selection
 	sortIfNeeded(items) {
-		if (panel.multiProcess && !ppt.customSort.length) {
+		if (panel.multiProcess && !ppt.customSort.length && panel.playlistSort) {
 			items = lib.processCustomSort(items, panel.playlistSort);
 		} else if (ppt.customSort.length) {
 			items = lib.processCustomSort(items, this.customSort);
 		}
 		return items;
 	}
+	// Regorxxx ->
 
 	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
 	sortView(data, method, type) {
@@ -2960,10 +2953,6 @@ class Populate {
 			: [ui.font.groupTooltip.Name, ui.font.groupTooltip.Size, ui.font.groupTooltip.Style];
 	}
 	// Regorxxx ->
-
-	uniq(arr) {
-		this.sel_items = [...new Set(arr)].sort(this.numSort);
-	}
 
 	upDnKeyCheckScroll(vkey) {
 		const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
