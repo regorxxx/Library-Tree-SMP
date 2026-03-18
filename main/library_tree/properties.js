@@ -414,7 +414,11 @@ let properties = [
 	['Filter show duplicates ', false, 'showDupl'],
 	// Regorxxx ->
 	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'], // Regorxxx <- GDI/D2D draw mode ->
-	['Image mouse rectangle selection on album art', true, 'selRectArt']  // Regorxxx <- Selection rectangle on art view ->
+	['Image mouse rectangle selection on album art', true, 'selRectArt'], // Regorxxx <- Selection rectangle on art view ->
+	// Regorxxx <- Customizable quicksearch timer
+	['Quick-search jump initial char timer', 150, 'findTimerInit'],
+	['Quick-search jump next chars timer', 300, 'findTimerNext']
+	// Regorxxx ->
 ];
 
 const ppt = new PanelProperties;

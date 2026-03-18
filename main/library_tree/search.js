@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/03/26
+//18/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -740,6 +740,7 @@ class Find {
 		if (utils.IsKeyPressed(0x09) || utils.IsKeyPressed(0x1B) || utils.IsKeyPressed(0x6A) || utils.IsKeyPressed(0x6D)) return;
 		if (!panel.search.active) {
 			let next = -1;
+			let ms = 500; // Regorxxx <- Customizable quicksearch timer ->
 			switch (code) {
 				case vk.back:
 					this.jSearch = this.jSearch.substr(0, this.jSearch.length - 1);
@@ -750,7 +751,14 @@ class Find {
 					this.bAnyPosition = false;
 					return;
 				default:
-					if (this.jSearch.length === 0 && bAnyPosition) { this.bAnyPosition = true; }
+					// Regorxxx <- Customizable quicksearch timer
+					if (this.jSearch.length === 0){
+						if (bAnyPosition) { this.bAnyPosition = true; }
+						ms = ppt.findTimerInit;
+					} else {
+						ms = ppt.findTimerNext;
+					}
+					// Regorxxx ->
 					this.jSearch += text;
 					break;
 				// Regorxxx ->
@@ -768,7 +776,7 @@ class Find {
 				panel.treePaint();
 				if (next !== -1) pop.showItem(next, 'focus');
 				timer.jsearch1.id = null;
-			}, 500);
+			}, ms); // Regorxxx <- Customizable quicksearch timer ->
 			this.sendAndClear(next);
 		}
 	}

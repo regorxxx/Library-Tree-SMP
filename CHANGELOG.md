@@ -14,6 +14,7 @@
 - Contextual menu: presence of tree items contextual menu (associated to selected tracks) is now configurable. Can be hidden (disabled), shown at the main R. Click menu, as a submenu or only called on demand (to avoid the performance impact when selecting a huge number of tracks). By default is now set to be called on demand.
 - Quick-search: added Shift/Ctrl modifiers to perform lookup at any position instead of only the start of strings. Display will show a '*' when feature is used. For ex. '*coltrane'. Note Ctrl + Key combinations are also used for some shortcuts, so these will be processed instead of quick-search.
 - Quick-search: results can now be navigated using Up/Down keys, for single char or full words. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077647.html#msg1077647).
+- Quick-search: added new settings to control the jump delay while new chars are input at 'Search' tab (HTML options panel) and 'Quick-search jump initial char timer' and 'Quick-search jump next chars timer' (properties panel).
 - Shortcuts: new 'Ctrl + <' shortcut to Invert selection.
 - Shortcuts: new 'Del' shortcut to remove tracks on 'Playback Queue' or 'Auto-DJ Queue' sources.
 - Shortcuts: added rectangle selection action while using Album art mode which allows to select non-contiguous items (on non-flow mode). Feature can be switched at 'Album Art' tab (HTML options panel) or 'Image mouse rectangle selection on album art' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1079053.html#msg1079053).
@@ -62,6 +63,7 @@
 		- sourcePlaylistIdx can be a number or array of numbers
 		- sourcePanel and sourcePlaylistName allow multiple values, joined with '|'.
 		- performance improvements and code cleanup.
+- Quick-search: changed the default timer for every next char to 300 ms (from 500 ms previously hard-coded). The initial char has now a 50 ms delay (from 500 ms previously hard-coded). Note CUI/DUI album list panels have an almost instant initial char  (which also feels "faster" due to non-smooth scrolling usage). The new default values should offer a more responsive behavior.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 - HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
 - HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
