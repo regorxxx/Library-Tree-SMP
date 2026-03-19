@@ -194,6 +194,10 @@ class Populate {
 	addItems(arr, node) {
 		if (node.child && node.child.length) {
 			node.child.forEach((subNode) => this.addItems(arr, subNode));
+		} else if (node.item.length > 1) {
+			this.branch(node, !node.root ? false : true, true);
+			node.child.forEach((subNode) => this.addItems(arr, subNode));
+			this.clearChild(node);
 		} else {
 			$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
 		}
