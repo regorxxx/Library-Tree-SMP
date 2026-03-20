@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/03/26
+//20/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1131,7 +1131,6 @@ class Library {
 				this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? getSortObj(processed)
 					: null;
-				console.log(searchText, processed);
 				this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? searchText
 					: 'N/A';
