@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/03/26
+//20/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2718,7 +2718,9 @@ class Populate {
 
 
 	sort(data) {
-		if (!ppt.libSource && !panel.multiProcess || (ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if (!ppt.libSource && !panel.multiProcess) { return; }
+		if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		if (lib.searchSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/03/26
+//20/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -781,18 +781,32 @@ class MenuItems {
 		});
 		// Regorxxx ->
 
-		// Regorxxx <- Queue source
-		if (ppt.libSource === 3 || ppt.libSource === 4) {
+		// Regorxxx <- Queue source | Support playlist sorting ->
+		const isQueueLike = ppt.libSource === 3 || ppt.libSource === 4;
+		const isPlsLike = ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist;
+		if (isQueueLike) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Queue idx',
 				func: () => { ppt.toggle('queueSorting'); lib.treeState(false, 2); },
 				checkItem: ppt.queueSorting
 			});
+		} else if (isPlsLike) {
+			menu.newItem({
+				menuName: appendTo ? 'Views' : void (0),
+				str: 'Sort by Playlist idx',
+				func: () => { ppt.toggle('plsSorting'); lib.treeState(false, 2); },
+				checkItem: ppt.plsSorting
+			});
 		}
 		const d = {};
 		this.getSortData(d);
-		menu.newMenu({ menuName: d.menuName, appendTo: appendTo ? 'Views' : void (0), flags: d.sortType && (ppt.libSource !== 3 || !ppt.queueSorting) ? MF_STRING : MF_GRAYED, separator: true });
+		menu.newMenu({
+			menuName: d.menuName,
+			appendTo: appendTo ? 'Views' : void (0),
+			flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) ? MF_STRING : MF_GRAYED,
+			separator: true
+		});
 		// Regorxxx ->
 		if (d.sortType) {
 			menu.newItem({

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/03/26
+//20/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -1477,6 +1477,7 @@ class Panel {
 			li.OrderByFormat(sortObj.tf, sortObj.direction);
 		} else {
 			if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+			if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 			if (this.folderView) {
 				li.OrderByRelativePath();
 			} else {
@@ -1493,9 +1494,21 @@ class Panel {
 
 	updateProp(prop, value) {
 		const curActionMode = ppt.actionMode;
+		// Regorxxx <- Apply relevant changes on properties update
+		let key;
+		let bRefreshLib = false;
+		const isQueueLike = ppt.libSource === 3 || ppt.libSource === 4;
+		const isPlsLike = ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist;
 		Object.entries(prop).forEach(v => {
-			ppt[v[0].replace('_internal', '')] = v[1][value];
+			key = v[0].replace('_internal', '');
+			if (ppt[key] !== v[1][value]) {
+				ppt[key] = v[1][value];
+				if (isPlsLike && key === 'plsSorting' || isQueueLike && key === 'queueSorting') { // Regorxxx <- Queue source | Support playlist sorting ->
+					bRefreshLib = true;
+				}
+			}
 		});
+		// Regorxxx ->
 
 		img.asyncBypass = Date.now();
 		img.preLoadItems = [];
@@ -1546,8 +1559,14 @@ class Panel {
 			delete v._statistics;
 		});
 		lib.prefix = ppt.prefix.split('|'); // Regorxxx <- Fix values on reset ->
-		lib.checkView();
-		lib.logTree();
+		// Regorxxx <- Apply relevant changes on properties update
+		if (bRefreshLib) {
+			lib.treeState(false, 2);
+		} else {
+			lib.checkView();
+			lib.logTree();
+		}
+		// Regorxxx ->
 		img.setRoot();
 		ppt.zoomImg = Math.round($.clamp(ppt.zoomImg, 10, 500));
 
@@ -1616,7 +1635,7 @@ class Panel {
 			img.trimCache(pop.tree[0].key);
 			img.metrics();
 		}
-		lib.rootNodes(1, true);
+		if (!bRefreshLib) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
 		if (this.pn_h_auto) {
 			window.MaxHeight = window.MinHeight = ppt.pn_h;

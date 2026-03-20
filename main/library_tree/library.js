@@ -1069,7 +1069,7 @@ class Library {
 		let arr = [];
 		if (!treeArtToggle || !panel.samePattern) switch (search) {
 			case 0:
-				if (ppt.libSource || panel.multiProcess) panel.sort(this.list);
+				panel.sort(this.list); // Regorxxx <- Support playlist sorting ->
 				li = panel.list = this.list;
 				this.libNode = [];
 				arr = this.libNode;

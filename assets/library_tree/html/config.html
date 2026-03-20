@@ -805,6 +805,10 @@
 					</span>
 					<div style="margin:0.31em 0 0;" id="viewSortingTrans"></div>
 					<!-- Regorxxx -->
+					 	<!-- Regorxxx Support playlist sorting -->
+					<span class="info5600">Playlists sources:</span>
+					<div style="margin:0.31em 0 0;" id="plsSource"></div>
+					<!-- Regorxxx -->
 					<!-- Regorxxx Queue source -->
 					<span class="info5600">Playback queue &amp; Auto-DJ:</span>
 					<div style="margin:0.31em 0 0;" id="queue"></div>
@@ -1578,6 +1582,7 @@
 			var sortingTransLabels = ['Transliterate values to Latin', 'Transliterate values to Latin'];
 			// Regorxxx  ->
 			var queueLabels = ['Show now playing track', 'Force sorting by queue idx']; // Regorxxx <- Queue source | Auto-DJ source ->
+			var plsSourceLabels = ['Force sorting by playlist idx']; // Regorxxx <- Support playlist sorting ->
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
@@ -1695,7 +1700,7 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection ->
+				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2154,6 +2159,9 @@
 				window.viewSorting_dropdown.innerHTML = viewSortingLabels[ppt['viewSorting_internal'].value];
 				for (i = 0; i < viewSortingLabels.length; i++) { window.viewSorting.insertAdjacentHTML('beforeend', '<a onclick="setViewSorting(' + i + ');">' + viewSortingLabels[i] + '</a>'); }
 				i = 1; window.viewSortingTrans.insertAdjacentHTML('beforeend', '<div><input id="viewSortingTrans_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="viewSortingTrans_checkbox' + i + '" class="checkbox_label">' + sortingTransLabels[i] + '</label></div>');
+				// Regorxxx ->
+				// Regorxxx <- Support playlist sorting
+				for (i = 0; i < 1; i++) { window.plsSource.insertAdjacentHTML('beforeend', '<div><input id="plsSource_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsSource_checkbox' + i + '" class="checkbox_label">' + plsSourceLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Queue source | Auto-DJ source
 				for (i = 0; i < 2; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
