@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 13/03/26 -->
+﻿<!DOCTYPE html> <!-- 26/03/26 -->
 <html>
 
 <head>
@@ -598,16 +598,16 @@
 <body>
 	<div style="clear:both;"></div>
 	<div id="tablink" class="tablink">
+		<!-- Regorxxx New Tabs | New statistics | Add colors -->
 		<a onclick="openPage('views', this, 'red')" id="viewsCfg">Views</a>
 		<a onclick="openPage('filters', this, 'green')" id="filtersCfg">Filters</a>
 		<a onclick="openPage('behaviour', this, 'orange')" id="behaviourCfg">Behaviour</a>
-		<!-- Regorxxx New Tabs. New statistics -->
-		<a onclick="openPage('search', this, 'blue')" id="searchCfg">Search</a>
-		<a onclick="openPage('display', this, 'red')" id="displayCfg">Display</a>
-		<a onclick="openPage('statistics', this, 'red')" id="statisticsCfg">Statistics</a>
-		<a onclick="openPage('albumArt', this, 'green')" id="albumArtCfg">Album Art</a>
-		<a onclick="openPage('custom', this, 'orange')" id="customCfg">Custom</a>
-		<a onclick="openPage('advanced', this, 'blue')" id="advancedCfg">Advanced</a>
+		<a onclick="openPage('search', this, 'purple')" id="searchCfg">Search</a>
+		<a onclick="openPage('display', this, 'olive')" id="displayCfg">Display</a>
+		<a onclick="openPage('statistics', this, 'coral')" id="statisticsCfg">Statistics</a>
+		<a onclick="openPage('albumArt', this, 'deeppink')" id="albumArtCfg">Album Art</a>
+		<a onclick="openPage('custom', this, 'navy')" id="customCfg">Custom</a>
+		<a onclick="openPage('advanced', this, 'maroon')" id="advancedCfg">Advanced</a>
 		<!-- Regorxxx -->
 	</div>
 	<!-- Regorxxx Code cleanup -->
@@ -731,23 +731,23 @@
 						<div class="info4600"><b><u>Player</b></u></div>
 						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & nowplaying indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are set if enabled</div>
 					</div>
-					<span class="info5600">Single-click:</span>
+					<div class="info5600">Single-click:</div>
 					<span class="dropdown" style="margin-top:0"><a id="click_dropdown" class="dropbtn" href="#" onclick="toggle('click');"></a>
 						<span id="click" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">Double-click:</span>
+					<div class="info5600">Double-click:</div>
 					<span class="dropdown" style="margin-top:0;"><a id="dblClick_dropdown" class="dropbtn" href="#" onclick="toggle('dblClick');"></a>
 						<span id="dblClick" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">Mbtn-click:</span>
+					<div class="info5600">Mbtn-click:</div>
 					<span class="dropdown" style="margin-top:0"><a id="mbtnClick_dropdown" class="dropbtn" href="#" onclick="toggle('mbtnClick');"></a>
 						<span id="mbtnClick" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">Alt+click:</span>
+					<div class="info5600">Alt+click:</div>
 					<span class="dropdown" style="margin-top:0"><a id="altClick_dropdown" class="dropbtn" href="#" onclick="toggle('altClick');"></a>
 						<span id="altClick" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">Keystroke:</span>
+					<div class="info5600">Keystroke:</div>
 					<span class="dropdown" style="margin-top:0"><a id="keystroke_dropdown" class="dropbtn" href="#" onclick="toggle('keystroke');"></a>
 						<span id="keystroke" class="dropdown-content"></span>
 					</span>
@@ -792,20 +792,20 @@
 					<div id="followCurrent"></div>
 					<div class="info9"><a id="setSize" style="text-decoration:none;" href="#" onclick="setWindowSize();return false;">Click to reset window size</a></div>
 					<div class="div_text1">Views sorting</div>
-					<span class="info5600">By folder:</span>
+					<div class="info5600">By folder:</div>
 					<!-- View by Folder structure sorting. Custom sorting for standard views -->
 					<span class="dropdown" style="margin-top:0"><a id="folderSorting_dropdown" class="dropbtn" href="#" onclick="toggle('folderSorting');"></a>
 						<span id="folderSorting" class="dropdown-content"></span>
 					</span>
 					<div style="margin:0.31em 0 0;" id="folderSortingFb"></div>
 					<div style="margin:0.31em 0 0;" id="folderSortingTrans"></div>
-					<span class="info5600">By TF:</span>
+					<div class="info5600">By TF:</div>
 					<span class="dropdown" style="margin-top:0"><a id="viewSorting_dropdown" class="dropbtn" href="#" onclick="toggle('viewSorting');"></a>
 						<span id="viewSorting" class="dropdown-content"></span>
 					</span>
 					<div style="margin:0.31em 0 0;" id="viewSortingTrans"></div>
 					<!-- Regorxxx -->
-					 	<!-- Regorxxx Support playlist sorting -->
+					<!-- Regorxxx Support playlist sorting -->
 					<span class="info5600">Playlists sources:</span>
 					<div style="margin:0.31em 0 0;" id="plsSource"></div>
 					<!-- Regorxxx -->
@@ -852,41 +852,41 @@
 				<div class="column33">
 					<div class="div_text1">Drag n' Drop</div>
 					<div class="div_text2">Multi-value tag Operator</div>
-					<span class="info5600">Default:</span>
+					<div class="info5600">Default:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpDefault');"></a>
 						<span id="searchDragValOpDefault" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Ctrl:</span>
+					<div class="info5600">On Ctrl:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpCtrl');"></a>
 						<span id="searchDragValOpCtrl" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Alt:</span>
+					<div class="info5600">On Alt:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpAlt');"></a>
 						<span id="searchDragValOpAlt" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2">Inter-tag Operator</div>
-					<span class="info5600">Default:</span>
+					<div class="info5600">Default:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpDefault');"></a>
 						<span id="searchDragTagOpDefault" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Ctrl:</span>
+					<div class="info5600">On Ctrl:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpCtrl');"></a>
 						<span id="searchDragTagOpCtrl" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Alt:</span>
+					<div class="info5600">On Alt:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpAlt');"></a>
 						<span id="searchDragTagOpAlt" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2" style="margin-top:0">Inter-track Operator</div>
-					<span class="info5600" style="margin-top:0">Default:</span>
+					<div class="info5600" style="margin-top:0">Default:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpDefault');"></a>
 						<span id="searchDragTrackOpDefault" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Ctrl:</span>
+					<div class="info5600">On Ctrl:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpCtrl');"></a>
 						<span id="searchDragTrackOpCtrl" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Alt:</span>
+					<div class="info5600">On Alt:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpAlt');"></a>
 						<span id="searchDragTrackOpAlt" class="dropdown-content"></span>
 					</span>
@@ -895,11 +895,11 @@
 				<div class="column33">
 					<div class="div_text1">Drag n' Drop</div>
 					<div class="div_text2">Inter-query operator</div>
-					<span class="info5600">Default:</span>
+					<div class="info5600">Default:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragQueryOpDefault');"></a>
 						<span id="searchDragQueryOpDefault" class="dropdown-content"></span>
 					</span>
-					<span class="info5600">On Shift:</span>
+					<div class="info5600">On Shift:</div>
 					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpShift_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragQueryOpShift');"></a>
 						<span id="searchDragQueryOpShift" class="dropdown-content"></span>
 					</span>
@@ -1203,7 +1203,7 @@
 					<!-- Regorxxx Auto-DJ feature -->
 					<div class="div_text1">Auto-DJ</div>
 					<div id="autodj"></div>
-					<span class="info5600">Next track picking method:</span>
+					<div class="info5600">Next track picking method:</div>
 					<span class="dropdown" style="margin-top:0"><a id="autodjPick_dropdown" class="dropbtn" href="#" onclick="toggle('autodjPick');"></a>
 						<span id="autodjPick" class="dropdown-content"></span>
 					</span>
@@ -1253,6 +1253,11 @@
 				return res;
 			};
 		}
+		if (!('isArray' in Array)) {
+			Array.isArray = function (obj) {
+				return Object.prototype.toString.call(obj) === '[object Array]';
+			}
+		}
 		if (!('startsWith' in String.prototype)) {
 			String.prototype.startsWith = function (search, rawPos) {
 				var pos = rawPos > 0 ? rawPos | 0 : 0;
@@ -1280,7 +1285,7 @@
 					if (arg !== null) {
 						var instance = null;
 						switch (true) { // Get object types
-							case Object.prototype.toString.call(arg) == '[object Array]': { instance = { name: 'Array', type: 'array' }; break; }
+							case Array.isArray(arg): { instance = { name: 'Array', type: 'array' }; break; }
 							case typeof Set !== 'undefined' && arg instanceof Set: { instance = { name: 'Set', type: 'array' }; break; }
 							case typeof Map !== 'undefined' && arg instanceof Map: { instance = { name: 'Map', type: 'array' }; break; }
 							case arg instanceof Error: { instance = { name: 'Error', type: 'error' }; break; }
@@ -1560,7 +1565,10 @@
 			var heightOffset = window_h - height;
 			var widthOffset = window_w - (document.documentElement.clientWidth || document.body.clientWidth);
 			checkWindowDefaultSize();
-			document.getElementById(cur.page + 'Cfg').click();
+			// Regorxxx <- Catch wrong page settings and load first page if not available
+			var page = document.getElementById(cur.page + 'Cfg') || document.getElementById('viewsCfg');
+			if (page) { page.click(); }
+			// Regorxxx ->
 
 			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact'];
@@ -2411,7 +2419,7 @@
 			setBehaviour();
 			setSearch(); // Regorxxx <- Drag n' drop to search box ->
 			setDisplay();
-			setStatistcs(); // Regorxxx <- statistics tab ->
+			setStatistcs(); // Regorxxx <- Statistics tab ->
 			setAlbumArt();
 			setCustom();
 			setAdvanced();
@@ -2700,6 +2708,7 @@
 			new_id++;
 			switch (cur.page) {
 				case 'views':
+					new_id++;
 					var list = document.getElementById("view").querySelectorAll("[id^='view_cnt']");
 					if (list.length > 98) return; // no limited to 100
 					list[list.length - 1].insertAdjacentHTML("beforebegin", '<div class="input_cnt1" id="view_cnt' + new_id + '"><input id="viewCheckbox' + new_id + '" name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + new_id + '" name="view_name" class="input21" value="" /><input name="input_view" class="input71" value="" /></div>');
@@ -2707,6 +2716,7 @@
 					document.getElementById("view_container" + new_id).focus();
 					break;
 				case 'filters':
+					new_id++;
 					var list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']");
 					if (list.length > 98) return; // no limited to 100
 					list[list.length - 1].insertAdjacentHTML("beforebegin", '<div class="input_cnt1" id="filter_cnt' + new_id + '"><input id="filterCheckbox' + new_id + '" name="filterCheckbox" style="' + cbox + '" type="checkbox" /><input id="filter_container' + new_id + '" name="filter_name" class="input21" value="" /><input name="input_filter" class="input71" value="" /></div>');
