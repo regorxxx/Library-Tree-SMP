@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/03/26
+//26/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -364,12 +364,12 @@ class Panel {
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				 // Regorxxx <-  Preserve tree sorting at selection
+				// Regorxxx <-  Preserve tree sorting at selection
 				if (ppt.smartSort) {
 					const view = this.view.toUpperCase();
 					this.playlistSort = FbTitleFormat((view.includes('ALBUM ARTIST') || !view.includes('%ARTIST%') && !view.includes('%<ARTIST>%') && !view.includes('$META(ARTIST') ? '%ALBUM ARTIST%' : '%ARTIST%') + '  %ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%');
 				}
-				 // Regorxxx ->
+				// Regorxxx ->
 			}
 			while (this.view.includes('$stripbranchprefix{')) {
 				ix1 = this.view.indexOf('$stripbranchprefix{');
