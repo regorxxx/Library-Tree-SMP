@@ -7,6 +7,7 @@ General notes:
 • Window arg should be an array with desired target panel names to control.
 • If not provided or empty, all panels will execute the action.
 • Panel notifications only work within same JS host (no SMP <-> JSplitter).
+• User presets may only be triggered if relevant panel setting is enabled.
 
 Callbacks:
 ----------
@@ -62,17 +63,19 @@ Callbacks:
 	-> { window: string[] }
 
 • 'Library-Tree-SMP: switch view'
-	-> { window: string[], viewName: string, viewIdx: number }
+	-> { window: string[], viewName: string, viewIdx: number, skipPresets: boolean }
 	- viewIdx = -1 for folder view
 	- viewName follows menu names
+	- skipPresets allow to bypass user-set preset rules
 
 • 'Library-Tree-SMP: switch filter'
-	-> { window: string[], filterName: string, filterIdx: number }
+	-> { window: string[], filterName: string, filterIdx: number, skipPresets: boolean }
 	- filterIdx = -1 or 0 for no filter
 	- filterName follow menu names
+	- skipPresets allow to bypass user-set preset rules
 
 • 'Library-Tree-SMP: switch source'
-	-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string }
+	-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string, skipPresets: boolean }
 	- sourceIdx = -1 or 0 for library
 	- sourcePlaylistIdx = -1 for active playlist
 	- sourceName follows menu names
@@ -81,6 +84,7 @@ Callbacks:
 	  Panel|Panels|Panel(s)
 	- sourcePanel allows multiples values, joined with '|'
 	- sourcePanel allows multiple values, joined with '|'
+	- skipPresets allow to bypass user-set preset rules
 
 • 'Library-Tree-SMP: switch art type'
 	-> { window: string[], artName: string, artIdx: number }
@@ -93,3 +97,31 @@ Callbacks:
 	- statisticsName follows menu names
 	- statisticsName can be matched by entire label (all), user label
 	  only or 'custom-X (...)' labels (custom entries only)
+
+Example: (copy code below into a new blank panel)
+---------------------------------------------
+'use strict';
+// Example script to switch Library-Tree-SMP sources depending on the active playlist
+// Library viewer playlist will switch to Library source, otherwise Playlist(s) source is used
+// Note Panel notifications only work within same JS host (no SMP <-> JSplitter)
+
+const panelName = '{7D3749BB-45F9-46AF-B114-E7F2F103BB62}'; // Set here your Library-Tree-SMP panel name
+const libraryPls= 'Library Viewer Selection'; // Set here your library viewer playlist name
+
+const changeSource = (() => {
+	let lastPls = plman.ActivePlaylist !== -1 ? plman.GetPlaylistName(plman.ActivePlaylist) : '';
+	return () => {
+		if (plman.ActivePlaylist !== -1) {
+			const name = plman.GetPlaylistName(plman.ActivePlaylist);
+			if (lastPls !== name) {
+				if (name === libraryPls) { window.NotifyOthers('Library-Tree-SMP: switch source', { window: [panelName], sourceName: 'library' }); }
+				else { window.NotifyOthers('Library-Tree-SMP: switch source', { window: [panelName], sourceName: 'playlists', sourcePlaylistIdx: -1 }); }
+				lastPls = name;
+			}
+		} else if (lastPls) { window.NotifyOthers('Library-Tree-SMP: switch source', { window: [panelName], sourceName: 'library' }); }
+	};
+})();
+
+function on_playlist_switch() { changeSource(); }
+
+function on_playlists_changed() { changeSource(); }
