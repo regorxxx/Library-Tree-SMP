@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/03/26
+//26/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -556,14 +556,14 @@ class MenuItems {
 				menu.newItem({
 					menuName: 'Auto-DJ',
 					str: 'Show queue...',
-					func: () => this.setCachedSource(4, 'Prev. Source', void (0), true), // Regorxxx <- Internal cache of views ->
+					func: () => this.setCachedSource(4, 'Prev. Source', void (0), { bOmitMsg: true }), // Regorxxx <- Internal cache of views ->
 					flags: panel.autoDj.running || fb.IsPlaying ? MF_STRING : MF_GRAYED
 				});
 			} else {
 				menu.newItem({
 					menuName: 'Auto-DJ',
 					str: 'Show prev. source...',
-					func: () => this.setCachedSource(0, void (0), 'Prev. Source', true), // Regorxxx <- Internal cache of views ->
+					func: () => this.setCachedSource(0, void (0), 'Prev. Source', { bOmitMsg: true }), // Regorxxx <- Internal cache of views ->
 					flags: MF_STRING
 				});
 			}
@@ -1171,10 +1171,11 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	setFixedPlaylist(i, bUseUUID) {
+	setFixedPlaylist(i, options = { bUseUUID: vk.k('ctrl') }) {
+		options = { bUseUUID: vk.k('ctrl'), ...options };
 		if (Array.isArray(i)) {
 			i.forEach((j) => {
-				const id = bUseUUID || typeof bUseUUID === 'undefined' && vk.k('ctrl')
+				const id = options.bUseUUID
 					? this.pl[j].guid || this.pl[j].name
 					: this.pl[j].name;
 				ppt.fixedPlaylistName = ppt.fixedPlaylistName.length
@@ -1182,7 +1183,7 @@ class MenuItems {
 					: id;
 			});
 		} else {
-			const id = bUseUUID || typeof bUseUUID === 'undefined' && vk.k('ctrl')
+			const id = options.bUseUUID
 				? this.pl[i].guid || this.pl[i].name
 				: this.pl[i].name;
 			ppt.fixedPlaylistName = vk.k('shift') && ppt.fixedPlaylistName.length
@@ -1296,7 +1297,9 @@ class MenuItems {
 		}
 	}
 
-	setSource(i, bOmitMsg, bProcessTree = true) { // Regorxxx <- External integration | Internal cache of views ->
+	// Regorxxx <- External integration | Internal cache of views
+	setSource(i, options = { bOmitMsg: false, bProcessTree: true }) {
+		options = { bOmitMsg: false, bProcessTree: true, ...options };
 		switch (i) {
 			case 0: // Library
 				ppt.libSource = 1;
@@ -1305,15 +1308,15 @@ class MenuItems {
 			case 1: // Panel
 				ppt.libSource = 2;
 				ppt.fixedPlaylist = false;
-				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
+				if (!options.bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			case 2: { // Playlist
 				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 				const fixedPlaylistIndex = lib.getFixedPlaylistSources();
-				if (fixedPlaylistIndex.length !== 0) { ppt.fixedPlaylist = true; }
+				ppt.fixedPlaylist = fixedPlaylistIndex.length !== 0;
 				// Regorxxx ->
 				ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
-				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
+				if (!options.bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			}
 			// Regorxxx <- Queue source
@@ -1332,8 +1335,9 @@ class MenuItems {
 		if (panel.imgView) img.clearCache();
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
-		if (bProcessTree) { lib.treeState(false, 2); } // Regorxxx <- Internal cache of views ->
+		if (options.bProcessTree) { lib.treeState(false, 2); } // Regorxxx <- Internal cache of views ->
 	}
+	// Regorxxx ->
 
 	setSourcePanel() {
 		const ok_callback = (status, input) => {
@@ -1360,14 +1364,15 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Internal cache of views
-	setCachedSource(i, from, to, bOmitMsg) {
+	setCachedSource(i, from, to, options = { bOmitMsg: false }) {
+		options = { bOmitMsg: false, ...options };
 		if (ppt.libSourceCache) {
 			if (typeof from !== 'undefined') { lib.setViewCache(from); }
 			if (lib.getViewCache(to)) {
-				return this.setSource(i, bOmitMsg, false);
+				return this.setSource(i, { ...options, bProcessTree: false });
 			}
 		}
-		return this.setSource(i, bOmitMsg);
+		return this.setSource(i, { ...options });
 	}
 	// Regorxxx ->
 
