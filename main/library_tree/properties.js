@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/03/26
+//24/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -418,7 +418,15 @@ let properties = [
 	['Image mouse rectangle selection on album art', true, 'selRectArt'], // Regorxxx <- Selection rectangle on art view ->
 	// Regorxxx <- Customizable quicksearch timer
 	['Quick-search jump initial char timer', 150, 'findTimerInit'],
-	['Quick-search jump next chars timer', 300, 'findTimerNext']
+	['Quick-search jump next chars timer', 300, 'findTimerNext'],
+	// Regorxxx ->
+	// Regorxxx <- Sources tab | Preset rules
+	['Sources|Views|Filters presets', JSON.stringify([]), 'presetRules'],
+	['Sources|Views|Filters presets use on Source switch', true, 'presetRulesOnSourceUse'],
+	['Sources|Views|Filters presets use on Views switch', true, 'presetRulesOnViewUse'],
+	['Sources|Views|Filters presets use on Filters switch', true, 'presetRulesOnFilterUse'],
+	['Sources|Views|Filters presets use on Playlists switch', true, 'presetRulesOnPlsUse'],
+	['Sources|Views|Filters presets use on Notify switch', false, 'presetRulesOnNotifyUse'],
 	// Regorxxx ->
 ];
 

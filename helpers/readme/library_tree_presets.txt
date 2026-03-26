@@ -1,0 +1,145 @@
+﻿Library-Tre-SMP panel settings can be dynamically adjusted using preset
+rules. Users should use the HTML options panel whenever possible, but
+Wine users may require direct manipulation of the properties panel to
+create/edit rules.
+
+JSON schema:
+------------
+• Rules are objects ({}) within an array ([]).
+	◦ e.g. [{...},{...},...]
+
+• Every rule must have at least an 'if'|'ifNot' and 'then' properties:
+	◦ e.g. [{"if":{...},"then":{...}},...]
+	◦ e.g. [{"ifNot":{...},"then":{...}},...]
+	◦ e.g. [{"if":{...},"ifNot":{...},"then":{...}},...]
+
+• Every rule must have at least a 'then' action:
+	◦ e.g. [{"if":{...},"then":{"source":[...]}},...]
+	◦ e.g. [{"if":{...},"then":{"filter":[...]}},...]
+
+• Every rule must have at least a 'if'|'ifNot' requisite, but allows
+  empty conditions (which apply to all cases):
+	◦ e.g. [{"if":{},"then":{...}},...]
+	◦ e.g. [{"ifNot":{},"then":{...}},...]
+
+• Every condition or action must be an array of valid values (or empty):
+	◦ e.g. [{"if":{source:["Library"]},"then":{"filter":["Lossless"]}},...]
+	◦ e.g. [{"if":{source:["Library","Active Playlist"]},"then":{"filter":["Lossless"]}},...]
+	◦ e.g. [{"if":{source:[]},"then":{"filter":["Lossless"]}},...]
+	◦ e.g. [{"if":{},"then":{"filter":["Lossless"]}},...]
+
+• Every action allows only a single value (within the array)
+	◦ e.g. [{"if":{},"then":{"filter":["Lossless"]}},...]
+
+• Available 'if'|'ifNot' conditions (and valid values):
+	◦ source: 'Library', 'Panel(s)', 'Active Playlist', 'Playlist(s)',
+	          'Playback Queue', 'Auto-DJ Queue'.
+	◦ sourceId: any Playlist name or GUID.
+	◦ view: any View name.
+	◦ filter: any Filter name. '- None -' as special value.
+
+• Available 'then' actions (and valid values):
+	◦ source: 'Library', 'Panel(s)', 'Active Playlist', 'Playlist(s)',
+	          'Playback Queue', 'Auto-DJ Queue'.
+	◦ view: any View name.
+	◦ filter: any Filter name. '- None -' as special value.
+
+General notes:
+--------------
+• Rules do not disallow manually changing any related setting at a later
+  point using the menus.
+
+• Rules are evaluated in order, until any of them is matched.
+
+• Chaining and loops are not allowed, only 1 rule can be fully evaluated
+  (when conditions are met).
+
+• Beware of setting mutually exclusive if/if not conditions, since rule
+  wil never be applied.
+
+• Multiple values are allowed for the same if/if not condition:
+	◦ e.g. A rule which applies by matching any of multiple possible
+	  views.
+	◦ If conditions will match any value on list, while if not
+	  conditions will match any value not on list.
+
+• A rule which would apply a setting triggered by a change on same
+  setting will always be skipped.
+	◦ Rules should usually only change settings different to the
+	  ones evaluated.
+	◦ e.g. A View change which matches all conditions of a rule
+	  which also changes the View will be skipped.
+	◦ e.g. If you want to set a default View for some Source, don't
+	  try to trigger the rule with View changes via menus.
+
+• If no conditions are set, rule will apply to any Source|View|Filter:
+	◦ e.g. [{"if":{},"then":{"source":["Library"]}}]
+	◦ Sets 'Library' source for all views and filters by default.
+
+• If condition is skipped ([]), rule will not apply when changing
+  associated setting (even if all other conditions are matched), but only
+  when non-skipped settings change.
+	◦ e.g. [{"if":{"view":[],"filter":["Lossless"]},"then":{"source":["Library"]}}]
+	◦ Sets 'Library' source for all views when filter is 'Lossless' but
+	only when changing the filter setting. Changing the view setting
+	will skip it.
+
+• Rule triggers can be switched as property settings. Note all conditions
+  are checked in any case, triggers only control at which events the
+  checks are done (associated setting change).
+  	◦ On Sources switch
+  	◦ On Views switch
+  	◦ On Filters switch
+  	◦ On Playlists switch (used along sourceId condition to track
+	  active playlist)
+  	◦ On Notify switch (used along external integration)
+
+• Place more specific rules first, and generic ones last, so the former
+  override later ones.
+	◦ e.g. [{"if":{"source":["Playlist(s)"]},"then":{"filter":["Lossless"]}},{"if":{},"then":{"filter":["- None -"]}}]
+	◦ First rule for 'Playlist' sources which sets filter to
+	  'Lossless'.
+	◦ Second rule with no conditions to set the filter to
+	  '- None -' by default.
+	◦ Any source will automatically use no filter, except playlists
+	  which will use 'Lossless'.
+
+• Selective settings trigger for specific rules can be emulated by setting
+  all other conditions to '[]'.
+	◦ e.g. [{"if":{"source":[],"view":[],"filter":["Lossless"]},"then":{"source":["Library"]}}]
+	◦ Changing the Source or View using the menus will never trigger
+	  the rule.
+	◦ Changing the filter using menus to 'Lossless' will trigger the
+	  rule (and apply 'Then' section).
+	◦ Note the difference with setting conditions to match all Sources
+	  and Views, which also triggers while changing any other setting
+	  via menus (Filter being 'Lossless' still required though).
+	◦ e.g. [{"if":{"filter":["Lossless"]},"then":{"source":["Library"]}}]
+
+Examples:
+---------
+Beware all these examples require the associated triggers to work. i.e. if
+'On Playlists switch' trigger is disabled, don't expect a rule based on
+active playlist matching an specific name to work!
+
+• 'Nowplaying artist' filter when source is 'Library', checked even if
+  any other setting changes:
+
+[{"if":{"source":["Library"]},"then":{"filter":["Nowplaying artist"]}}]
+
+• 'Nowplaying artist' filter when source is set to 'Library'. Skips rule
+  when changing any other setting:
+
+[{"if":{"source":["Library"],"view":[],"filter":[],"sourceId":[]},"then":{"filter":["Nowplaying artist"]}}]
+
+• 'Library' source while active playlist is 'Library viewer selection' and
+  'Playlist(s)' source in all other playlists. Skips rule when changing any
+  other setting:
+
+[{"if":{"sourceId":["Library Viewer Selection"],"source":["Active Playlist"],"view":[],"filter":[]},"then":{"source":["Library"]}},{"if":{"source":["Library"],"view":[],"filter":[],"sourceId":[]},"ifNot":{"sourceId":["Library Viewer Selection"],"view":[],"filter":[],"source":[]},"then":{"source":["Active Playlist"]}}]
+
+• 'Recently played' filter while active playlist is 'Loved tracks' or
+  'Fav tracks' and no filter in all other playlists. Skips rule when
+  changing any other setting:
+
+[{"if":{"sourceId":["Loved tracks","Fav tracks"],"source":["Active Playlist"],"view":[],"filter":[]},"then":{"filter":["Recently played"]}},{"if":{"source":[],"view":[],"filter":[],"sourceId":[]},"ifNot":{"sourceId":["Loved tracks","Fav tracks"],"view":[],"filter":[],"source":[]},"then":{"filter":["- None -"]}}]

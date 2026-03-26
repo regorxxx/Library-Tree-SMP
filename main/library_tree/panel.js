@@ -1363,6 +1363,12 @@ class Panel {
 						}
 						break;
 					default:
+						// Regorxxx <- Preset rules
+						if (ppt.presetRulesOnFilterUse) {
+							const rule = this.getPresetRule({ filterBy: i });
+							if (this.applyPresetRule(rule)) { break; };
+						}
+						// Regorxxx ->
 						ppt.filterBy = i;
 						but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
 						this.calcText();
@@ -1398,7 +1404,14 @@ class Panel {
 			case 'view': {
 				if (this.colMarker) this.draw = false;
 				if (this.search.txt) lib.upd_search = true;
-				this.getFields(i < this.grp.length ? i : ppt.viewBy, ppt.filterBy);
+				// Regorxxx <- Preset rules
+				const viewBy = i < this.grp.length ? i : ppt.viewBy;
+				if (ppt.presetRulesOnViewUse) {
+					const rule = this.getPresetRule({ viewBy });
+					if (this.applyPresetRule(rule)) { break; };
+				}
+				this.getFields(viewBy, ppt.filterBy);
+				// Regorxxx ->
 				this.on_size();
 				lib.searchCache = {};
 				pop.cache = {
@@ -1987,4 +2000,192 @@ class Panel {
 		return false;
 	}
 	// Regorxxx ->
+
+	// Regorxxx <- Preset rules
+	getPresetRule({ viewBy, filterBy, sourceBy, sourceId = [plman.GetPlaylistName(plman.ActivePlaylist), plman.GetGUID(plman.ActivePlaylist)], bSetSourceId = false } = {}) {
+		const rules = $.jsonParse(ppt.presetRules, []);
+		const bSetView = typeof viewBy !== 'undefined';
+		const bSetFilter = typeof filterBy !== 'undefined';
+		const bSetSource = typeof sourceBy !== 'undefined';
+		const hasSourceId = typeof sourceId !== 'undefined';
+		const viewName = bSetView
+			? this.grp[viewBy].name
+			: this.grp[ppt.viewBy].name;
+		const filterName = bSetFilter
+			? this.filter.mode[filterBy].name
+			: this.filter.mode[ppt.filterBy].name;
+		const sourceIdx = bSetSource
+			? this.getSourceIdxFromSettings(sourceBy)
+			: this.getSourceIdxFromSettings();
+		if (hasSourceId && !Array.isArray(sourceId)) { sourceId = [sourceId]; }
+		if (bSetView || bSetFilter || bSetSource || hasSourceId) {
+			const hasKey = (obj, key) => Object.hasOwn(obj, key);
+			const hasKeys = (obj, key) => hasKey(obj, key) && Object.keys(obj[key]).length > 0;
+			const omit = (condition, key, bSet) => !hasKey(condition, key) || (!condition[key] || !condition[key].length) && !bSet;
+			const match = (condition, val) => Array.isArray(val)
+				? val.some((sv) => condition.some((v) => v === sv))
+				: condition.some((v) => v === val);
+			const notMatch = (condition, val) => Array.isArray(val)
+				? val.every((sv) => condition.every((v) => v !== sv))
+				: condition.every((v) => v !== val);
+			const isValid = (cond) => Object.keys(cond).every((key) => cond[key] === null || Array.isArray(cond[key]));
+			const rule = rules.find((rule) => {
+				let bDone = (hasKeys(rule, 'if') || hasKeys(rule, 'ifNot')) && hasKeys(rule, 'then');
+				if (hasKey(rule, 'if')) {
+					const cond = rule.if;
+					if (!isValid(cond)) { console.log(window.PanelName + ': Non valid preset rule (if)\n\t ' + JSON.stringify(rule)); return false; }
+					bDone = bDone && (omit(cond, 'view', bSetView) || match(cond.view, viewName));
+
+					bDone = bDone && (omit(cond, 'filter', bSetFilter) || match(cond.filter, filterName));
+					bDone = bDone && (omit(cond, 'source', bSetSource) || match(cond.source.map((s) => this.getSourceIdx(s)), sourceIdx));
+					bDone = bDone && (omit(cond, 'sourceId', bSetSourceId) || hasSourceId && match(cond.sourceId, sourceId));
+				}
+				if (hasKey(rule, 'ifNot')) {
+					const cond = rule.ifNot;
+					if (!isValid(cond)) { console.log(window.PanelName + ': Non valid preset rule (if not)\n\t ' + JSON.stringify(rule)); return false; }
+					bDone = bDone && (omit(cond, 'view', bSetView) || notMatch(cond.view, viewName));
+					bDone = bDone && (omit(cond, 'filter', bSetFilter) || notMatch(cond.filter, filterName));
+					bDone = bDone && (omit(cond, 'source', bSetSource) || notMatch(cond.source.map((s) => this.getSourceIdx(s)), sourceIdx));
+					bDone = bDone && (omit(cond, 'sourceId', bSetSourceId) || hasSourceId && notMatch(cond.sourceId, sourceId));
+				}
+				if (!isValid(rule.then)) { console.log(window.PanelName + ': Non valid preset rule (then)\n\t ' + JSON.stringify(rule)); return false; }
+				bDone = bDone && (!hasKey(rule.then, 'view') || !bSetView);
+				bDone = bDone && (!hasKey(rule.then, 'filter') || !bSetFilter);
+				bDone = bDone && (!hasKey(rule.then, 'source') || !bSetSource);
+				return bDone;
+			});
+			if (rule) {
+				const then = { ...rule.then };
+				then.filterBy = Object.hasOwn(then, 'filter')
+					? then.filter[0].toLowerCase() === '- none -' ? 0 : this.filter.mode.findIndex((f) => f.name.toLowerCase() === rule.filter.toLowerCase())
+					: bSetFilter ? filterBy : -1;
+				then.viewBy = Object.hasOwn(then, 'view')
+					? this.grp.findIndex((v) => v.name.toLowerCase() === then.view[0].toLowerCase())
+					: bSetView ? viewBy : -1;
+				then.sourceIdx = Object.hasOwn(then, 'source')
+					? this.getSourceIdx(then.source[0])
+					: bSetSource ? sourceIdx : null;
+				return then;
+			}
+		}
+		return { view: null, viewBy: -1, filter: null, filterBy: -1, source: null, sourceIdx: null };
+	}
+
+	applyPresetRule(then) {
+		let viewBy = -1;
+		if (then.viewBy !== -1) {
+			viewBy = then.viewBy;
+			if (viewBy !== ppt.viewBy) {
+				if (ppt.artTreeSameView) {
+					ppt.albumArtViewBy = ppt.treeViewBy = viewBy;
+				} else {
+					if (!this.imgView) { ppt.treeViewBy = viewBy; }
+					else { ppt.albumArtViewBy = viewBy; }
+					if (ppt.treeViewBy != ppt.albumArtViewBy) {
+						ppt.set(this.imgView ? 'Tree' : 'Tree Image', null);
+						ppt.set(this.imgView ? 'Tree Search' : 'Tree Image Search', null);
+					}
+				}
+			}
+		}
+		let filterBy = -1;
+		if (then.filterBy !== -1) {
+			filterBy = then.filterBy;
+			if (filterBy !== ppt.filterBy) {
+				ppt.filterBy = filterBy;
+				but.multiBtnSetName(this.filter.mode[filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
+				this.calcText();
+			}
+		}
+		let source = null;
+		if (then.sourceIdx !== null) {
+			source = then.sourceIdx;
+			switch (source) {
+				case -1: { // Playlist
+					const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+					ppt.fixedPlaylist = fixedPlaylistIndex.length !== 0;
+					ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
+					break;
+				}
+				case 0:  // Playlist
+					ppt.fixedPlaylist = false;
+					ppt.libSource = 0;
+					break;
+				case 1: // Library
+					ppt.libSource = 1;
+					ppt.fixedPlaylist = false;
+					break;
+				case 2: // Panel
+					ppt.libSource = 2;
+					ppt.fixedPlaylist = false;
+					break;
+				case 3: // Queue
+					ppt.libSource = 3;
+					break;
+				case 4: // Auto-DJ
+					ppt.libSource = 4;
+					break;
+			}
+			if (this.imgView) { img.clearCache(); }
+		}
+		if (source === null && viewBy === -1 && filterBy === -1) { return false; }
+		if (viewBy === -1) { viewBy = ppt.viewBy; }
+		if (filterBy === -1) { filterBy = ppt.filterBy; }
+		this.getFields(viewBy, filterBy);
+		lib.searchCache = {};
+		if (source !== null) { lib.treeState(false, 2); return true; }
+		this.on_size();
+		pop.cache = {
+			'standard': {},
+			'search': {},
+			'filter': {}
+		};
+		lib.checkView();
+		const key = !ppt.rememberView ? 'def' : this.viewName;
+		if (ppt.rememberView && lib.exp[key]) { lib.readTreeState(false); }
+		if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
+		else if (ppt.rememberTree) { lib.logFilter(); }
+		lib.getLibrary();
+		lib.rootNodes((ppt.rememberView), (ppt.rememberView) ? true : false);
+		if (ppt.rememberView) {
+			this.calcText();
+			but.refresh(true);
+			this.searchPaint();
+			lib.logTree();
+			if (!pop.notifySelection()) {
+				const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
+				window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+			}
+		}
+		this.draw = true;
+		if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
+		pop.checkAutoHeight();
+		return true;
+	}
+
+	sourceTypes() {
+		return { 'Playlist(s)': -1, 'Active Playlist': 0, 'Library': 1, 'Panel(s)': 2, 'Playback Queue': 3, 'Auto-DJ Queue': 4 };
+	}
+
+	getSourceType(idx) {
+		const source = Object.entries(this.sourceTypes()).find(([, val]) => val === idx);
+		return source ? source[0] : null;
+	}
+
+	getSourceIdx(type) {
+		const idx = this.sourceTypes()[type];
+		return typeof idx !== 'undefined' ? idx : null;
+	}
+
+	getSourceIdxFromSettings(setting = ppt.libSource, fixedPlaylist = ppt.fixedPlaylist) {
+		switch (setting) {
+			case 0:
+				return 0;
+			case 1:
+				return fixedPlaylist ? -1 : 1;
+			default:
+				return setting;
+		}
+	}
+	// Regorxxx->
 }

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/03/26
+//25/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -401,7 +401,7 @@ addEventListener('on_notify_data', (name, info) => {
 				if (info.viewIdx === -1) { idx = panel.grp.length - 1; }
 				else if (panel.grp[info.viewIdx].name.trim() !== 'separator') { idx = info.viewIdx; }
 			}
-			if (idx !== -1) { men.setView(idx); }
+			if (idx !== -1) { men.setView(idx, { bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); } // Regorxxx <- Preset rules ->
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch filter': {
@@ -412,7 +412,10 @@ addEventListener('on_notify_data', (name, info) => {
 				if (info.filterIdx === -1) { idx = 0; }
 				else if (panel.dialogFiltGrps[info.filterIdx].name.trim() !== 'separator') { idx = info.filterIdx; }
 			}
+			const bSkipPresets = !!info.skipPresets || !ppt.presetRulesOnNotifyUse;
+			if (bSkipPresets) { ppt.toggle('presetRulesOnFilterUse'); }
 			if (idx !== -1) { panel.set('Filter', idx); }
+			if (bSkipPresets) { ppt.toggle('presetRulesOnFilterUse'); }
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch source': {
@@ -450,8 +453,8 @@ addEventListener('on_notify_data', (name, info) => {
 			}
 			// Set all
 			if (idx === 2) {
-				if (plsIdx.length) { men.setFixedPlaylist(plsIdx); }
-				else if (ppt.libSource !== 0 || ppt.fixedPlaylist) { men.setActivePlaylist(plsIdx); }
+				if (plsIdx.length) { men.setFixedPlaylist(plsIdx, { bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); }
+				else if (ppt.libSource !== 0 || ppt.fixedPlaylist) { men.setActivePlaylist({ bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); }
 			}
 			if (idx !== -1) {
 				// Don't update unless needed
@@ -460,7 +463,7 @@ addEventListener('on_notify_data', (name, info) => {
 				else if (idx === 2 && plsIdx.length && ppt.libSource === 1 && ppt.fixedPlaylist) { return; }
 				else if (idx === 2 && !plsIdx.length && ppt.libSource === 0 && !ppt.fixedPlaylist) { return; }
 				else if (idx === 3 && ppt.libSource === 3) { return; }
-				men.setSource(idx, true);
+				men.setSource(idx, { bOmitMsg: true, bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse });
 			}
 			break;
 		}
@@ -607,6 +610,16 @@ addEventListener('on_playlist_items_reordered', (playlistIndex) => {
 
 addEventListener('on_playlist_switch', () => {
 	$.pl_active = plman.ActivePlaylist;
+	// Regorxxx <- Preset rules
+	if (ppt.presetRulesOnPlsUse) {
+		const rule = panel.getPresetRule({ bSetSourceId: !ppt.libSource });
+		if (panel.applyPresetRule(rule)) {
+			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+			ui.focus_changed();
+			return;
+		};
+	}
+	// Regorxxx ->
 	if (!ppt.libSource) {
 		lib.playlist_update();
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->

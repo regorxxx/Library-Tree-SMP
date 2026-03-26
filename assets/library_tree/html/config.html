@@ -370,6 +370,28 @@
 			cursor: pointer;
 		}
 
+		.dropbtnRed {
+			white-space: nowrap;
+			width: 100%;
+			background-color: #cc2626;
+			color: white;
+			text-decoration: none;
+			padding: 0.13em 5px;
+			border: none;
+			cursor: pointer;
+		}
+
+		.dropbtnBlue {
+			white-space: nowrap;
+			width: 100%;
+			background-color: #002ed3;
+			color: white;
+			text-decoration: none;
+			padding: 0.13em 5px;
+			border: none;
+			cursor: pointer;
+		}
+
 		.dropbtnLight {
 			white-space: nowrap;
 			width: 100%;
@@ -388,6 +410,20 @@
 		}
 
 		.dropbtnLight:after {
+			font-family: FontAwesome;
+			content: "\f107";
+			padding-left: 0.5em;
+			padding-right: 0.19em;
+		}
+
+		.dropbtnRed:after {
+			font-family: FontAwesome;
+			content: "\f107";
+			padding-left: 0.5em;
+			padding-right: 0.19em;
+		}
+
+		.dropbtnBlue:after {
 			font-family: FontAwesome;
 			content: "\f107";
 			padding-left: 0.5em;
@@ -431,6 +467,14 @@
 
 		.dropdown:hover .dropbtnLight {
 			background-color: Gainsboro;
+		}
+
+		.dropdown:hover .dropbtnRed {
+			background-color: rgb(206, 67, 67);
+		}
+
+		.dropdown:hover .dropbtnBlue {
+			background-color: rgb(54, 74, 250);
 		}
 
 		.dropArrow {
@@ -484,6 +528,18 @@
 			border: 1px solid Gainsboro;
 		}
 
+		.column12 {
+			width: 12%;
+		}
+
+		.column14 {
+			width: 14%;
+		}
+
+		.column16 {
+			width: 16%;
+		}
+
 		.column25 {
 			width: 25%;
 		}
@@ -524,6 +580,9 @@
 			width: 66%;
 		}
 
+		.column12,
+		.column14,
+		.column16,
 		.column25,
 		.column27,
 		.column29,
@@ -598,9 +657,10 @@
 <body>
 	<div style="clear:both;"></div>
 	<div id="tablink" class="tablink">
-		<!-- Regorxxx New Tabs | New statistics | Add colors -->
+		<!-- Regorxxx New Tabs | New statistics | Presets tab | Add colors -->
 		<a onclick="openPage('views', this, 'red')" id="viewsCfg">Views</a>
 		<a onclick="openPage('filters', this, 'green')" id="filtersCfg">Filters</a>
+		<a onclick="openPage('presets', this, 'blue')" id="presetsCfg">Presets</a>
 		<a onclick="openPage('behaviour', this, 'orange')" id="behaviourCfg">Behaviour</a>
 		<a onclick="openPage('search', this, 'purple')" id="searchCfg">Search</a>
 		<a onclick="openPage('display', this, 'olive')" id="displayCfg">Display</a>
@@ -699,6 +759,39 @@
 			<div id="filterDuplBy"></div>
 			<!-- Regorxxx -->
 		</div>
+		<!-- Regorxxx Presets tab | Preset rules -->
+		<div id='presets' class="tabcontent">
+			<span class="alignLeftH" style="margin-left: 0%;"><span style="color: #3e8e41; padding-right: 0;">If</span> / <span style="color: #cc2626; padding-right: 0;">If not</span> (match all)</span>
+			<span class="alignLeftH" style="margin-left: 31%;"><span style="color: #002ed3; padding-right: 0;">Then</span> (apply all)</span>
+			<div style="clear:both;"></div>
+			<hr>
+			<div style="clear:both;"></div>
+			<span class="div_text1 column12">Source</span>
+			<span class="div_text1 column12">Source Id</span>
+			<span class="div_text1 column16">View</span>
+			<span class="div_text1 column14">Filter</span>
+			<span class="div_text1 column12">Source</span>
+			<span class="div_text1 column16">View</span>
+			<span class="div_text1 column14">Filter</span>
+			<div style="clear:both;"></div>
+			<div id="presetRules"></div>
+			<div style="clear:both;"></div>
+			<hr>
+			<div class="info1">Sources, Views and Filters can be associated by rules so that any setting change also sets other settings by default.</div>
+			<div style="display:inline-block; padding-top:0em;"><a id="presets_help" href="#" onclick="showHelp('presets_text');return false;">Preset rules help</a></div>
+			<div id="presets_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+				<div class="info4">&#x2022; Use buttons at bottom to create/move/delete rules.<br><br>&#x2022; Rules do not disallow manually changing any related setting at a later point using the menus.<br><br>&#x2022; Rules are evaluated in order, from top to bottom, until any of them is matched.<br><br>&#x2022; Chaining and loops are not allowed, only 1 rule can be fully evaluated (when conditions are met).<br><br>&#x2022; Beware of setting mutually exclusive if/if not conditions, since rule wil never be applied.<br><br>&#x2022; Multiple values are allowed for the same if/if not condition by pressing Shift while clicking at dropdown box entries.<br>&emsp;&#x2219; e.g. A rule which applies by matching any of multiple possible views.<br>&emsp;&#x2219; If conditions will match any value on list, while if not conditions will match any value not on list.<br>&emsp;&#x2219; The dropdown button will show a counter if there is more than 1 value set. For ex. 'Value... (2)'.<br>&emsp;&#x2219; Adding a value without pressing Shift will simply replace all values with selected one.<br>&emsp;&#x2219; Note already selected values also have a different text color.<br><br>&#x2022; A rule which would apply a setting triggered by a change on same setting will always be skipped.<br>&emsp;&#x2219; Rules should usually only change settings different to the ones evaluated.<br>&emsp;&#x2219; e.g. A View change which matches all conditions of a rule which also changes the View will be skipped.<br>&emsp;&#x2219; e.g. If you want to set a default View for some Source, don't try to trigger the rule with View changes via menus.<br><br>&#x2022; If no conditions are set ('- Any -'), rule will apply to any Source, View and Filter.<br><br>&#x2022; If condition is skipped ('- Skip -'), rule will not apply when changing associated setting (even if the conditions are matched), but only when non-skipped settings change.<br><br>&#x2022; Rule triggers can be switched below. Note all conditions are checked in any case, triggers only control at which events the checks are done (associated setting change).<br><br>&#x2022; Place more specific rules at top, and generic ones at bottom, so the former override later ones. e.g.<br>&emsp;&#x2219; A rule at top for playlist sources which sets filter to 'Lossless'.<br>&emsp;&#x2219; A rule at bottom with no conditions to set the filter to '- None - by default.<br>&emsp;&#x2219; Any source will automatically use no filter, except playlists which will use 'Lossless'.<br><br>&#x2022; Selective settings trigger for specific rules can be emulated by setting all other conditions to '- Skip -'. e.g.<br>&emsp;&#x2219; A rule with Source and View conditions set to '- Skip -' and filter to 'Lossless'.<br>&emsp;&#x2219; Changing the Source or View using the menus will never trigger the rule.<br>&emsp;&#x2219; Changing the filter using menus to 'Lossless' will trigger the rule (and apply 'Then' section).<br>&emsp;&#x2219; Note the difference with setting conditions to '- Any -', which also triggers while changing Source/View via menus (Filter being 'Lossless' still required though).</div>
+			</div>
+			<div class="info5"><b>Rules triggering</b></div>
+			<div id="presetRulesOnSourceUse"></div>
+			<div id="presetRulesOnViewUse"></div>
+			<div id="presetRulesOnFilterUse"></div>
+			<div id="presetRulesOnPlsUse"></div>
+			<div id="presetRulesOnNotifyUse"></div>
+			<div class="info1">Note all <b>presets rules can be temporarily bypassed by pressing Shift</b> when switching Sources, Views or Filters via menus.</div>
+
+		</div>
+		<!-- Regorxxx -->
 		<div style="clear:both;"></div>
 		<div id="btn_cnt_right" class="btn_cnt">
 			<button id="btn_ok">OK</button>
@@ -1264,6 +1357,14 @@
 				return this.substring(pos, pos + search.length) === search;
 			};
 		}
+		if (!String.prototype.cut) {
+			var cutRegex = { multiLine: {}, singleLine: {} };
+			String.prototype.cut = function cut(c, bMultiLine) { // NOSONAR
+				if (!bMultiLine && !cutRegex.singleLine.hasOwnProperty(c)) { cutRegex.singleLine[c] = new RegExp('^([\\s\\S]{' + c + '})[\\s\\S]{2,}', 'g'); } // eslint-disable-line no-prototype-builtins
+				else if (bMultiLine && !cutRegex.multiLine.hasOwnProperty(c)) { cutRegex.multiLine[c] = new RegExp('^(.{' + c + '}).{2,}', 'gm'); } // eslint-disable-line no-prototype-builtins
+				return this.replace(bMultiLine ? cutRegex.multiLine[c] : cutRegex.singleLine[c], '$1\u2026'); // …
+			};
+		}
 		// Expand alert popup with automatic type parsing
 		var formatArg = function (arg) {
 			var type = typeof arg;
@@ -1378,7 +1479,7 @@
 			document.getElementById(pageName).style.overflow = "auto";
 			var btns = ["btn_add", "btn_up", "btn_down", "btn_delete"];
 			for (i = 0; i < btns.length; i++) {
-				document.getElementById(btns[i]).style.display = pageName == 'views' || pageName == 'filters' ? "inline-block" : "none";
+				document.getElementById(btns[i]).style.display = pageName == 'views' || pageName == 'filters' || pageName == 'presets' ? "inline-block" : "none"; // Regorxxx <- Presets tab ->
 			}
 			document.getElementById("btn_ok").focus();
 		}
@@ -1429,6 +1530,12 @@
 					var ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
 					document.getElementById("btn_add").disabled = ln > 98 ? true : false;
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_add").disabled = ln > 98 ? true : false;
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -1457,6 +1564,12 @@
 					var ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
 					document.getElementById("btn_delete").disabled = ix.filter != -1 && ln > 1 ? false : true;
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_delete").disabled = ix.preset != -1 && ln > 0 ? false : true;
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -1470,6 +1583,12 @@
 					var element = document.getElementById("filter_cnt" + ix.filter);
 					document.getElementById("btn_down").disabled = ix.filter == -1 || element.nextSibling && element.nextSibling.id == "filter_cnt_menuName" ? true : false;
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_down").disabled = ix.preset == -1 || ix.preset == ln - 1 ? true : false;
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -1483,6 +1602,12 @@
 					var element = document.getElementById("filter_cnt" + ix.filter);
 					document.getElementById("btn_up").disabled = ix.filter == -1 || !element || !element.previousSibling ? true : false;
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_up").disabled = ix.preset <= 0 ? true : false;
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -1532,11 +1657,12 @@
 		var cbox_w = 17;
 		var cfg = [];
 		var cur = {};
-		var ix = { filter: -1, view: -1 }
+		var ix = { filter: -1, view: -1, preset: -1 } // Regorxxx <- Presets tab ->
 		var new_id = 100;
 		var parsed_args;
 		var props_callback;
 		var rootPath; // Regorxxx <- Root path ->
+		var plsIds = []; // Regorxxx <- Preset rules ->
 		var ppt = {};
 		var sizes = [];
 
@@ -1570,6 +1696,7 @@
 			if (page) { page.click(); }
 			// Regorxxx ->
 
+			var presetRulesLabels = ['Apply on Source switching', 'Apply on Views switching', 'Apply on Filters switching', 'Apply on Playlists switching (used along Source Id condition to track active playlist)', 'Apply on Notify callback -external integration- (also depends on triggers above)']; // Regorxxx <- Presets tab | Preset rules ->
 			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact'];
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
@@ -1708,6 +1835,7 @@
 			// Regorxxx ->
 			// Regorxxx ->
 			var box = {
+				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting ->
 				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
@@ -1717,7 +1845,7 @@
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
 			}
 			// Regorxxx <- New search tab
-			box.all = box.behaviour.concat(box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
+			box.all = box.presets.concat(box.behaviour, box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
 			// Regorxxx ->
 
 			var radio = {
@@ -1735,6 +1863,7 @@
 			callback = parsed_args[3];
 			props_callback = parsed_args[4];
 			rootPath = parsed_args[5]; // Regorxxx <- Root path ->
+			plsIds = JSON.parse(parsed_args[6]); // Regorxxx <- Preset rules ->
 
 			function setSbarShow(n) {
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[n];
@@ -1928,6 +2057,208 @@
 				window.keystroke.style.display = 'none';
 			}
 
+			// Regorxxx <- Presets tab | Preset rules
+			function getPresetRuleValue(rule, condition, typeProp, bWithFallback) {
+				if (typeof bWithFallback === 'undefined') { bWithFallback = true; }
+				if (bWithFallback) {
+					if (rule.hasOwnProperty(condition)) {
+						return rule[condition].hasOwnProperty(typeProp)
+							? rule[condition][typeProp] !== null
+								? Array.isArray(rule[condition][typeProp])
+									? rule[condition][typeProp].length
+										? rule[condition][typeProp].join('|')
+										: condition === 'then'
+											? '- Unchanged -'
+											: '- Skip -'
+									: '- Invalid -'
+								: '- Invalid -'
+							: condition === 'then'
+								? '- Unchanged -'
+								: '- Skip -';
+					} else {
+						return condition === 'then'
+							? '- Unchanged -'
+							: '- Any -';
+					}
+				} else {
+					return rule.hasOwnProperty(condition) && rule[condition].hasOwnProperty(typeProp)
+						? Array.isArray(rule[condition][typeProp])
+							? rule[condition][typeProp].join('|')
+							: rule[condition][typeProp]
+						: '';
+				}
+			}
+
+			function getPresetRuleValueCount(rule, condition, typeProp) {
+				return rule.hasOwnProperty(condition) && rule[condition].hasOwnProperty(typeProp)
+					? Array.isArray(rule[condition][typeProp])
+						? rule[condition][typeProp].length
+						: 0
+					: 0;
+			}
+
+			function hasPresetRuleValue(rule, condition, typeProp, val) {
+				return rule.hasOwnProperty(condition) && rule[condition].hasOwnProperty(typeProp)
+					? Array.isArray(rule[condition][typeProp])
+						? rule[condition][typeProp].indexOf(val) !== -1
+						: false
+					: false;
+			}
+
+			function setPresetRule(idx, id, condition, typeProp, val) {
+				var bAppend = bShiftDown && condition !== 'then';
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				if (!presetRules[idx][condition]) { presetRules[idx][condition] = {}; }
+				if (typeof val === 'undefined') {
+					window[id + '_dropdown'].innerHTML = (condition === 'if' || condition === 'ifNot')
+						? '- Any -'
+						: '- Unchanged -';
+					if (presetRules[idx][condition].hasOwnProperty(typeProp)) { delete presetRules[idx][condition][typeProp]; }
+				} else {
+					var bSkip = (condition === 'if' || condition === 'ifNot') && val === '- Skip -';
+					if (bAppend && !bSkip && Array.isArray(presetRules[idx][condition][typeProp])) {
+						presetRules[idx][condition][typeProp].push(val);
+						window[id + '_dropdown'].innerHTML = (window[id + '_dropdown'].innerHTML + '|' + val).cut(Math.round(25 * window_w / 1300)) + ' (' + presetRules[idx][condition][typeProp].length + ')';
+					} else {
+						window[id + '_dropdown'].innerHTML = val.cut(Math.round(25 * window_w / 1300));
+						presetRules[idx][condition][typeProp] = bSkip
+							? []
+							: [val];
+					}
+				}
+				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
+				window[id].style.display = 'none';
+			}
+
+			function setPresetRuleWithInput(idx, id, condition, typeProp, msg, defValue) {
+				var val = inputValue(msg, defValue);
+				if (val === null) { return; }
+				if (val.indexOf('|') !== -1) {
+					val = val.split('|');
+					for (var i = 0; i < val.length; i++) {
+						setPresetRule(idx, id, condition, typeProp, val[i]);
+					}
+				}
+				setPresetRule(idx, id, condition, typeProp, val);
+			}
+
+			var subMenus = {};
+			function toogleSubmenu(id) {
+				if (window[id].style.display === 'none') {
+					window[id].style.display = 'inline-block';
+					subMenus[id] = true;
+				} else {
+					window[id].style.display = 'none'
+					subMenus[id] = false;
+				}
+			}
+
+			function setPresetRules() {
+				var presetRules = JSON.parse(ppt['presetRules_internal'].default_value);
+				var rulesLen = presetRules.length;
+				var ids = getPresetColumns();
+				var idsLen = ids.length;
+				for (i = 0; i < rulesLen; i++) {
+					var rule = presetRules[i];
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						var id = 'presetRuleIf' + type.id + i;
+						window[id + '_dropdown'].innerHTML = rule['if'][type.prop] || 'any';
+						window[id].style.display = 'none';
+					}
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						var id = 'presetRuleThen' + type.id + i;
+						window[id + '_dropdown'].innerHTML = rule['if'][type.prop] || 'any';
+						window[id].style.display = 'none';
+					}
+				}
+				ppt['presetRules_internal'].value = ppt['presetRules_internal'].default_value;
+			}
+
+			function hidePresetRules(currId) {
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				var rulesLen = presetRules.length;
+				var ids = getPresetColumns();
+				var idsLen = ids.length;
+				var menuOpened = false;
+				for (var key in subMenus) {
+					if (cur.page === 'presets') {
+						if (key.startsWith(currId.replace(/\d*$/, ''))) {
+							menuOpened = true;
+							if (!subMenus[key]) { delete subMenus[key]; }
+						} else {
+							delete subMenus[key];
+						}
+					} else {
+						delete subMenus[key];
+					}
+				}
+				if (menuOpened) { return; }
+				for (i = 0; i < rulesLen; i++) {
+					var rule = presetRules[i];
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'if') { continue; }
+						var id = 'presetRuleIf' + type.id + i;
+						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
+					}
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'then') { continue; }
+						var id = 'presetRuleThen' + type.id + i;
+						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
+					}
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'if') { continue; }
+						var id = 'presetRuleIfNot' + type.id + i;
+						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
+					}
+				}
+			}
+
+			function addPresetRule() {
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				presetRules.push({ 'if': {}, 'ifNot': {}, 'then': {} });
+				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
+				setPresets(true);
+			}
+
+			function deletePresetRule(idx) {
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				presetRules.splice(idx, 1);
+				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
+				setPresets(true);
+			}
+
+			function movePresetRule(idx, toIdx) {
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				var rule = presetRules.splice(idx, 1);
+				presetRules.splice(toIdx, 0, rule[0]);
+				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
+				setPresets(true);
+			}
+
+			function getPresetColumns() {
+				return [
+					{ id: 'Source', prop: 'source', html: 'column12', cut: 3000 },
+					{ id: 'SourceId', prop: 'sourceId', html: 'column12', condition: 'if', cut: 3000 },
+					{ id: 'View', prop: 'view', html: 'column16', cut: 3000 },
+					{ id: 'Filter', prop: 'filter', html: 'column14', cut: 3000 }
+				];
+			}
+
+			function getPresetSourceNames() {
+				return ['Library', 'Panel(s)', 'Active Playlist', 'Playlist(s)', 'Playback Queue', 'Auto-DJ Queue'];
+			}
+
+			function inputValue(msg, defvalue) {
+				var input = prompt(msg, defvalue);
+				return input === null || input === '' ? null : input;
+			}
+			// Regorxxx ->
+
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views
 			function setFolderSorting(n) {
 				window.folderSorting_dropdown.innerHTML = viewSortingLabels[n];
@@ -2097,6 +2428,183 @@
 					}
 				}
 			}
+
+			// Regorxxx <- Presets tab | Preset rules
+			function setPresets(clear) {
+				if (clear) { document.getElementById("presetRules").innerHTML = ''; }
+				var sourceNames = getPresetSourceNames();
+				var sourceLen = sourceNames.length;
+				var viewNames = [];
+				var viewsLen = cfg[0].length;
+				for (i = 0; i < viewsLen; i++) { viewNames.push(cfg[0][i].name); }
+				var filterNames = ['- None -'];
+				var filtersLen = cfg[1].length - 1;
+				for (i = 0; i < filtersLen; i++) { filterNames.push(cfg[1][i].name); }
+				var sourceIds = ['Input value...', 'separator', 'Playlist by name...', 'Playlist by GUID...'];
+				var sourceIdsLen = sourceIds.length;
+				var sourceIdsNames = [];
+				var sourceIdsGUIDs = [];
+				var sourceIdsNamesLen = plsIds.length;
+				for (i = 0; i < sourceIdsNamesLen; i++) {
+					sourceIdsNames.push(plsIds[i].name);
+					if (plsIds[i].guid) { sourceIdsGUIDs.push(plsIds[i].guid) }
+				}
+				var sourceIdsGUIDsLen = sourceIdsGUIDs.length;
+				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
+				var rulesLen = presetRules.length;
+				var ids = getPresetColumns();
+				var idsLen = ids.length;
+				for (i = 0; i < rulesLen; i++) {
+					var rule = presetRules[i];
+					var ruleId = 'presetRuleParent' + i;
+					window.presetRules.insertAdjacentHTML('beforeend', '<div style="clear:both;"></div><hr>');
+					window.presetRules.insertAdjacentHTML('beforeend', '<div id ="' + ruleId + '" style="padding: 0.5em 0 4em 0;"></span>');
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'if') { continue; }
+						var id = 'presetRuleIf' + type.id + i;
+						var count = getPresetRuleValueCount(rule, 'if', type.prop);
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0"><a id="' + id + '_dropdown" class="dropbtn" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'if', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
+						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'if\', \'' + type.prop + '\');">- Any -</a>');
+						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'if\', \'' + type.prop + '\', \'- Skip -\');">- Skip -</a>');
+						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+					}
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'then') { continue; }
+						var id = 'presetRuleThen' + type.id + i;
+						var count = getPresetRuleValueCount(rule, 'then', type.prop);
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:1em"><a id="' + id + '_dropdown" class="dropbtnBlue" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'then', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
+						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'then\', \'' + type.prop + '\');">- Unchanged -</a>');
+						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+					}
+					for (j = 0; j < idsLen; j++) {
+						var type = ids[j];
+						if (type.condition && type.condition !== 'if') { continue; }
+						var id = 'presetRuleIfNot' + type.id + i;
+						var count = getPresetRuleValueCount(rule, 'ifNot', type.prop);
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0em;"><a id="' + id + '_dropdown" class="dropbtnRed" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'ifNot', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
+						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\');">- Any -</a>');
+						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\', \'- Skip -\');">- Skip -</a>');
+						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+					}
+					for (j = 0; j < sourceLen; j++) {
+						if (sourceNames[j] !== 'separator') {
+							var isPresent = hasPresetRuleValue(rule, 'if', 'source', sourceNames[j]);
+							window['presetRuleIfSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSource' + i + '\', \'if\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'source', sourceNames[j]);
+							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'then\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'source', sourceNames[j]);
+							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'ifNot\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+						} else {
+							window['presetRuleIfSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						}
+					}
+					for (j = 0; j < sourceIdsLen; j++) {
+						if (sourceIds[j] !== 'separator') {
+							switch (sourceIds[j]) {
+								case 'Input value...': {
+									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRuleWithInput(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'Input playlist/panel name or GUID:\', \'' + (getPresetRuleValue(rule, 'if', 'sourceId', false) || 'write your value') + '\');">' + sourceIds[j] + '</a>');
+									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRuleWithInput(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'Input playlist/panel name or GUID:\', \'' + (getPresetRuleValue(rule, 'ifNot', 'sourceId', false) || 'write your value') + '\');">' + sourceIds[j] + '</a>');
+									break;
+								}
+								case 'Playlist by name...': {
+									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
+									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
+									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
+									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
+									for (var k = 0; k < sourceIdsNamesLen; k++) {
+										if (sourceIdsNames[k] !== 'separator') {
+											var isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsNames[k]);
+											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
+											isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsNames[k]);
+											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
+										} else {
+											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+										}
+									}
+									break;
+								}
+								case 'Playlist by GUID...': {
+									if (sourceIdsGUIDsLen > 0) {
+										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
+										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
+										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
+										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
+										for (var k = 0; k < sourceIdsGUIDsLen; k++) {
+											if (sourceIdsNames[k] !== 'separator') {
+												var isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsGUIDs[k]);
+												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
+												isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsGUIDs[k]);
+												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
+											} else {
+												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+											}
+										}
+									}
+									break;
+								}
+								default: {
+									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIds[j] + '\');">' + sourceIds[j] + '</a>');
+									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIds[j] + '\');">' + sourceIds[j] + '</a>');
+								}
+							}
+						} else {
+							window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						}
+					}
+					for (j = 0; j < viewsLen; j++) {
+						if (viewNames[j] !== 'separator') {
+							var isPresent = hasPresetRuleValue(rule, 'if', 'view', viewNames[j]);
+							window['presetRuleIfView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfView' + i + '\', \'if\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'view', viewNames[j]);
+							window['presetRuleThenView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenView' + i + '\', \'then\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'view', viewNames[j]);
+							window['presetRuleIfNotView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotView' + i + '\', \'ifNot\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
+						} else {
+							window['presetRuleIfView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleThenView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleIfNotView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						}
+					}
+					for (j = 0; j < filtersLen; j++) {
+						if (filterNames[j] !== 'separator') {
+							var isPresent = hasPresetRuleValue(rule, 'if', 'filter', filterNames[j]);
+							window['presetRuleIfFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfFilter' + i + '\', \'if\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'filter', filterNames[j]);
+							window['presetRuleThenFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenFilter' + i + '\', \'then\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'filter', filterNames[j]);
+							window['presetRuleIfNotFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotFilter' + i + '\', \'ifNot\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
+						} else {
+							window['presetRuleIfFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleThenFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleIfNotFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						}
+					}
+				}
+				if (clear) {
+					document.getElementById("presetRulesOnSourceUse").innerHTML = '';
+					document.getElementById("presetRulesOnViewUse").innerHTML = '';
+					document.getElementById("presetRulesOnFilterUse").innerHTML = '';
+					document.getElementById("presetRulesOnPlsUse").innerHTML = '';
+					document.getElementById("presetRulesOnNotifyUse").innerHTML = '';
+				}
+				i = 0; window.presetRulesOnSourceUse.insertAdjacentHTML('beforeend', '<div><input id="presetRulesUse_checkbox' + i + '" name="presets_checkbox" style="' + cbox + '" type="checkbox" /><label for="presetRulesUse_checkbox' + i + '" class="checkbox_label">' + presetRulesLabels[i] + '</label></div>');
+				i = 1; window.presetRulesOnViewUse.insertAdjacentHTML('beforeend', '<div><input id="presetRulesUse_checkbox' + i + '" name="presets_checkbox" style="' + cbox + '" type="checkbox" /><label for="presetRulesUse_checkbox' + i + '" class="checkbox_label">' + presetRulesLabels[i] + '</label></div>');
+				i = 2; window.presetRulesOnFilterUse.insertAdjacentHTML('beforeend', '<div><input id="presetRulesUse_checkbox' + i + '" name="presets_checkbox" style="' + cbox + '" type="checkbox" /><label for="presetRulesUse_checkbox' + i + '" class="checkbox_label">' + presetRulesLabels[i] + '</label></div>');
+				i = 3; window.presetRulesOnPlsUse.insertAdjacentHTML('beforeend', '<div><input id="presetRulesUse_checkbox' + i + '" name="presets_checkbox" style="' + cbox + '" type="checkbox" /><label for="presetRulesUse_checkbox' + i + '" class="checkbox_label">' + presetRulesLabels[i] + '</label></div>');
+				i = 4; window.presetRulesOnNotifyUse.insertAdjacentHTML('beforeend', '<div><input id="presetRulesUse_checkbox' + i + '" name="presets_checkbox" style="' + cbox + '" type="checkbox" /><label for="presetRulesUse_checkbox' + i + '" class="checkbox_label">' + presetRulesLabels[i] + '</label></div>');
+				if (clear) { setCheckboxes('presets', 'value'); }
+			}
+			// Regorxxx ->
 
 			function setBehaviour() {
 				for (i = 0; i < 3; i++) { window.actionType.insertAdjacentHTML('beforeend', '<div><input id="actionMode' + i + '" name="actionMode" style="' + cbox + '" type="radio" /><label for="actionMode' + i + '" class="checkbox_label">' + actionTypeLabels[i] + '</label></div>'); }
@@ -2416,6 +2924,7 @@
 
 			setViews();
 			setFilters();
+			setPresets(); // Regorxxx <- Presets tab ->
 			setBehaviour();
 			setSearch(); // Regorxxx <- Drag n' drop to search box ->
 			setDisplay();
@@ -2705,7 +3214,6 @@
 		}
 
 		window.btn_add.onclick = function () {
-			new_id++;
 			switch (cur.page) {
 				case 'views':
 					new_id++;
@@ -2723,6 +3231,13 @@
 					document.getElementById("filterCheckbox" + new_id).checked = true;
 					document.getElementById("filter_container" + new_id).focus();
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					var list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']");
+					addPresetRule();
+					document.getElementById("presetRuleParent" + (list.length)).focus();
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -2738,6 +3253,12 @@
 					var el = document.getElementById("filter_cnt" + ix.filter);
 					moveUp(el);
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					if (ix.preset == -1) { break; }
+					movePresetRule(ix.preset, ix.preset - 1);
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -2753,6 +3274,12 @@
 					var el = document.getElementById("filter_cnt" + ix.filter);
 					moveDown(el);
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					if (ix.preset == -1) { break; }
+					movePresetRule(ix.preset, ix.preset + 1);
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -2774,6 +3301,13 @@
 					if (next) ix.filter = next.id.replace('filter_cnt', '');
 					if (next) next.style["background"] = "lightgreen";
 					break;
+				// Regorxxx <- Presets tab | Preset rules
+				case 'presets':
+					if (ix.preset == -1) { break; }
+					deletePresetRule(ix.preset);
+					ix.preset = -1;
+					break;
+				// Regorxxx ->
 			}
 		}
 
@@ -2836,6 +3370,7 @@
 			setCheckboxes(cur.page, 'default_value');
 			setInputs(cur.page, 'default_value');
 			setRadioBtns(cur.page, 'default_value');
+			if (cur.page == 'presets') { setPresetRules(); } // Regorxxx <- Presets tab | Preset rules ->
 			// Regorxxx <- Fix reset
 			if (cur.page == 'behaviour') {
 				setClickAction(ppt['clickAction_internal'].default_value);
@@ -2905,14 +3440,17 @@
 			}
 		}
 
+		var bShiftDown = false; // Regorxxx <- Preset rules ->
 		document.onkeydown = function () {
 			if (window.event.keyCode == 13 && window.btn_ok.onclick) {
 				window.btn_ok.onclick();
 			}
+			if (window.event.keyCode == 16) { bShiftDown = true; }  // Regorxxx <- Preset rules ->
 		}
 
 		document.onkeyup = function () {
 			set_btn_apply_state();
+			if (window.event.keyCode == 16) { bShiftDown = false; }  // Regorxxx <- Preset rules ->
 		}
 
 		document.onclick = function () {
@@ -2942,6 +3480,23 @@
 							par.style["background"] = "lightgreen";
 						}
 						break;
+					// Regorxxx <- Presets tab | Preset rules
+					case 'presets':
+						var list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']")
+						for (i = 0; i < list.length; i++) { list[i].style["background"] = "none"; }
+						var par = document.activeElement.parentElement;
+						var activate = /presetRuleParent/.test(par.id);
+						if (!activate) {
+							var par = par.parentElement;
+							var activate = /presetRuleParent/.test(par.id);
+						}
+						if (!activate) { ix.preset = -1; }
+						else {
+							ix.preset = par.id.replace('presetRuleParent', '');
+							par.style["background"] = "lightgreen";
+						}
+						break;
+					// Regorxxx ->
 				}
 			}
 			set_btn_add_state();
@@ -3074,6 +3629,7 @@
 			for (i = 0; i < h.length; i++) {
 				if (id != h[i][0]) window[h[i][1]].style.display = 'none';
 			}
+			hidePresetRules(id); // Regorxxx <- Presets tab | Preset rules ->
 		}
 
 		// Regorxxx <- Copy links to clipboard ->
