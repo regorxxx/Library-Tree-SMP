@@ -421,6 +421,9 @@ let properties = [
 	['Quick-search jump initial char timer', 150, 'findTimerInit'],
 	['Quick-search jump next chars timer', 300, 'findTimerNext'],
 	// Regorxxx ->
+	// Regorxxx <- Quicksearch transliteration
+	['Quick-search transliteration', true, 'findTrans'],
+	// Regorxxx ->
 	// Regorxxx <- Sources tab | Preset rules
 	['Sources|Views|Filters presets', JSON.stringify([]), 'presetRules'],
 	['Sources|Views|Filters presets use on Source switch', true, 'presetRulesOnSourceUse'],

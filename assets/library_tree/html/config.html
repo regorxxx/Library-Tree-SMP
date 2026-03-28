@@ -1015,6 +1015,7 @@
 					<div class="div_text2">Timers</div>
 					<div class="info5"><i>Delay in ms can be set below</i></div>
 					<div id="findTimer"></div>
+					<div id="findTrans"></div>
 				</div>
 
 				<div class="column33">
@@ -1758,7 +1759,7 @@
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
-			var languageLabels = ['Transliteration -by order- (| separator)']; // Regorxxx <- Sorting transliteration ->
+			var languageLabels = ['Transliteration order (| separator)']; // Regorxxx <- Sorting transliteration ->
 			var autodjLabels = ['Stop when repeating a track', 'Random', 'By Genre-Mood matching', 'By Genre matching', 'By Mood matching']; // Regorxxx <- Auto-DJ feature ->
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control', 'Windows style dark theme fix'];  // Regorxxx <- Scrollbar on windows style improvements ->
 			var selectionLabels = ['Full line', 'Play on enter or send from menu'];
@@ -1798,7 +1799,7 @@
 			var dragQueryOpShiftLabels = dragQueryOpDefaultLabels;
 			var dragTagsLabels = ['Default', 'On Ctrl', 'On Alt'];
 			// Regorxxx ->
-			var findTimerLabels = ['On first char', 'On next chars']; // Regorxxx <- Customizable quicksearch timer ->
+			var findLabels = ['On first char', 'On next chars', 'Transliterate values to Latin']; // Regorxxx <- Customizable quicksearch timer | Quicksearch transliteration ->
 
 			function setNodeLabels() {
 				nodeLabels[0] = !ppt['winNode_internal'].value ? 'Squares' : 'Squares (windows)';
@@ -1855,7 +1856,7 @@
 			var box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'fullLineSelection', 'autoPlay', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting ->
-				search: ['searchEnter', 'searchRefreshTf'], // Regorxxx <- New search tab ->
+				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'selRectArt', 'artTreeSameView', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view ->
@@ -2765,8 +2766,9 @@
 
 				for (i = 0; i < 3; i++) { window.dragTags.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="dragTags_container' + i + '" name="search_input" class="input70" /><label for="dragTags_container' + i + '" class="inp_label2">' + dragTagsLabels[i] + '</label></div>'); }
 
-				// Regorxxx <- Customizable quicksearch timer
-				for (i = 0; i < 2; i++) { window.findTimer.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="findTimer_container' + i + '" name="search_input" class="input70" /><label for="findTimer_container' + i + '" class="inp_label2">' + findTimerLabels[i] + '</label></div>'); }
+				// Regorxxx <- Customizable quicksearch timer | Quicksearch transliteration
+				for (i = 0; i < 2; i++) { window.findTimer.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="findTimer_container' + i + '" name="search_input" class="input70" /><label for="findTimer_container' + i + '" class="inp_label2">' + findLabels[i] + '</label></div>'); }
+				i = 2; window.findTrans.insertAdjacentHTML('beforeend', '<div><input id="find_checkbox' + i + '" name="find_checkbox" style="' + cbox + '" type="checkbox" /><label for="find_checkbox' + i + '" class="checkbox_label">' + findLabels[i] + '</label></div>');
 				// Regorxxx ->
 			}
 			// Regorxxx ->
