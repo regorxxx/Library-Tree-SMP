@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 26/03/26 -->
+﻿<!DOCTYPE html> <!-- 28/03/26 -->
 <html>
 
 <head>
@@ -604,6 +604,13 @@
 			clear: both;
 		}
 
+		/* Regorxxx <- Allow inline links for navigation */
+		.internalLink {
+			border-bottom: 1px dotted rgb(0, 0, 0);
+			cursor: pointer;
+		}
+		/* Regorxxx -> */
+
 		/* Regorxxx <- Add tooltip to links */
 		.tooltip {
 			position: relative;
@@ -693,7 +700,7 @@
 						<li>For each panel press Shift + Windows key, choose 'Configure panel...'.At 'Script' tab set the panel name of the first panel to 'Genre', second to 'Artist' and third to 'Album'</li>
 						<li>For the second panel set Settings > Source to Panel, then choose select panel source and enter 'Genre' (it's case sensitive)</li>
 						<li>For the third panel set the source to panel, then choose select panel source and enter 'Artist' (it's case sensitive)"</li>
-						<li>Check 'Advanced' tab for more info about chained source notifications. If using legacy behaviour, then third panel should use 'Genre|Artist' instead</li>
+						<li>Check <a class="internalLink" onclick="openPage('advanced', 'advancedCfg', 'maroon')">Advanced tab</a> for more info about chained source notifications. If using legacy behaviour, then third panel should use 'Genre|Artist' instead</li>
 					</ul><i>Options</i>
 					<ul style="white-space: normal;">
 						<li>Optionally change the second panel at Context menu > Show album art if preferred and set the type to artist & may be circular style images</li>
@@ -1217,7 +1224,7 @@
 				<div class="info5"><b>Follow selection</b></div>
 				<div class="info5">If enabled, the &quot;File>Preferences>Display>Selection viewers&quot; setting is used.</div>
 				<div class="info5"><b>Tree only mode</b></div>
-				<div class="info5">Switch off 'Show Album Art Options' on the display tab while in tree view. Album art loading, disk caching plus the album art tab and menu options are disabled. Switch the option back on to allow album art mode.</div>
+				<div class="info5">Switch off 'Show Album Art Options' on the <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display</a> b while in tree view. Album art loading, disk caching plus the album art tab and menu options are disabled. Switch the option back on to allow album art mode.</div>
 				<div><br></div>
 			</div>
 		</div>
@@ -1267,7 +1274,7 @@
 					<div id="facets"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><a id="facets_help" href="#" onclick="showHelp('facets_text');return false;">Multi-panel mode help</a></div>
 					<div id="facets_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4"><b><u>Chained source notifications:</b></u><br><br>&#x2022; Facets mode is enabled when setting source to panel. More info at <a class="tooltip" onclick="openPage('views', this, 'red')" id="viewsCfg">Views tab</a><br>&#x2022; Every panel will send updates to other panels when being refreshed<br>&#x2022; No need to set multiple sources, only the most immediate parent's name<br>&#x2022; The entire chain will be updated if needed<br>&#x2022; Disable the setting to roll back to legacy behaviour<br>&#x2022; For example: Genre|Artist|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' panel uses 'Artist' as source, and 'Artist' panel uses 'Genre'<br>&emsp;&#x25E6; Any change on 'Genre' would immediately refresh the other 2 child panels<br>&emsp;&#x25E6; If disabled (legacy behaviour), then third panel should use 'Genre|Artist' instead<br><br><br><b><u>Multiple sources:</b></u><br><br>&#x2022; Multiple sources are only needed if they are fully independent<br>&#x2022; Along chained source notifications, sources are merged and deduplicated<br>&#x2022; Can merge selections from total different views/filters (for ex. artist and genres)<br>&#x2022; Destination panel's sorting and display don't follow sources' settings<br>&#x2022; If disabled (legacy behaviour), the last one selected on UI is used instead<br>&#x2022; For example: Artist1|Artist2|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' uses 'Artist1|Artist2' as sources<br>&emsp;&#x25E6; Selection from both 'Artist' panels are merged and used on 'Album' panel<br>&emsp;&#x25E6; Legacy behaviour uses either 'Artist1' or 'Artist2', last one selected on UI, not both<br><br><br><b><u>Internal cache:</b></u><br><br>&#x2022; To use a panel as source, its selection must be stored somewhere<br>&#x2022; This can be done using playlists (legacy behaviour) or internal caching<br>&#x2022; A dummy playlist is required per panel with legacy behaviour<br>&#x2022; Internal caching requires methods available only at latest JSplitter and SMP versions<br>&#x2022; if not supported, it fallbacks to legacy behaviour instead<br>&#x2022; Internal caching is preferable to avoid filling your playlist list with dummy playlists
+						<div class="info4"><b><u>Chained source notifications:</b></u><br><br>&#x2022; Facets mode is enabled when setting source to panel. More info at <a class="internalLink" onclick="openPage('views', 'viewsCfg', 'red')">Views tab</a><br>&#x2022; Every panel will send updates to other panels when being refreshed<br>&#x2022; No need to set multiple sources, only the most immediate parent's name<br>&#x2022; The entire chain will be updated if needed<br>&#x2022; Disable the setting to roll back to legacy behaviour<br>&#x2022; For example: Genre|Artist|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' panel uses 'Artist' as source, and 'Artist' panel uses 'Genre'<br>&emsp;&#x25E6; Any change on 'Genre' would immediately refresh the other 2 child panels<br>&emsp;&#x25E6; If disabled (legacy behaviour), then third panel should use 'Genre|Artist' instead<br><br><br><b><u>Multiple sources:</b></u><br><br>&#x2022; Multiple sources are only needed if they are fully independent<br>&#x2022; Along chained source notifications, sources are merged and deduplicated<br>&#x2022; Can merge selections from total different views/filters (for ex. artist and genres)<br>&#x2022; Destination panel's sorting and display don't follow sources' settings<br>&#x2022; If disabled (legacy behaviour), the last one selected on UI is used instead<br>&#x2022; For example: Artist1|Artist2|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' uses 'Artist1|Artist2' as sources<br>&emsp;&#x25E6; Selection from both 'Artist' panels are merged and used on 'Album' panel<br>&emsp;&#x25E6; Legacy behaviour uses either 'Artist1' or 'Artist2', last one selected on UI, not both<br><br><br><b><u>Internal cache:</b></u><br><br>&#x2022; To use a panel as source, its selection must be stored somewhere<br>&#x2022; This can be done using playlists (legacy behaviour) or internal caching<br>&#x2022; A dummy playlist is required per panel with legacy behaviour<br>&#x2022; Internal caching requires methods available only at latest JSplitter and SMP versions<br>&#x2022; if not supported, it fallbacks to legacy behaviour instead<br>&#x2022; Internal caching is preferable to avoid filling your playlist list with dummy playlists
 						</div>
 						<div><br></div>
 					</div>
@@ -1474,7 +1481,10 @@
 				tablinks[i].style.backgroundColor = "";
 			}
 			document.getElementById(pageName).style.display = "block";
-			elmnt.style.backgroundColor = color;
+			// Regorxxx <- Allow inline links for navigation
+			if (typeof elmnt === 'string') { elmnt = document.getElementById(elmnt); }
+			if (elmnt) { elmnt.style.backgroundColor = color; }
+			// Regorxxx ->
 			document.getElementById(pageName).style.height = height - window.tablink.offsetHeight - window.btn_cnt_right.offsetHeight;
 			document.getElementById(pageName).style.overflow = "auto";
 			var btns = ["btn_add", "btn_up", "btn_down", "btn_delete"];
