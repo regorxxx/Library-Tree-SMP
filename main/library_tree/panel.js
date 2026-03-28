@@ -64,6 +64,11 @@ class Panel {
 		};
 		// Regorxxx ->
 		ppt.zoomFilter = this.zoomFilter * 100;
+		// Regorxxx <- Sorting transliteration
+		this.sortingTransLangs = ppt.sortingTransLangs.toLowerCase() !== 'el|ru|jp|ch'
+			? ppt.sortingTransLangs.split('|').filter(Boolean)
+			: null;
+		// Regorxxx ->
 
 		this.filter = {
 			menu: [],
@@ -1572,6 +1577,11 @@ class Panel {
 			delete v._statistics;
 		});
 		lib.prefix = ppt.prefix.split('|'); // Regorxxx <- Fix values on reset ->
+		// Regorxxx <- Sorting transliteration
+		this.sortingTransLangs = ppt.sortingTransLangs.length && ppt.sortingTransLangs.toLowerCase() !== 'el|ru|jp|ch'
+			? ppt.sortingTransLangs.split('|').filter(Boolean)
+			: null;
+		// Regorxxx ->
 		// Regorxxx <- Apply relevant changes on properties update
 		if (bRefreshLib) {
 			lib.treeState(false, 2);

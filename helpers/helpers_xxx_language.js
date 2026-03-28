@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/03/26
+//28/03/26
 
 /* exported Language */
 
@@ -8,6 +8,18 @@ const Language = Object.freeze({
 	// Data validation
 	data: Object.seal({ lastOutput: null, lastInput: null }),
 	helpers: Object.freeze({
+		replacerLangMap: Object.freeze(
+			{
+				el: 'greek',
+				ru: 'russian'
+			}
+		),
+		romanizeLangMap: Object.freeze(
+			{
+				ch: 'jpRomanize',
+				jp: 'chRomanize'
+			}
+		),
 		greek: Object.freeze(
 			{
 				table: Object.freeze(
@@ -781,28 +793,43 @@ const Language = Object.freeze({
 		return dest;
 	},
 	/**
-	 * Transliterates a string from Japanese, Greek and Cyrilic into latin
+	 * Transliterates a string from Greek, Cyrilic, Chinese and Japanese into latin
 	 *
 	 * @property
 	 * @name transliterate
 	 * @kind method
 	 * @memberof Language
 	 * @param {string} value
-	 * @param {{japansese: object, chinese: object}} config - Language dependendant settings. See this.jpRomanize and this.chRomanize
+	 * @param {{jp: object?, ch: object?, languajes: ('jp'|'ch'|'ru'|'el')[]?}} config - Language dependendant settings. See this.jpRomanize and this.chRomanize. languajes array sets tranformations applied and order of processing. If not provided, all languajes are used as ['el', 'ru', 'ch', 'jp'].
 	 * @returns {string}
 	 */
 	transliterate(string, config = {}) {
 		if (this.data.lastInput === string) { return this.lastOutput; }
 		this.data.lastInput = string;
-		return this.data.lastOutput = this.jpRomanize(
-			this.chRomanize(
-				string.replace(/./gui, a => this.helpers.greek.table[a] || this.helpers.russian.table[a] || a),
-				Object.hasOwn(config, 'chinese') ? config.chinese : void (0),
+		if (config.languajes) {
+			const idx = Object.fromEntries(['el', 'ru', 'ch', 'jp'].map((l) => [l, config.languajes.indexOf(l) + 1]));
+			const replacerLang = ['el', 'ru'].sort((a, b) => idx[a] - idx[b]).filter(Boolean);
+			if (replacerLang.length) {
+				const replacerLangMap = this.helpers.replacerLangMap;
+				string = string.replace(/./gui,  (a) => replacerLang.reduce((prev, curr) => prev || this.helpers[replacerLangMap[curr]].table[a], '') || a);
+			}
+			const romanizeLang = ['ch', 'jp'].sort((a, b) => idx[a] - idx[b]).filter(Boolean);
+			if (romanizeLang.length) {
+				const romanizeLangMap = this.helpers.romanizeLangMap;
+				string = romanizeLang.reduce((prev, curr) => this[romanizeLangMap[curr]](prev, Object.hasOwn(config, curr) ? config[curr] : void (0), false), string);
+			}
+			return this.data.lastOutput = string;
+		} else {
+			return this.data.lastOutput = this.jpRomanize(
+				this.chRomanize(
+					string.replace(/./gui, a => this.helpers.greek.table[a] || this.helpers.russian.table[a] || a),
+					Object.hasOwn(config, 'ch') ? config.chinese : void (0),
+					false
+				),
+				Object.hasOwn(config, 'jp') ? config.japanese : void (0),
 				false
-			),
-			Object.hasOwn(config, 'japanese') ? config.japanese : void (0),
-			false
-		);
+			);
+		}
 	}
 });
 

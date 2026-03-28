@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/03/26
+//28/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2723,7 +2723,7 @@ class Populate {
 		if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		if (lib.searchSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
 		this.specialCharSort(data);
-		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
+		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
 		//	Otherwise it uses custom sorting algorithms which may mimic windows sorting
 		//	For non-library sources, only the second is available, despite playlist or panel sources pointing to tracked items
@@ -2753,13 +2753,13 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
+	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views | Sorting transliteration
 	sortView(data, method, type) {
 		switch (method) {
 			default:
 			case 0: {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2])); }
+					if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs })); }
 					data.sort((a, b) => this.collator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
 				} else {
 					data.sort((a, b) => this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
@@ -2771,7 +2771,7 @@ class Populate {
 				switch (type) {
 					case 'standard':
 						if (ppt.viewSortingTrans) {
-							if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2])); }
+							if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs })); }
 							data.sort((a, b) => {
 								return this.folderCollator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 							});
@@ -2785,8 +2785,8 @@ class Populate {
 						if (ppt.folderSortingTrans) {
 							if (data[0] && typeof data[0].srt[4] === 'undefined') {
 								data.forEach((v) => {
-									v.srt[4] = Language.transliterate(v.srt[0]);
-									v.srt[5] = Language.transliterate(v.srt[2]);
+									v.srt[4] = Language.transliterate(v.srt[0], { languages: panel.sortingTransLangs });
+									v.srt[5] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs });
 								});
 							}
 							data.sort((a, b) => {
@@ -2806,10 +2806,10 @@ class Populate {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
 					if (data[0] && typeof data[0].srt[4] === 'undefined') {
 						data.forEach((v) => {
-							v.srt[4] = Language.transliterate(v.srt[idx].trim());
+							v.srt[4] = Language.transliterate(v.srt[idx].trim(), { languages: panel.sortingTransLangs });
 							v.srt[5] = $.getTypeWeight(v.srt[4]);
 							v.srt[6] = $.getSymbolIndex(v.srt[4][0]);
-							v.srt[7] = Language.transliterate(v.srt[2]);
+							v.srt[7] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs });
 						});
 					}
 					data.sort((a, b) => {
@@ -2846,11 +2846,11 @@ class Populate {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
 					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 						data.forEach((v) => {
-							v.srt[4] = Language.transliterate(v.srt[idx].trim());
+							v.srt[4] = Language.transliterate(v.srt[idx].trim(), { languages: panel.sortingTransLangs });
 							v.srt[5] = v.srt[4].length;
 							v.srt[6] = v.srt[4].split('').map((c) => $.getSymbolIndex(c));
 							v.srt[7] = v.srt[4].split('').map((c, i) => $.getTypeWeight(c, v.srt[6][i], 'base'));;
-							v.srt[8] = Language.transliterate(v.srt[2]);
+							v.srt[8] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs });
 						});
 					}
 					let srtA, charA, lenA, typeA, idxA, srtB, charB, lenB, typeB, idxB, out, i;

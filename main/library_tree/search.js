@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/03/26
+//28/03/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -281,9 +281,9 @@ class Search {
 
 	// Regorxxx <- Tooltip over search input box | Code cleanup
 	trace(x, y, element) {
-		switch((element || '').toLowerCase()) {
+		switch ((element || '').toLowerCase()) {
 			case 'input': return y < panel.search.h && x > (but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
-			case 'button': return y < panel.search.h && x >(but.q.x - but.margin / 2 + but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
+			case 'button': return y < panel.search.h && x > (but.q.x - but.margin / 2 + but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
 			default: return y < panel.search.h && x > panel.search.x && x < (panel.search.w + panel.search.x);
 		}
 	}
@@ -668,7 +668,7 @@ class Find {
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
 			const char = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase();
 			// Regorxxx <- Fixed quick-search on same letter | Fix quick-searck for non ascii first char, greek and cyrilic
-			const normChar = $.asciify(Language.transliterate(char));
+			const normChar = $.asciify(Language.transliterate(char, { languages: panel.sortingTransLangs }));
 			if (pop.tree[panel.pos].sel && (char === text || normChar === text) && this.prevChar == text) { advance = true; }
 			this.prevChar = text;
 			timer.clear(timer.jsearch3);
@@ -697,7 +697,7 @@ class Find {
 				pop.tree.forEach((v, i) => {
 					if (!v.root) {
 						const nm = v.name.replace(/@!#.*?@!#/g, '');
-						init = $.asciify(Language.transliterate(nm.charAt(0).toLowerCase())); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
+						init = $.asciify(Language.transliterate(nm.charAt(0).toLowerCase(), { languages: panel.sortingTransLangs })); // Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic ->
 						if (cur != init && !this.initials[init]) {
 							this.initials[init] = [i];
 							cur = init;
@@ -752,7 +752,7 @@ class Find {
 					return;
 				default:
 					// Regorxxx <- Customizable quicksearch timer
-					if (this.jSearch.length === 0){
+					if (this.jSearch.length === 0) {
 						if (bAnyPosition) { this.bAnyPosition = true; }
 						ms = ppt.findTimerInit;
 					} else {
@@ -838,7 +838,7 @@ class Find {
 		let next = -1;
 		let first = -1;
 		pop.tree.some((v, i) => {
-			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, '')));
+			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''), { languages: panel.sortingTransLangs }));
 			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
 				if (i <= currPos) {
 					if (first === -1) { first = i; }
@@ -858,7 +858,7 @@ class Find {
 		const len = pop.tree.length - 1;
 		for (let i = len, v; i >= 0; i--) {
 			v = pop.tree[i];
-			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, '')));
+			const name = $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''), { languages: panel.sortingTransLangs }));
 			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
 				if (i >= currPos) {
 					if (first === -1) { first = i; }

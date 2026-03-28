@@ -1283,6 +1283,11 @@
 					<div class="div_text1">Logging</div>
 					<div id="logging"></div>
 					<!-- Regorxxx -->
+					<!-- Regorxxx Sorting transliteration -->
+					<div class="div_text1">Languages</div>
+					<div id="sortingTransLangs"></div>
+					<div class="info5" style="padding-right:20%;"><i>Specific languages may be skipped by removing their ISO 639-1 language code.<br>Leaving it empty will use all available languages. To disable transliteration check <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a>.</i></div>
+					<!-- Regorxxx -->
 				</div>
 
 				<div class="column50">
@@ -1721,7 +1726,7 @@
 			var dblClickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist & play'] : ppt['actionMode_internal'].value == 2 ? ['Send to playback queue and play'] : ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
 			var diskCacheLabels = ['Enable', 'Preload cached images']
 			var followCurrentLabels = ['Standard mode', 'Album art flow mode'];
-			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views
+			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
 			var viewSortingLabels = ['Library Tree (original)', 'Library Tree (updated)', 'Windows-like (basic)', 'Windows-like (advanced)']
 			var folderSortingFbLabels = ['Prefer native sorting for library sources'];
 			var sortingTransLabels = ['Transliterate values to Latin', 'Transliterate values to Latin'];
@@ -1753,6 +1758,7 @@
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
 			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
+			var languageLabels = ['Transliteration -by order- (| separator)']; // Regorxxx <- Sorting transliteration ->
 			var autodjLabels = ['Stop when repeating a track', 'Random', 'By Genre-Mood matching', 'By Genre matching', 'By Mood matching']; // Regorxxx <- Auto-DJ feature ->
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control', 'Windows style dark theme fix'];  // Regorxxx <- Scrollbar on windows style improvements ->
 			var selectionLabels = ['Full line', 'Play on enter or send from menu'];
@@ -1831,10 +1837,12 @@
 					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Custom album art overlay track count ->
 				},
 				// Regorxxx ->
+				// Regorxxx <- Sorting transliteration
 				advanced: {
-					name: ['scrollStep', 'durationScroll', 'durationTouchFlick', 'flickDistance', 'sbarWidth', 'narrowSbarWidth', 'sbarArrowWidth', 'sbarPad', 'sbarGripHeight', 'arrowSymbol', 'butCustIconFont', 'sbarButPad', 'iconCustom', 'custIconFont', 'iconVerticalPad', 'blurTemp', 'blurAlpha', 'prefix', 'pn_h_max', 'pn_h_min', 'treeExpandLimit'],
-					type: ['float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'text', 'text', 'float', 'text', 'text', 'float', 'float', 'float', 'text', 'int', 'int', 'int']
+					name: ['scrollStep', 'durationScroll', 'durationTouchFlick', 'flickDistance', 'sbarWidth', 'narrowSbarWidth', 'sbarArrowWidth', 'sbarPad', 'sbarGripHeight', 'arrowSymbol', 'butCustIconFont', 'sbarButPad', 'sortingTransLangs', 'iconCustom', 'custIconFont', 'iconVerticalPad', 'blurTemp', 'blurAlpha', 'prefix', 'pn_h_max', 'pn_h_min', 'treeExpandLimit'],
+					type: ['float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'text', 'text', 'float', 'text', 'text', 'text', 'float', 'float', 'float', 'text', 'int', 'int', 'int']
 				},
+				// Regorxxx ->
 				all: {}
 			}
 			// Regorxxx <- Drag n' drop to search box | New statistics
@@ -2269,7 +2277,7 @@
 			}
 			// Regorxxx ->
 
-			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views
+			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
 			function setFolderSorting(n) {
 				window.folderSorting_dropdown.innerHTML = viewSortingLabels[n];
 				ppt['folderSorting_internal'].value = n;
@@ -2923,6 +2931,9 @@
 				for (i = 0; i < 2; i++) { window.modeInput.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="modeInput_container' + i + '" name="advanced_input" class="input35" /><label for="modeInput_container' + i + '" class="inp_label2">' + modeLabels[i] + '</label></div>'); }
 				// Regorxxx <- Library profiling
 				i = 0; window.logging.insertAdjacentHTML('beforeend', '<div><input id="logging_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="logging_checkbox' + i + '" class="checkbox_label">' + loggingLabels[i] + '</label></div>');
+				// Regorxxx ->
+				// Regorxxx <- Library profiling
+				i = 0; window.sortingTransLangs.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="language_container' + i + '" name="advanced_input" class="input35" /><label for="language_container' + i + '" class="inp_label2">' + languageLabels[i] + '</label></div>');
 				// Regorxxx ->
 				// Regorxxx <- Auto-DJ feature
 				i = 0; window.autodj.insertAdjacentHTML('beforeend', '<div><input id="autodj_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="autodj_checkbox' + i + '" class="checkbox_label">' + autodjLabels[i] + '</label></div>');
@@ -3610,7 +3621,7 @@
 			['sbarCol_dropdown', 'sbarCol'],
 			['sbarIcon_dropdown', 'sbarIcon'],
 			['contextMenu_dropdown', 'contextMenu'], // Regorxxx <- Contextual menu options ->
-			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views
+			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
 			['folderSorting_dropdown', 'folderSorting'],
 			['viewSorting_dropdown', 'viewSorting'],
 			// Regorxxx ->

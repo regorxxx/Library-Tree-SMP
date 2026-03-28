@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/03/26
+//28/03/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -370,12 +370,13 @@ let properties = [
 	['View By', 1, 'viewBy'],
 	['View By Album Art', 1, 'albumArtViewBy'],
 	['View By Tree', 1, 'treeViewBy'],
-	// Regorxxx <- Fix "View by Folder Structure" to match Windows Explorer. Custom sorting for standard views
+	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views | Sorting transliteration
 	['View By Sorting', 0, 'viewSorting'],
 	['View By Sorting transliteration', true, 'viewSortingTrans'],
 	['View By Folder Sorting', 3, 'folderSorting'],
 	['View By Folder Sorting from foobar2000', true, 'folderSortingFb'],
 	['View By Folder Sorting transliteration', true, 'folderSortingTrans'],
+	['View By transliteration languages', 'el|ru|jp|ch', 'sortingTransLangs'],
 	// Regorxxx ->
 	['Zoom Filter Size (%)', 100, 'zoomFilter'],
 	['Zoom Font Size (%)', 100, 'zoomFont'],
