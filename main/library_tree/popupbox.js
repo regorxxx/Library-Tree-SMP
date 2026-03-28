@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/03/26
+//28/03/26
 
 /* global ppt:readable, $:readable, WshShell:readable, doc:readable */
 /* global folders:readable */
@@ -16,7 +16,13 @@ class PopUpBox {
 	// Methods
 
 	config(cfg, ppt, cfgWindow, ok_callback) {
-		const playlistIds = JSON.stringify($.range(0, plman.PlaylistCount, 1).map((idx) => { return { name: plman.GetPlaylistName(idx), guid: plman.GetGUID(idx) }; })); // Regorxxx <- Preset rules ->
+		// Regorxxx <- Preset rules
+		const playlistIds = JSON.stringify(
+			plman.PlaylistCount > 0
+				? $.range(0, plman.PlaylistCount - 1, 1).map((idx) => { return { name: plman.GetPlaylistName(idx), guid: plman.GetGUID(idx) }; })
+				: []
+		);
+		// Regorxxx ->
 		utils.ShowHtmlDialog(0, this.configHtmlCode, {
 			data: [cfg, ppt, cfgWindow, ok_callback, void (0), folders.xxx + 'assets\\library_tree\\html', playlistIds], // Regorxxx <- Root path | Preset rules ->
 			resizable: true
