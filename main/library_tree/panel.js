@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/03/26
+//29/03/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -2012,7 +2012,13 @@ class Panel {
 	// Regorxxx ->
 
 	// Regorxxx <- Preset rules
-	getPresetRule({ viewBy, filterBy, sourceBy, sourceId = [plman.GetPlaylistName(plman.ActivePlaylist), plman.GetGUID(plman.ActivePlaylist)], bSetSourceId = false } = {}) {
+	getPresetRule({
+		viewBy,
+		filterBy,
+		sourceBy,
+		sourceId = plman.ActivePlaylist !== -1 ? [plman.GetPlaylistName(plman.ActivePlaylist), plman.GetGUID(plman.ActivePlaylist)] : [],
+		bSetSourceId = false
+	} = {}) {
 		const rules = $.jsonParse(ppt.presetRules, []);
 		const bSetView = typeof viewBy !== 'undefined';
 		const bSetFilter = typeof filterBy !== 'undefined';
