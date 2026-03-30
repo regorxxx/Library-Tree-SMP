@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/03/26
+//30/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1506,12 +1506,11 @@ class Library {
 		if (!this.viewCache) { this.viewCache = {}; }
 		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: ppt.fixedPlaylist ? -1 : ppt.libSource };
 		const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
-		// ['exp', 'expand', 'full_list', 'list', 'full_list_need_sort', 'libNode', 'cacheId', 'cache', 'node', 'root']
-		Object.keys(this).filter((k) => !filterKeys.has(k))
+		Object.keys(this).filter((k) => !filterKeys.has(k) && typeof k !== 'function')
 			.forEach((key) => this.viewCache[id].lib[key] = this[key]);
-		['cur_ix', 'expandedTracks', 'id', 'last_sel', 'nd', 'rows', 'sel_items', 'selList', 'tree']
+		['childCount', 'clicked_on', 'cur', 'cur_ix', 'expandedTracks', 'id', 'last_sel', 'lastSelMul', 'nd', 'rows', 'sel_items', 'selList', 'tree']
 			.forEach((key) => this.viewCache[id].pop[key] = pop[key]);
-		['list']
+		['curPattern', 'list', 'tree', 'pos', 'paint_y', 'rootName', 'sortBy', 'search', 'sourceName', 'viewName']
 			.forEach((key) => this.viewCache[id].panel[key] = panel[key]);
 		['treeViewBy', 'albumArtViewBy']
 			.forEach((key) => this.viewCache[id].ppt[key] = ppt[key]);
@@ -1520,15 +1519,29 @@ class Library {
 	getViewCache(id, bDelete = true) {
 		if (this.hasViewCache(id)) {
 			const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
-			Object.keys(this).filter((k) => !filterKeys.has(k))
+			Object.keys(this).filter((k) => !filterKeys.has(k) && typeof k !== 'function')
 				.forEach((key) => this[key] = this.viewCache[id].lib[key]);
-			['cur_ix', 'expandedTracks', 'id', 'last_sel', 'nd', 'rows', 'sel_items', 'selList', 'tree']
+			['childCount', 'clicked_on', 'cur', 'cur_ix', 'expandedTracks', 'id', 'last_sel', 'lastSelMul', 'nd', 'rows', 'sel_items', 'selList', 'tree']
 				.forEach((key) => pop[key] = this.viewCache[id].pop[key]);
-			['list']
+			['curPattern', 'list', 'tree', 'pos', 'paint_y', 'rootName', 'sortBy', 'search', 'sourceName', 'viewName']
 				.forEach((key) => panel[key] = this.viewCache[id].panel[key]);
 			['treeViewBy', 'albumArtViewBy']
 				.forEach((key) => ppt[key] = this.viewCache[id].ppt[key]);
 			if (bDelete) { delete this.viewCache[id]; }
+			// Reset other settings
+			pop.tree.forEach(v => {
+				v.id = '';
+				v.count = ''; // has to reset parentheses if stats change off/on
+				delete v.statistics;
+				delete v._statistics;
+			});
+			pop.cache = {
+				'standard': {},
+				'search': {},
+				'filter': {}
+			};
+			sbar.setRows(pop.tree.length);
+			pop.getNowplaying();
 			return true;
 		}
 		return false;
