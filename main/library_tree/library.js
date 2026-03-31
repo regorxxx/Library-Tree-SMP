@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//31/03/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -127,7 +127,7 @@ class Library {
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? stripSort(processed)
+							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
 						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? getSortObj(processed)
@@ -206,7 +206,7 @@ class Library {
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? stripSort(processed)
+							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
 						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? getSortObj(processed)
@@ -1126,7 +1126,7 @@ class Library {
 					: null;
 				const processed = panel.processCustomTf(panel.search.txt);
 				const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-					? stripSort(processed)
+					? stripSort(processed) || 'ALL'
 					: panel.search.txt;
 				this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 					? getSortObj(processed)
@@ -1406,7 +1406,7 @@ class Library {
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? stripSort(processed)
+							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
 						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? getSortObj(processed)
@@ -1451,7 +1451,7 @@ class Library {
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
 						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
-							? stripSort(processed)
+							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
 						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
 							? getSortObj(processed)
