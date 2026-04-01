@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/04/26
+//02/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -192,11 +192,14 @@ class Populate {
 
 	// Regorxxx <- Preserve tree sorting at selection
 	addItems(arr, node) {
-		if (node.child && node.child.length) {
+		if (node.root) {
+			$.range(0, panel.list.Count -1, 1).forEach((idx) => arr.push(idx));
+		} else if (node.child && node.child.length) {
 			node.child.forEach((subNode) => this.addItems(arr, subNode));
 		} else if (node.item.length > 1 || node.item[0].count > 1) {
 			this.branch(node, !node.root ? false : true, true);
-			node.child.forEach((subNode) => this.addItems(arr, subNode));
+			if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
+			else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
 			this.clearChild(node);
 		} else {
 			$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
