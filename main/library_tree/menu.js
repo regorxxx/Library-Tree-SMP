@@ -622,7 +622,7 @@ class MenuItems {
 						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...] | [...] SORT BY [...]' +
 						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...]' +
 						'\n\t∙ Descending:  [...] SORT DESCENDING BY [...]' +
-						'\n\t∙ Sorting without filtering: ALL SORT BY [...]' +
+						'\n\t∙ Sorting without filtering: ALL SORT BY [...] | SORT BY [...]' +
 						[
 							{ key: 'Ctrl + A', action: 'Select all.' },
 							{ key: 'Ctrl + C', action: 'Copy selected text.' },
@@ -639,6 +639,13 @@ class MenuItems {
 							{ key: 'End', action: 'Set cursor at right.' },
 							{ key: 'Left|Right', action: 'Move cursor.' },
 						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
+						'\n' +
+						'\nSorting:' +
+						'\n----------------------' +
+						'\n• Sorting is applied directly from View TF pattern.' +
+						'\n• Can be overridden by query expressions at Search box and Filters.' +
+						'\n• Specific sources have additional settings (e.g. Playback Queue).' +
+						'\n• Sorting priority: Search box > Filter > Source > View' +
 						'\n' +
 						'\nUI:' +
 						'\n----------------------' +
@@ -992,7 +999,7 @@ class MenuItems {
 		d.valueLength = d.value.length;
 		let l = d.sortYear.length;
 		while (l-- && l) {
-			d.value = d.value.replace(RegExp($.regexEscape(d.sortYear[l]), 'gi'), ''); // Regorxxx <- Sorting identification should not be case sensitive ->
+			d.value = d.value.replace(RegExp($.regexEscape(d.sortYear[l]), 'gi'), ''); // Regorxxx <- Sorting identification should not be case-sensitive ->
 			if (d.valueLength != d.value.length) {
 				d.sortIX = l;
 				d.valueLength = d.value.length;
@@ -1001,7 +1008,7 @@ class MenuItems {
 		if (d.sortIX == -1) {
 			l = d.sortAlbumsByYearAfter.length;
 			while (l-- && l) {
-				d.value = d.value.replace(RegExp($.regexEscape(d.sortAlbumsByYearAfter[l]), 'gi'), '%ALBUM%'); // Regorxxx <- Sorting identification should not be case sensitive ->
+				d.value = d.value.replace(RegExp($.regexEscape(d.sortAlbumsByYearAfter[l]), 'gi'), '%ALBUM%'); // Regorxxx <- Sorting identification should not be case-sensitive ->
 				if (d.valueLength != d.value.length) {
 					d.sortIX = l;
 					d.valueLength = d.value.length;
@@ -1011,14 +1018,14 @@ class MenuItems {
 		if (d.sortIX == -1) {
 			l = d.sortAlbumsByYearBefore.length;
 			while (l-- && l) {
-				d.value = d.value.replace(RegExp($.regexEscape(d.sortAlbumsByYearBefore[l]), 'gi'), '%ALBUM%'); // Regorxxx <- Sorting identification should not be case sensitive ->
+				d.value = d.value.replace(RegExp($.regexEscape(d.sortAlbumsByYearBefore[l]), 'gi'), '%ALBUM%'); // Regorxxx <- Sorting identification should not be case-sensitive ->
 				if (d.valueLength != d.value.length) {
 					d.sortIX = l;
 					d.valueLength = d.value.length;
 				}
 			}
 		}
-		// Regorxxx <- Sorting identification should not be case sensitive
+		// Regorxxx <- Sorting identification should not be case-sensitive
 		if (d.value.includes('//') && /%YEAR%|%DATE%/i.test(d.value)) { d.sortType = 1; }
 		else if (/%ALBUM%/i.test(d.value)) { d.sortType = 2; }
 		// Regorxxx ->
@@ -1485,7 +1492,7 @@ class MenuItems {
 			if (i) {
 				let str = d.value.split('//');
 				if (str[1]) {
-					// Regorxxx <- Sorting identification should not be case sensitive ->
+					// Regorxxx <- Sorting identification should not be case-sensitive ->
 					str[1] = str[1].trim().replace(/(\|\s*)(.*?(%YEAR%|%DATE%))/gi, '$1' + d.sortYear[i] + '$2');
 					if (!/\|.*?(%YEAR%|%DATE%)/i.test(str[1])) { str[1] = d.sortYear[i] + str[1]; }
 					// Regorxxx ->
@@ -1493,7 +1500,7 @@ class MenuItems {
 				} else d.value = str[0];
 			}
 		} else if (d.sortType == 2 && i && sortByIX != -1) {
-			d.value = d.value.replace(/%ALBUM%/gi, d.sortAlbumByYear[sortByIX]); // Regorxxx <- Sorting identification should not be case sensitive ->
+			d.value = d.value.replace(/%ALBUM%/gi, d.sortAlbumByYear[sortByIX]); // Regorxxx <- Sorting identification should not be case-sensitive ->
 		}
 		if (d.sortType == 1 || sortByIX != -1) {
 			const expanded = [];

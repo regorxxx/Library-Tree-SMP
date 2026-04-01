@@ -364,12 +364,12 @@ class Panel {
 				return indices.reverse();
 			};
 			const prefix = ppt.prefix.split('|');
-			this.statistics = /play(_|)count|auto(_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case sensitive ->
+			this.statistics = /play(_|)count|auto(_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
 			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				// Regorxxx <-  Preserve tree sorting at selection
+				// Regorxxx <- Preserve tree sorting at selection
 				if (ppt.smartSort) {
 					const view = this.view.toUpperCase();
 					this.playlistSort = FbTitleFormat((view.includes('ALBUM ARTIST') || !view.includes('%ARTIST%') && !view.includes('%<ARTIST>%') && !view.includes('$META(ARTIST') ? '%ALBUM ARTIST%' : '%ARTIST%') + '  %ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%');
@@ -474,7 +474,7 @@ class Panel {
 		this.multiPrefix = false;
 		this.multiProcess = false;
 		this.noDisplay = false;
-		this.playlistSort = null;  // Regorxxx <-  Preserve tree sorting at selection ->
+		this.playlistSort = null; // Regorxxx <- Preserve tree sorting at selection ->
 		this.statistics = false;
 		this.view = '';
 		this.view_ppt.forEach((v, i) => {
@@ -1751,7 +1751,7 @@ class Panel {
 				const prev = this.autoDj.last;
 				if (!prev) { out = this.sortTracksAutoDj(itemsArr, 'random'); }
 				else {
-					// Match genre, style and mood while trying to scatter same artists
+					// Match genre, style, and mood while trying to scatter same artists
 					const tags = [
 						['match-genre', 'match'].includes(method)
 							? [globTags.genre, globTags.style]
