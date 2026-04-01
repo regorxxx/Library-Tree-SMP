@@ -194,7 +194,7 @@ class Populate {
 	addItems(arr, node) {
 		if (node.child && node.child.length) {
 			node.child.forEach((subNode) => this.addItems(arr, subNode));
-		} else if (node.item.length > 1) {
+		} else if (node.item.length > 1 || node.item[0].count > 1) {
 			this.branch(node, !node.root ? false : true, true);
 			node.child.forEach((subNode) => this.addItems(arr, subNode));
 			this.clearChild(node);
