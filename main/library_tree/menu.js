@@ -640,12 +640,14 @@ class MenuItems {
 							{ key: 'Left|Right', action: 'Move cursor.' },
 						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
 						'\n' +
-						'\nSorting:' +
+						'\nPanel Sorting:' +
 						'\n----------------------' +
 						'\n• Sorting is applied directly from View TF pattern.' +
 						'\n• Can be overridden by query expressions at Search box and Filters.' +
 						'\n• Specific sources have additional settings (e.g. Playback Queue).' +
-						'\n• Sorting priority: Search box > Filter > Source > View' +
+						'\n• Selection sorting can be set independently (e.g. sending to playlist).' +
+						'\n• If not specified, selection sorting will use panel sorting by default.' +
+						'\n• Panel Sorting priority: Search box > Filter > Source > View' +
 						'\n' +
 						'\nUI:' +
 						'\n----------------------' +

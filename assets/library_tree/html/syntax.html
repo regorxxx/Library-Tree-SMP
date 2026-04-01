@@ -298,6 +298,9 @@
 						<li>
 							<div class="li"> Sorting may be overridden by Search box or Filter expressions in some cases. </div>
 						</li>
+						<li>
+							<div class="li"> Panel Sorting priority: Search box > Filter > Source > View </div>
+						</li>
 					</ul>
 					<li>
 						<div class="li"> Prefixes used by $stripbranchprefix{}, $swapbranchprefix{} and $prefix are set at advanced tab (HTML options panel) or 'Prefixes to Strip or Swap (| Separator)' (properties panel).</div>
@@ -519,13 +522,16 @@
 								<div class="li"> Descending: [...QUERY...] SORT DESCENDING BY [...] </div>
 							</li>
 							<li>
-								<div class="li"> To apply sorting without filtering: ALL SORT BY [...]</div>
+								<div class="li"> To apply sorting without filtering: ALL SORT BY [...] </div>
 							</li>
 							<li>
-								<div class="li"> Panel also allows to skip the query term: SORT BY [...]</div>
+								<div class="li"> Panel also allows to skip the query term: SORT BY [...] </div>
 							</li>
 							<li>
-								<div class="li"> Will override any View (TF) or Source sorting (queue idx, etc.) when used.</div>
+								<div class="li"> Will override any View (TF) or Source sorting (queue idx, etc.) when used. </div>
+							</li>
+							<li>
+								<div class="li"> Panel Sorting priority: Search box > Filter > Source > View </div>
 							</li>
 						</ul>
 					</ul>
@@ -825,6 +831,9 @@
 							<div class="li"> Foobar2000 Title Formatting reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference</a> </div>
 						</li>
 					</ul>
+					<li>
+						<div class="li"> Note Playlist/Selection sorting is independent to Panel sorting (which is only used if not specified). </div>
+					</li>
 					<li>
 						<div class="li"> Special sorting functions can be applied on top of any standard TF expressions, being replaced with $not(0) on real time. The sorting algorithms will then be applied before the standard TF sorting. </div>
 					</li>
