@@ -1,5 +1,5 @@
 ﻿'use strict';
-//31/03/26
+//01/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -557,8 +557,8 @@ class Panel {
 				_qCond(globTags.playCountRateSinceAdded) + ' GREATER 0'
 			])
 			],
-			['Filter XX: Name // Query', 'Recently Added // ' + globQuery.added],
-			['Filter XX: Name // Query', 'Recently Played // ' + globQuery.recent],
+			['Filter XX: Name // Query', 'Recently Added // ' + globQuery.added + ' SORT BY ' + globTags.added],
+			['Filter XX: Name // Query', 'Recently Played // ' + globQuery.recent + ' SORT BY ' + globTags.lastPlayed],
 			['Filter XX: Name // Query', 'separator // .'],
 			['Filter XX: Name // Query', 'Top Rated // ' + queryJoin([globQuery.fav, '%2003_RATING% EQUAL 10'], 'OR')],
 			['Filter XX: Name // Query', 'Not Rated // ' + queryJoin([globQuery.noRating, '%2003_RATING% MISSING'], 'AND')],

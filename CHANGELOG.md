@@ -46,7 +46,6 @@
 - Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Views: updated default view TF patterns with above changes related to $prefix.
 - Views: updated default view TF patterns with better compatibility for albums with multiple artists.
-- Filters: updated some of the default filter patterns.
 - Sources: playback queue source now also shows the currently playing track by default. A new setting has been added to toggle this behavior (''Library Source: Playback Queue show now playing' at properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077224.html#msg1077224).
 - Sources: contextual menu while using Playback queue source has been changed to allow easy queue manipulation. Menu entries related to playlist sending have been removed.
 - Sources: active playlist source no longer follows playlist sorting by default when using non-branching View TF patterns (those with %<TAG>% or equivalent), but it's conditioned to the 'Sort by Playlist idx' setting found at HTML options panel and menus (see above). Note previously playlist sorting was ignored if branching expressions were used, thus behaving different according to the view used instead of an independent setting. See [here](https://hydrogenaudio.org/index.php/topic,111060.msg1079489.html#msg1079489) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1079506.html#msg1079506) for more info.
@@ -59,6 +58,7 @@
 - Search: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed. Previously they returned an invalid search warning. They override any sorting on panel, including the one inherited by View TF or Filter query, specific source sorting settings, etc.
 - Filter: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed. Previously they returned a 'Nothing found' message. They override any sorting on panel (except from search box), including the one inherited by View TF, specific source sorting settings, etc.
 - Filter: Filter patterns are now checked before using and panel will warn when using an invalid expression instead of showing 'Nothing found'.
+- Filters: updated some of the default filter patterns and added in some cases built-in sorting expressions.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
