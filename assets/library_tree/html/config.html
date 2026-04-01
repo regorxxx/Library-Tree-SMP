@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 28/03/26 -->
+﻿<!DOCTYPE html> <!-- 01/04/26 -->
 <html>
 
 <head>
@@ -743,12 +743,12 @@
 			<span class="alignRightH">Query</span>
 			<div style="clear:both;"></div>
 			<div id="filter"></div>
-			<!-- Regorxxx Add help to filter tab -->
+			<!-- Regorxxx Add help to filter tab | Support SORT BY query sorting -->
 			<div class="info1">Selected items will be displayed in the menu. A separator may be added by setting name to 'separator' and query to any non-empty string.</div>
-			<button id="syntaxFilter_button" name="syntaxFilter_button" style="margin-left:0px;margin-right:2em;" type="button">Extended Syntax Help</button><a class="tooltip" id="tfReference2" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference2')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference2" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference2')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
+			<button id="syntaxFilter_button" name="syntaxFilter_button" style="margin-left:0px;margin-right:2em;" type="button">Extended Syntax Help</button><a class="tooltip" id="tfReference2" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference2')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference2" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference2')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="queryReference" href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax" target="_blank" oncontextmenu="copyToClipboardId('queryReference')">foobar2000 Query Syntax reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
 			<div id="syntaxFilter_help" style="display: none;">
 				<div class="info5"><b>Extended syntax</b></div>
-				<div class="info7">Note new functions only available at Library-Tree-SMP use curly braces {} instead of parentheses (). e.g. $nowplaying{}.</div>
+				<div class="info7">Note new functions only available at Library-Tree-SMP use curly braces {} instead of parentheses (). e.g. $nowplaying{}.<br>Sorting expressions are also allowed (check query syntax reference) and will override any View (TF) or Source sorting (queue idx, etc.)</div>
 				<table id="syntaxFilter" class="table98">
 					<br>
 					<colgroup>

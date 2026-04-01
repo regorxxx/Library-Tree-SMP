@@ -1,4 +1,4 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"> <!-- 11/03/26 -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"> <!-- 01/04/26 -->
 
 <head>
 	<title>Library-Tree-SMP Syntax Help</title>
@@ -280,8 +280,25 @@
 						</li>
 					</ul>
 					<li>
-						<div class="li"> Regarding date sorting, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern. This way you can easily change and switch sorting without further editing.</div>
+						<div class="li"> Sorting is also based on TF output: </div>
 					</li>
+					<ul>
+						<li>
+							<div class="li"> Alphanumerical sorting is done following the settings at 'Behaviour' tab (HTML options panel) or 'View By Sorting' (properties panel). </div>
+						</li>
+						<li>
+							<div class="li"> To sort by date, in most cases is preferable to use the 'Settings\Views\Sort selected view by' menu instead of directly adding an expression to the View pattern.<br>This way you can easily change and switch sorting at any point without further editing. </div>
+						</li>
+						<li>
+							<div class="li"> 'View by Folder Structure' may also use its own independent windows-like sorting.</div>
+						</li>
+						<li>
+							<div class="li"> Playback Queue, Auto-DJ and Playlist sources may also use sorting by idx, set at 'Settings\Views'.</div>
+						</li>
+						<li>
+							<div class="li"> Sorting may be overridden by Search box or Filter expressions in some cases. </div>
+						</li>
+					</ul>
 					<li>
 						<div class="li"> Prefixes used by $stripbranchprefix{}, $swapbranchprefix{} and $prefix are set at advanced tab (HTML options panel) or 'Prefixes to Strip or Swap (| Separator)' (properties panel).</div>
 					</li>
@@ -489,7 +506,7 @@
 							<div class="li"> Foobar2000 Query Syntax reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax</a> </div>
 						</li>
 						<li>
-							<div class="li"> SORT BY expressions are also allowed: </a> </div>
+							<div class="li"> SORT BY expressions are also allowed (Filters and Search box): </a> </div>
 						</li>
 						<ul>
 							<li>
@@ -506,6 +523,9 @@
 							</li>
 							<li>
 								<div class="li"> Panel also allows to skip the query term: SORT BY [...]</div>
+							</li>
+							<li>
+								<div class="li"> Will override any View (TF) or Source sorting (queue idx, etc.) when used.</div>
 							</li>
 						</ul>
 					</ul>

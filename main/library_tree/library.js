@@ -1,5 +1,5 @@
 ﻿'use strict';
-//31/03/26
+//01/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -7,7 +7,7 @@
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
-/* global stripSort:readable, getSortObj:readable */
+/* global stripSort:readable, getSortObj:readable, isQuery:readable */
 
 /* exported Library*/
 
@@ -43,7 +43,11 @@ class Library {
 		this.upd_search = false;
 		this.v2_init = fb.Version.startsWith('2') && fb.IsLibraryEnabled();
 		this.validSearch = true;
-		this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
+		// Regorxxx <- Support SORT BY query sorting ->
+		this.searchSort = null;
+		this.filterSort = null;
+		this.validFilter = true;
+		// Regorxxx ->
 
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
@@ -105,7 +109,9 @@ class Library {
 		this.full_list_need_sort = true;
 		switch (true) {
 			case handleList.Count < 100 && (!panel.folderView || ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb): {  // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
-				let lis = ppt.filterBy && !this.filterQuery.includes('$searchtext') ? $.query(handleList, this.filterQuery) : handleList;
+				let lis = this.hasFilterQueryNoSearch() // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
+					? $.query(handleList, this.filterQuery)
+					: handleList;
 				panel.sort(lis);
 				this.binaryInsert(panel.folderView, lis, this.list, this.libNode);
 				// Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
@@ -126,29 +132,29 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
-						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
+						const searchText = !isRegExp && this.hasNoSearchOnFilter()
 							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
-						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchSort = !isRegExp && this.hasNoSearchOnFilter()
 							? getSortObj(processed)
 							: null;
-						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 							? searchText
 							: 'N/A';
 						newSearchItems = isRegExp
 							? $.applyRegExp(searchText, handleList, tags)
 							: fb.GetQueryItems(
 								handleList,
-								!this.filterQuery.includes('$searchtext')
+								this.hasNoSearchOnFilter()
 									? searchText
-									: this.filterQuery.replace(/\$searchtext/g, searchText)
+									: this.replaceFilterQuerySearch(searchText)
 							);
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
 						this.validSearch = false;
 						this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 					}
-					this.binaryInsert(panel.folderView, newSearchItems, panel.list, this.searchNode, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
+					this.binaryInsert(panel.folderView, newSearchItems, panel.list, this.searchNode, this.searchSort || this.filterSort); // Regorxxx <- Support SORT BY query sorting ->
 					if (!panel.list.Count) {
 						pop.clearTree();
 						sbar.setRows(0);
@@ -164,7 +170,7 @@ class Library {
 				break;
 			}
 			default:
-				if (ppt.filterBy && !this.filterQuery.includes('$searchtext')) {
+				if (this.hasFilterQueryNoSearch()) { // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
 					const newFilterItems = $.query(handleList, this.filterQuery);
 					this.list.InsertRange(this.list.Count, newFilterItems);
 					panel.sort(this.list);
@@ -205,22 +211,22 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
-						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
+						const searchText = !isRegExp && this.hasNoSearchOnFilter()
 							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
-						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchSort = !isRegExp && this.hasNoSearchOnFilter()
 							? getSortObj(processed)
 							: null;
-						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 							? searchText
 							: 'N/A';
 						newSearchItems = isRegExp
 							? $.applyRegExp(searchText, handleList, tags)
 							: fb.GetQueryItems(
 								handleList,
-								!this.filterQuery.includes('$searchtext')
+								this.hasNoSearchOnFilter()
 									? searchText
-									: this.filterQuery.replace(/\$searchtext/g, searchText)
+									: this.replaceFilterQuerySearch(searchText)
 							);
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
@@ -229,8 +235,8 @@ class Library {
 					}
 					panel.list.InsertRange(panel.list.Count, newSearchItems);
 					// Regorxxx <- Support SORT BY query sorting
-					panel.sort(panel.list, this.searchSort);
-					panel.sort(newSearchItems, this.searchSort);
+					panel.sort(panel.list, this.searchSort || this.filterSort);
+					panel.sort(newSearchItems, this.searchSort || this.filterSort);
 					// Regorxxx ->
 					switch (true) {
 						case !panel.folderView: {
@@ -302,11 +308,11 @@ class Library {
 		let i, items;
 		switch (true) {
 			case handleList.Count < 100:
-				this.binaryInsert(panel.folderView, handleList, panel.list, this.searchNode, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
+				this.binaryInsert(panel.folderView, handleList, panel.list, this.searchNode, this.searchSort || this.filterSort); // Regorxxx <- Support SORT BY query sorting ->
 				break;
 			default:
 				panel.list.InsertRange(panel.list.Count, handleList);
-				panel.sort(panel.list, this.searchSort); // Regorxxx <- Support SORT BY query sorting ->
+				panel.sort(panel.list, this.searchSort || this.filterSort); // Regorxxx <- Support SORT BY query sorting ->
 				switch (true) {
 					case !panel.folderView: {
 						const tfo = FbTitleFormat(panel.view);
@@ -404,7 +410,7 @@ class Library {
 		// Regorxxx <- Merge now playing and selected as fallback | Expand TF support on view patterns
 		this.doDynamicFilter(type, (bSearchMatch, bFilterMatch, bViewMatch) => {
 			if (bFilterMatch || bSearchMatch || bViewMatch) {
-				if (bFilterMatch) { this.getFilterQuery(); }
+				if (bFilterMatch) { this.processFilterQuery(); } // Regorxxx <- Code cleanup ->
 				const bFilterChanged = bFilterMatch && this.filterQuery !== this.filterQueryID;
 				const bSearchChanged = bSearchMatch && panel.processCustomTf(panel.search.txt) !== this.searchQueryID;
 				if (bFilterChanged || bSearchChanged || bViewMatch) {
@@ -521,10 +527,34 @@ class Library {
 		node.splice(i, 0, item);
 	}
 
-	// Regorxxx <- Code cleanup. Expose TF formatting for arbitrary input
-	getFilterQuery() {
-		this.filterQuery = panel.processCustomTf(panel.filter.mode[ppt.filterBy].type);
+	// Regorxxx <- Code cleanup | Expose TF formatting for arbitrary input | Support SORT BY query sorting
+	processFilterQuery() {
+		const processed = panel.processCustomTf(panel.filter.mode[ppt.filterBy].type);
+		this.filterQuery = panel.processCustomTf(stripSort(processed));
+		this.filterSort = getSortObj(processed);
+		this.validFilter = isQuery(this.filterQuery, true);
 	}
+
+	hasFilterQuery() {
+		return ppt.filterBy && this.filterQuery && this.filterQuery.length;
+	}
+
+	hasFilterQueryNoSearch() {
+		return this.hasFilterQuery() && !this.filterQuery.includes('$searchtext');
+	}
+
+	hasFilterQuerySearch() {
+		return this.hasFilterQuery() && this.filterQuery.includes('$searchtext');
+	}
+
+	hasNoSearchOnFilter() {
+		return !this.hasFilterQuery() || !this.filterQuery.includes('$searchtext');
+	}
+
+	replaceFilterQuerySearch(searchText) {
+		return this.filterQuery.replace(/\$searchtext/g, searchText);
+	}
+	// Regorxxx ->
 
 	// Regorxxx <- Expand TF support
 	processCustomSort(handleList, tf) {
@@ -681,12 +711,13 @@ class Library {
 		panel.forcePaint();
 		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
 		if (ppt.filterBy) {
-			this.getFilterQuery();
+			this.processFilterQuery(); // Regorxxx <- Code cleanup ->
 			this.filterQueryID = this.filterQuery;
-			if (!this.filterQuery.includes('$searchtext')) this.list = $.query(this.list, this.filterQuery);
+			if (this.hasFilterQueryNoSearch()) { this.list = $.query(this.list, this.filterQuery); } // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
 		} else {
 			this.filterQuery = '';
 			this.filterQueryID = 'N/A';
+			this.filterSort = null; // REgorxxx <- Support SORT BY query sorting ->
 		}
 		if (profiler) { profiler.Print('Search filter'); } // Regorxxx <- Library profiling ->
 		// Regorxxx <- Global duplicates filter
@@ -701,7 +732,7 @@ class Library {
 		if (!this.list.Count) {
 			pop.clearTree();
 			sbar.setRows(0);
-			this.none = 'Nothing found';
+			this.none = this.validFilter ? 'Nothing found' : 'Invalid filter expression'; // Regorxxx <- Support SORT BY query sorting ->
 			panel.treePaint();
 			return;
 		}
@@ -710,7 +741,7 @@ class Library {
 	}
 
 	getSearchList(n) {
-		if (this.filterQuery.includes('$searchtext')) return false;
+		if (this.hasFilterQuerySearch()) { return false; } // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 		const queryArr = [' AFTER ', 'ALL', ' AND ', ' BEFORE ', ' DURING ', ' EQUAL ', ' GREATER ', ' HAS ', ' IS ', ' LESS ', ' MISSING', ' NOT ', ' OR ', ' PRESENT', ' SINCE '];
 		if (queryArr.some(v => n.includes(v))) return false;
 		const ln = n.length;
@@ -1067,17 +1098,19 @@ class Library {
 	rootNames(li, search, treeArtToggle) {
 		const tree_type = !panel.folderView ? 0 : 1;
 		let arr = [];
-		if (!treeArtToggle || !panel.samePattern) switch (search) {
-			case 0:
-				panel.sort(this.list); // Regorxxx <- Support playlist sorting ->
-				li = panel.list = this.list;
-				this.libNode = [];
-				arr = this.libNode;
-				break;
-			case 1:
-				this.searchNode = [];
-				arr = this.searchNode;
-				break;
+		if (!treeArtToggle || !panel.samePattern) {
+			switch (search) {
+				case 0:
+					panel.sort(this.list, this.filterSort); // Regorxxx <- Support playlist sorting | Support SORT BY query sorting ->
+					li = panel.list = this.list;
+					this.libNode = [];
+					arr = this.libNode;
+					break;
+				case 1:
+					this.searchNode = [];
+					arr = this.searchNode;
+					break;
+			}
 		}
 
 		if (!treeArtToggle || !panel.samePattern) {
@@ -1125,22 +1158,22 @@ class Library {
 						: $.getTagsFromTf(panel.view)
 					: null;
 				const processed = panel.processCustomTf(panel.search.txt);
-				const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
+				const searchText = !isRegExp && this.hasNoSearchOnFilter()
 					? stripSort(processed) || 'ALL'
 					: panel.search.txt;
-				this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+				this.searchSort = !isRegExp && this.hasNoSearchOnFilter()
 					? getSortObj(processed)
 					: null;
-				this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
+				this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 					? searchText
 					: 'N/A';
 				panel.list = isRegExp
 					? $.applyRegExp(searchText, this.list, tags)
 					: fb.GetQueryItems(
 						this.getSearchList(searchText) || this.list,
-						!this.filterQuery.includes('$searchtext')
+						this.hasNoSearchOnFilter()
 							? searchText
-							: this.filterQuery.replace(/\$searchtext/g, searchText)
+							: this.replaceFilterQuerySearch(searchText)
 					);
 				this.searchCache[searchText] = panel.list;
 				// Regorxxx ->
@@ -1150,7 +1183,7 @@ class Library {
 				panel.list.RemoveAll();
 				this.validSearch = false;
 			}
-			if (this.searchSort) { panel.sort(panel.list, this.searchSort); } // Regorxxx <- Support SORT BY query sorting ->
+			if (this.searchSort || this.filterSort) { panel.sort(panel.list, this.searchSort || this.filterSort); } // Regorxxx <- Support SORT BY query sorting ->
 			if (!panel.list.Count) {
 				pop.clearTree();
 				sbar.setRows(0);
@@ -1368,7 +1401,8 @@ class Library {
 					else this.lib_update(isMainChanged);
 					break;
 				}
-				if (ppt.filterBy && !this.filterQuery.includes('$searchtext')) { // filter: check if not done
+				// filter: check if not done
+				if (this.hasFilterQueryNoSearch()) { // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
 					let newFilterItems = $.query(handleList, this.filterQuery);
 					let origFilter = this.list.Clone();
 					// addns
@@ -1405,22 +1439,22 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
-						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
+						const searchText = !isRegExp && this.hasNoSearchOnFilter()
 							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
-						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchSort = !isRegExp && this.hasNoSearchOnFilter()
 							? getSortObj(processed)
 							: null;
-						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 							? searchText
 							: 'N/A';
 						newSearchItems = isRegExp
 							? $.applyRegExp(searchText, handleList, tags)
 							: fb.GetQueryItems(
 								handleList,
-								!this.filterQuery.includes('$searchtext')
+								this.hasNoSearchOnFilter()
 									? searchText
-									: this.filterQuery.replace(/\$searchtext/g, searchText)
+									: this.replaceFilterQuerySearch(searchText)
 							);
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars
@@ -1450,22 +1484,22 @@ class Library {
 								: $.getTagsFromTf(panel.view)
 							: null;
 						const processed = panel.processCustomTf(panel.search.txt);
-						const searchText = !isRegExp && !this.filterQuery.includes('$searchtext')
+						const searchText = !isRegExp && this.hasNoSearchOnFilter()
 							? stripSort(processed) || 'ALL'
 							: panel.search.txt;
-						this.searchSort = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchSort = !isRegExp && this.hasNoSearchOnFilter()
 							? getSortObj(processed)
 							: null;
-						this.searchQueryID = !isRegExp && !this.filterQuery.includes('$searchtext')
+						this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 							? searchText
 							: 'N/A';
 						handlesInSearch = isRegExp
 							? $.applyRegExp(searchText, removeSearchItems, tags)
 							: fb.GetQueryItems(
 								removeSearchItems,
-								!this.filterQuery.includes('$searchtext')
+								this.hasNoSearchOnFilter()
 									? searchText
-									: this.filterQuery.replace(/\$searchtext/g, searchText)
+									: this.replaceFilterQuerySearch(searchText)
 							);
 						// Regorxxx ->
 					} catch (e) { // eslint-disable-line no-unused-vars

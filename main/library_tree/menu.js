@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/03/26
+//01/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -791,7 +791,7 @@ class MenuItems {
 		});
 		// Regorxxx ->
 
-		// Regorxxx <- Queue source | Support playlist sorting ->
+		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
 		const isQueueLike = ppt.libSource === 3 || ppt.libSource === 4;
 		const isPlsLike = ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist;
 		if (isQueueLike) {
@@ -799,14 +799,16 @@ class MenuItems {
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Queue idx',
 				func: () => { ppt.toggle('queueSorting'); lib.treeState(false, 2); },
-				checkItem: ppt.queueSorting
+				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
 			});
 		} else if (isPlsLike) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Playlist idx',
 				func: () => { ppt.toggle('plsSorting'); lib.treeState(false, 2); },
-				checkItem: ppt.plsSorting
+				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
 			});
 		}
 		const d = {};
@@ -814,7 +816,7 @@ class MenuItems {
 		menu.newMenu({
 			menuName: d.menuName,
 			appendTo: appendTo ? 'Views' : void (0),
-			flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) ? MF_STRING : MF_GRAYED,
+			flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
 			separator: true
 		});
 		// Regorxxx ->
@@ -861,12 +863,13 @@ class MenuItems {
 			str: v,
 			func: () => {
 				// Regorxxx <- Internal cache of views
-				const toCache = new Set([3, 4]);
-				if (toCache.has(i) && !toCache.has(ppt.libSource)) {
+				const queueCache = new Set([3, 4]);
+				if (queueCache.has(i) && !queueCache.has(ppt.libSource)) {
 					this.setCachedSource(i, 'Prev. Source', void (0));
-				} else if (!toCache.has(i) && toCache.has(ppt.libSource)) {
+				} else if (!queueCache.has(i) && queueCache.has(ppt.libSource)) {
 					this.setCachedSource(i, void (0), 'Prev. Source');
 				} else {
+					// TODO this.setCachedSource(i, this.sourceTypes()[sourceIdx], v);
 					this.setSource(i);
 				}
 				// Regorxxx ->
@@ -1020,7 +1023,13 @@ class MenuItems {
 		else if (/%ALBUM%/i.test(d.value)) { d.sortType = 2; }
 		// Regorxxx ->
 
-		d.menuName = d.sortType ? 'Sort selected view' : 'Sort N/A for selected view pattern';
+		// Regorxxx <- Support SORT BY query sorting
+		d.menuName = lib.searchSort || lib.filterSort
+			? lib.searchSort
+				? 'Sort N/A (Search sorting)'
+				: 'Sort N/A (Filter sorting)'
+			: d.sortType ? 'Sort selected view' : 'Sort N/A for selected view pattern';
+		// Regorxxx ->
 	}
 
 	loadView(clearCache, view, sel) {

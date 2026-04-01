@@ -56,12 +56,15 @@
 - Auto-DJ: 'From current view ' option plays tracks from the entire tree available at the moment Auto-DJ started, ignoring any future changes to the tree (view, search or filter changes at a latter point). There are additional entries to append further tracks at any point. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: submenu entry is now checked while it's running. Menu entries are checked according to the source (selection or live view). Note in the case of using the current view, it's transformed internally into 'selection'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: improved track selection by trying to choose different artists than currently playing one if possible. Note this greatly depends on variability of available tracks and if a track from same artist is still the overall best choice, it will probably be chosen over the rest.
-- Search: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed, the sorting part is simply ignored. Previously they returned an invalid search warning.
+- Search: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed. Previously they returned an invalid search warning. They override any sorting on panel, including the one inherited by View TF or Filter query, specific source sorting settings, etc.
+- Filter: queries with [sorting expressions](https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax#Sorting_results) are now allowed. Previously they returned a 'Nothing found' message. They override any sorting on panel (except from search box), including the one inherited by View TF, specific source sorting settings, etc.
+- Filter: Filter patterns are now checked before using and panel will warn when using an invalid expression instead of showing 'Nothing found'.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
 - Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
+- Sorting: view submenu will now show a warning when sorting by playlist idx, queue idx or TF is not available due to sorting being forced by Search box of Filter expressions.
 - Drag n' drop: drag n' drop to perform a search is now only allowed within the input box for all sources.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - External integration: changed callbacks.

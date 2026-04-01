@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/03/26
+//01/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -359,7 +359,7 @@ class Populate {
 					let n_o = '#condense#';
 					let nU = '';
 					const splitter = panel.softSplitter;
-					if (lib.searchSort) {
+					if (lib.searchSort || lib.filterSort) {
 						br.forEach((v, i) => {
 							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
 								multi = this.getAllCombinations(v.nm);
@@ -2721,7 +2721,7 @@ class Populate {
 		if (!ppt.libSource && !panel.multiProcess) { return; }
 		if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
-		if (lib.searchSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
+		if (lib.searchSort || lib.filterSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
@@ -2742,8 +2742,8 @@ class Populate {
 
 	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection
 	sortIfNeeded(items) {
-		if (lib.searchSort) {
-			panel.sort(items, lib.searchSort);
+		if (lib.searchSort || lib.filterSort) {
+			panel.sort(items, lib.searchSort || lib.filterSort);
 		} else if (panel.multiProcess && !ppt.customSort.length && panel.playlistSort) {
 			items = lib.processCustomSort(items, panel.playlistSort);
 		} else if (ppt.customSort.length) {
