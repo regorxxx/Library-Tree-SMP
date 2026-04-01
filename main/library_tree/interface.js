@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/03/26
+//01/04/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -559,7 +559,7 @@ class UserInterface {
 	}
 
 	getImgAlpha(image) {
-		const colorSchemeArray = JSON.parse(image.GetColourSchemeJSON(15));
+		const colorSchemeArray = JSON.parse(image.GetColourSchemeJSONV2 ? image.GetColourSchemeJSONV2(15): image.GetColourSchemeJSON(15)); // Regorxxx <- Improved color handling ->
 		let rTot = 0;
 		let gTot = 0;
 		let bTot = 0;
@@ -784,7 +784,7 @@ class UserInterface {
 	}
 
 	isImageLight(image) {
-		const colorSchemeArray = $.jsonParse(image.GetColourSchemeJSON(15), []);
+		const colorSchemeArray = $.jsonParse(image.GetColourSchemeJSONV2 ? image.GetColourSchemeJSONV2(15): image.GetColourSchemeJSON(15), []); // Regorxxx <- Improved color handling ->
 		let rTot = 0;
 		let gTot = 0;
 		let bTot = 0;
