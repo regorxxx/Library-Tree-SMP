@@ -126,9 +126,9 @@ class Populate {
 			custom1Avg: FbTitleFormat(ppt.tfCustom1Avg),
 			custom2Avg: FbTitleFormat(ppt.tfCustom2Avg),
 			custom3Avg: FbTitleFormat(ppt.tfCustom3Avg),
-			custom1Wei: FbTitleFormat(ppt.tfCustom1Me5),
-			custom2Wei: FbTitleFormat(ppt.tfCustom2Me5),
-			custom3Wei: FbTitleFormat(ppt.tfCustom3Me5),
+			custom1MeX: FbTitleFormat(ppt.tfCustom1MeX),
+			custom2MeX: FbTitleFormat(ppt.tfCustom2MeX),
+			custom3MeX: FbTitleFormat(ppt.tfCustom3MeX),
 		};
 		// Regorxxx <- Expand TF support. Fix sorting not being applied after HTML options panel change.
 		this.customSort = panel.processCustomTf(ppt.customSort) !== ppt.customSort
@@ -726,20 +726,21 @@ class Populate {
 					case 18: tf = this.tf.custom1Avg; break;
 					case 19: tf = this.tf.custom2Avg; break;
 					case 20: tf = this.tf.custom3Avg; break;
-					case 21: tf = this.tf.custom1Wei; break;
-					case 22: tf = this.tf.custom2Wei; break;
-					case 23: tf = this.tf.custom3Wei; break;
+					case 21: tf = this.tf.custom1MeX; break;
+					case 22: tf = this.tf.custom2MeX; break;
+					case 23: tf = this.tf.custom3MeX; break;
 				}
 				values = tf.EvalWithMetadbs(handleList).filter((v) => v !== '');
 				ln = values.length;
 				if (ln) {
+					const exp = Number(ppt.customMeX) || 1;
 					values = ppt.itemShowStatistics <= 20
 						? values.map(v => parseFloat(v)).reduce((a, b) => a + b, 0)
-						: values.map(v => parseFloat(v)).reduce((a, b) => a + b ** 5, 0); // Power mean with exponent 5
+						: values.map(v => parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
 					rawValue = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
 						? value
 						: values / ln;
-					if (ppt.itemShowStatistics > 20) { rawValue = rawValue ** (1 / 5); }
+					if (ppt.itemShowStatistics > 20) { rawValue = rawValue ** (1 / exp); }
 					value = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
 						? values
 						: $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals; // Regorxxx <- Rating decimals;
@@ -2680,7 +2681,7 @@ class Populate {
 		{
 			const userCustomTypes = ppt.tfCustomLabels.split('|');
 			const userCustomTooltip = ppt.tfCustomTooltip.split('|');
-			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean⁵)', 'Custom-2 (p-mean⁵)', 'Custom-3 (p-mean⁵)']
+			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
 				.forEach((t, i) => {
 					this.statistics.push({
 						name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i],

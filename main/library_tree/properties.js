@@ -349,9 +349,10 @@ let properties = [
 	['Statistics Titleformat Custom-1 (avg)', '[%DYNAMIC RANGE%]', 'tfCustom1Avg'],
 	['Statistics Titleformat Custom-2 (avg)', '[' + _t(globTags.bpm) + ']', 'tfCustom2Avg'],
 	['Statistics Titleformat Custom-3 (avg)', '$min($add($select($add(' + _t(globTags.feedback) + ',%2003_LOVED%,2),-10,0,10),$select(' + _t(globTags.rating) + ',0,2,5,7,10)),10)', 'tfCustom3Avg'],
-	['Statistics Titleformat Custom-1 (p-mean⁵)', '[%DYNAMIC RANGE%]', 'tfCustom1Me5'],
-	['Statistics Titleformat Custom-2 (p-mean⁵)', '[' + _t(globTags.bpm) + ']', 'tfCustom2Me5'],
-	['Statistics Titleformat Custom-3 (p-mean⁵)', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfCustom3Me5'],
+	['Statistics Titleformat Custom-1 (p-mean)', '[%DYNAMIC RANGE%]', 'tfCustom1MeX'],
+	['Statistics Titleformat Custom-2 (p-mean)', '[' + _t(globTags.bpm) + ']', 'tfCustom2MeX'],
+	['Statistics Titleformat Custom-3 (p-mean)', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfCustom3MeX'],
+	['Statistics Titleformat p-mean exponent', 3, 'tfCustomMeX'],
 	['Statistics Titleformat Custom labels', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomLabels'],
 	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|| DR| BPMs| ', 'tfCustomTooltip'],
 	// Regorxxx ->

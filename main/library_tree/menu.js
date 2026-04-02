@@ -1548,7 +1548,7 @@ class MenuItems {
 
 	statisticsTypes() {
 		const userCustomTypes = ppt.tfCustomLabels.split('|');
-		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean⁵)', 'Custom-2 (p-mean⁵)', 'Custom-3 (p-mean⁵)']
+		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
 			.forEach((t, i) => {
 				if (!userCustomTypes[i] || !userCustomTypes[i].length) { userCustomTypes[i] = t; }
 				else { userCustomTypes[i] += ' [' + t + ']'; }
