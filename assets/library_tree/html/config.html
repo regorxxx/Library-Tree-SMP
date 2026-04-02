@@ -1111,7 +1111,7 @@
 					<div id="statisticsTooltip"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><a id="stats_help" href="#" onclick="showHelp('stats_text');return false;">Statistics help</a></div>
 					<div id="stats_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, averaged value from all their children<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children. For X>1 -> &#x2265; average (1-power mean)<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;e.g. 'Lyrics: 0 tracks with lyrics'</div>
+						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Use X&gt; for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
 						<div><br></div>
 					</div>
 				</div>
@@ -1827,7 +1827,7 @@
 					type: ['float', 'int', 'int', 'int', 'int', 'int', 'int']
 				},
 				statistics: {
-					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'tfCustomMeX', 'tfCustomLabels', 'tfCustomTooltip', 'ratingDecimals'],
+					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomTooltip', 'ratingDecimals'],
 					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'int']
 				},
 				// Regorxxx ->

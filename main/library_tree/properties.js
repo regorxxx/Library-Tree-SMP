@@ -352,7 +352,7 @@ let properties = [
 	['Statistics Titleformat Custom-1 (p-mean)', '[%DYNAMIC RANGE%]', 'tfCustom1MeX'],
 	['Statistics Titleformat Custom-2 (p-mean)', '[' + _t(globTags.bpm) + ']', 'tfCustom2MeX'],
 	['Statistics Titleformat Custom-3 (p-mean)', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfCustom3MeX'],
-	['Statistics Titleformat p-mean exponent', 3, 'tfCustomMeX'],
+	['Statistics Titleformat p-mean exponent', 3, 'expCustomMeX'],
 	['Statistics Titleformat Custom labels', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomLabels'],
 	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|| DR| BPMs| ', 'tfCustomTooltip'],
 	// Regorxxx ->

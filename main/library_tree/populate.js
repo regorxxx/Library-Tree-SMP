@@ -733,7 +733,7 @@ class Populate {
 				values = tf.EvalWithMetadbs(handleList).filter((v) => v !== '');
 				ln = values.length;
 				if (ln) {
-					const exp = Number(ppt.customMeX) || 1;
+					const exp = Number(ppt.expCustomMeX) || 1;
 					values = ppt.itemShowStatistics <= 20
 						? values.map(v => parseFloat(v)).reduce((a, b) => a + b, 0)
 						: values.map(v => parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
