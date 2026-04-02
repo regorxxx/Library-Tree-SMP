@@ -66,6 +66,7 @@
 - Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
 - Sorting: view submenu will now show a warning when sorting by playlist idx, queue idx or TF is not available due to sorting being forced by Search box of Filter expressions.
+- Sorting: changed behavior of smart sort (see also related fix below), to mimic the View pattern with clever substitutions for branches and other custom TF expressions, instead of using a hardcoded expression based on (%ALBUM ARTIST%|%ARTIST%) + '%ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%'. See 'Behaviour' tab (HTML options panel) or 'Playlist: Smart Sort by view' (properties panel).
 - Drag n' drop: drag n' drop to perform a search is now only allowed within the input box for all sources.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
 - External integration: changed callbacks.

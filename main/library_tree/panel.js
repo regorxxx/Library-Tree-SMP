@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/04/26
+//02/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -338,6 +338,28 @@ class Panel {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Preserve tree sorting at selection
+	cleanViewTf(s) {
+		s = s.replace(/\$colour{.*?}/gi, '')
+			.replace(/\$nodisplay{(.*?)}/gi, '@$1@') // It's used for sorting but not displayed
+			.replace(/%<(.*?)>%/gi, (match, group) => {  // Only the first value of a branch tag is used for sorting
+				group = (group || '').toUpperCase();
+				return group === 'ARTIST'
+					? '$if3([$meta(ARTIST,0)],[$meta(ALBUM ARTIST,0)],[$meta(COMPOSER,0)],[$meta(PERFORMER,0)])'
+					: group === 'ALBUM ARTIST'
+						? '$if3([$meta(ALBUM ARTIST,0)],[$meta(ARTIST,0)],[$meta(COMPOSER,0)],[$meta(PERFORMER,0)])'
+						: group === 'ALBUM'
+							? '$if3([$meta(ALBUM,0)],[$meta(VENUE,0)],[$meta(COMPOSER,0)],[$meta(PERFORMER,0)])'
+							: group === 'TRACK ARTIST'
+								? '$if($strcmp(%ARTIST%,%ALBUM ARTIST%),$char(8203),[$meta(ARTIST,0)])'
+								: '[$meta(' + group + ',0)]';
+			})
+			.replace(/\$swapbranchprefix{(.*?)}/gi, '$stripprefix($1)')
+			.replace(/\$stripbranchprefix{(.*?)}/gi, '$swapprefix($1)');
+		return s;
+	}
+	// Regorxxx ->
+
 	// Regorxxx <- Expand TF support on view patterns
 	getView(view) {
 		this.view = view;
@@ -369,12 +391,7 @@ class Panel {
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				// Regorxxx <- Preserve tree sorting at selection
-				if (ppt.smartSort) {
-					const view = this.view.toUpperCase();
-					this.playlistSort = FbTitleFormat((view.includes('ALBUM ARTIST') || !view.includes('%ARTIST%') && !view.includes('%<ARTIST>%') && !view.includes('$META(ARTIST') ? '%ALBUM ARTIST%' : '%ARTIST%') + '  %ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%');
-				}
-				// Regorxxx ->
+				if (ppt.smartSort) { this.playlistSort = this.cleanViewTf(this.view); } // Regorxxx <- Preserve tree sorting at selection ->
 			}
 			while (this.view.includes('$stripbranchprefix{')) {
 				ix1 = this.view.indexOf('$stripbranchprefix{');
@@ -1631,7 +1648,8 @@ class Panel {
 		but.refresh(true);
 		find.on_size();
 		pop.createImages();
-		// Regorxxx <- Fix values on reset
+		// Regorxxx <- Fix values on reset | Fix values on options change
+		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)): '';
 		img.setRoot();
 		img.setNoArtist();
 		img.setNoCover();
