@@ -191,18 +191,22 @@ class Populate {
 	// Regorxxx ->
 
 	// Regorxxx <- Preserve tree sorting at selection
-	addItems(arr, node) {
-		if (node.root) {
-			$.range(0, panel.list.Count -1, 1).forEach((idx) => arr.push(idx));
-		} else if (node.child && node.child.length) {
-			node.child.forEach((subNode) => this.addItems(arr, subNode));
-		} else if (node.item.length > 1 || node.item[0].count > 1) {
-			this.branch(node, !node.root ? false : true, true);
-			if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
-			else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
-			this.clearChild(node);
+	addItems(arr, node, bNoSort) {
+		if (panel.playlistSort || bNoSort) {
+			node.item.forEach((item) => $.range(item.start, item.end, 1).forEach((idx) => arr.push(idx)));
 		} else {
-			$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
+			if (node.root) { // When selecting all, ommit
+				$.range(0, panel.list.Count - 1, 1).forEach((idx) => arr.push(idx));
+			} else if (node.child && node.child.length) {
+				node.child.forEach((subNode) => this.addItems(arr, subNode));
+			} else if (node.item.length > 1 || node.item[0].count > 1) {
+				this.branch(node, !node.root ? false : true, true);
+				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
+				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
+				this.clearChild(node);
+			} else {
+				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
+			}
 		}
 	}
 	// Regorxxx ->
@@ -541,7 +545,7 @@ class Populate {
 		const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
 		if (this.cache[type][key]) { return this.cache[type][key]; }
 		let items = [];
-		this.addItems(items, v); // Regorxxx <- Preserve tree sorting at selection ->
+		this.addItems(items, v, true); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
 		const handleList = this.getHandleList(void (0), items);
 		let ln, n, tf, value, rawValue, values;
@@ -1582,12 +1586,7 @@ class Populate {
 	// Regorxxx <- Preserve tree sorting at selection
 	getHandleList(n, selection) {
 		if (n == 'newItems') { this.getTreeSel(); }
-		let handleList = new FbMetadbHandleList();
-		(selection || this.sel_items).forEach(v => {
-			if (v >= panel.list.Count) { return; }
-			handleList.Add(panel.list[v]);
-		});
-		return handleList;
+		return new FbMetadbHandleList((selection || this.sel_items).map((v) => panel.list[v]).filter(Boolean));
 	}
 	// Regorxxx ->
 
@@ -1649,11 +1648,13 @@ class Populate {
 		this.sel_items = [];
 		this.lastSelMul = [];
 		this.tree.forEach((v, idx) => {
-			if (v.sel) {
-				this.addItems(this.sel_items, v);
-				this.lastSelMul.push(idx);
-			}
+			if (v.sel) { this.lastSelMul.push(idx); }
 		});
+		if (this.lastSelMul.length === this.tree.length - (this.rootNode ? 1 : 0)) {
+			this.tree.forEach((v) => this.addItems(this.sel_items, v, true));
+		} else {
+			this.lastSelMul.forEach((idx) => this.addItems(this.sel_items, this.tree[idx]));
+		}
 		this.sel_items = [...new Set(this.sel_items)];
 	}
 	// Regorxxx ->
@@ -2751,6 +2752,9 @@ class Populate {
 			items = lib.processCustomSort(items, panel.playlistSort);
 		} else if (ppt.customSort.length) {
 			items = lib.processCustomSort(items, this.customSort);
+		} else if (items.Count === panel.list.Count) {
+			const tf = new FbTitleFormat(panel.cleanViewTf(panel.processCustomTf(panel.curPattern)));
+			panel.sort(items, { tf, direction: 1 });
 		}
 		return items;
 	}
