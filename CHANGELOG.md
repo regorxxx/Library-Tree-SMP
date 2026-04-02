@@ -40,6 +40,7 @@
 - Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 - Album art: added menu entry to open the art cache folder (if used).
 - Album art: added new setting to show/hide the image gray frame border, which was forced on original script, at 'Album Art' tab (HTML options panel) or 'Image Frame border' (properties panel).
+- Statistics: added 3 new customizable statistics slots based on [5-power mean](https://en.wikipedia.org/wiki/Generalized_mean). Slots and labels can be modified easily at the HTML options panel or at 'Statistics Titleformat Custom-X (p-mean5)' and 'Statistics Titleformat Custom-X (p-mean5)' and 'Statistics Titleformat Custom labels' (properties panel). By default the panel includes custom expressions as example.
 - Readme: added help submenu, at settings menu, showing all available docs. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 - Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 ### Changed

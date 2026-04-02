@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/04/26
+//02/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -363,7 +363,7 @@ class MenuItems {
 			str: v,
 			func: () => this.setStatistics(i),
 			checkRadio: i == ppt.itemShowStatistics,
-			separator: !i || i == 7 || i == 11 || i == 14 || i === 17 || i === 20
+			separator: !i || i == 7 || i == 11 || i == 14 || i === 17 || i === 20 || i === 23
 		}));
 		// Regorxxx ->
 
@@ -1548,7 +1548,7 @@ class MenuItems {
 
 	statisticsTypes() {
 		const userCustomTypes = ppt.tfCustomLabels.split('|');
-		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)']
+		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean⁵)', 'Custom-2 (p-mean⁵)', 'Custom-3 (p-mean⁵)']
 			.forEach((t, i) => {
 				if (!userCustomTypes[i] || !userCustomTypes[i].length) { userCustomTypes[i] = t; }
 				else { userCustomTypes[i] += ' [' + t + ']'; }
