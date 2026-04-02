@@ -192,7 +192,7 @@ class Populate {
 
 	// Regorxxx <- Preserve tree sorting at selection
 	addItems(arr, node, bNoSort) {
-		if (panel.playlistSort || bNoSort) {
+		if (panel.playlistSort || bNoSort) { // Regorxxx <- Smart sorting based on view ->
 			node.item.forEach((item) => $.range(item.start, item.end, 1).forEach((idx) => arr.push(idx)));
 		} else {
 			if (node.root) { // When selecting all, ommit
@@ -2744,7 +2744,7 @@ class Populate {
 
 	}
 
-	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection
+	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection | Smart sorting based on view ->
 	sortIfNeeded(items) {
 		if (lib.searchSort || lib.filterSort) {
 			panel.sort(items, lib.searchSort || lib.filterSort);

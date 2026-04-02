@@ -391,7 +391,7 @@ class Panel {
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				if (ppt.smartSort) { this.playlistSort = this.cleanViewTf(this.view); } // Regorxxx <- Preserve tree sorting at selection ->
+				if (ppt.smartSort) { this.playlistSort = this.cleanViewTf(this.view); } // Regorxxx <- Preserve tree sorting at selection | Smart sorting based on view ->
 			}
 			while (this.view.includes('$stripbranchprefix{')) {
 				ix1 = this.view.indexOf('$stripbranchprefix{');
@@ -1649,7 +1649,7 @@ class Panel {
 		find.on_size();
 		pop.createImages();
 		// Regorxxx <- Fix values on reset | Fix values on options change
-		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)): '';
+		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)): ''; // Regorxxx <- Smart sorting based on view ->
 		img.setRoot();
 		img.setNoArtist();
 		img.setNoCover();
