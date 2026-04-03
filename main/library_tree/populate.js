@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/04/26
+//03/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1599,7 +1599,13 @@ class Populate {
 	// Regorxxx <- Preserve tree sorting at selection
 	getHandleList(n, selection) {
 		if (n == 'newItems') { this.getTreeSel(); }
-		return new FbMetadbHandleList((selection || this.sel_items).map((v) => panel.list[v]).filter(Boolean));
+		const max = panel.list.Count;
+		return new FbMetadbHandleList(
+			(selection || this.sel_items).reduce((prev, v) => {
+				if (v < max) { prev.push(panel.list[v]); }
+				return prev;
+			}, [])
+		);
 	}
 	// Regorxxx ->
 
