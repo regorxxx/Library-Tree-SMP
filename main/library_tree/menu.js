@@ -1116,6 +1116,8 @@ class MenuItems {
 		if (this.validItem) {
 			if (!item.sel) {
 				pop.clearSelected();
+				pop.sel_items = []; // Regorxxx <- Performance improvement for contextual menu ->
+				pop.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 				item.sel = true;
 			}
 			if (!pop.sel_items.length) { pop.getTreeSel(); } // Regorxxx <- Performance improvement for contextual menu ->
