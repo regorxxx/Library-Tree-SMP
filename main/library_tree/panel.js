@@ -6,7 +6,7 @@
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable */
-/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable */
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
 
 /* exported Panel */
 
@@ -183,7 +183,7 @@ class Panel {
 		window.RepaintRect(0, this.paint_y, ui.w, ui.h - this.paint_y + 1, true);
 	}
 
-	// Regorxxx <- Expose TF formatting for arbitrary input
+	// Regorxxx <- Expose TF formatting for arbitrary input | Expand TF support | Merge now playing and selected as fallback | Expose custom prefixes as tag
 	eval(n, type) {
 		let handle, tfo;
 		switch (type) {
@@ -199,21 +199,21 @@ class Panel {
 				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
 				handle = fb.GetFocusItem();
 				return handle ? tfo.EvalWithMetadb(handle) : '';
-			// Regorxxx <- Merge now playing and selected as fallback
 			case 'nowplayingorselected':
 				if (!n) return '';
 				tfo = FbTitleFormat(n);
 				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
 				handle = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
 				return handle ? tfo.EvalWithMetadb(handle) : '';
-			// Regorxxx ->
 		}
 	}
 
-	processCustomTf(s) {
+	processCustomTf(s, node) {
 		if (typeof s === 'string') {
-			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(',')); // Regorxxx <- Expose custom prefixes as tag ->
-			// Regorxxx <- Expand TF support
+			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(','))
+				.replace(/\$nodename/gi, sanitizeTagTfo((node || {}).nm || '-N/A-'))
+				.replace(/\$viewname/gi, sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
+				.replace(/\$filtername/gi, sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
 				if (!q) { s = s.replace(/\$randfloat{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
@@ -294,7 +294,6 @@ class Panel {
 				if (!q) { s = s.replace(/\$meta_branch(.*?)?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
 			}
-			// Regorxxx ->
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
 				if (!q) { s = s.replace(/\$nowplaying{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
@@ -305,14 +304,11 @@ class Panel {
 				if (!q) { s = s.replace(/\$selected{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
 			}
-			// Regorxxx <- Merge now playing and selected as fallback
 			while (s.includes('$nowplayingorselected{')) {
 				const q = s.match(/\$nowplayingorselected{(.+?)}/);
 				if (!q) { s = s.replace(/\$nowplayingorselected{.*?}?/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
 			}
-			// Regorxxx ->
-			// Regorxxx <- Expand TF support
 			let i = 0;
 			while (s.includes('$harmonicsort{')) {
 				const q = s.match(/\$harmonicsort{.*?}/);
@@ -333,7 +329,6 @@ class Panel {
 				i++;
 			}
 		}
-		// Regorxxx ->
 		return s;
 	}
 	// Regorxxx ->
