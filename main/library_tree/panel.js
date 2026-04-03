@@ -213,6 +213,7 @@ class Panel {
 			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(','))
 				.replace(/\$nodename/gi, sanitizeTagTfo((node || {}).nm || '-N/A-'))
 				.replace(/\$viewname/gi, sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
+				.replace(/\$sourcetype/gi, sanitizeTagTfo(this.getSourceType(this.getSourceIdxFromSettings()) || '-N/A-'))
 				.replace(/\$filtername/gi, sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
