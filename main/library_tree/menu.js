@@ -368,14 +368,29 @@ class MenuItems {
 		// Regorxxx ->
 
 		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
-		[...this.artTypes(), 'Group: auto', 'Group: top level', 'Group: two levels', 'Change group name...', 'Configure album art...'].forEach((v, i) => menu.newItem({ // Regorxxx <- External integration ->
+		// Regorxxx <- Code cleanup
+		this.artTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration ->
 			menuName: 'Album art',
 			str: v,
-			func: () => this.setAlbumart(i),
-			flags: i == 8 && (panel.folderView || ppt.rootNode != 3) ? MF_GRAYED : MF_STRING,
-			checkRadio: i == ppt.artId || i - 5 == ppt.albumArtGrpLevel,
-			separator: i == 4 || i == 7 || i == 8
+			func: () => this.setAlbumartType(i),
+			checkRadio: i == ppt.artId,
 		}));
+		menu.newItem({ menuName: 'Album art', separator: true });
+		['Group: auto', 'Group: top level', 'Group: two levels', 'Change group name...'].forEach((v, i) => menu.newItem({
+			menuName: 'Album art',
+			str: v,
+			func: () => this.setAlbumartGroup(i),
+			flags: i === 3 && (panel.folderView || ppt.rootNode != 3) ? MF_GRAYED : MF_STRING,
+			checkRadio: i === ppt.albumArtGrpLevel,
+			separator: i == 2
+		}));
+		menu.newItem({ menuName: 'Album art', separator: true });
+		menu.newItem({ // Regorxxx <- External integration ->
+			menuName: 'Album art',
+			str: 'Configure album art...',
+			func: () => panel.open('albumArt'),
+		});
+		// Regorxxx ->
 		// Regorxxx <- Art cache folder
 		menu.newItem({ menuName: 'Album art', separator: true });
 		menu.newItem({
@@ -1146,8 +1161,8 @@ class MenuItems {
 	}
 	// Regorxxx ->
 
-	setAlbumart(i) {
-		let clearCache = false;
+	// Regorxxx <- Custom TF art | Code cleanup
+	setAlbumartType(i) {
 		switch (i) {
 			case 0:
 			case 1:
@@ -1156,12 +1171,18 @@ class MenuItems {
 			case 4:
 				ppt.artId = i;
 				break;
-			case 5:
-			case 6:
-			case 7:
-				ppt.albumArtGrpLevel = i - 5;
+		}
+		this.loadView(false, ppt.albumArtViewBy);
+	}
+
+	setAlbumartGroup(i) {
+		switch (i) {
+			case 0:
+			case 1:
+			case 2:
+				ppt.albumArtGrpLevel = i;
 				break;
-			case 8: {
+			case 3: {
 				const key = `${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`;
 				const ok_callback = (status, input) => {
 					if (status != 'cancel') {
@@ -1186,12 +1207,10 @@ class MenuItems {
 				}
 				break;
 			}
-			case 9:
-				panel.open('albumArt');
-				break;
 		}
-		this.loadView(clearCache, ppt.albumArtViewBy);
+		this.loadView(false, ppt.albumArtViewBy);
 	}
+	// Regorxxx ->
 
 	setEdit(i) {
 		switch (i) {
