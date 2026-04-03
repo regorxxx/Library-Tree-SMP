@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/04/26
+//03/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -35,7 +35,7 @@ class Panel {
 		this.init = true;
 		this.l = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
 		this.lc = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
-		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : [2, 2, 2, 1, 1][ppt.artId];
+		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.art(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 		this.list = new FbMetadbHandleList();
 		this.menu = [];
 		this.paint_y = Math.floor(ui.style.topBarShow || !ppt.sbarShow ? ui.row.h * 1.2 : 0);
@@ -539,7 +539,7 @@ class Panel {
 			this.samePattern = !this.colMarker && this.curPattern == this.view;
 		}
 		this.curPattern = this.view;
-		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : [2, 2, 2, 1, 1][ppt.artId];
+		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.art(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 
 		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
@@ -1649,7 +1649,7 @@ class Panel {
 		find.on_size();
 		pop.createImages();
 		// Regorxxx <- Fix values on reset | Fix values on options change
-		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)): ''; // Regorxxx <- Smart sorting based on view ->
+		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)) : ''; // Regorxxx <- Smart sorting based on view ->
 		img.setRoot();
 		img.setNoArtist();
 		img.setNoCover();

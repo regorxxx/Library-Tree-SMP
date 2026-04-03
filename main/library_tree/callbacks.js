@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/03/26
+//03/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -275,6 +275,9 @@ addEventListener('on_notify_data', (name, info) => {
 		});
 	}
 
+	const switchArt = img.artSwitchType(ppt.artId);
+	const art = img.art();
+	const artTypes = art.map((a) => a.type);
 	switch (name) {
 		case '!!.tags update':
 			lib.treeState(false, 2);
@@ -339,13 +342,12 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch show artists / albums':
-		case window.ScriptInfo.Name + ': show artists':
-		case window.ScriptInfo.Name + ': show albums': {
+		case window.ScriptInfo.Name + ': ' + art[0].showMenu.toLowerCase(): // Front
+		case window.ScriptInfo.Name + ': ' + art[4].showMenu.toLowerCase(): { // Artist
 			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
-			if (name === window.ScriptInfo.Name + ': show albums' && ppt.artId != 4) { break; }
-			if (name === window.ScriptInfo.Name + ': show artists' && ppt.artId === 4) { break; }
-			ppt.artId = ppt.artId === 4 ? 0 : 4;
+			if (name === window.ScriptInfo.Name + ': ' + art[ppt.artId].showMenu.toLowerCase()) { break; }
+			ppt.artId = switchArt.idx;
 			men.setPlaylist(5);
 			break;
 		}
@@ -353,9 +355,8 @@ addEventListener('on_notify_data', (name, info) => {
 			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
 			let idx = -1;
-			const types = men.artTypes();
-			if (typeof info.artType !== 'undefined') { idx = types.findIndex((t) => t.toLowerCase() === info.artType.toLowerCase()); }
-			else if (typeof info.artIdx !== 'undefined' && info.artIdx >= -1 && info.artIdx < types.length) {
+			if (typeof info.artType !== 'undefined') { idx = artTypes.findIndex((t) => t.toLowerCase() === info.artType.toLowerCase()); }
+			else if (typeof info.artIdx !== 'undefined' && info.artIdx >= -1 && info.artIdx < artTypes.length) {
 				if (info.artIdx === -1) { idx = 0; }
 				else { idx = info.artIdx; }
 			}

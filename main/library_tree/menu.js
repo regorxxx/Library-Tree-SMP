@@ -333,13 +333,16 @@ class MenuItems {
 			});
 		}
 
+		// Regorxxx <- Code cleanup
 		if (this.validItem && panel.imgView) {
+			const switchArt = img.artSwitchType(ppt.artId);
 			menu.newItem({
-				str: ppt.artId != 4 ? 'Show artists' : 'Show albums',
-				func: () => { ppt.artId = ppt.artId != 4 ? 4 : 0; this.setPlaylist(5); },
+				str: switchArt.showMenu,
+				func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); },
 				separator: this.show_context && !ui.style.topBarShow
 			});
 		}
+		// Regorxxx ->
 
 		if (this.validItem && !panel.imgView) {
 			['Collapse all\tNum -', 'Expand\tNum *'].forEach((v, i) => menu.newItem({
@@ -369,7 +372,7 @@ class MenuItems {
 
 		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
 		// Regorxxx <- Code cleanup
-		this.artTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration ->
+		 img.artTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
 			menuName: 'Album art',
 			str: v,
 			func: () => this.setAlbumartType(i),
@@ -1163,7 +1166,7 @@ class MenuItems {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Custom TF art | Code cleanup
+	// Regorxxx <- Code cleanup
 	setAlbumartType(i) {
 		switch (i) {
 			case 0:
@@ -1565,10 +1568,6 @@ class MenuItems {
 	}
 
 	// Regorxxx <- External integration
-	artTypes() {
-		return ['Front', 'Back', 'Disc', 'Icon', 'Artist'];
-	}
-
 	statisticsTypes() {
 		const userCustomTypes = ppt.tfCustomLabels.split('|');
 		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/03/26
+//03/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -133,6 +133,33 @@ class Images {
 	}
 
 	// Methods
+
+	// Regorxxx <- Code cleanup | External integration
+	art(idx, folderView) {
+		const art = [
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, showMenu: 'Show artists', switchIdx: 0 }
+		];
+		return typeof idx === 'undefined' ? art : art[idx];
+	}
+
+	artTypes() {
+		return this.art().map((a) => a.type);
+	}
+
+	artSwitchType(idx) {
+		const art = this.art();
+		const newIdx = art[idx].switchIdx;
+		return art[newIdx];
+	}
+
+	artCachePath(idx, folderView) {
+		return this.cachePath + this.art(idx, folderView).cacheName;
+	}
+	// Regorxxx ->
 
 	async get_album_art_async(handle, art_id, key, ix) {
 		let result = await utils.GetAlbumArtAsyncV2(0, handle, art_id, false);
@@ -713,7 +740,7 @@ class Images {
 			cache: this.saveSize == 250 ? 1 : this.saveSize == 500 ? 4 : 9,
 			preLoad: this.saveSize == 250 ? (ppt.albumArtLabelType != 3 ? 7 : 15) : this.saveSize == 500 ? 20 : 45
 		};
-		this.cacheFolder = this.cachePath + ['front', 'back', 'disc', 'icon', 'artist'][ppt.artId] + (this.saveSize == 250 ? '' : this.saveSize) + '\\';
+		this.cacheFolder = this.artCachePath(ppt.artId, panel.folderView) + (this.saveSize == 250 ? '' : this.saveSize) + '\\'; // Regorxxx <- Code cleanup ->
 		$.create(this.cacheFolder);
 		this.database = $.jsonParse(this.cacheFolder + 'database.dat', this.newDatabase(), 'file');
 		if (this.cacheFolder != cacheFolder) {
@@ -1263,7 +1290,7 @@ class Images {
 		}
 
 		const allSelected = pop.sel_items.length == fb.GetLibraryItems().Count;
-		const base = this.cachePath + ['front', 'back', 'disc', 'icon', 'artist'][ppt.artId];
+		const base = this.artCachePath(ppt.artId, panel.folderView); // Regorxxx <- Code cleanup ->
 		const databases = [base + '\\database.dat', base + '500\\database.dat', base + '750\\database.dat'];
 		if (allSelected) {
 			this.clearCache(); // full clear of working cache
