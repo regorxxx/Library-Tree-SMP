@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//04/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -210,10 +210,17 @@ class Panel {
 
 	processCustomTf(s, node) {
 		if (typeof s === 'string') {
+			const sourceIdx = this.getSourceIdxFromSettings();
+			const sourceType = this.getSourceType(sourceIdx);
+			const sourceName = sourceIdx === 0 && plman.ActivePlaylist !== -1 ? plman.GetPlaylistName(plman.ActivePlaylist) : '';
+			const sourceId = sourceIdx === 0 && plman.ActivePlaylist !== -1 ? plman.GetGUID(plman.ActivePlaylist) : '';
 			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(','))
 				.replace(/\$nodename/gi, sanitizeTagTfo((node || {}).nm || '-N/A-'))
+				.replace(/\$sourcetype/gi, sanitizeTagTfo(sourceType || '-N/A-'))
+				.replace(/\$sourcename/gi, sanitizeTagTfo(sourceName || '-N/A-'))
+				.replace(/\$sourcenameortype/gi, sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
+				.replace(/\$sourceid/gi, sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$viewname/gi, sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
-				.replace(/\$sourcetype/gi, sanitizeTagTfo(this.getSourceType(this.getSourceIdxFromSettings()) || '-N/A-'))
 				.replace(/\$filtername/gi, sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);

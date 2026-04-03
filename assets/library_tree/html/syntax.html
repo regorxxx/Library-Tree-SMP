@@ -151,7 +151,8 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped. <td>
+					<td> Returns current source type. Special characters are already escaped.
+					<td>
 						<em>
 							%ARTIST%|%ALBUM%$if($stricmp($sourcetype,library),,|%RATING%)
 							<br>
@@ -168,8 +169,66 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$sourcename</em> </td>
+					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td>
+						<em>
+							%ARTIST%|%ALBUM%$if($stricmp($sourcename,library viewer selection),,|%RATING%)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on active playlist being 'library viewer selection'.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcenameortype</em> </td>
+					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td>
+						<em>
+							%ARTIST%|%ALBUM%$if($stricmp($sourcenameortype,library),,|%RATING%)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on active playlist or source being 'Library'.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourceid</em> </td>
+					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td>
+						<em>
+							%ARTIST%|%ALBUM%$if($stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),,|%RATING%)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on active playlist's GUID matching.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$viewname</em> </td>
-					<td> Returns current view name. Special characters are already escaped. <td>
+					<td> Returns current view name. Special characters are already escaped.
+					<td>
 						<em>
 							$viewname
 							<br>
@@ -187,7 +246,8 @@
 				</tr>
 				<tr>
 					<td> <em>$filtername</em> </td>
-					<td> Returns current filter name. Special characters are already escaped. <td>
+					<td> Returns current filter name. Special characters are already escaped.
+					<td>
 						<em>
 							$if($stricmp($filtername,lossless),,%CODEC%|)%ARTIST%|%ALBUM%
 							<br>
@@ -395,7 +455,7 @@
 						</li>
 					</ul>
 					<li>
-						<div class="li"> Usage of $viewname, $filtername and $sourcetype can be used for conditional behavior. </div>
+						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. and can be used for conditional behavior. </div>
 					</li>
 					<ul>
 						<li>
@@ -459,7 +519,8 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped. <td>
+					<td> Returns current source type. Special characters are already escaped.
+					<td>
 						<em>
 							"$stricmp($sourcetype,library)" MISSING OR %RATING% PRESENT
 						</em>
@@ -471,8 +532,51 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$sourcename</em> </td>
+					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td>
+						<em>
+							"$stricmp($sourcename,library viewer selection)" MISSING OR %RATING% PRESENT
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						Displays only rated tracks if active playlist is 'Library viewer selection', all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcenameortype</em> </td>
+					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td>
+						<em>
+							"$stricmp($sourcenameortype,library)" MISSING OR %RATING% PRESENT
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						Displays only rated tracks if active playlist or source is 'Library', all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourceid</em> </td>
+					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td>
+						<em>
+							"$stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE)" MISSING OR %RATING% PRESENT
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						Displays only rated tracks if active playlist's GUID matches, all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$viewname</em> </td>
-					<td> Returns current view name. Special characters are already escaped. <td>
+					<td> Returns current view name. Special characters are already escaped.
+					<td>
 						<em>
 							"$stricmp($viewname,test)" MISSING OR MOOD PRESENT
 						</em>
@@ -485,7 +589,8 @@
 				</tr>
 				<tr>
 					<td> <em>$filtername</em> </td>
-					<td> Returns current filter name. Special characters are already escaped. <td>
+					<td> Returns current filter name. Special characters are already escaped.
+					<td>
 						<em>
 							"$stricmp($filtername,lossless)" MISSING OR ARTIST IS ABBA
 						</em>
@@ -684,8 +789,8 @@
 							<div class="li"> If automatic evaluation is disabled, then search can be refreshed by pressing 'enter'. </div>
 						</li>
 					</ul>
-						<li>
-						<div class="li"> Usage of $viewname, $filtername and $sourcetype can be used for conditional behavior. </div>
+					<li>
+						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. and can be used for conditional behavior. </div>
 					</li>
 					<ul>
 						<li>
@@ -834,7 +939,8 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped. <td>
+					<td> Returns current source type. Special characters are already escaped.
+					<td>
 						<em>
 							$if($strcmp($sourcetype,library),$harmonicmix{},)
 						</em>
@@ -844,8 +950,45 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$sourcename</em> </td>
+					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td>
+						<em>
+							$if($strcmp($sourcename,library viewer selection),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only on 'library viewer selection' playlist.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcenameortype</em> </td>
+					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td>
+						<em>
+							$if($strcmp($sourcenameortype,library),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only on 'Library' source or playlist.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourceid</em> </td>
+					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td>
+						<em>
+							if($strcmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only if active playlist's GUID matches.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$viewname</em> </td>
-					<td> Returns current view name. Special characters are already escaped. <td>
+					<td> Returns current view name. Special characters are already escaped.
+					<td>
 						<em>
 							$if($strcmp($viewname,test),$harmonicmix{},)
 						</em>
@@ -856,7 +999,8 @@
 				</tr>
 				<tr>
 					<td> <em>$filtername</em> </td>
-					<td> Returns current filter name. Special characters are already escaped. <td>
+					<td> Returns current filter name. Special characters are already escaped.
+					<td>
 						<em>
 							$if($strcmp($filtername,lossless),$harmonicmix{},)
 						</em>
