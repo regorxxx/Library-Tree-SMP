@@ -359,7 +359,7 @@ addEventListener('on_notify_data', (name, info) => {
 				if (info.artIdx === -1) { idx = 0; }
 				else { idx = info.artIdx; }
 			}
-			if (idx !== -1) { men.setAlbumart(idx); }
+			if (idx !== -1) { men.setAlbumartType(idx); }
 			break;
 		}
 		case window.ScriptInfo.Name + ': collapse all': {
