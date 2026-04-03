@@ -487,7 +487,7 @@ class Panel {
 		this.multiProcess = false;
 		this.noDisplay = false;
 		this.playlistSort = null; // Regorxxx <- Preserve tree sorting at selection ->
-		this.statistics = false;
+		this.condViewFilter = false; // Regorxxx <- Expand TF support ->
 		this.view = '';
 		this.view_ppt.forEach((v, i) => {
 			if (v.includes('//')) {
@@ -534,6 +534,7 @@ class Panel {
 			this.samePattern = !this.colMarker && this.curPattern == this.view;
 		}
 		this.curPattern = this.view;
+		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.filter.mode[ppt.filterBy].name.includes(s)); // Regorxxx <- Expand TF support ->
 		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.art(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 
 		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
@@ -1387,6 +1388,7 @@ class Panel {
 						}
 						// Regorxxx ->
 						ppt.filterBy = i;
+						if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
 						but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
 						this.calcText();
 						if (this.search.txt) lib.upd_search = true;
