@@ -2635,6 +2635,7 @@ class Populate {
 				break;
 			case 3:
 				this.sel_items = [];
+				this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 				this.clearSelected();
 				this.tree[idx].sel = true;
 				// Regorxxx <- Preserve tree sorting at selection

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/03/26
+//03/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -725,6 +725,7 @@ class Find {
 			if (this.jump_search) {
 				pop.clearSelected();
 				pop.sel_items = [];
+				pop.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 				this.select(panel.pos);
 				panel.treePaint();
 				if (panel.imgView) { pop.showItem(panel.pos, 'focus'); }
@@ -771,6 +772,7 @@ class Find {
 			pop.clearSelected();
 			if (!this.jSearch) return;
 			pop.sel_items = [];
+			pop.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 			this.jump_search = true;
 			panel.treePaint();
 			timer.clear(timer.jsearch1);
@@ -795,6 +797,7 @@ class Find {
 			pop.clearSelected();
 			if (!this.jSearch) { return; }
 			pop.sel_items = [];
+			pop.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
 			this.jump_search = true;
 			panel.treePaint();
 			({ first, next } = bReverse
