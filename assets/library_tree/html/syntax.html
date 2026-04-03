@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"> <!-- 01/04/26 -->
 
 <head>
@@ -146,6 +147,60 @@
 						<br>
 						<br>
 						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcetype</em> </td>
+					<td> Returns current source type. Special characters are already escaped. <td>
+						<em>
+							%ARTIST%|%ALBUM%$if($stricmp($sourcetype,library),,|%RATING%)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on source being 'Library'.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$viewname</em> </td>
+					<td> Returns current view name. Special characters are already escaped. <td>
+						<em>
+							$viewname
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							View by Artist|Album
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$filtername</em> </td>
+					<td> Returns current filter name. Special characters are already escaped. <td>
+						<em>
+							$if($stricmp($filtername,lossless),,%CODEC%|)%ARTIST%|%ALBUM%
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							%ARTIST%|%ALBUM% <i>or</i> %CODEC%|%ARTIST%|%ALBUM%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on filter name matching 'lossless'.
 					</td>
 				</tr>
 				<tr>
@@ -339,6 +394,23 @@
 							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
 						</li>
 					</ul>
+					<li>
+						<div class="li"> Usage of $viewname, $filtername and $sourcetype can be used for conditional behavior. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> May have some performance impact. </div>
+						</li>
+						<li>
+							<div class="li"> View will be updated automatically when filter/source changes. </div>
+						</li>
+						<li>
+							<div class="li"> Can be used for things like showing/hiding tags on specific filters or sources. </div>
+						</li>
+						<li>
+							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
+						</li>
+					</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Views" -->
@@ -351,24 +423,6 @@
 					<th> Description </th>
 					<th> Example </th>
 					<th> Comment </th>
-				</tr>
-				<tr>
-					<td> <em>$nowplaying{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing track. </td>
-					<td> <em>ARTIST IS $nowplaying{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by nowplaying artist. </td>
-				</tr>
-				<tr>
-					<td> <em>$selected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the selected track. </td>
-					<td> <em>ARTIST IS $selected{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by selected (focused) artist. </td>
-				</tr>
-				<tr>
-					<td> <em>$nowplayingorselected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
-					<td> <em>ARTIST IS $nowplayingorselected{$meta(ARTIST,0)}</em> </td>
-					<td> Displays tracks by nowplaying artist while playing, selected (focused) artist otherwise. </td>
 				</tr>
 				<tr>
 					<td> <em>$searchtext</em> </td>
@@ -402,6 +456,63 @@
 						<br>
 						Internally changed to this.
 					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcetype</em> </td>
+					<td> Returns current source type. Special characters are already escaped. <td>
+						<em>
+							"$stricmp($sourcetype,'library')" MISSING OR %RATING% present
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						Displays only rated tracks if source is 'Library', all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$viewname</em> </td>
+					<td> Returns current view name. Special characters are already escaped. <td>
+						<em>
+							"$stricmp($viewname,'test')" MISSING OR MOOD PRESENT
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						Displays only tracks with MOOD present if view matches 'test', all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$filtername</em> </td>
+					<td> Returns current filter name. Special characters are already escaped. <td>
+						<em>
+							"$stricmp($filtername,lossless)" MISSING OR ARTIST IS ABBA
+						</em>
+					</td>
+					<td>
+						Example as expresion in search box.
+						<br>
+						Displays only ABBA's tracks if filter matches 'lossless' or all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nowplaying{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing track. </td>
+					<td> <em>ARTIST IS $nowplaying{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by nowplaying artist. </td>
+				</tr>
+				<tr>
+					<td> <em>$selected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the selected track. </td>
+					<td> <em>ARTIST IS $selected{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by selected (focused) artist. </td>
+				</tr>
+				<tr>
+					<td> <em>$nowplayingorselected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
+					<td> <em>ARTIST IS $nowplayingorselected{$meta(ARTIST,0)}</em> </td>
+					<td> Displays tracks by nowplaying artist while playing, selected (focused) artist otherwise. </td>
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
@@ -573,6 +684,24 @@
 							<div class="li"> If automatic evaluation is disabled, then search can be refreshed by pressing 'enter'. </div>
 						</li>
 					</ul>
+						<li>
+						<div class="li"> Usage of $viewname, $filtername and $sourcetype can be used for conditional behavior. </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> May have some performance impact. </div>
+						</li>
+						<li>
+							<div class="li"> Filter will be updated automatically when view/source changes. </div>
+						</li>
+						<li>
+							<div class="li"> Can be used for things like showing/hiding tracks on specific views or sources. </div>
+						</li>
+						<li>
+							<div class="li"> It's preferable to directly use a Filter than permanently using the search box with these variables to do the same. Filters are much faster. </div>
+						</li>
+					</ul>
+				</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Filters and Search box" -->
@@ -685,24 +814,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td> <em>$nowplaying{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing track. </td>
-					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)</em> </td>
-					<td> Puts nowplaying artist first, then follows panel sorting. </td>
-				</tr>
-				<tr>
-					<td> <em>$selected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the selected track. </td>
-					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}</em> </td>
-					<td> Performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted. </td>
-				</tr>
-				<tr>
-					<td> <em>$nowplayingorselected{X}</em> </td>
-					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
-					<td> <em>$if($strcmp(Rock,$nowplayingorselected{$meta(GENRE,0)}),$rand(),0)$harmonicmix{}</em> </td>
-					<td> Performs harmonic mixing and when playing or selecting a Rock track applies a random sorting. </td>
-				</tr>
-				<tr>
 					<td> <em>$prefix</em> </td>
 					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
 					<td>
@@ -720,6 +831,57 @@
 						<br>
 						Internally changed to this.
 					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcetype</em> </td>
+					<td> Returns current source type. Special characters are already escaped. <td>
+						<em>
+							$if($strcmp($sourcetype,library),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only on 'Library' source.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$viewname</em> </td>
+					<td> Returns current view name. Special characters are already escaped. <td>
+						<em>
+							$if($strcmp($viewname,test),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only when view matches 'test'.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$filtername</em> </td>
+					<td> Returns current filter name. Special characters are already escaped. <td>
+						<em>
+							$if($strcmp($filtername,lossless),$harmonicmix{},)
+						</em>
+					</td>
+					<td>
+						Performs harmonic mixing only when filter matches 'lossless'.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nowplaying{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing track. </td>
+					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)</em> </td>
+					<td> Puts nowplaying artist first, then follows panel sorting. </td>
+				</tr>
+				<tr>
+					<td> <em>$selected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the selected track. </td>
+					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}</em> </td>
+					<td> Performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted. </td>
+				</tr>
+				<tr>
+					<td> <em>$nowplayingorselected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
+					<td> <em>$if($strcmp(Rock,$nowplayingorselected{$meta(GENRE,0)}),$rand(),0)$harmonicmix{}</em> </td>
+					<td> Performs harmonic mixing and when playing or selecting a Rock track applies a random sorting. </td>
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
@@ -919,6 +1081,37 @@
 								$if(%ISPLAYING%,$harmonicmix{}$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1))
 								<br>
 								Only does harmonic mixing while playing and also puts the now playing artist first, leaving the rest as previously sorted.
+							</div>
+						</li>
+					</ul>
+					<li>
+						<div class="li">
+							Conditional execution based on panel settings like Source, View or Filter works as expected:
+						</div>
+					</li>
+					<br>
+					<ul>
+						<li>
+							<div class="li">
+								$if($strcmp($sourcetype,library),$harmonicmix{},)
+								<br>
+								Only does harmonic mixing on 'Library' source and sorts all other cases as selected from panel.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($strcmp($viewname,test),$harmonicmix{},)
+								<br>
+								Only does harmonic mixing on 'Test' view and sorts all other cases as selected from panel.
+							</div>
+						</li>
+						<br>
+						<li>
+							<div class="li">
+								$if($strcmp($filter,lossless),,$harmonicmix{})
+								<br>
+								Only does harmonic mixing when filter is not 'Lossless' and sorts while using 'Lossless' filter as selected from panel.
 							</div>
 						</li>
 					</ul>
