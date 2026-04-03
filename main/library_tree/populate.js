@@ -1661,7 +1661,7 @@ class Populate {
 		return Math.round((y - panel.tree.y - ui.row.h * 0.5) / ui.row.h);
 	}
 
-	// Regorxxx <- Rectangle selection on art view | Preserve tree sorting at selection ->
+	// Regorxxx <- Rectangle selection on art view | Preserve tree sorting at selection | Performance improvements ->
 	getTreeSel() {
 		panel.treePaint();
 		this.sel_items = [];
@@ -1669,7 +1669,7 @@ class Populate {
 		this.tree.forEach((v, idx) => {
 			if (v.sel) { this.lastSelMul.push(idx); }
 		});
-		if (this.lastSelMul.length === this.tree.length - (this.rootNode ? 1 : 0)) {
+		if (!panel.playlistSort && this.lastSelMul.reduce((prev, idx) => prev + this.trackCount(this.tree[idx].item), 0) > (Number(ppt.treeSortLimit) || Infinity)) {
 			this.tree.forEach((v) => this.addItems(this.sel_items, v, true));
 		} else {
 			this.lastSelMul.forEach((idx) => this.addItems(this.sel_items, this.tree[idx]));
@@ -2634,16 +2634,12 @@ class Populate {
 				this.last_sel = idx;
 				break;
 			case 3:
-				this.sel_items = [];
-				this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
+				// Regorxxx <- Preserve tree sorting at selection | Performance improvements
 				this.clearSelected();
 				this.tree[idx].sel = true;
-				// Regorxxx <- Preserve tree sorting at selection
-				this.addItems(this.sel_items, this.tree[idx]);
-				this.sel_items = [...new Set(this.sel_items)];
-				// Regorxxx ->
+				this.getTreeSel();
 				this.last_sel = idx;
-				this.lastSelMul = [idx]; // Regorxxx <- Rectangle selection on art view ->
+				// Regorxxx ->
 				break;
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/04/26
+//03/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -244,6 +244,7 @@ let properties = [
 
 	['Limit Menu Expand: 10-6000', 500, 'treeExpandLimit'],
 	['Limit Tree Auto Expand: 10-1000', 350, 'autoExpandLimit'],
+	['Limit Tree Branch Sort on selection: 0-Infinity', 3000, 'treeSortLimit'], // Regorxxx <- Preserve tree sorting at selection | Performance improvements ->
 	['Line Padding', 5, 'verticalPad'],
 	['Line Padding Album Art', 2, 'verticalAlbumArtPad'],
 	['Margin', Math.round(8 * $.scale), 'margin'],
