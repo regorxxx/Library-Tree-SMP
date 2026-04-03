@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/12/25
+//03/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -373,7 +373,11 @@ class Helpers {
 				: rgExp.test(Language.transliterate(val));
 		};
 		return new FbMetadbHandleList(
-			this.getHandleListTags(handleList, meta, { bMerged: true }).map((tagArr, i) => (match(tagArr) || bTransliterate && matchTrans(tagArr)) ? handleList[i] : null).filter(Boolean)
+			this.getHandleListTags(handleList, meta, { bMerged: true })
+				.reduce((prev, tagArr, i) => {
+					if (match(tagArr) || bTransliterate && matchTrans(tagArr)) { prev.push(handleList[i]); }
+					return prev;
+				}, [])
 		);
 	}
 
