@@ -1309,6 +1309,11 @@
 					<div id="mode"></div>
 					<div id="modeInput"></div>
 					<div class="info5"><i>Requires a panel above or below library tree. N/A with panel stack splitter or if root node displayed in line.</i></div>
+					<!-- Regorxxx Preserve tree sorting at selection | Performance improvements -->
+					<div class="div_text1">Branch sorting</div>
+					<div id="treeSortLimit"></div>
+					<div class="info5"><i>Increasing this setting may have a high performance impact on selection, contextual menus, etc.</i></div>
+					<!-- Regorxxx -->
 					<!-- Regorxxx Auto-DJ feature -->
 					<div class="div_text1">Auto-DJ</div>
 					<div id="autodj"></div>
@@ -1841,10 +1846,10 @@
 					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Custom album art overlay track count ->
 				},
 				// Regorxxx ->
-				// Regorxxx <- Sorting transliteration
+				// Regorxxx <- Sorting transliteration | Preserve tree sorting at selection | Performance improvements
 				advanced: {
-					name: ['scrollStep', 'durationScroll', 'durationTouchFlick', 'flickDistance', 'sbarWidth', 'narrowSbarWidth', 'sbarArrowWidth', 'sbarPad', 'sbarGripHeight', 'arrowSymbol', 'butCustIconFont', 'sbarButPad', 'sortingTransLangs', 'iconCustom', 'custIconFont', 'iconVerticalPad', 'blurTemp', 'blurAlpha', 'prefix', 'pn_h_max', 'pn_h_min'],
-					type: ['float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'text', 'text', 'float', 'text', 'text', 'text', 'float', 'float', 'float', 'text', 'int', 'int']
+					name: ['scrollStep', 'durationScroll', 'durationTouchFlick', 'flickDistance', 'sbarWidth', 'narrowSbarWidth', 'sbarArrowWidth', 'sbarPad', 'sbarGripHeight', 'arrowSymbol', 'butCustIconFont', 'sbarButPad', 'sortingTransLangs', 'iconCustom', 'custIconFont', 'iconVerticalPad', 'blurTemp', 'blurAlpha', 'prefix', 'pn_h_max', 'pn_h_min', 'treeSortLimit'],
+					type: ['float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'float', 'text', 'text', 'float', 'text', 'text', 'text', 'float', 'float', 'float', 'text', 'int', 'int', 'int']
 				},
 				// Regorxxx ->
 				all: {}
@@ -2941,6 +2946,9 @@
 				// Regorxxx <- Sorting transliteration
 				i = 0; window.sortingTransLangs.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="language_container' + i + '" name="advanced_input" class="input35" /><label for="language_container' + i + '" class="inp_label2">' + languageLabels[i] + '</label></div>');
 				// Regorxxx ->
+				// Regorxxx <- Preserve tree sorting at selection | Performance improvements
+				i = 0; window.treeSortLimit.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="treeSortLimit_container' + i + '" name="advanced_input" class="input35" /><label for="treeSortLimit_container' + i + '" class="inp_label2">Branch sorting limit (no Smart sort)</label></div>');
+				// Regorxxx ->
 				// Regorxxx <- Auto-DJ feature
 				i = 0; window.autodj.insertAdjacentHTML('beforeend', '<div><input id="autodj_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="autodj_checkbox' + i + '" class="checkbox_label">' + autodjLabels[i] + '</label></div>');
 				i = 1;
@@ -3049,6 +3057,7 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
+			window.treeSortLimit_container0.parentNode.disabled =  ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
 			// Regorxxx <- Preserve tree sorting at selection
 			if (window.playlistSort_container1.value.length) {
 				window.playlistSort_checkbox0.checked = false;
