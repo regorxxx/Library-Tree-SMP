@@ -61,7 +61,8 @@
 - Filter: Filter patterns are now checked before using and panel will warn when using an invalid expression instead of showing 'Nothing found'.
 - Filters: updated some of the default filter patterns and added in some cases built-in sorting expressions.
 - UI: filter button can now be used  as a Filter | View (on Shift) | Source (on Ctrl) multi-button, showing respective menus.
-- UI: performance improvements when clicking on settings button while a large selection is active. Previously it could take up to +1 second to show the menu in such cases.
+- UI: performance improvements when clicking on settings button while a large selection is active. Previously it could take up to +1 second to show the menu in such cases (while not using 'smart' sorting).
+- UI: performance improvements when R. clicking on current selection.for large selections. Previously it could take up to +1 second to show the menu in such cases (while not using 'smart' sorting).
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
 - UI: improvements on art-based colors handling related to K-means++ with OKLAB color space when using JSplitter v3.7.10+ or v4.1.0+ as JS host. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1078415.html#msg1078415).

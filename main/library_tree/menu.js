@@ -1118,7 +1118,7 @@ class MenuItems {
 				pop.clearSelected();
 				item.sel = true;
 			}
-			pop.getTreeSel();
+			if (!pop.sel_items.length) { pop.getTreeSel(); } // Regorxxx <- Performance improvement for contextual menu ->
 			this.expandable = pop.trackCount(pop.tree[this.ix].item) > this.treeExpandLimit || pop.tree[this.ix].track || panel.imgView ? false : true;
 			if (this.expandable && pop.tree.length) {
 				let count = 0;
