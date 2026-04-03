@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/04/26
+//03/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -1121,7 +1121,9 @@ class MenuItems {
 			}
 			this.items = pop.getHandleList();
 			this.show_context = true;
-		} else this.items = pop.getHandleList('newItems');
+		} else {
+			this.items = this.settingsBtnDn ? pop.getHandleList() : pop.getHandleList('newItems'); // Regorxxx <- Performance improvement for settings button ->
+		}
 
 		menu.load(x, y);
 		this.r_up = false;
