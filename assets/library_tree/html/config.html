@@ -1205,6 +1205,11 @@
 					<div class="info5"><i>Click dropdown items for full preview (provided visible in panel).</i></div>
 					<div class="div_text2">Index</div>
 					<div id="indexLetter"></div>
+					<!-- Regorxxx Custom TF art -->
+					<div class="div_text2">TF style</div>
+					<div id="albumArtTf"></div>
+					<div class="info5"><i>In addition to <a class="tooltip" id="ltReference4" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference4')">custom TF syntax<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>, <b>$nodename</b> is available to retrieve node names as shown on the panel. Paths starting with '<b>.\profile\</b>' are relative to foobar profile folder.<br>'<b>%FB2K_PROFILE_PATH%</b>' or '<b>%PROFILE%</b>' may also be used.<br><br>This can be used to display custom art related to actual View TF pattern instead of track-based. e.g. To display a genre/style tree with custom images for every genre, add rock genre image at '[FB2K_PROFILE]\images\rock.jpg'</i></div>
+					<!-- Regorxxx -->
 				</div>
 			</div>
 			<div id="help_text" style="display: none;">
@@ -1745,6 +1750,7 @@
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
+			var albumArtTfLabels = ['Custom views', 'Folder view']; // Regorxxx <- Custom TF art ->
 			var keystrokeLabels = ['Select', 'Send to playlist']
 			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			var metricsLabels = ['Margin', 'Tree indent', 'Line padding tree', 'Line padding album art', 'Margin overide top/bottom (no top bar)', 'Side marker width (0 = auto)'];
@@ -1836,10 +1842,12 @@
 					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'int']
 				},
 				// Regorxxx ->
+				// Regorxxx <- Custom TF art
 				albumArt: {
-					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo'],
-					type: ['int', 'int', 'int']
+					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo', 'albumArtTfView', 'albumArtTfFolder'],
+					type: ['int', 'int', 'int', 'text', 'text']
 				},
+				// Regorxxx ->
 				// Regorxxx <- Tooltip font
 				custom: {
 					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'], // Regorxxx <- Custom album art overlay track count ->
@@ -1882,7 +1890,7 @@
 				search: [], // Regorxxx <- Drag n' drop to search box ->
 				display: [],
 				statistics: ['itemShowStatistics'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist'],
+				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'], // Regorxxx <- Custom TF art ->
 				custom: [],
 				advanced: []
 			}
@@ -2310,8 +2318,8 @@
 			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
 			// Regorxxx ->
 
-			// Regorxxx <- Code cleanup| Custom TF art
-			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist'];
+			// Regorxxx <- Code cleanup | Custom TF art
+			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
 				var cells = [];
@@ -2320,7 +2328,7 @@
 				var imgLen = imgTable.length;
 				switch (id) {
 					case 'imageFormat':
-						var headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', ''];
+						var headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
 						cells.push(headers);
 						var radioLabels = ['Regular', 'Auto-Fill', 'Circular'];
 						var items = [];
@@ -2334,7 +2342,7 @@
 									items[j].push('<div style="padding-left:0.46em; text-align:left">' + radioLabels[j] + '</div>');
 									cells.push(items[j]);
 								}
-							}
+								}
 						}
 						columnCount = imgLen + 1;
 						break;
@@ -2907,6 +2915,10 @@
 				i = 0; window.indexLetter.insertAdjacentHTML('beforeend', '<div><input id="indexLetter_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="indexLetter_checkbox' + i + '" class="checkbox_label">' + indexLetterLabels[i] + '</label></div>');
 				i = 1; window.indexLetter.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="indexLetter_container' + i + '" name="albumart_input" class="input7" /><label for="indexLetter_container' + i + '" class="inp_label2">' + indexLetterLabels[i] + '</label></div>');
 				i = 2; window.indexLetter.insertAdjacentHTML('beforeend', '<div><input id="indexLetter_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="indexLetter_checkbox' + i + '" class="checkbox_label">' + indexLetterLabels[i] + '</label></div>');
+
+				// Regorxxx <- Custom TF art
+				for (i = 0; i < 2; i++) { window.albumArtTf.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="albumArtTf_container' + i + '" name="albumart_input" class="input70" /><label for="albumArtTf_container' + i + '" class="inp_label2">' + albumArtTfLabels[i] + '</label></div>'); }
+				// Regorxxx ->
 			}
 
 			var bg = [];
@@ -3072,7 +3084,7 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
-			window.treeSortLimit_container0.parentNode.disabled = ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
+			window.treeSortLimit_container0.parentNode.disabled =  ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
 			// Regorxxx <- Preserve tree sorting at selection
 			if (window.playlistSort_container1.value.length) {
 				window.playlistSort_checkbox0.checked = false;
@@ -3709,6 +3721,7 @@
 		window.ltReference1.href = rootPath + '\\' + window.ltReference1.href.replace('about:', '');
 		window.ltReference2.href = rootPath + '\\' + window.ltReference2.href.replace('about:', '');
 		window.ltReference3.href = rootPath + '\\' + window.ltReference3.href.replace('about:', '');
+		window.ltReference4.href = rootPath + '\\' + window.ltReference4.href.replace('about:', '');
 		// Regorxxx ->
 
 		window.document.body.focus();

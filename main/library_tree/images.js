@@ -3,6 +3,7 @@
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
+/* global getFiles:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable */
 
 /* exported img */
@@ -134,14 +135,15 @@ class Images {
 
 	// Methods
 
-	// Regorxxx <- Code cleanup | External integration
+	// Regorxxx <- Code cleanup | External integration | Custom TF art
 	getArt(idx, folderView) {
 		const art = [
 			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: ppt.imgStyleFront, showMenu: 'Show albums', switchIdx: 4 },
 			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: ppt.imgStyleBack, showMenu: 'Show albums', switchIdx: 4 },
 			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: ppt.imgStyleDisc, showMenu: 'Show albums', switchIdx: 4 },
 			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: ppt.imgStyleIcon, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: ppt.imgStyleArtist, showMenu: 'Show artists', switchIdx: 0 }
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: ppt.imgStyleArtist, showMenu: 'Show artists', switchIdx: 0 },
+			{ idx: 5, type: 'File (by TF)...', cacheName: folderView ? 'foldertf' : 'viewtf', lines: 1, style: ppt.imgStyleTF, showMenu: 'Show art (tf)', switchIdx: 0 }
 		];
 		return typeof idx === 'undefined' ? art : art[idx];
 	}
@@ -163,14 +165,24 @@ class Images {
 	getArtCachePath(idx, folderView) {
 		return this.cachePath + this.getArt(idx, folderView).cacheName;
 	}
-	// Regorxxx ->
 
 	async get_album_art_async(handle, art_id, key, ix) {
-		let result = await utils.GetAlbumArtAsyncV2(0, handle, art_id, false);
+		let result = { path: '', img: null };
+		if (art_id === 5) {
+			const tf = panel.processCustomTf(panel.folderView ? ppt.albumArtTfFolder : ppt.albumArtTfView, pop.tree[ix]);
+			const mask = new FbTitleFormat(tf).EvalWithMetadb(handle);
+			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
+			if (files[0] && $.file(files[0])) { result = { path: files[0], image: await gdi.LoadImageAsyncV2(0, files[0]) }; }
+		} else {
+			result = await utils.GetAlbumArtAsyncV2(0, handle, art_id, false);
+		}
 		const o = this.cache[key];
-		const saveName = md5.hashStr(result.path) + '.jpg';
-		if (o && o.img == 'called') this.cacheIt(result.image, key, ix, saveName);
+		if (o && o.img == 'called') {
+			const saveName = md5.hashStr(result.path) + '.jpg';
+			this.cacheIt(result.image, key, ix, saveName);
+		}
 	}
+	// Regorxxx ->
 
 	async load_image_async(key, image_path, ix, rawCache) {
 		const image = Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path);

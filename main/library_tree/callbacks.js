@@ -343,7 +343,8 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 		case window.ScriptInfo.Name + ': switch show artists / albums':
 		case window.ScriptInfo.Name + ': ' + art[0].showMenu.toLowerCase(): // Front
-		case window.ScriptInfo.Name + ': ' + art[4].showMenu.toLowerCase(): { // Artist
+		case window.ScriptInfo.Name + ': ' + art[4].showMenu.toLowerCase(): // Artist
+		case window.ScriptInfo.Name + ': ' + art[5].showMenu.toLowerCase(): { // TF
 			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
 			if (name === window.ScriptInfo.Name + ': ' + art[ppt.artId].showMenu.toLowerCase()) { break; }

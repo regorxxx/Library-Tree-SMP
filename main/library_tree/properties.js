@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//04/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -226,6 +226,11 @@ let properties = [
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
 	['Image Frame Border', true, 'albumArtBorderShow'], // Regorxxx <-  Image border setting ->
+	// Regorxxx <- Custom TF art
+	['Image Label TF view', '.\\profile\\images\\$lower($nodename).*', 'albumArtTfView'],
+	['Image Label TF folders', '$replace($directory_path(%PATH%),$directory(%PATH%,1),)*.jpg', 'albumArtTfFolder'],
+	['Image Style [TF] Regular-0 Auto-Fill-1 Circular-2', 2, 'imgStyleTF'],
+	// Regorxxx ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],

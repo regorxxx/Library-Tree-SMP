@@ -336,10 +336,17 @@ class MenuItems {
 		// Regorxxx <- Code cleanup
 		if (this.validItem && panel.imgView) {
 			const switchArt = img.getArtSwitchType(ppt.artId);
+			const tfArt = img.getArt(5);
 			menu.newItem({
 				str: switchArt.showMenu,
 				func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); }
 			});
+			if (ppt.artId !== tfArt.idx && switchArt.showMenu !== tfArt.showMenu) {
+				menu.newItem({
+					str: tfArt.showMenu,
+					func: () => { ppt.artId = tfArt.idx; this.setPlaylist(5); }
+				});
+			}
 			menu.newItem({ separator: this.show_context && !ui.style.topBarShow });
 		}
 		// Regorxxx ->
@@ -1166,7 +1173,7 @@ class MenuItems {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Code cleanup
+	// Regorxxx <- Custom TF art | Code cleanup
 	setAlbumartType(i) {
 		switch (i) {
 			case 0:
@@ -1174,6 +1181,7 @@ class MenuItems {
 			case 2:
 			case 3:
 			case 4:
+			case 5:
 				ppt.artId = i;
 				break;
 		}
