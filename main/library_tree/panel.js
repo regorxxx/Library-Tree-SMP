@@ -35,7 +35,7 @@ class Panel {
 		this.init = true;
 		this.l = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
 		this.lc = DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
-		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.art(ppt.artId).lines; // Regorxxx <- Code cleanup ->
+		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.getArt(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 		this.list = new FbMetadbHandleList();
 		this.menu = [];
 		this.paint_y = Math.floor(ui.style.topBarShow || !ppt.sbarShow ? ui.row.h * 1.2 : 0);
@@ -543,7 +543,7 @@ class Panel {
 		}
 		this.curPattern = this.view;
 		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.filter.mode[ppt.filterBy].name.includes(s)); // Regorxxx <- Expand TF support ->
-		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.art(ppt.artId).lines; // Regorxxx <- Code cleanup ->
+		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.getArt(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 
 		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//04/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -275,8 +275,8 @@ addEventListener('on_notify_data', (name, info) => {
 		});
 	}
 
-	const switchArt = img.artSwitchType(ppt.artId);
-	const art = img.art();
+	const switchArt = img.getArtSwitchType(ppt.artId);
+	const art = img.getArt();
 	const artTypes = art.map((a) => a.type);
 	switch (name) {
 		case '!!.tags update':

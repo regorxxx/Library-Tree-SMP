@@ -2310,12 +2310,14 @@
 			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
 			// Regorxxx ->
 
+			// Regorxxx <- Code cleanup| Custom TF art
 			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
 				var cells = [];
 				var headings = [];
 				var columnCount = 0;
+				var imgLen = imgTable.length;
 				switch (id) {
 					case 'imageFormat':
 						var headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', ''];
@@ -2324,18 +2326,19 @@
 						var items = [];
 						for (j = 0; j < 3; j++) {
 							items[j] = [];
-							for (i = 0; i < imgTable.length; i++) {
+							for (i = 0; i < imgLen; i++) {
 								var n = imgTable[i];
 								var id = imgTable[i] + j;
 								items[j].push('<input id="' + id + '" name="' + n + '" style="' + cbox + '" type="radio" />');
-								if (i == 4) {
+								if (i == imgLen - 1) {
 									items[j].push('<div style="padding-left:0.46em; text-align:left">' + radioLabels[j] + '</div>');
 									cells.push(items[j]);
 								}
 							}
 						}
-						columnCount = 6;
+						columnCount = imgLen + 1;
 						break;
+					// Regorxxx ->
 					case 'syntaxFilter': // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
 					case 'syntaxView': // Regorxxx <- Filter non-relevant functions at help ->
 					case 'syntax':
@@ -3069,7 +3072,7 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
-			window.treeSortLimit_container0.parentNode.disabled =  ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
+			window.treeSortLimit_container0.parentNode.disabled = ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
 			// Regorxxx <- Preserve tree sorting at selection
 			if (window.playlistSort_container1.value.length) {
 				window.playlistSort_checkbox0.checked = false;

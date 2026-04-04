@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//04/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -135,29 +135,33 @@ class Images {
 	// Methods
 
 	// Regorxxx <- Code cleanup | External integration
-	art(idx, folderView) {
+	getArt(idx, folderView) {
 		const art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, showMenu: 'Show artists', switchIdx: 0 }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: ppt.imgStyleFront, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: ppt.imgStyleBack, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: ppt.imgStyleDisc, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: ppt.imgStyleIcon, showMenu: 'Show albums', switchIdx: 4 },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: ppt.imgStyleArtist, showMenu: 'Show artists', switchIdx: 0 }
 		];
 		return typeof idx === 'undefined' ? art : art[idx];
 	}
 
-	artTypes() {
-		return this.art().map((a) => a.type);
+	getArtStyle(idx) {
+		return this.getArt(idx).style;
 	}
 
-	artSwitchType(idx) {
-		const art = this.art();
+	getArtTypes() {
+		return this.getArt().map((a) => a.type);
+	}
+
+	getArtSwitchType(idx) {
+		const art = this.getArt();
 		const newIdx = art[idx].switchIdx;
 		return art[newIdx];
 	}
 
-	artCachePath(idx, folderView) {
-		return this.cachePath + this.art(idx, folderView).cacheName;
+	getArtCachePath(idx, folderView) {
+		return this.cachePath + this.getArt(idx, folderView).cacheName;
 	}
 	// Regorxxx ->
 
@@ -740,7 +744,7 @@ class Images {
 			cache: this.saveSize == 250 ? 1 : this.saveSize == 500 ? 4 : 9,
 			preLoad: this.saveSize == 250 ? (ppt.albumArtLabelType != 3 ? 7 : 15) : this.saveSize == 500 ? 20 : 45
 		};
-		this.cacheFolder = this.artCachePath(ppt.artId, panel.folderView) + (this.saveSize == 250 ? '' : this.saveSize) + '\\'; // Regorxxx <- Code cleanup ->
+		this.cacheFolder = this.getArtCachePath(ppt.artId, panel.folderView) + (this.saveSize == 250 ? '' : this.saveSize) + '\\'; // Regorxxx <- Code cleanup ->
 		$.create(this.cacheFolder);
 		this.database = $.jsonParse(this.cacheFolder + 'database.dat', this.newDatabase(), 'file');
 		if (this.cacheFolder != cacheFolder) {
@@ -945,21 +949,6 @@ class Images {
 		return nowp || item.sel ? this.albumArtShowLabels ? ui.col.imgBgSel : ui.col.imgOverlaySel : $.RGBA(0, 0, 0, 175);
 	}
 
-	getStyle() {
-		switch (ppt.artId) {
-			case 0:
-				return ppt.imgStyleFront;
-			case 1:
-				return ppt.imgStyleBack;
-			case 2:
-				return ppt.imgStyleDisc;
-			case 3:
-				return ppt.imgStyleIcon;
-			case 4:
-				return ppt.imgStyleArtist;
-		}
-	}
-
 	load() {
 		const albumArtGrpNames = $.jsonParse(ppt.albumArtGrpNames, {});
 		const fields = [];
@@ -1018,7 +1007,7 @@ class Images {
 		this.style = {
 			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType != 3,
 			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType != 3 && (ppt.artId == 4 || ppt.curNoCoverImg > 2),
-			image: this.getStyle(),
+			image: this.getArtStyle(ppt.artId), // Regorxxx <- Code cleanup ->
 			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
 			vertical: !ppt.albumArtFlowMode ? true : ui.h - panel.search.h > ui.w - ui.sbar.w
 		};
@@ -1290,7 +1279,7 @@ class Images {
 		}
 
 		const allSelected = pop.sel_items.length == fb.GetLibraryItems().Count;
-		const base = this.artCachePath(ppt.artId, panel.folderView); // Regorxxx <- Code cleanup ->
+		const base = this.getArtCachePath(ppt.artId, panel.folderView); // Regorxxx <- Code cleanup ->
 		const databases = [base + '\\database.dat', base + '500\\database.dat', base + '750\\database.dat'];
 		if (allSelected) {
 			this.clearCache(); // full clear of working cache

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//04/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -335,12 +335,12 @@ class MenuItems {
 
 		// Regorxxx <- Code cleanup
 		if (this.validItem && panel.imgView) {
-			const switchArt = img.artSwitchType(ppt.artId);
+			const switchArt = img.getArtSwitchType(ppt.artId);
 			menu.newItem({
 				str: switchArt.showMenu,
-				func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); },
-				separator: this.show_context && !ui.style.topBarShow
+				func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); }
 			});
+			menu.newItem({ separator: this.show_context && !ui.style.topBarShow });
 		}
 		// Regorxxx ->
 
@@ -372,7 +372,7 @@ class MenuItems {
 
 		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
 		// Regorxxx <- Code cleanup
-		 img.artTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
+		img.getArtTypes((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
 			menuName: 'Album art',
 			str: v,
 			func: () => this.setAlbumartType(i),
