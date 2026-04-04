@@ -32,7 +32,7 @@ const files = [
 	'main\\library_tree\\helpers.js',
 	'main\\library_tree\\properties.js',
 	'main\\library_tree\\interface.js',
-	'main\\library_tree\\images.js',
+	'main\\library_tree\\images.js', // Regorxxx <- Code cleanup | External integration | Custom TF art ->
 	'main\\library_tree\\panel.js',
 	'main\\library_tree\\scrollbar.js',
 	'main\\library_tree\\library.js',

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//05/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -58,7 +58,7 @@ class Images {
 		this.style = {
 			image: 0,
 			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
-			vertical: !ppt.albumArtFlowMode ? true : ui.h - panel.search.h > ui.w - ui.sbar.w,
+			vertical: !ppt.albumArtFlowMode, // Regorxxx <- Code cleanup ->
 			y: 25
 		};
 
@@ -716,6 +716,8 @@ class Images {
 					image = image.Clone(ix, iy, iw, ih);
 				}
 				// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+				w = Math.round(w);
+				h = Math.round(h);
 				if (w !== iw || h !== ih) {
 					image = image.Resize(w + 2, h + 2, InterpolationMode.HighQualityBicubic);
 					image = image.Clone(2, 2, w, h);
@@ -1021,7 +1023,7 @@ class Images {
 			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType != 3 && (ppt.artId == 4 || ppt.curNoCoverImg > 2),
 			image: this.getArtStyle(ppt.artId), // Regorxxx <- Code cleanup ->
 			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
-			vertical: !ppt.albumArtFlowMode ? true : ui.h - panel.search.h > ui.w - ui.sbar.w
+			vertical: ppt.albumArtFlowMode ? ui.h - panel.search.h > ui.w - ui.sbar.w : true, // Regorxxx <- Code cleanup ->
 		};
 
 		this.style.dropGrad = ppt.albumArtDropShadow && !this.style.dropShadow;
