@@ -372,7 +372,7 @@ class MenuItems {
 
 		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
 		// Regorxxx <- Code cleanup
-		img.getArtTypes((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
+		img.getArtTypes.forEach((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
 			menuName: 'Album art',
 			str: v,
 			func: () => this.setAlbumartType(i),
