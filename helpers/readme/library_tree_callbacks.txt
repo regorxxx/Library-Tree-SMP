@@ -47,7 +47,7 @@ Callbacks:
 • 'Library-Tree-SMP: show albums'
 	-> { window: string[], forceShowArt: boolean }
 
-• 'Library-Tree-SMP: show art (TF)'
+• 'Library-Tree-SMP: show art (tf)'
 	-> { window: string[], forceShowArt: boolean }
 
 • 'Library-Tree-SMP: collapse all'
