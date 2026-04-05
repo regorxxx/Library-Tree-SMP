@@ -452,6 +452,7 @@ if (ppt.get('Tree List View')) {
 	ppt.facetView = ppt.get('Tree List View');
 	ppt.set('Tree List View', null);
 }
+if (ppt.get('Image Type') > 5) { ppt.set('Image Type', 0); } // Regorxxx <- Custom TF art safety check ->
 ppt.set('Image Show Index Number', null);
 ppt.set('Image Show Index Year Auto', null);
 properties = undefined;
