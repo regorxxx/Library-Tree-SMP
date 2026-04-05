@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//05/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -60,11 +60,12 @@ addEventListener('on_get_album_art_done', (handle, art_id, image, image_path) =>
 
 addEventListener('on_item_focus_change', (playlistIndex) => {
 	lib.checkFilter('selection'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns ->
-	if (!pop.setFocus) {
+	if (pop.setFocus) { pop.setFocus = false; }
+	else {
 		if (ppt.followPlaylistFocus && playlistIndex == $.pl_active && !ppt.libSource) {
 			setSelection(fb.GetFocusItem());
 		}
-	} else pop.setFocus = false;
+	}
 	ui.focus_changed();
 });
 
@@ -211,8 +212,8 @@ addEventListener('on_mouse_rbtn_up', (x, y) => {
 
 addEventListener('on_mouse_wheel', (step) => {
 	pop.deactivateTooltip();
-	if (!vk.k('zoom')) sbar.wheel(step);
-	else ui.wheel(step);
+	if (vk.k('zoom')) { ui.wheel(step); }
+	else { sbar.wheel(step); }
 });
 
 addEventListener('on_notify_data', (name, info) => {
@@ -304,7 +305,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		// Regorxxx <- Don't create cache playlists if possible
 		case window.ScriptInfo.Name + ': ask selection': {
-			if (!info.some((v) => v === window.Name)) { break; }
+			if (!info.includes(window.Name)) { break; }
 			pop.notifySelection();
 			break;
 		}
@@ -313,7 +314,7 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': new':
 		case window.ScriptInfo.Name + ': insert':
 		case window.ScriptInfo.Name + ': add': {
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			pop.getTreeSel();
 			if (!pop.sel_items.length) { break; }
 			if (name === window.ScriptInfo.Name + ': New') { pop.sendToNewPlaylist(); }
@@ -321,13 +322,13 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': show now playing': {
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			pop.nowPlayingShow();
 			break;
 		}
 		case window.ScriptInfo.Name + ': show handle': {
 			if (!info || !info.handle) { break; }
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			const item = panel.list.Find(info.handle);
 			if (item !== -1) { pop.selShow(item); }
 			break;
@@ -335,7 +336,7 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch show art':
 		case window.ScriptInfo.Name + ': show art':
 		case window.ScriptInfo.Name + ': show tree': {
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			if (name === window.ScriptInfo.Name + ': show album art' && panel.imgView) { break; }
 			if (name === window.ScriptInfo.Name + ': show tree' && !panel.imgView) { break; }
 			men.setPlaylist(4);
@@ -345,7 +346,7 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': ' + art[0].showMenu.toLowerCase(): // Front
 		case window.ScriptInfo.Name + ': ' + art[4].showMenu.toLowerCase(): // Artist
 		case window.ScriptInfo.Name + ': ' + art[5].showMenu.toLowerCase(): { // TF
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
 			if (name === window.ScriptInfo.Name + ': ' + art[ppt.artId].showMenu.toLowerCase()) { break; }
 			ppt.artId = switchArt.idx;
@@ -353,7 +354,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch art type': {
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
 			let idx = -1;
 			if (typeof info.artType !== 'undefined') { idx = artTypes.findIndex((t) => t.toLowerCase() === info.artType.toLowerCase()); }
@@ -365,38 +366,38 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': collapse all': {
-			if (info && info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			men.setTreeState(0);
 			break;
 		}
 		case window.ScriptInfo.Name + ': quicksearch': {
 			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			info.search.split('').forEach((s) => on_char(s.charCodeAt(0)));
 			break;
 		}
 		case window.ScriptInfo.Name + ': search': {
 			if (!ppt.searchShow) { break; }
 			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			info.search.split('').forEach((s) => search.on_char(s.charCodeAt(0), true));
 			search.on_char(vk.enter);
 			break;
 		}
 		case window.ScriptInfo.Name + ': search clear': {
 			if (!ppt.searchShow) { break; }
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			search.clear();
 			break;
 		}
 		case window.ScriptInfo.Name + ': search focus': {
 			if (!ppt.searchShow) { break; }
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			if (pop.is_focused) { search.focus(); }
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch view': {
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
 			if (typeof info.viewName !== 'undefined') { idx = panel.grp.findIndex(v => v.name.trim().toLowerCase() === info.viewName.toLowerCase()); }
 			else if (typeof info.viewIdx !== 'undefined' && info.viewIdx >= -1 && info.viewIdx < panel.grp.length) {
@@ -407,7 +408,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch filter': {
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
 			if (typeof info.filterName !== 'undefined') { idx = panel.dialogFiltGrps.findIndex(v => v.name.trim().toLowerCase() === info.filterName.toLowerCase()); }
 			else if (typeof info.filterIdx !== 'undefined' && info.filterIdx >= -1 && info.filterIdx < panel.dialogFiltGrps.length) {
@@ -421,7 +422,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch source': {
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
 			let plsIdx = [];
 			// Source type
@@ -429,7 +430,7 @@ addEventListener('on_notify_data', (name, info) => {
 			const types = men.sourceTypes().map((st) => st.toLowerCase().replace(typeCleanRe, '$1'));
 			if (typeof info.sourceName !== 'undefined') {
 				const sourceName = info.sourceName.toLowerCase().replace(typeCleanRe, '$1');
-				idx = types.findIndex((t) => t === sourceName);
+				idx = types.indexOf(sourceName);
 			} else if (typeof info.sourceIdx !== 'undefined' && info.sourceIdx >= -1 && info.sourceIdx < types.length) {
 				if (info.sourceIdx === -1) { idx = 0; }
 				else { idx = info.sourceIdx; }
@@ -470,7 +471,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': switch statistics': {
-			if (info.window && !info.window.some((v) => v === window.Name)) { break; }
+			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
 			const types = men.statisticsTypes();
 			const customRe = / \[custom-\d \(avg\)\]/i;
@@ -697,8 +698,8 @@ function setSelection(handle) {
 		if (!v.root && pop.inRange(item, v.item)) idx = i;
 	});
 	if (idx != -1) {
-		if (!panel.imgView) pop.focusShow(idx);
-		else pop.showItem(idx, 'focus');
+		if (panel.imgView) { pop.showItem(idx, 'focus'); }
+		else { pop.focusShow(idx); }
 	}
 };
 
