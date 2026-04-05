@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 04/04/26 -->
+<!DOCTYPE html> <!-- 05/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -154,11 +154,11 @@
 					<td> Returns current source type. Special characters are already escaped.
 					<td>
 						<em>
-							%ARTIST%|%ALBUM%$if($stricmp($sourcetype,library),,|%RATING%)
+							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcetype,library),, - %RATING%)
 							<br>
 							&nbsp;&nbsp;&nbsp;&nbsp;->
 							<br>
-							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+							%ARTIST%|%ALBUM%|%TITLE% <i>or</i>%ARTIST%|%ALBUM%|%TITLE% - %RATING%
 						</em>
 					</td>
 					<td>
@@ -173,11 +173,11 @@
 					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
 					<td>
 						<em>
-							%ARTIST%|%ALBUM%$if($stricmp($sourcename,library viewer selection),,|%RATING%)
+							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcename,library viewer selection),, - %RATING%)
 							<br>
 							&nbsp;&nbsp;&nbsp;&nbsp;->
 							<br>
-							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+							%ARTIST%|%ALBUM%|%TITLE% <i>or</i> %ARTIST%|%ALBUM%|%TITLE% - %RATING%
 						</em>
 					</td>
 					<td>
@@ -192,11 +192,11 @@
 					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
 					<td>
 						<em>
-							%ARTIST%|%ALBUM%$if($stricmp($sourcenameortype,library),,|%RATING%)
+							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcenameortype,library),, - %RATING%)
 							<br>
 							&nbsp;&nbsp;&nbsp;&nbsp;->
 							<br>
-							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+							%ARTIST%|%ALBUM%|%TITLE% <i>or</i> %ARTIST%|%ALBUM%|%TITLE% - %RATING%
 						</em>
 					</td>
 					<td>
@@ -211,11 +211,11 @@
 					<td> Returns current source GUID, when source is 'Active playlist'.
 					<td>
 						<em>
-							%ARTIST%|%ALBUM%$if($stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),,|%RATING%)
+							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),, - %RATING%)
 							<br>
 							&nbsp;&nbsp;&nbsp;&nbsp;->
 							<br>
-							%ARTIST%|%ALBUM% <i>or</i> %ARTIST%|%ALBUM%|%RATING%
+							%ARTIST%|%ALBUM%|%TITLE% <i>or</i> %ARTIST%|%ALBUM%|%TITLE% - %RATING%
 						</em>
 					</td>
 					<td>
