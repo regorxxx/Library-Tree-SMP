@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//05/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -452,10 +452,6 @@ if (ppt.get('Tree List View')) {
 	ppt.facetView = ppt.get('Tree List View');
 	ppt.set('Tree List View', null);
 }
-ppt.set('Image Pre-Load Images In Disk Cache', null);
-ppt.set('Image Root Collage', null);
 ppt.set('Image Show Index Number', null);
 ppt.set('Image Show Index Year Auto', null);
-ppt.set('Node: Item Show Duration', null);
-ppt.set('Node [Squares]: Windows 0 or 1', null);
 properties = undefined;
