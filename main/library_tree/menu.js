@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//05/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -335,18 +335,13 @@ class MenuItems {
 
 		// Regorxxx <- Code cleanup
 		if (this.validItem && panel.imgView) {
-			const switchArt = img.getArtSwitchType(ppt.artId);
-			const tfArt = img.getArt(5);
-			menu.newItem({
-				str: switchArt.showMenu,
-				func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); }
-			});
-			if (ppt.artId !== tfArt.idx && switchArt.showMenu !== tfArt.showMenu) {
+			const switchArtArr = img.getArtSwitchTypes(ppt.artId);
+			switchArtArr.forEach((switchArt) => {
 				menu.newItem({
-					str: tfArt.showMenu,
-					func: () => { ppt.artId = tfArt.idx; this.setPlaylist(5); }
+					str: switchArt.showMenu,
+					func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); }
 				});
-			}
+			});
 			menu.newItem({ separator: this.show_context && !ui.style.topBarShow });
 		}
 		// Regorxxx ->
@@ -1505,8 +1500,8 @@ class MenuItems {
 				ppt.treeViewBy = i;
 				ppt.albumArtViewBy = i;
 			} else {
-				if (panel.imgView) {ppt.albumArtViewBy = i;}
-				else {ppt.treeViewBy = i;}
+				if (panel.imgView) { ppt.albumArtViewBy = i; }
+				else { ppt.treeViewBy = i; }
 				if (ppt.treeViewBy != ppt.albumArtViewBy) {
 					ppt.set(panel.imgView ? 'Tree' : 'Tree Image', null);
 					ppt.set(panel.imgView ? 'Tree Search' : 'Tree Image Search', null);

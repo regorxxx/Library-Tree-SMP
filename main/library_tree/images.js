@@ -138,12 +138,12 @@ class Images {
 	// Regorxxx <- Code cleanup | External integration | Custom TF art
 	getArt(idx, folderView) {
 		const art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: ppt.imgStyleFront, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: ppt.imgStyleBack, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: ppt.imgStyleDisc, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: ppt.imgStyleIcon, showMenu: 'Show albums', switchIdx: 4 },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: ppt.imgStyleArtist, showMenu: 'Show artists', switchIdx: 0 },
-			{ idx: 5, type: 'File (by TF)...', cacheName: folderView ? 'foldertf' : 'viewtf', lines: 1, style: ppt.imgStyleTF, showMenu: 'Show art (tf)', switchIdx: 0 }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: ppt.imgStyleFront, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: ppt.imgStyleBack, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: ppt.imgStyleDisc, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: ppt.imgStyleIcon, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: ppt.imgStyleArtist, showMenu: 'Show artists', switchIdx: [0, 5] },
+			{ idx: 5, type: 'File (by TF)...', cacheName: folderView ? 'foldertf' : 'viewtf', lines: 1, style: ppt.imgStyleTF, showMenu: 'Show art (tf)', switchIdx: [0, 4] }
 		];
 		return typeof idx === 'undefined' ? art : art[idx];
 	}
@@ -156,10 +156,14 @@ class Images {
 		return this.getArt().map((a) => a.type);
 	}
 
-	getArtSwitchType(idx) {
+	getArtSwitchTypes(idx) {
 		const art = this.getArt();
 		const newIdx = art[idx].switchIdx;
-		return art[newIdx];
+		return newIdx.map((id) => art[id]);
+	}
+
+	getArtSwitchType(idx) {
+		return this.getArtSwitchTypes(idx)[0];
 	}
 
 	getArtCachePath(idx, folderView) {
