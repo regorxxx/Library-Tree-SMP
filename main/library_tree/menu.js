@@ -964,7 +964,7 @@ class MenuItems {
 		if (search.menu.length) {
 			for (let i = 1; i < search.menu.length + 2; i++) {
 				sMenu.newItem({
-					str: i < search.menu.length + 1 ? search.menu[i - 1].search : 'Clear history',
+					str: i < search.menu.length + 1 ? search.menu[i - 1].search.trim().cut(80) : 'Clear history', // Regorxxx <- Cut and trim search history entries ->
 					func: () => this.setSearchHistory(i),
 					flags: i != 1 || search.menu.length ? MF_STRING : MF_GRAYED,
 					separator: search.menu.length && i == search.menu.length
