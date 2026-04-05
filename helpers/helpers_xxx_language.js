@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/03/26
+//05/04/26
 
 /* exported Language */
 
@@ -16,8 +16,8 @@ const Language = Object.freeze({
 		),
 		romanizeLangMap: Object.freeze(
 			{
-				ch: 'jpRomanize',
-				jp: 'chRomanize'
+				ch: 'chRomanize',
+				jp: 'jpRomanize'
 			}
 		),
 		greek: Object.freeze(
