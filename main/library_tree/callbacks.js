@@ -276,9 +276,8 @@ addEventListener('on_notify_data', (name, info) => {
 		});
 	}
 
-	const switchArt = img.getArtSwitchType(ppt.artId);
 	const art = img.getArt();
-	const artTypes = art.map((a) => a.type);
+	const artShowId = [0, 4, 5].find((id) => name === window.ScriptInfo.Name + ': ' + art[id].showMenu.toLowerCase());
 	switch (name) {
 		case '!!.tags update':
 			lib.treeState(false, 2);
@@ -342,14 +341,27 @@ addEventListener('on_notify_data', (name, info) => {
 			men.setPlaylist(4);
 			break;
 		}
-		case window.ScriptInfo.Name + ': switch show artists / albums':
-		case window.ScriptInfo.Name + ': ' + art[0].showMenu.toLowerCase(): // Front
-		case window.ScriptInfo.Name + ': ' + art[4].showMenu.toLowerCase(): // Artist
-		case window.ScriptInfo.Name + ': ' + art[5].showMenu.toLowerCase(): { // TF
+		case window.ScriptInfo.Name + ': switch show artists / albums': {
 			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
-			if (name === window.ScriptInfo.Name + ': ' + art[ppt.artId].showMenu.toLowerCase()) { break; }
-			ppt.artId = switchArt.idx;
+			const switchArtArr = img.getArtSwitchTypes(ppt.artId);
+			ppt.artId = switchArtArr[0].idx;
+			men.setPlaylist(5);
+			break;
+		}
+		case window.ScriptInfo.Name + ': cycle show art type': {
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
+			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
+			const types = img.getArtShowTypes();
+			ppt.artId = types.rotate(types.findIndex((t) => t.idx === ppt.artId) + 1)[0].idx;
+			men.setPlaylist(5);
+			break;
+		}
+		case artShowId !== -1: { // Front | Artist | TF
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
+			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
+			if (artShowId === ppt.artId) { break; }
+			ppt.artId = artShowId;
 			men.setPlaylist(5);
 			break;
 		}
@@ -357,12 +369,20 @@ addEventListener('on_notify_data', (name, info) => {
 			if (info && info.window && !info.window.includes(window.Name)) { break; }
 			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
 			let idx = -1;
+			const artTypes = art.map((a) => a.type);
 			if (typeof info.artType !== 'undefined') { idx = artTypes.findIndex((t) => t.toLowerCase() === info.artType.toLowerCase()); }
 			else if (typeof info.artIdx !== 'undefined' && info.artIdx >= -1 && info.artIdx < artTypes.length) {
 				if (info.artIdx === -1) { idx = 0; }
 				else { idx = info.artIdx; }
 			}
 			if (idx !== -1) { men.setAlbumartType(idx); }
+			break;
+		}
+		case window.ScriptInfo.Name + ': cycle art type': {
+			if (info && info.window && !info.window.includes(window.Name)) { break; }
+			if (!panel.imgView && info && info.forceShowArt) { men.setPlaylist(4); }
+			const idx = art.rotate(art.findIndex((t) => t.idx === ppt.artId) + 1)[0].idx;
+			men.setAlbumartType(idx);
 			break;
 		}
 		case window.ScriptInfo.Name + ': collapse all': {

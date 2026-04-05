@@ -41,6 +41,9 @@ Callbacks:
 • 'Library-Tree-SMP: switch show artists / albums'
 	-> { window: string[], forceShowArt: boolean }
 
+• 'Library-Tree-SMP: cycle show art type'
+	-> { window: string[], forceShowArt: boolean }
+
 • 'Library-Tree-SMP: show artists'
 	-> { window: string[], forceShowArt: boolean }
 
@@ -48,6 +51,14 @@ Callbacks:
 	-> { window: string[], forceShowArt: boolean }
 
 • 'Library-Tree-SMP: show art (tf)'
+	-> { window: string[], forceShowArt: boolean }
+
+• 'Library-Tree-SMP: switch art type'
+	-> { window: string[], artName: string, artIdx: number, forceShowArt: boolean }
+	- artIdx = -1 or 0 for front art
+	- artName follows menu names
+
+• 'Library-Tree-SMP: cycle art type'
 	-> { window: string[], forceShowArt: boolean }
 
 • 'Library-Tree-SMP: collapse all'
@@ -88,11 +99,6 @@ Callbacks:
 	- sourcePanel allows multiples values, joined with '|'
 	- sourcePanel allows multiple values, joined with '|'
 	- skipPresets allow to bypass user-set preset rules
-
-• 'Library-Tree-SMP: switch art type'
-	-> { window: string[], artName: string, artIdx: number }
-	- artIdx = -1 or 0 for front art
-	- artName follows menu names
 
 • 'Library-Tree-SMP: switch statistics'
 	-> { window: string[], statisticsName: string, statisticsIdx: number }

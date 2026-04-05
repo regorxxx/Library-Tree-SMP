@@ -156,6 +156,11 @@ class Images {
 		return this.getArt().map((a) => a.type);
 	}
 
+	getArtShowTypes() {
+		const art = this.getArt();
+		return [...new Set(this.getArt().map((a) => a.switchIdx).flat(Infinity))].sort((a, b) => a - b).map((id) => art[id]);
+	}
+
 	getArtSwitchTypes(idx) {
 		const art = this.getArt();
 		const newIdx = art[idx].switchIdx;
