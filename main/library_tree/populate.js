@@ -63,12 +63,12 @@ class Populate {
 		this.highlight = {};
 
 		this.getMainMenuIndex = {
-			add: parseFloat(this.hotKeys[3]),
-			collapseAll: parseFloat(this.hotKeys[1]),
-			insert: parseFloat(this.hotKeys[5]),
-			new: parseFloat(this.hotKeys[7]),
-			searchClear: parseFloat(this.hotKeys[11]),
-			searchFocus: parseFloat(this.hotKeys[9])
+			add: Number.parseFloat(this.hotKeys[3]),
+			collapseAll: Number.parseFloat(this.hotKeys[1]),
+			insert: Number.parseFloat(this.hotKeys[5]),
+			new: Number.parseFloat(this.hotKeys[7]),
+			searchClear: Number.parseFloat(this.hotKeys[11]),
+			searchFocus: Number.parseFloat(this.hotKeys[9])
 		};
 
 		this.last_pressed_coord = {
@@ -560,10 +560,10 @@ class Populate {
 				} else {
 					let lengths = FbTitleFormat('%LENGTH_SECONDS_FP%').EvalWithMetadbs(handleList);
 					const total = values.map((v, i) => v * lengths[i]);
-					let totals = total.map(v => parseFloat(v) || '');
+					let totals = total.map(v => Number.parseFloat(v) || '');
 					totals = totals.filter((v, i) => v && lengths[i] ? v : lengths.splice(i, 1));
 					totals = totals.reduce((a, b) => a + b, 0);
-					lengths = lengths.map(v => parseFloat(v)).reduce((a, b) => a + b, 0);
+					lengths = lengths.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
 					value = Number(Math.round(totals / lengths)) || '';
 				}
 				if (typeof value !== 'undefined') {
@@ -599,7 +599,7 @@ class Populate {
 				values = values.filter(Boolean);
 				ln = values.length;
 				if (ln) {
-					values = values.map(v => parseFloat(v)).reduce((a, b) => a + b, 0);
+					values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
 					rawValue = values / ln;
 					value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 4 ? 'Rating ' : 'Popularity ') + value; }
@@ -704,7 +704,7 @@ class Populate {
 						: values.filter((v) => v < 0);
 				ln = values.length;
 				if (ln) {
-					value = Math.abs(values.map(v => parseFloat(v)).reduce((a, b) => a + b, 0));
+					value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 					rawValue = value;
 					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 14 ? 'Feedback ' : (ppt.itemShowStatistics == 13 ? 'Hated ' : 'Loved ')) + value; }
 				}
@@ -735,8 +735,8 @@ class Populate {
 				if (ln) {
 					const exp = Number(ppt.expCustomMeX) || 1;
 					values = ppt.itemShowStatistics <= 20
-						? values.map(v => parseFloat(v)).reduce((a, b) => a + b, 0)
-						: values.map(v => parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
+						? values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0)
+						: values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
 					rawValue = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
 						? value
 						: values / ln;
@@ -1511,7 +1511,7 @@ class Populate {
 
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-		return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+		return `${Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 	}
 
 	getAllCombinations(n) {
@@ -1653,8 +1653,8 @@ class Populate {
 
 	getNumbers(arr) { // test [0, '0', "0", "0.5", 10, '10', "", '', '-', null, true, false, 'Oh']
 		return arr.filter(v => Number(v)); // gives ["0.5", 10, "10", true]
-		//return arr.filter(v => parseFloat(v) == v); // gives [0, "0", "0", "0.5", 10, "10"]
-		//return arr.filter(v => Number(v) && parseFloat(v) == v); // gives ["0.5", 10, "10"]
+		//return arr.filter(v => Number.parseFloat(v) == v); // gives [0, "0", "0", "0.5", 10, "10"]
+		//return arr.filter(v => Number(v) && Number.parseFloat(v) == v); // gives ["0.5", 10, "10"]
 	}
 
 	getRowNumber(y) {

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/03/26
+//06/04/26
 
 /* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath */
 
@@ -1016,7 +1016,7 @@ function formatFileSize(val) {
 	const regexUnit = /(^\d*.*\d* )(\w*)/;
 	val = utils.FormatFileSize(val);  // X.XX bb
 	if (regexHundreds.test(val)) {
-		val = val.replace(regexHundreds, round(parseFloat(val.match(regexHundreds)[0] / 1024), 3));
+		val = val.replace(regexHundreds, round(Number.parseFloat(val.match(regexHundreds)[0] / 1024), 3));
 		const unit = val.match(regexUnit)[2];
 		let toUnit = '';
 		switch (unit) {
@@ -1028,7 +1028,7 @@ function formatFileSize(val) {
 		val = val.replace(regexUnit, '$1' + toUnit);
 	}
 	if (regexTwoDecs.test(val)) {
-		val = val.replace(regexTwoDecs, round(parseFloat(val.match(regexTwoDecs)[0]), 1));
+		val = val.replace(regexTwoDecs, round(Number.parseFloat(val.match(regexTwoDecs)[0]), 1));
 	}
 	return val;
 }

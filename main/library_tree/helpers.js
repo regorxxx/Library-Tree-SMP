@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//06/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -55,9 +55,7 @@ class Helpers {
 	}
 
 	clamp(num, min, max) {
-		num = num <= max ? num : max;
-		num = num >= min ? num : min;
-		return num;
+		return Math.max(Math.min(num, max), min);
 	}
 
 	create(fo) {
@@ -67,7 +65,7 @@ class Helpers {
 	}
 
 	debounce(e, r, i) {
-		var o, u, a, c, v, f, d = 0, m = !1, j = !1, n = !0; if ('function' != typeof e) throw new TypeError('debounce: invalid function'); function T(i) { var n = o, t = u; return o = u = void 0, d = i, c = e.apply(t, n); } function b(i) { var n = i - f; return void 0 === f || r <= n || n < 0 || j && a <= i - d; } function l() { var i, n, t = Date.now(); if (b(t)) return w(t); v = setTimeout(l, (n = r - ((i = t) - f), j ? Math.min(n, a - (i - d)) : n)); } function w(i) { return v = void 0, n && o ? T(i) : (o = u = void 0, c); } function t() { var i, n = Date.now(), t = b(n); if (o = arguments, u = this, f = n, t) { if (void 0 === v) return d = i = f, v = setTimeout(l, r), m ? T(i) : c; if (j) return v = setTimeout(l, r), T(f); } return void 0 === v && (v = setTimeout(l, r)), c; } return r = parseFloat(r) || 0, this.isObject(i) && (m = !!i.leading, a = ((j = 'maxWait' in i)) ? Math.max(parseFloat(i.maxWait) || 0, r) : a, n = 'trailing' in i ? !!i.trailing : n), t.cancel = function () { void 0 !== v && clearTimeout(v), o = f = u = v = void (d = 0); }, t.flush = function () { return void 0 === v ? c : w(Date.now()); }, t;
+		var o, u, a, c, v, f, d = 0, m = !1, j = !1, n = !0; if ('function' != typeof e) throw new TypeError('debounce: invalid function'); function T(i) { var n = o, t = u; return o = u = void 0, d = i, c = e.apply(t, n); } function b(i) { var n = i - f; return void 0 === f || r <= n || n < 0 || j && a <= i - d; } function l() { var i, n, t = Date.now(); if (b(t)) return w(t); v = setTimeout(l, (n = r - ((i = t) - f), j ? Math.min(n, a - (i - d)) : n)); } function w(i) { return v = void 0, n && o ? T(i) : (o = u = void 0, c); } function t() { var i, n = Date.now(), t = b(n); if (o = arguments, u = this, f = n, t) { if (void 0 === v) return d = i = f, v = setTimeout(l, r), m ? T(i) : c; if (j) return v = setTimeout(l, r), T(f); } return void 0 === v && (v = setTimeout(l, r)), c; } return r = Number.parseFloat(r) || 0, this.isObject(i) && (m = !!i.leading, a = ((j = 'maxWait' in i)) ? Math.max(Number.parseFloat(i.maxWait) || 0, r) : a, n = 'trailing' in i ? !!i.trailing : n), t.cancel = function () { void 0 !== v && clearTimeout(v), o = f = u = v = void (d = 0); }, t.flush = function () { return void 0 === v ? c : w(Date.now()); }, t; // NOSONAR
 	}
 
 	equal(arr1, arr2) {
@@ -109,7 +107,7 @@ class Helpers {
 	}
 
 	getDpi() {
-		let dpi = typeof window.DPI !== 'number' ? window.DPI : 120; // Regorxxx <- Use exposed SMP dpi ->
+		let dpi = typeof window.DPI === 'number' ? 120 : window.DPI; // Regorxxx <- Use exposed SMP dpi ->
 		try {
 			dpi = WshShell.RegRead('HKCU\\Control Panel\\Desktop\\WindowMetrics\\AppliedDPI');
 		} catch (e) { /* empty */ } // eslint-disable-line no-unused-vars
@@ -117,7 +115,7 @@ class Helpers {
 	}
 
 	gr(w, h, im, func) {
-		if (isNaN(w) || isNaN(h)) return;
+		if (Number.isNaN(w) || Number.isNaN(h)) return;
 		let i = gdi.CreateImage(Math.max(w, 2), Math.max(h, 2));
 		let g = i.GetGraphics();
 		func(g, i);
@@ -178,8 +176,7 @@ class Helpers {
 		return l;
 	}
 
-	range(start, stop, step) {
-		step = step || 1;
+	range(start, stop, step = 1) {
 		return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 	}
 
@@ -285,8 +282,8 @@ class Helpers {
 	}
 
 	value(num, def, type) {
-		num = parseFloat(num);
-		if (isNaN(num)) return def;
+		num = Number.parseFloat(num);
+		if (Number.isNaN(num)) return def;
 		switch (type) {
 			case 0:
 				return num;
@@ -303,8 +300,7 @@ class Helpers {
 	wshPopup(prompt, caption) {
 		try {
 			const ns = WshShell.Popup(prompt, 0, caption, 1);
-			if (ns == 1) return true;
-			return false;
+			return ns == 1;
 		} catch (e) { // eslint-disable-line no-unused-vars
 			return true;
 		}
@@ -418,11 +414,11 @@ class Helpers {
 		const outputArray_length = handleList.Count;
 		const sep = '|‎|'; // Contains U+200E invisible char
 		while (i < tagArray_length) {
-			const tagStr = !tagsArray[i].includes('$')
-				? !tagsArray[i].includes('%')
-					? '%' + tagsArray[i] + '%'
-					: tagsArray[i]
-				: tagsArray[i];
+			const tagStr = tagsArray[i].includes('$')
+				? tagsArray[i]
+				: tagsArray[i].includes('%')
+					? tagsArray[i]
+					: '%' + tagsArray[i] + '%';
 			if (options.bMerged) { tagString += this._b((i === 0 ? '' : ', ') + tagStr); } // We have all values separated by comma
 			else { tagString += (i === 0 ? '' : sep) + this._b(tagStr); } // We have tag values separated by comma and different tags by 'sep'
 			i++;
@@ -459,7 +455,7 @@ class Helpers {
 	// Regorxxx <- Drag n' drop to search box
 	escapeRegExp(s) { // https://github.com/lodash/lodash/blob/4.1.2-npm-packages/lodash.escaperegexp/index.js
 		const reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-		const reHasRegExpChar = RegExp(reRegExpChar.source);
+		const reHasRegExpChar = new RegExp(reRegExpChar.source);
 		s = s.toString();
 		return (s && reHasRegExpChar.test(s) ? s.replace(reRegExpChar, '\\$&') : s);
 	}
@@ -500,18 +496,7 @@ class Helpers {
 		let tagsArrayLength = tagsArray.length;
 		/** @type {string|string[]} */
 		let query = '';
-		if (!Array.isArray(tagsArray[0])) { //no subTagsArrays
-			if (!['AND', 'OR', 'AND NOT', 'OR NOT'].includes(tagsArrayLogic)) { return; }
-			let i = 0;
-			while (i < tagsArrayLength) {
-				if (i === 0) {
-					query += queryKey + ' ' + match + ' ' + this.sanitizeQueryVal(/** @type {string} */(tagsArray[0]));
-				} else {
-					query += ' ' + tagsArrayLogic + ' ' + queryKey + ' ' + match + ' ' + this.sanitizeQueryVal(/** @type {string} */(tagsArray[i]));
-				}
-				i++;
-			}
-		} else {
+		if (Array.isArray(tagsArray[0])) {
 			if (!['AND', 'OR', 'AND NOT', 'OR NOT'].includes(tagsArrayLogic) || !['AND', 'OR', 'AND NOT', 'OR NOT'].includes(subTagsArrayLogic)) { return; }
 			let k = tagsArray[0].length; // subTagsArrays length
 			let i = 0;
@@ -529,6 +514,17 @@ class Helpers {
 					j++;
 				}
 				query += (k > 1 ? ')' : '');
+				i++;
+			}
+		} else { //no subTagsArrays
+			if (!['AND', 'OR', 'AND NOT', 'OR NOT'].includes(tagsArrayLogic)) { return; }
+			let i = 0;
+			while (i < tagsArrayLength) {
+				if (i === 0) {
+					query += queryKey + ' ' + match + ' ' + this.sanitizeQueryVal(/** @type {string} */(tagsArray[0]));
+				} else {
+					query += ' ' + tagsArrayLogic + ' ' + queryKey + ' ' + match + ' ' + this.sanitizeQueryVal(/** @type {string} */(tagsArray[i]));
+				}
 				i++;
 			}
 		}
@@ -588,7 +584,7 @@ class Helpers {
 	}
 
 	isNumeric(n) {
-		return !isNaN(parseFloat(n)) && isFinite(n);
+		return !Number.isNaN(Number.parseFloat(n)) && Number.isFinite(n);
 	}
 	// Regorxxx ->
 
@@ -603,8 +599,8 @@ class Helpers {
 
 const $ = new Helpers;
 
-function Bezier() { const i = 4, c = .001, o = 1e-7, v = 10, l = 11, s = 1 / (l - 1), n = typeof Float32Array === 'function'; function e(r, n) { return 1 - 3 * n + 3 * r; } function u(r, n) { return 3 * n - 6 * r; } function a(r) { return 3 * r; } function w(r, n, t) { return ((e(n, t) * r + u(n, t)) * r + a(n)) * r; } function y(r, n, t) { return 3 * e(n, t) * r * r + 2 * u(n, t) * r + a(n); } function h(r, n, t, e, u) { let a, f, i = 0; do { f = n + (t - n) / 2; a = w(f, e, u) - r; if (a > 0) { t = f; } else { n = f; } } while (Math.abs(a) > o && ++i < v); return f; } function A(r, n, t, e) { for (let u = 0; u < i; ++u) { const a = y(n, t, e); if (a === 0) { return n; } const f = w(n, t, e) - r; n -= f / a; } return n; } function f(r) { return r; } function bezier(i, t, o, e) { if (!(0 <= i && i <= 1 && 0 <= o && o <= 1)) { throw new Error('Bezier x values must be in [0, 1] range'); } if (i === t && o === e) { return f; } const v = n ? new Float32Array(l) : new Array(l); for (let r = 0; r < l; ++r) { v[r] = w(r * s, i, o); } function u(r) { const e = l - 1; let n = 0, t = 1; for (; t !== e && v[t] <= r; ++t) { n += s; } --t; const u = (r - v[t]) / (v[t + 1] - v[t]), a = n + u * s, f = y(a, i, o); if (f >= c) { return A(r, a, i, o); } else if (f === 0) { return a; } else { return h(r, n, n + s, i, o); } } return function r(n) { if (n === 0) { return 0; } if (n === 1) { return 1; } return w(u(n), t, e); }; } this.scroll = bezier(0.25, 0.1, 0.25, 1); this.full = this.scroll; this.step = this.scroll; this.bar = bezier(0.165, 0.84, 0.44, 1); this.barFast = bezier(0.19, 1, 0.22, 1); this.inertia = bezier(0.23, 1, 0.32, 1); }
+function Bezier() { const i = 4, c = .001, o = 1e-7, v = 10, l = 11, s = 1 / (l - 1), n = typeof Float32Array === 'function'; function e(r, n) { return 1 - 3 * n + 3 * r; } function u(r, n) { return 3 * n - 6 * r; } function a(r) { return 3 * r; } function w(r, n, t) { return ((e(n, t) * r + u(n, t)) * r + a(n)) * r; } function y(r, n, t) { return 3 * e(n, t) * r * r + 2 * u(n, t) * r + a(n); } function h(r, n, t, e, u) { let a, f, i = 0; do { f = n + (t - n) / 2; a = w(f, e, u) - r; if (a > 0) { t = f; } else { n = f; } } while (Math.abs(a) > o && ++i < v); return f; } function A(r, n, t, e) { for (let u = 0; u < i; ++u) { const a = y(n, t, e); if (a === 0) { return n; } const f = w(n, t, e) - r; n -= f / a; } return n; } function f(r) { return r; } function bezier(i, t, o, e) { if (!(0 <= i && i <= 1 && 0 <= o && o <= 1)) { throw new Error('Bezier x values must be in [0, 1] range'); } if (i === t && o === e) { return f; } const v = n ? new Float32Array(l) : new Array(l); for (let r = 0; r < l; ++r) { v[r] = w(r * s, i, o); } function u(r) { const e = l - 1; let n = 0, t = 1; for (; t !== e && v[t] <= r; ++t) { n += s; } --t; const u = (r - v[t]) / (v[t + 1] - v[t]), a = n + u * s, f = y(a, i, o); if (f >= c) { return A(r, a, i, o); } else if (f === 0) { return a; } else { return h(r, n, n + s, i, o); } } return function r(n) { if (n === 0) { return 0; } if (n === 1) { return 1; } return w(u(n), t, e); }; } this.scroll = bezier(0.25, 0.1, 0.25, 1); this.full = this.scroll; this.step = this.scroll; this.bar = bezier(0.165, 0.84, 0.44, 1); this.barFast = bezier(0.19, 1, 0.22, 1); this.inertia = bezier(0.23, 1, 0.32, 1); } // NOSONAR
 const ease = new Bezier;
 
-function MD5() { const b = function (l, n) { let m = l[0], j = l[1], p = l[2], o = l[3]; m += (j & p | ~j & o) + n[0] - 680876936 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[1] - 389564586 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[2] + 606105819 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[3] - 1044525330 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[4] - 176418897 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[5] + 1200080426 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[6] - 1473231341 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[7] - 45705983 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[8] + 1770035416 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[9] - 1958414417 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[10] - 42063 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[11] - 1990404162 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[12] + 1804603682 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[13] - 40341101 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[14] - 1502002290 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[15] + 1236535329 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & o | p & ~o) + n[1] - 165796510 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[6] - 1069501632 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[11] + 643717713 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[0] - 373897302 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[5] - 701558691 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[10] + 38016083 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[15] - 660478335 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[4] - 405537848 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[9] + 568446438 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[14] - 1019803690 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[3] - 187363961 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[8] + 1163531501 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[13] - 1444681467 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[2] - 51403784 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[7] + 1735328473 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[12] - 1926607734 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j ^ p ^ o) + n[5] - 378558 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[8] - 2022574463 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[11] + 1839030562 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[14] - 35309556 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[1] - 1530992060 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[4] + 1272893353 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[7] - 155497632 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[10] - 1094730640 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[13] + 681279174 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[0] - 358537222 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[3] - 722521979 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[6] + 76029189 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[9] - 640364487 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[12] - 421815835 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[15] + 530742520 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[2] - 995338651 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (p ^ (j | ~o)) + n[0] - 198630844 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[7] + 1126891415 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[14] - 1416354905 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[5] - 57434055 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[12] + 1700485571 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[3] - 1894986606 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[10] - 1051523 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[1] - 2054922799 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[8] + 1873313359 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[15] - 30611744 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[6] - 1560198380 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[13] + 1309151649 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[4] - 145523070 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[11] - 1120210379 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[2] + 718787259 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[9] - 343485551 | 0; j = (j << 21 | j >>> 11) + p | 0; l[0] = m + l[0] | 0; l[1] = j + l[1] | 0; l[2] = p + l[2] | 0; l[3] = o + l[3] | 0; }; const e = '0123456789abcdef'; const d = []; const c = function (k) { const q = e; const o = d; let r, p, l; for (let m = 0; m < 4; m++) { p = m * 8; r = k[m]; for (l = 0; l < 8; l += 2) { o[p + 1 + l] = q.charAt(r & 15); r >>>= 4; o[p + 0 + l] = q.charAt(r & 15); r >>>= 4; } } return o.join(''); }; const i = function () { this._dataLength = 0; this._state = new Int32Array(4); this._buffer = new ArrayBuffer(68); this._bufferLength = 0; this._buffer8 = new Uint8Array(this._buffer, 0, 68); this._buffer32 = new Uint32Array(this._buffer, 0, 17); this.start(); }; const a = new Int32Array([1732584193, -271733879, -1732584194, 271733878]); const h = new Int32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); i.prototype.appendStr = function (n) { const k = this._buffer8; const j = this._buffer32; let o = this._bufferLength; for (let l = 0; l < n.length; l++) { let m = n.charCodeAt(l); if (m < 128) { k[o++] = m; } else { if (m < 2048) { k[o++] = (m >>> 6) + 192; k[o++] = m & 63 | 128; } else { if (m < 55296 || m > 56319) { k[o++] = (m >>> 12) + 224; k[o++] = (m >>> 6 & 63) | 128; k[o++] = (m & 63) | 128; } else { m = ((m - 55296) * 1024) + (n.charCodeAt(++l) - 56320) + 65536; if (m > 1114111) { throw 'Unicode standard supports code points up to U+10FFFF'; } k[o++] = (m >>> 18) + 240; k[o++] = (m >>> 12 & 63) | 128; k[o++] = (m >>> 6 & 63) | 128; k[o++] = (m & 63) | 128; } } } if (o >= 64) { this._dataLength += 64; b(this._state, j); o -= 64; j[0] = j[16]; } } this._bufferLength = o; return this; }; i.prototype.appendAsciiStr = function (o) { const l = this._buffer8; const k = this._buffer32; let p = this._bufferLength; let n = 0, m = 0; for (; ;) { n = Math.min(o.length - m, 64 - p); while (n--) { l[p++] = o.charCodeAt(m++); } if (p < 64) { break; } this._dataLength += 64; b(this._state, k); p = 0; } this._bufferLength = p; return this; }; i.prototype.start = function () { this._dataLength = 0; this._bufferLength = 0; this._state.set(a); return this; }; i.prototype.end = function () { const q = this._bufferLength; this._dataLength += q; const r = this._buffer8; r[q] = 128; r[q + 1] = r[q + 2] = r[q + 3] = 0; const k = this._buffer32; const m = (q >> 2) + 1; k.set(h.subarray(m), m); if (q > 55) { b(this._state, k); k.set(h); } const j = this._dataLength * 8; if (j <= 4294967295) { k[14] = j; } else { const n = j.toString(16).match(/(.*?)(.{0,8})$/); const o = parseInt(n[2], 16); const l = parseInt(n[1], 16) || 0; k[14] = o; k[15] = l; } b(this._state, k); return c(this._state); }; const f = new i(); i.hashStr = function (k) { return f.start().appendStr(k).end(); }; return i; } // https://github.com/gorhill/yamd5.js
+function MD5() { const b = function (l, n) { let m = l[0], j = l[1], p = l[2], o = l[3]; m += (j & p | ~j & o) + n[0] - 680876936 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[1] - 389564586 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[2] + 606105819 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[3] - 1044525330 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[4] - 176418897 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[5] + 1200080426 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[6] - 1473231341 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[7] - 45705983 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[8] + 1770035416 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[9] - 1958414417 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[10] - 42063 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[11] - 1990404162 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & p | ~j & o) + n[12] + 1804603682 | 0; m = (m << 7 | m >>> 25) + j | 0; o += (m & j | ~m & p) + n[13] - 40341101 | 0; o = (o << 12 | o >>> 20) + m | 0; p += (o & m | ~o & j) + n[14] - 1502002290 | 0; p = (p << 17 | p >>> 15) + o | 0; j += (p & o | ~p & m) + n[15] + 1236535329 | 0; j = (j << 22 | j >>> 10) + p | 0; m += (j & o | p & ~o) + n[1] - 165796510 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[6] - 1069501632 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[11] + 643717713 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[0] - 373897302 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[5] - 701558691 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[10] + 38016083 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[15] - 660478335 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[4] - 405537848 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[9] + 568446438 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[14] - 1019803690 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[3] - 187363961 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[8] + 1163531501 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j & o | p & ~o) + n[13] - 1444681467 | 0; m = (m << 5 | m >>> 27) + j | 0; o += (m & p | j & ~p) + n[2] - 51403784 | 0; o = (o << 9 | o >>> 23) + m | 0; p += (o & j | m & ~j) + n[7] + 1735328473 | 0; p = (p << 14 | p >>> 18) + o | 0; j += (p & m | o & ~m) + n[12] - 1926607734 | 0; j = (j << 20 | j >>> 12) + p | 0; m += (j ^ p ^ o) + n[5] - 378558 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[8] - 2022574463 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[11] + 1839030562 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[14] - 35309556 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[1] - 1530992060 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[4] + 1272893353 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[7] - 155497632 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[10] - 1094730640 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[13] + 681279174 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[0] - 358537222 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[3] - 722521979 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[6] + 76029189 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (j ^ p ^ o) + n[9] - 640364487 | 0; m = (m << 4 | m >>> 28) + j | 0; o += (m ^ j ^ p) + n[12] - 421815835 | 0; o = (o << 11 | o >>> 21) + m | 0; p += (o ^ m ^ j) + n[15] + 530742520 | 0; p = (p << 16 | p >>> 16) + o | 0; j += (p ^ o ^ m) + n[2] - 995338651 | 0; j = (j << 23 | j >>> 9) + p | 0; m += (p ^ (j | ~o)) + n[0] - 198630844 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[7] + 1126891415 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[14] - 1416354905 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[5] - 57434055 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[12] + 1700485571 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[3] - 1894986606 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[10] - 1051523 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[1] - 2054922799 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[8] + 1873313359 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[15] - 30611744 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[6] - 1560198380 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[13] + 1309151649 | 0; j = (j << 21 | j >>> 11) + p | 0; m += (p ^ (j | ~o)) + n[4] - 145523070 | 0; m = (m << 6 | m >>> 26) + j | 0; o += (j ^ (m | ~p)) + n[11] - 1120210379 | 0; o = (o << 10 | o >>> 22) + m | 0; p += (m ^ (o | ~j)) + n[2] + 718787259 | 0; p = (p << 15 | p >>> 17) + o | 0; j += (o ^ (p | ~m)) + n[9] - 343485551 | 0; j = (j << 21 | j >>> 11) + p | 0; l[0] = m + l[0] | 0; l[1] = j + l[1] | 0; l[2] = p + l[2] | 0; l[3] = o + l[3] | 0; }; const e = '0123456789abcdef'; const d = []; const c = function (k) { const q = e; const o = d; let r, p, l; for (let m = 0; m < 4; m++) { p = m * 8; r = k[m]; for (l = 0; l < 8; l += 2) { o[p + 1 + l] = q.charAt(r & 15); r >>>= 4; o[p + 0 + l] = q.charAt(r & 15); r >>>= 4; } } return o.join(''); }; const i = function () { this._dataLength = 0; this._state = new Int32Array(4); this._buffer = new ArrayBuffer(68); this._bufferLength = 0; this._buffer8 = new Uint8Array(this._buffer, 0, 68); this._buffer32 = new Uint32Array(this._buffer, 0, 17); this.start(); }; const a = new Int32Array([1732584193, -271733879, -1732584194, 271733878]); const h = new Int32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); i.prototype.appendStr = function (n) { const k = this._buffer8; const j = this._buffer32; let o = this._bufferLength; for (let l = 0; l < n.length; l++) { let m = n.charCodeAt(l); if (m < 128) { k[o++] = m; } else { if (m < 2048) { k[o++] = (m >>> 6) + 192; k[o++] = m & 63 | 128; } else { if (m < 55296 || m > 56319) { k[o++] = (m >>> 12) + 224; k[o++] = (m >>> 6 & 63) | 128; k[o++] = (m & 63) | 128; } else { m = ((m - 55296) * 1024) + (n.charCodeAt(++l) - 56320) + 65536; if (m > 1114111) { throw 'Unicode standard supports code points up to U+10FFFF'; } k[o++] = (m >>> 18) + 240; k[o++] = (m >>> 12 & 63) | 128; k[o++] = (m >>> 6 & 63) | 128; k[o++] = (m & 63) | 128; } } } if (o >= 64) { this._dataLength += 64; b(this._state, j); o -= 64; j[0] = j[16]; } } this._bufferLength = o; return this; }; i.prototype.appendAsciiStr = function (o) { const l = this._buffer8; const k = this._buffer32; let p = this._bufferLength; let n = 0, m = 0; for (; ;) { n = Math.min(o.length - m, 64 - p); while (n--) { l[p++] = o.charCodeAt(m++); } if (p < 64) { break; } this._dataLength += 64; b(this._state, k); p = 0; } this._bufferLength = p; return this; }; i.prototype.start = function () { this._dataLength = 0; this._bufferLength = 0; this._state.set(a); return this; }; i.prototype.end = function () { const q = this._bufferLength; this._dataLength += q; const r = this._buffer8; r[q] = 128; r[q + 1] = r[q + 2] = r[q + 3] = 0; const k = this._buffer32; const m = (q >> 2) + 1; k.set(h.subarray(m), m); if (q > 55) { b(this._state, k); k.set(h); } const j = this._dataLength * 8; if (j <= 4294967295) { k[14] = j; } else { const n = j.toString(16).match(/(.*?)(.{0,8})$/); const o = parseInt(n[2], 16); const l = parseInt(n[1], 16) || 0; k[14] = o; k[15] = l; } b(this._state, k); return c(this._state); }; const f = new i(); i.hashStr = function (k) { return f.start().appendStr(k).end(); }; return i; } // NOSONAR https://github.com/gorhill/yamd5.js NOSONAR
 const md5 = new MD5;
