@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/04/26
+//06/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2588,12 +2588,18 @@ class Populate {
 		panel.treePaint();
 		plman.ClearPlaylistSelection($.pl_active);
 		let items = [];
-		if (panel.search.txt || ppt.filterBy || panel.multiProcess) {
+		if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort) { // Regorxxx <- Support playlist sorting | Support SORT BY query sorting ->
 			const hl = this.getHandleList();
-			hl.Convert().forEach(h => {
-				const i = lib.full_list.Find(h);
-				if (i != -1) items.push(i);
+			// Regorxxx <- Select duplicates handles ->
+			const list = lib.full_list.Convert();
+			hl.Convert().forEach((h) => {
+				let i = 0;
+				for (const handle of list) {
+					if (handle.Compare(h)) { items.push(i);}
+					i++;
+				}
 			});
+			// Regorxxx ->
 		} else {
 			items = this.range(item.item);
 		}
