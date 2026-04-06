@@ -131,9 +131,9 @@ class Populate {
 			custom3MeX: FbTitleFormat(ppt.tfCustom3MeX),
 		};
 		// Regorxxx <- Expand TF support. Fix sorting not being applied after HTML options panel change.
-		this.customSort = panel.processCustomTf(ppt.customSort) !== ppt.customSort
-			? ppt.customSort
-			: FbTitleFormat(ppt.customSort); // If not using special $funcs{} then caching is faster
+		this.customSort = panel.processCustomTf(ppt.customSort) === ppt.customSort
+			? FbTitleFormat(ppt.customSort)
+			: ppt.customSort; // If not using special $funcs{} then caching is faster
 		// Regorxxx ->
 	}
 	// Regorxxx ->
@@ -203,7 +203,7 @@ class Populate {
 			} else if (node.child && node.child.length) {
 				node.child.forEach((subNode) => this.addItems(arr, subNode));
 			} else if (node.item.length > 1 || node.item[0].count > 1) {
-				this.branch(node, !node.root ? false : true, true);
+				this.branch(node, !!node.root, true);
 				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
 				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
 				this.clearChild(node);
@@ -223,7 +223,7 @@ class Populate {
 				ranges[lastIndex].max = value;
 			}
 			return ranges;
-		}, []).map(function (range) { return range.min !== range.max ? range.min + '-' + range.max : range.min.toString(); });
+		}, []).map(function (range) { return range.min === range.max ? range.min.toString() : range.min + '-' + range.max; });
 	}
 
 	branch(br, base, node, block) {
@@ -238,7 +238,8 @@ class Populate {
 		this.range(br.item).forEach(v => {
 			n = lib.node[v][l];
 			nU = n.toUpperCase();
-			if (n_o != nU) {
+			if (n_o == nU) { br.child[i - 1].item.push(v); }
+			else {
 				n_o = nU;
 				if (panel.multiPrefix) n = lib.prefixes(n);
 				br.child[i] = {
@@ -250,7 +251,7 @@ class Populate {
 					srt: lib.sort(n)
 				};
 				i++;
-			} else br.child[i - 1].item.push(v);
+			}
 		});
 		this.condense(br.child);
 		this.buildTree(lib.root, 0, node, true, block);
@@ -273,7 +274,7 @@ class Populate {
 		let n_o = '#get_branch#';
 		let nU = '';
 		if (base) node = false;
-		const full = !br.root ? false : true;
+		const full = !!br.root;
 		this.range(br.item).forEach(v => {
 			if (l < lib.node[v].length) {
 				n = lib.node[v][l];
@@ -350,7 +351,7 @@ class Populate {
 
 	// Regorxxx <- Support SORT BY query sorting | Code cleanup
 	buildTree(br, level, node, full, block) {
-		const l = !this.rootNode ? level : level - 1;
+		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
 			switch (panel.multiProcess) {
@@ -395,7 +396,8 @@ class Populate {
 						multi_obj.forEach((v) => {
 							n = v.nm;
 							nU = n.toUpperCase();
-							if (n_o != nU) {
+							if (n_o == nU) { v.item.forEach(v => multi_cond[j - 1].item.push(v)); }
+							else {
 								n_o = nU;
 								multi_cond[j] = {
 									nm: n,
@@ -406,7 +408,7 @@ class Populate {
 								multi_pos.set(multi_cond[j], multi_pos.get(v));
 								multi_pos.delete(v);
 								j++;
-							} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
+							}
 						});
 						multi_cond.forEach((v, i) => {
 							h = nm_arr.indexOf(v.nm);
@@ -450,7 +452,8 @@ class Populate {
 						multi_obj.forEach((v) => {
 							n = v.nm;
 							nU = n.toUpperCase();
-							if (n_o != nU) {
+							if (n_o == nU) { v.item.forEach(v => multi_cond[j - 1].item.push(v)); }
+							else {
 								n_o = nU;
 								multi_cond[j] = {
 									nm: n,
@@ -459,7 +462,7 @@ class Populate {
 									srt: v.srt
 								};
 								j++;
-							} else v.item.forEach(v => multi_cond[j - 1].item.push(v));
+							}
 						});
 						multi_cond.forEach((v, i) => {
 							h = nm_arr.indexOf(v.nm);
@@ -503,7 +506,8 @@ class Populate {
 				case l != -1 && !this.showTracks:
 					this.range(item.item).some((v) => {
 						if (lib.node[v] && (lib.node[v].length == l + 1 || lib.node[v].length == l + 2)) {
-							return item.track = true;
+							item.track = true;
+							return item.track;
 						}
 					});
 					break;
@@ -515,13 +519,13 @@ class Populate {
 				const str = '@!#' + ui.col.counts + '`' + (this.highlight.text ? ui.col.text_h : ui.col.counts) + '`' + ui.col.textSel + '@!#';
 				if (!item.nm.endsWith(str)) { item.nm += str; }
 			}
-			item.name = !panel.noDisplay ? item.nm : item.nm.replace(/#@#.*?#@#/g, '');
+			item.name = panel.noDisplay ? item.nm.replace(/#@#.*?#@#/g, '') : item.nm;
 			if (v.child.length > 0) { this.buildTree(v.child, level + 1, node, !!item.root); }
 		});
 		if (ui.style.squareNode && ui.col.line) {
 			this.row.lineMax = [];
 			this.tree.forEach((v) => {
-				const depth = !this.inlineRoot ? v.level : Math.max(v.level - 1, 0);
+				const depth = this.inlineRoot ? Math.max(v.level - 1, 0) : v.level;
 				this.row.lineMax[depth] = v.ix;
 			});
 		}
@@ -585,7 +589,7 @@ class Populate {
 					return a[a.length - 1];
 				});
 				if (size.length) {
-					size = size.map(v => parseInt(v)).reduce((a, b) => a + b, 0);
+					size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
 					rawValue = size;
 					value = this.formatBytes(size);
 				}
@@ -638,6 +642,7 @@ class Populate {
 			}
 			// Regorxxx <- Now playing index | Duplicated idx bug on original script
 			case 7: {// queue
+				/** @type {string|string[]} */
 				let index = '';
 				let indices = new Set();
 				const queueHandles = plman.GetPlaybackQueueHandles();
@@ -652,23 +657,23 @@ class Populate {
 				}
 				ln = indices.size;
 				if (ln) {
-					if (ln === 1) { index = indices.values().next().value; }
+					if (ln === 1) { index = indices.values().next().value.toString(); }
 					else {
 						index = this.arrayToRange([...indices]);
 						index.join();
 					}
 				}
-				if (index) {
+				if (index === '0') {
+					rawValue = 0;
+					value = panel.imgView && this.label
+						? 'Now playing'
+						: String.fromCharCode(9654) /* ▶ */;
+				} else if (index && index.length > 0) {
 					const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
 					rawValue = index;
 					value = panel.imgView && this.label
 						? 'Queue ' + (bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index)
 						: bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index;
-				} else if (index === 0) {
-					rawValue = 0;
-					value = panel.imgView && this.label
-						? 'Now playing'
-						: String.fromCharCode(9654) /* ▶ */;
 				}
 				break;
 			}
@@ -682,7 +687,7 @@ class Populate {
 				});
 				playcount = this.getNumbers(n);
 				if (playcount.length) {
-					playcount = n.map(v => parseInt(v)).reduce((a, b) => a + b, 0);
+					playcount = n.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
 					rawValue = playcount;
 					value = panel.imgView
 						? (this.label ? 'Played ' : '') + playcount + 'x'
@@ -750,9 +755,9 @@ class Populate {
 			}
 			// Regorxxx ->
 		}
-		return typeof value !== 'undefined'
-			? this.cache[type][key] = { value, rawValue, items }
-			: { value: '', rawValue: void (0), items };
+		return typeof value === 'undefined'
+			? { value: '', rawValue: void (0), items }
+			: (this.cache[type][key] = { value, rawValue, items }); // NOSONAR
 	}
 	// Regorxxx ->
 
@@ -763,8 +768,8 @@ class Populate {
 	check_ix(br, x, y, type) {
 		if (panel.imgView) return true;
 		if (!br) return false;
-		const level = !this.inlineRoot ? br.level : Math.max(br.level - 1, 0);
-		const icon_w = this.inlineRoot && br.ix == 0 ? 0 : ui.icon.w + (!this.fullLineSelection ? ui.l.wf : 0);
+		const level = this.inlineRoot ? Math.max(br.level - 1, 0) : br.level;
+		const icon_w = this.inlineRoot && br.ix == 0 ? 0 : ui.icon.w + (this.fullLineSelection ? 0 : ui.l.wf);
 		return type ? (x >= Math.round(this.treeIndent * level + ui.sz.margin) && x < Math.round(this.treeIndent * level + ui.sz.margin) + br.w + icon_w) :
 			(x >= Math.round(this.treeIndent * level + ui.sz.margin) + icon_w) && x < Math.min(Math.round(this.treeIndent * level + ui.sz.margin) + icon_w + br.w, panel.tree.w);
 	}
@@ -787,7 +792,7 @@ class Populate {
 		if (im >= this.tree.length || im < 0 || x > ui.w - ui.sbar.sp) return -1;
 		if (panel.imgView) return im;
 		const item = this.tree[im];
-		const level = !this.inlineRoot ? item.level : Math.max(item.level - 1, 0);
+		const level = this.inlineRoot ? Math.max(item.level - 1, 0) : item.level;
 		if (x < Math.round(this.treeIndent * level) + ui.icon.w + ui.sz.margin && (!item.track || item.root)) this.m.br = im;
 		return im;
 	}
@@ -803,11 +808,11 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (item.statistics !== undefined ? this.statistics[this.statisticsShow].name + ': ' + item.statistics : '') // Regorxxx <- New statistics | Code cleanup ->
+						? (item.statistics === undefined ? '' : this.statistics[this.statisticsShow].name + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
-					text = (!panel.colMarker ? item.name : item.name.replace(/@!#.*?@!#/g, '')) + (!this.countsRight || this.statisticsShow ? item.count : '');
+					text = (panel.colMarker ? item.name.replace(/@!#.*?@!#/g, '') : item.name) + (!this.countsRight || this.statisticsShow ? item.count : '');
 					text = text.replace(/&/g, '&&');
 				}
 				if (text != tooltip.Text) this.deactivateTooltip();
@@ -821,7 +826,12 @@ class Populate {
 				let trace1 = false;
 				let trace2 = false;
 				let trace3 = false;
-				if (!img.labels.hide) {
+				if (img.labels.hide) {
+					text = panel.lines == 2 ? (ppt.albumArtFlipLabels ? item.lot + '\n' + item.grp : item.grp + '\n' + item.lot) : item.grp;
+					if (panel.colMarker) text = text.replace(/@!#.*?@!#/g, '');
+					text = text.replace(/&/g, '&&');
+					if (text != tooltip.Text) this.deactivateTooltip();
+				} else {
 					if (!item.tt) {
 						this.deactivateTooltip();
 						return;
@@ -837,11 +847,6 @@ class Populate {
 						this.deactivateTooltip();
 						return;
 					}
-				} else {
-					text = panel.lines == 2 ? !ppt.albumArtFlipLabels ? item.grp + '\n' + item.lot : item.lot + '\n' + item.grp : item.grp;
-					if (panel.colMarker) text = text.replace(/@!#.*?@!#/g, '');
-					text = text.replace(/&/g, '&&');
-					if (text != tooltip.Text) this.deactivateTooltip();
 				}
 				break;
 			}
@@ -904,7 +909,7 @@ class Populate {
 	clickedOn(x, y, item) {
 		if (panel.imgView) return 'text';
 		if (this.inlineRoot && item.ix == 0) return this.check_ix(item, x, y, false) ? 'text' : 'none';
-		const level = !this.inlineRoot ? item.level : Math.max(item.level - 1, 0);
+		const level = this.inlineRoot ? Math.max(item.level - 1, 0) : item.level;
 		return x < Math.round(this.treeIndent * level) + ui.icon.w + ui.sz.margin ? 'node' : this.check_ix(item, x, y, false) ? 'text' : 'none';
 	}
 
@@ -931,7 +936,8 @@ class Populate {
 		this.tree.some((v, i) => {
 			if (v.srt[0].toUpperCase() == nm) {
 				sbar.checkScroll(i * ui.row.h);
-				return scr_pos = true;
+				scr_pos = true;
+				return scr_pos;
 			}
 		});
 		if (!scr_pos) {
@@ -954,33 +960,10 @@ class Populate {
 
 	createImages() {
 		if (!ui.w || !ui.h) return;
-		if (!this.nodeStyle) {
-			const sz = ui.sz.node;
-			const ln_w = Math.max(Math.floor(sz / 9), 1);
-			let plus = true;
-			let hot = false;
-			let sy_w = ln_w;
-			let x = 0;
-			let y = 0;
-			if (((sz - ln_w * 3) / 2) % 1 != 0) sy_w = ln_w > 1 ? ln_w - 1 : ln_w + 1;
-			for (let j = 0; j < 4; j++) {
-				this.nd[j] = $.gr(sz, sz, true, g => {
-					hot = j > 1 ? true : false;
-					plus = !j || j == 2 ? true : false;
-					g.FillSolidRect(x, y, sz, sz, $.RGB(145, 145, 145));
-					if (!hot) g.FillGradRect(x + ln_w, y + ln_w, sz - ln_w * 2, sz - ln_w * 2, 91, plus ? ui.col.icon_e[0] : ui.col.icon_c[0], plus ? ui.col.icon_e[1] : ui.col.icon_c[1], 1.0);
-					else g.FillGradRect(x + ln_w, y + ln_w, sz - ln_w * 2, sz - ln_w * 2, 91, ui.col.icon_h[0], ui.col.icon_h[1], 1.0);
-					let x_o = [x, x + sz - ln_w, x, x + sz - ln_w];
-					let y_o = [y, y, y + sz - ln_w, y + sz - ln_w];
-					for (let i = 0; i < 4; i++) g.FillSolidRect(x_o[i], y_o[i], ln_w, ln_w, $.RGB(186, 187, 188));
-					if (plus) g.FillSolidRect(Math.floor(x + (sz - sy_w) / 2), y + ln_w + Math.min(ln_w, sy_w), sy_w, sz - ln_w * 2 - Math.min(ln_w, sy_w) * 2, !hot ? ui.col.iconPlus : ui.col.iconPlus_h);
-					g.FillSolidRect(x + ln_w + Math.min(ln_w, sy_w), Math.floor(y + (sz - sy_w) / 2), sz - ln_w * 2 - Math.min(ln_w, sy_w) * 2, sy_w, !hot ? (plus ? ui.col.iconMinus_e : ui.col.iconMinus_c) : ui.col.iconMinus_h);
-				});
-			}
-		} else {
+		if (this.nodeStyle) {
 			let lightCol = ui.isLightCol(ui.col.icon_h);
 			$.gr(1, 1, false, g => {
-				const h = this.nodeStyle != 7 ? g.CalcTextHeight('String', ui.icon.font) / 15 : g.CalcTextHeight('String', ui.font.main) / 20;
+				const h = this.nodeStyle == 7 ? g.CalcTextHeight('String', ui.font.main) / 20 : g.CalcTextHeight('String', ui.icon.font) / 15;
 				this.sy_sz = Math.floor(Math.max(8 * ppt.zoomNode / 100 * h, 5));
 			});
 
@@ -1001,6 +984,35 @@ class Populate {
 				g.FillPolygon(ui.col.textSel & (lightCol ? 0xC0ffffff : 0xBAffffff), 1, [sz, 0, sz, sz, 0, sz]);
 				g.SetSmoothingMode();
 			});
+		} else {
+			const sz = ui.sz.node;
+			const ln_w = Math.max(Math.floor(sz / 9), 1);
+			let plus = true;
+			let hot = false;
+			let sy_w = ln_w;
+			let x = 0;
+			let y = 0;
+			if (((sz - ln_w * 3) / 2) % 1 != 0) sy_w = ln_w > 1 ? ln_w - 1 : ln_w + 1;
+			for (let j = 0; j < 4; j++) {
+				this.nd[j] = $.gr(sz, sz, true, g => {
+					hot = j > 1;
+					plus = !!(!j || j == 2);
+					g.FillSolidRect(x, y, sz, sz, $.RGB(145, 145, 145));
+					if (hot) {
+						g.FillGradRect(x + ln_w, y + ln_w, sz - ln_w * 2, sz - ln_w * 2, 91, ui.col.icon_h[0], ui.col.icon_h[1], 1);
+					}
+					else {
+						g.FillGradRect(x + ln_w, y + ln_w, sz - ln_w * 2, sz - ln_w * 2, 91, plus ? ui.col.icon_e[0] : ui.col.icon_c[0], plus ? ui.col.icon_e[1] : ui.col.icon_c[1], 1);
+					}
+					let x_o = [x, x + sz - ln_w, x, x + sz - ln_w];
+					let y_o = [y, y, y + sz - ln_w, y + sz - ln_w];
+					for (let i = 0; i < 4; i++) g.FillSolidRect(x_o[i], y_o[i], ln_w, ln_w, $.RGB(186, 187, 188));
+					if (plus) {
+						g.FillSolidRect(Math.floor(x + (sz - sy_w) / 2), y + ln_w + Math.min(ln_w, sy_w), sy_w, sz - ln_w * 2 - Math.min(ln_w, sy_w) * 2, hot ? ui.col.iconPlus_h : ui.col.iconPlus);
+					}
+					g.FillSolidRect(x + ln_w + Math.min(ln_w, sy_w), Math.floor(y + (sz - sy_w) / 2), sz - ln_w * 2 - Math.min(ln_w, sy_w) * 2, sy_w, hot ? ui.col.iconMinus_h : (plus ? ui.col.iconMinus_e : ui.col.iconMinus_c));
+				});
+			}
 		}
 	}
 
@@ -1047,7 +1059,7 @@ class Populate {
 			text.forEach((v, i) => {
 				if (i % 2 == 0) {
 					const cur_w = x + w_arr[i];
-					const next_text = text[i + 2] ? true : false;
+					const next_text = !!text[i + 2];
 					let ellipsis_corr = 0;
 					let roomForEllipsis = true;
 					if (next_text && cur_w < w && w - cur_w < ellipsisSpace) roomForEllipsis = false;
@@ -1072,7 +1084,7 @@ class Populate {
 		}
 		text.forEach((v, i) => {
 			if (i % 2 == 0 && text[i]) {
-				gr.GdiDrawText(text[i], font, !np ? col[i][type] : ui.col.nowp, item_x + col_x[i], item_y, col_w[i], h, panel.lc);
+				gr.GdiDrawText(text[i], font, np ? ui.col.nowp : col[i][type], item_x + col_x[i], item_y, col_w[i], h, panel.lc);
 			}
 		});
 	}
@@ -1086,7 +1098,7 @@ class Populate {
 
 	dragDrop(x, y) {
 		if (!this.lbtnDn) return;
-		const drag_diff = !ppt.touchControl ? Math.sqrt((Math.pow(this.last_pressed_coord.x - x, 2) + Math.pow(this.last_pressed_coord.y - y, 2))) : Math.abs(x - this.last_pressed_coord.x);
+		const drag_diff = ppt.touchControl ? Math.abs(x - this.last_pressed_coord.x) : Math.sqrt((Math.pow(this.last_pressed_coord.x - x, 2) + Math.pow(this.last_pressed_coord.y - y, 2)));
 		if (drag_diff > 7) {
 			if (ppt.touchControl) {
 				const ix = this.get_ix(x, y, true, false);
@@ -1131,20 +1143,20 @@ class Populate {
 		if (!ui.style.squareNode) gr.SetTextRenderingHint(5);
 		this.rows = 0;
 		if (ui.style.squareNode && ui.col.line) {
-			level = !this.inlineRoot ? this.tree[b].level : Math.max(this.tree[b].level - 1, 0);
+			level = this.inlineRoot ? Math.max(this.tree[b].level - 1, 0) : this.tree[b].level;
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
 			this.getItemCount(item);
 			nm[i] = item.name + (i || this.rootNode != 3 || this.nodeCounts == 1 && (this.countsRight || this.statisticsShow) ? (!this.countsRight || this.statisticsShow ? item.count : '') : '');
-			const counts = !this.statisticsShow ? item.count : item.statistics;
+			const counts = this.statisticsShow ? item.statistics : item.count;
 			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) nowp_c.push(i);
 			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i ? '\u266B  ' : '';
 			if (item.np && item.id != this.id) this.row.note_w = gr.CalcTextWidth(item.np, ui.font.main);
 			if (item.id != this.id || item.np) {
 				let note_w = !item.np || item.track ? 0 : this.row.note_w;
-				item.name_w = gr.CalcTextWidth(!panel.colMarker ? nm[i] : nm[i].replace(/@!#.*?@!#/g, ''), ui.font.main) - note_w;
+				item.name_w = gr.CalcTextWidth(panel.colMarker ? nm[i].replace(/@!#.*?@!#/g, '') : nm[i], ui.font.main) - note_w;
 				item.count_w = this.nodeCounts && this.countsRight || this.statisticsShow ?
 					gr.CalcTextWidth(counts || '000', ui.font.small) + (counts ? ui.row.h * 0.2 : 0) : 0;
 				if (!this.fullLineSelection) {
@@ -1153,7 +1165,7 @@ class Populate {
 				}
 			}
 
-			level = !this.inlineRoot ? item.level : Math.max(item.level - 1, 0);
+			level = this.inlineRoot ? Math.max(item.level - 1, 0) : item.level;
 			item_y = Math.round(ui.row.h * i + panel.search.h - sbar.delta);
 			if (item_y < panel.filter.y) {
 				this.rows++;
@@ -1195,7 +1207,7 @@ class Populate {
 		}
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
-			const level = !this.inlineRoot ? item.level : Math.max(item.level - 1, 0);
+			const level = this.inlineRoot ? Math.max(item.level - 1, 0) : item.level;
 			item_y = Math.round(ui.row.h * i + panel.search.h - sbar.delta);
 			if (item_y < panel.filter.y) {
 				item_x = Math.round(this.treeIndent * level + ui.sz.margin);
@@ -1216,7 +1228,9 @@ class Populate {
 						} else
 							gr.DrawRect(sel_x + Math.floor(ui.l.w / 2), item_y, sel_w, ui.row.h, ui.l.w, ui.col.frame);
 					}
-					if (this.highlight.row == 2) gr.FillSolidRect(sel_x + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? 0 : ui.l.w), item_y + ui.l.wc, sel_w + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? ui.l.w : -ui.l.w), ui.row.h - ui.l.w, !item.sel ? ui.col.bg_h : ui.col.bgSel_h);
+					if (this.highlight.row == 2) {
+						gr.FillSolidRect(sel_x + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? 0 : ui.l.w), item_y + ui.l.wc, sel_w + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? ui.l.w : -ui.l.w), ui.row.h - ui.l.w, item.sel ? ui.col.bgSel_h : ui.col.bg_h);
+					}
 				}
 				if (this.highlight.row == 1 && this.row.i == i && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.sideMarker);
 
@@ -1247,7 +1261,7 @@ class Populate {
 
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
-			const level = !this.inlineRoot ? item.level : Math.max(item.level - 1, 0);
+			const level = this.inlineRoot ? Math.max(item.level - 1, 0) : item.level;
 			item_y = Math.round(ui.row.h * i + panel.search.h - sbar.delta);
 			if (item_y < panel.filter.y) {
 				item_x = Math.round(this.treeIndent * level + ui.sz.margin);
@@ -1256,13 +1270,13 @@ class Populate {
 					if (!item.track && (!this.inlineRoot || item.level)) {
 						const y2 = ui.row.h * i + y1 - ui.l.wf;
 						if (ui.col.line) gr.FillSolidRect(item_x + ui.sz.node, y2, ui.l.s1, ui.l.w, ui.col.line);
-						this.drawNode(gr, item.child.length < 1 ? this.m.br != i ? 0 : 2 : this.m.br != i ? 1 : 3, item_x, item_y + panel.node_y);
+						this.drawNode(gr, item.child.length < 1 ? (this.m.br == i ? 2 : 0) : (this.m.br == i ? 3 : 1), item_x, item_y + panel.node_y);
 					} else if (ui.col.line && (!this.inlineRoot || item.level)) {
 						const y2 = Math.round(panel.search.h - sbar.delta) + Math.ceil(ui.row.h * (i + 0.5)) - ui.l.wf;
 						gr.FillSolidRect(item_x + ui.l.s2, y2, ui.l.s3, ui.l.w, ui.col.line);
 					}
 				} else if (!item.track && (!this.inlineRoot || item.level)) this.drawNode(gr, item, item_x, item_y, item.child.length < 1, this.m.br == i, item.sel);
-				if (!this.inlineRoot || item.level) item_x += ui.icon.w + (!this.fullLineSelection ? ui.l.wf : 0);
+				if (!this.inlineRoot || item.level) item_x += ui.icon.w + (this.fullLineSelection ? 0 : ui.l.wf);
 				const w = panel.tree.w - item_x - ui.sz.sel - item.count_w;
 				this.checkTooltip(item, item_x, item_y, item.name_w, w);
 				if (this.fullLineSelection && item.id != this.id) {
@@ -1277,8 +1291,11 @@ class Populate {
 				const txt_co = np && !item.sel ? ui.col.nowp : item.sel && this.fullLineSelection ? (this.highlight.row ? ui.col.textSel : ui.col.text) : this.m.i == i && this.highlight.text ? ui.col.text_h : ui.col.counts || ui.col.count;
 				const type = item.sel ? (this.highlight.row || !this.fullLineSelection ? 2 : 0) : this.m.i == i && this.highlight.text ? 1 : 0;
 				const txt_c = np && !item.sel ? ui.col.nowp : ui.col.txtArr[type];
-				!panel.colMarker ? gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc) : this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text');
-				if (this.countsRight || this.statisticsShow) gr.GdiDrawText(!this.statisticsShow ? item.count : item.statistics, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+				if (panel.colMarker) { this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text'); }
+				else { gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc); }
+				if (this.countsRight || this.statisticsShow) {
+					gr.GdiDrawText(this.statisticsShow ? item.statistics : item.count, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+				}
 			}
 		}
 	}
@@ -1301,16 +1318,16 @@ class Populate {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_e, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_e, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 					} else {
-						gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						if (this.nodeStyle == 1) gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.nodeStyle == 1) gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 					}
 				} else {
 					if (hover) {
 						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_c, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_c, x - ui.icon.offset, y2 + 1, panel.tree.w - x, ui.row.h, panel.s_lc);
 					} else {
-						gr.DrawString(ui.icon.collapse, ui.icon.font, !selCol ? ui.col.icon_e : ui.col.textSel, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						gr.DrawString(ui.icon.collapse, ui.icon.font, !selCol ? ui.col.icon_e : ui.col.textSel, x - ui.icon.offset, y2 + 1, panel.tree.w - x, ui.row.h, panel.s_lc);
+						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e, x - ui.icon.offset, y2 + 1, panel.tree.w - x, ui.row.h, panel.s_lc);
 					}
 				}
 				break;
@@ -1320,14 +1337,14 @@ class Populate {
 				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 				if (parent) {
 					if (hover) {
-						if (this.highlight.node) gr.DrawString(ui.icon.expand2, ui.icon.font, !selCol ? ui.col.icon_h : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						else gr.DrawString(ui.icon.expand2, ui.icon.font, !selCol ? ui.col.icon_e & 0xCFffffff : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.highlight.node) gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_h, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						else gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e & 0xCFffffff, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 					} else {
-						gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						if (this.nodeStyle == 3) gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.nodeStyle == 3) gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 					}
-				} else if (hover && this.highlight.node) gr.DrawImage(!selCol ? this.triangle.highlight : this.triangle.select, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.highlight.Width, this.triangle.highlight.Height);
-				else gr.DrawImage(!selCol ? this.triangle.expand : this.triangle.select, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.expand.Width, this.triangle.expand.Height);
+				} else if (hover && this.highlight.node) gr.DrawImage(selCol ? this.triangle.select : this.triangle.highlight, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.highlight.Width, this.triangle.highlight.Height);
+				else gr.DrawImage(selCol ? this.triangle.select : this.triangle.expand, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.expand.Width, this.triangle.expand.Height);
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -1335,27 +1352,27 @@ class Populate {
 				if (parent) {
 					if (hover) {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_e, x, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
-					} else gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
+					} else gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
 				} else {
 					if (hover) {
 						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_c, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
-					} else gr.DrawString(ui.icon.collapse, ui.icon.font, !selCol ? ui.col.icon_e : ui.col.textSel, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
+					} else gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e, x - ui.icon.offset, y2, panel.tree.w - x, ui.row.h - 1, panel.s_lc);
 				}
 				break;
 			case 7:
 				if (item > 1) item -= 2;
-				ui.style.symb.SetPartAndStateID(2, !item ? 1 : 2);
+				ui.style.symb.SetPartAndStateID(2, item ? 2 : 1);
 				ui.style.symb.DrawThemeBackground(gr, x, y, ui.sz.node, ui.sz.node);
 				break;
 			default:
 				if (parent) {
 					if (hover) {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_e, x, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
-					} else gr.DrawString(ui.icon.expand, ui.icon.font, !selCol ? ui.col.icon_c : ui.col.textSel, x, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
+					} else gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
 				} else {
 					if (hover) {
 						gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_c, x - ui.icon.offset, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
-					} else gr.DrawString(ui.icon.collapse, ui.icon.font, !selCol ? ui.col.icon_e : ui.col.textSel, x - ui.icon.offset, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
+					} else gr.DrawString(ui.icon.collapse, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e, x - ui.icon.offset, y + this.iconVerticalPad, panel.tree.w - x, ui.row.h, panel.s_lc);
 				}
 				break;
 		}
@@ -1397,7 +1414,7 @@ class Populate {
 		this.expandLmt = men.treeExpandLimit;
 		while (m--)
 			if (this.tree[m].sel) {
-				this.expandNodes(this.tree[m], !this.rootNode || m ? false : true);
+				this.expandNodes(this.tree[m], !(!this.rootNode || m));
 				nodes++;
 			}
 		sbar.setRows(this.tree.length);
@@ -1446,7 +1463,7 @@ class Populate {
 					sbar.checkScroll(sbar.scroll - n * ui.row.h, 'step');
 				}
 				let row = this.getRowNumber(y);
-				this.branch(item, !item.root ? false : true, true);
+				this.branch(item, !!item.root, true);
 				if (!ix) panel.setHeight(true);
 				n = 2;
 				if (item.child.length == 1 && ppt.treeAutoExpandSingle) {
@@ -1473,7 +1490,7 @@ class Populate {
 	}
 
 	expandNodes(obj, am) {
-		this.branch(obj, !am ? false : true, true, true);
+		this.branch(obj, !!am, true, true);
 		if (obj.child) obj.child.some(v => {
 			if (v.track) this.expandedTracks++;
 			if (this.expandedTracks >= this.expandLmt) return true;
@@ -1506,7 +1523,7 @@ class Populate {
 		if (!+bytes) return '0 Bytes';
 
 		const k = 1024;
-		const dm = decimals < 0 ? 0 : decimals;
+		const dm = Math.max(decimals, 0);
 		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -1524,7 +1541,7 @@ class Populate {
 		const combinations = [];
 		const divisors = [];
 		const arraysToCombine = [];
-		n = n.replace(RegExp(`(#!#|)${panel.softSplitter}(#!#|)`, 'g'), '@@').split('#!#');
+		n = n.replace(new RegExp(`(#!#|)${panel.softSplitter}(#!#|)`, 'g'), '@@').split('#!#');
 		const ln = n.length;
 		let i = 0;
 		for (i = 0; i < ln; i++) {
@@ -1558,7 +1575,7 @@ class Populate {
 	}
 	// Regorxxx <- Statistics rework
 	getItemCount(v) {
-		let prop = !panel.imgView ? 'statistics' : '_statistics';
+		let prop = panel.imgView ? '_statistics' : 'statistics';
 		if (this.statisticsShow && v[prop] == null) {
 			if (v.root && this.label && !panel.imgView) { v[prop] = this.label; }
 			else {
@@ -1568,17 +1585,7 @@ class Populate {
 			}
 		}
 		if (v.count === '' && this.nodeCounts) {
-			if (!panel.imgView) {
-				if (v.root && this.label) {
-					if (!this.statisticsShow) v.count = this.label;
-				} else {
-					const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
-					const key = this.getKey(v);
-					v.count = !v.track || !this.showTracks ? (v.name ? ' ' : '') + (this.nodeCounts == 1 ? '(' + this.trackCount(v.item) + ')' : this.nodeCounts == 2 ? '(' + this.branchCount(v, !v.root ? false : true, true, false, key, type) + ')' : '') : '';
-					if (!this.showTracks && v.count == (v.name ? ' ' : '') + '(0)') v.count = '';
-					if (this.countsRight && !this.statisticsShow) v.count = v.count.replace(/[()]/g, '');
-				}
-			} else {
+			if (panel.imgView) {
 				// Regorxxx <- New statistics | Code cleanup
 				if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
 					v.count = this.trackCount(v.item);
@@ -1590,6 +1597,16 @@ class Populate {
 					const count = v.count.replace(/\D/g, '');
 					if (panel.lines == 1 || ppt.albumArtFlipLabels) v.grp += ` (${count})`;
 					else v.lot += ` (${count})`;
+				}
+			} else {
+				if (v.root && this.label) {
+					if (!this.statisticsShow) v.count = this.label;
+				} else {
+					const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+					const key = this.getKey(v);
+					v.count = !v.track || !this.showTracks ? (v.name ? ' ' : '') + (this.nodeCounts == 1 ? '(' + this.trackCount(v.item) + ')' : this.nodeCounts == 2 ? '(' + this.branchCount(v, !!v.root, true, false, key, type) + ')' : '') : '';
+					if (!this.showTracks && v.count == (v.name ? ' ' : '') + '(0)') v.count = '';
+					if (this.countsRight && !this.statisticsShow) v.count = v.count.replace(/[()]/g, '');
 				}
 			}
 		}
@@ -1633,7 +1650,7 @@ class Populate {
 		const level = v.level;
 		const o = {
 			a: v.nm || '',
-			b: level != 0 ? this.tree[v.par].nm : '',
+			b: level == 0 ? '' : this.tree[v.par].nm,
 			c: level > 1 ? this.tree[this.tree[v.par].par].nm : '',
 			d: level > 2 ? this.tree[this.tree[this.tree[v.par].par].par].nm : ''
 		};
@@ -1643,10 +1660,11 @@ class Populate {
 	getNowplaying(handle, stop) {
 		if (stop) {
 			panel.treePaint();
-			return this.nowp = -1;
+			this.nowp = -1;
+			return this.nowp;
 		}
 		if (!handle && fb.IsPlaying) handle = fb.GetNowPlaying();
-		if (!handle) return this.nowp = -1;
+		if (!handle) { this.nowp = -1; return this.nowp; }
 		this.nowp = panel.list.Find(handle);
 		panel.treePaint();
 	}
@@ -1875,13 +1893,14 @@ class Populate {
 		if (this.clicked_on != 'text') return;
 		if (!ppt.libSource) return this.setPlaylistSelection(ix, item);
 		if (vk.k('alt')) {
-			this.mbtnUpOrAltClickUp(x, y, '', 'alt');// {
+			this.mbtnUpOrAltClickUp(x, y, '', 'alt');
 			return;
 		}
-		if (!vk.k('ctrl')) {
+		if (vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
+		else {
 			this.clearSelected();
 			if (!item.sel) this.setTreeSel(ix, item.sel);
-		} else this.setTreeSel(ix, item.sel);
+		}
 		if (this.autoFill.mouse || this.autoPlay.click) {
 			window.Repaint(true);
 			this.send(item, x, y);
@@ -1977,8 +1996,8 @@ class Populate {
 				if (np_item != -1) {
 					np = plman.GetPlayingItemLocation();
 					if (np.IsValid) {
-						if (np.PlaylistIndex != pl_stnd_idx) pl_chk = false;
-						else pid = np.PlaylistItemIndex;
+						if (np.PlaylistIndex == pl_stnd_idx) { pid = np.PlaylistItemIndex; }
+						else { pl_chk = false; }
 					}
 					if (pl_chk && pid == -1 && items.Count < 5000) {
 						if (ui.dui) plman.SetActivePlaylistContext();
@@ -1994,7 +2013,12 @@ class Populate {
 						}
 					}
 				}
-				if (pid != -1) {
+				if (pid == -1) {
+					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
+					plman.ClearPlaylist(pl_stnd_idx);
+					plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
+					if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
+				} else {
 					plman.ClearPlaylistSelection(pl_stnd_idx);
 					plman.SetPlaylistSelectionSingle(pl_stnd_idx, pid, true);
 					plman.RemovePlaylistSelection(pl_stnd_idx, true);
@@ -2005,26 +2029,21 @@ class Populate {
 					plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
 					plman.InsertPlaylistItems(pl_stnd_idx, plman.PlaylistItemCount(pl_stnd_idx), it);
 					if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count + it.Count), true); } // Regorxxx <- Send to playlist & select ->
-				} else {
-					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
-					plman.ClearPlaylist(pl_stnd_idx);
-					plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
-					if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
 				}
 			}
-		} else if (!bAddToPls) {
+		} else if (bAddToPls) {
+			if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
+			plman.InsertPlaylistItems(pl_stnd_idx, bInsertToPls ? plman.GetPlaylistFocusItemIndex(pl_stnd_idx) : plman.PlaylistItemCount(pl_stnd_idx), items, true);
+			const f_ix = !bInsertToPls || plman.GetPlaylistFocusItemIndex(pl_stnd_idx) == -1 ? plman.PlaylistItemCount(pl_stnd_idx) - items.Count : plman.GetPlaylistFocusItemIndex(pl_stnd_idx) - items.Count;
+			plman.SetPlaylistFocusItem(pl_stnd_idx, f_ix);
+			plman.EnsurePlaylistItemVisible(pl_stnd_idx, f_ix);
+			if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(f_ix, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
+		} else {
 			if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
 			plman.ClearPlaylist(pl_stnd_idx);
 			plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
 			plman.SetPlaylistFocusItem(pl_stnd_idx, 0);
 			if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
-		} else {
-			if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
-			plman.InsertPlaylistItems(pl_stnd_idx, !bInsertToPls ? plman.PlaylistItemCount(pl_stnd_idx) : plman.GetPlaylistFocusItemIndex(pl_stnd_idx), items, true);
-			const f_ix = !bInsertToPls || plman.GetPlaylistFocusItemIndex(pl_stnd_idx) == -1 ? plman.PlaylistItemCount(pl_stnd_idx) - items.Count : plman.GetPlaylistFocusItemIndex(pl_stnd_idx) - items.Count;
-			plman.SetPlaylistFocusItem(pl_stnd_idx, f_ix);
-			plman.EnsurePlaylistItemVisible(pl_stnd_idx, f_ix);
-			if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(f_ix, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
 		}
 		if (bAutoPlay) {
 			const c = (plman.PlaybackOrder == 3 || plman.PlaybackOrder == 4) ? Math.ceil(plman.PlaylistItemCount(pl_stnd_idx) * Math.random() - 1) : 0;
@@ -2078,9 +2097,8 @@ class Populate {
 					const plItems = plman.GetPlaylistItems(ap);
 					add.Convert().forEach(v => {
 						const ix = plItems.Find(v);
-						if (ix != -1) {
-							plman.AddPlaylistItemToPlaybackQueue(ap, ix);
-						} else plman.AddItemToPlaybackQueue(v);
+						if (ix == -1) { plman.AddItemToPlaybackQueue(v); }
+						else { plman.AddPlaylistItemToPlaybackQueue(ap, ix); }
 					});
 				}
 			}, 180);
@@ -2229,7 +2247,7 @@ class Populate {
 			case vk.selNone:
 			case vk.selAll: {
 				const bSelected = code === vk.selAll
-					? this.tree.every((v) => v.root || v.sel) ? false : true
+					? !this.tree.every((v) => v.root || v.sel)
 					: false;
 				this.tree.forEach(v => {
 					if (!v.root) { v.sel = bSelected; }
@@ -2360,12 +2378,12 @@ class Populate {
 				// !imgView
 				if (item.child.length) {
 					panel.pos++;
-					panel.pos = $.clamp(panel.pos, !this.rootNode ? 0 : 1, this.tree.length - 1);
+					panel.pos = $.clamp(panel.pos, this.rootNode ? 1 : 0, this.tree.length - 1);
 					this.upDnKeyCheckScroll(vkey);
 					break;
 				}
 				if (ppt.autoCollapse) this.branchChange(item, false, true);
-				this.branch(item, !item.root ? false : true, true);
+				this.branch(item, !!item.root, true);
 				let n = 2;
 				if (item.child.length == 1 && ppt.treeAutoExpandSingle) {
 					this.branch(item.child[0], false, true);
@@ -2389,7 +2407,7 @@ class Populate {
 				if (panel.imgView) {
 					panel.pos = panel.pos - img.columns * (panel.rows - 1);
 					panel.pos = $.clamp(panel.pos, 0, this.tree.length - 1);
-				} else panel.pos = Math.max(Math.round(sbar.scroll / ui.row.h + 0.4) - Math.floor(panel.rows) + 1, !this.rootNode ? 0 : 1);
+				} else panel.pos = Math.max(Math.round(sbar.scroll / ui.row.h + 0.4) - Math.floor(panel.rows) + 1, this.rootNode ? 1 : 0);
 				sbar.pageThrottle(1);
 				this.setTreeSel(this.tree[panel.pos].ix);
 				panel.treePaint();
@@ -2412,7 +2430,7 @@ class Populate {
 			case vk.home:
 				if (this.tree.length == 0) break;
 				if (vk.k('alt')) { return this.on_key_down(vk.up); } // Regorxxx <- Jump to fist/last sibling ->
-				panel.pos = !this.rootNode ? 0 : 1;
+				panel.pos = this.rootNode ? 1 : 0;
 				sbar.checkScroll(0, 'full');
 				this.setTreeSel(this.tree[panel.pos].ix);
 				panel.treePaint();
@@ -2443,30 +2461,30 @@ class Populate {
 				if (vk.k('alt')) {
 					item = this.tree[panel.pos];
 					let sibling;
-					if (!panel.imgView) {
-						if (item.level === 0) { this.on_key_down(vk.right); }
-						const parent = item.level === 0 ? item : this.tree[item.par];
-						if (parent) { sibling = parent.child.slice(vkey === vk.dn ? -1 : 0, vkey === vk.dn ? void (0) : 1)[0]; }
-					} else {
+					if (panel.imgView) {
 						const parentId = item.nm.split('^@^')[0];
 						if (parentId) {
 							sibling = vkey === vk.dn
 								? this.tree.slice(panel.pos).slice().reverse().find((node) => node.nm.startsWith(parentId + '^@^'))
 								: this.tree.slice(0, panel.pos).slice().find((node) => node.nm.startsWith(parentId + '^@^'));
 						}
+					} else {
+						if (item.level === 0) { this.on_key_down(vk.right); }
+						const parent = item.level === 0 ? item : this.tree[item.par];
+						if (parent) { sibling = parent.child.slice(vkey === vk.dn ? -1 : 0, vkey === vk.dn ? void (0) : 1)[0]; }
 					}
 					if (sibling) { panel.pos = sibling.ix; }
 				} else {
-					if (!panel.imgView) {
-						if (vkey == vk.dn) panel.pos++;
-						if (vkey == vk.up) panel.pos--;
-					} else {
+					if (panel.imgView) {
 						if (vkey == vk.dn) panel.pos += img.columns;
 						if (vkey == vk.up) panel.pos -= img.columns;
+					} else {
+						if (vkey == vk.dn) panel.pos++;
+						if (vkey == vk.up) panel.pos--;
 					}
 				}
 				// Regorxxx ->
-				panel.pos = $.clamp(panel.pos, !this.rootNode ? 0 : 1, this.tree.length - 1);
+				panel.pos = $.clamp(panel.pos, this.rootNode ? 1 : 0, this.tree.length - 1);
 				if (panel.imgView) {
 					item = this.tree[panel.pos];
 					this.m.i = panel.pos;
@@ -2541,7 +2559,7 @@ class Populate {
 			send: ppt.autoPlay
 		};
 		this.autoFill = {
-			mouse: ppt.actionMode == 2 ? false : ppt.clickAction == 1 || ppt.actionMode == 1 ? true : false,
+			mouse: ppt.actionMode == 2 ? false : ppt.clickAction == 1 || ppt.actionMode == 1,
 			key: ppt.keyAction
 		};
 		this.dblClickAction = ppt.actionMode == 1 ? 1 : ppt.actionMode == 2 ? 3 : ppt.dblClickAction;
@@ -2595,7 +2613,7 @@ class Populate {
 			hl.Convert().forEach((h) => {
 				let i = 0;
 				for (const handle of list) {
-					if (handle.Compare(h)) { items.push(i);}
+					if (handle.Compare(h)) { items.push(i); }
 					i++;
 				}
 			});
@@ -2616,7 +2634,7 @@ class Populate {
 	}
 
 	setTreeSel(idx, state) {
-		const sel_type = idx == -1 ? 0 : vk.k('shift') && this.last_sel > -1 && ppt.libSource ? 1 : vk.k('ctrl') ? 2 : !state ? 3 : 0;
+		const sel_type = idx == -1 ? 0 : vk.k('shift') && this.last_sel > -1 && ppt.libSource ? 1 : vk.k('ctrl') ? 2 : state ? 0 : 3;
 		switch (sel_type) {
 			case 0:
 				this.clearSelected();
@@ -2668,7 +2686,7 @@ class Populate {
 		this.rootNode = ppt.rootNode;
 		this.rowStripes = ppt.rowStripes;
 		this.sbarShow = ppt.sbarShow;
-		this.showTracks = !ppt.facetView ? ppt.showTracks : false;
+		this.showTracks = ppt.facetView ? false : ppt.showTracks;
 		// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
 		this.statistics = [
 			{ name: '', showTrackCount: true, showTooltip: false },
@@ -2700,7 +2718,7 @@ class Populate {
 				});
 		}
 		this.statisticsShow = ppt.itemShowStatistics;
-		this.label = !ppt.labelStatistics ? '' : this.statisticsShow ? this.statistics[this.statisticsShow].name : '';
+		this.label = ppt.labelStatistics ? this.statisticsShow ? this.statistics[this.statisticsShow].name : '' : '';
 		// Regorxxx ->
 		this.tooltipStatistics = ppt.tooltipStatistics;
 		this.treeIndent = ppt.treeIndent;
@@ -2785,7 +2803,7 @@ class Populate {
 	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views | Sorting transliteration
 	sortView(data, method, type) {
 		switch (method) {
-			default:
+			default: // NOSONAR
 			case 0: {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
 					if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs })); }
@@ -3004,15 +3022,15 @@ class Populate {
 	// Regorxxx ->
 
 	specialCharHas(name) {
-		return RegExp(this.specialChar).test(name);
+		return new RegExp(this.specialChar).test(name);
 	}
 
 	specialCharIsLeading(name) {
-		return RegExp('^' + this.specialChar).test(name);
+		return new RegExp('^' + this.specialChar).test(name);
 	}
 
 	specialCharPad(name) {
-		return name.replace(RegExp(this.specialChar + '+', 'g'), v => (v + '    ').slice(0, 5));
+		return name.replace(new RegExp(this.specialChar + '+', 'g'), v => (v + '    ').slice(0, 5));
 	}
 
 	specialCharSort(data) {
@@ -3036,8 +3054,8 @@ class Populate {
 	specialCharStrip(name) {
 		let [str1, ...str2] = name.split(' ');
 		str2 = str2.join(' ');
-		if (this.isDate(str1)) return `${str1} ${str2.replace(RegExp(this.specialChar, 'g'), '')}`;
-		return name.replace(RegExp(this.specialChar, 'g'), '');
+		if (this.isDate(str1)) return `${str1} ${str2.replace(new RegExp(this.specialChar, 'g'), '')}`;
+		return name.replace(new RegExp(this.specialChar, 'g'), '');
 	}
 
 	track(plLoaded) {
@@ -3052,9 +3070,9 @@ class Populate {
 
 	// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 	treeTooltipFont() {
-		return !panel.imgView
-			? [ui.font.mainTooltip.Name, ui.font.mainTooltip.Size, ui.font.mainTooltip.Style]
-			: [ui.font.groupTooltip.Name, ui.font.groupTooltip.Size, ui.font.groupTooltip.Style];
+		return panel.imgView
+			? [ui.font.groupTooltip.Name, ui.font.groupTooltip.Size, ui.font.groupTooltip.Style]
+			: [ui.font.mainTooltip.Name, ui.font.mainTooltip.Size, ui.font.mainTooltip.Style];
 	}
 	// Regorxxx ->
 
