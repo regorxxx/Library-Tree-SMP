@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
+	<title>Library-Tree-SMP: Panel Settings</title>
 	<meta http-equiv="x-ua-compatible" content="IE=8" />
 	<link rel="stylesheet" type="text/css" href="styles10.css">
 	<style type="text/css">
@@ -14,7 +15,7 @@
 		.tablink {
 			background-color: #e5e5e5;
 			overflow: hidden;
-			font: 1em Arial;
+			font: 1em Arial, serif;
 		}
 
 		.tablink a {
@@ -163,11 +164,10 @@
 		}
 
 		.info1,
-		.info3,
 		.info2,
 		.info3,
 		.info4,
-		info4600,
+		.info4600,
 		.info5,
 		.info5600,
 		.info6,
@@ -353,7 +353,7 @@
 		.div_text4,
 		.div_text6,
 		.div_text7 {
-			font: bold 1.15em Segoe UI;
+			font: bold 1.15em Segoe UI, serif;
 			color: #0066cc;
 			word-wrap: break-word;
 			white-space: pre-wrap;
@@ -362,8 +362,8 @@
 		.dropbtn {
 			white-space: nowrap;
 			width: 100%;
-			background-color: #3e8e41;
-			color: white;
+			background-color: #8994bc;
+			color: black;
 			text-decoration: none;
 			padding: 0.13em 5px;
 			border: none;
@@ -373,8 +373,8 @@
 		.dropbtnRed {
 			white-space: nowrap;
 			width: 100%;
-			background-color: #cc2626;
-			color: white;
+			background-color: #b48b8b;
+			color: black;
 			text-decoration: none;
 			padding: 0.13em 5px;
 			border: none;
@@ -384,8 +384,8 @@
 		.dropbtnBlue {
 			white-space: nowrap;
 			width: 100%;
-			background-color: #002ed3;
-			color: white;
+			background-color: #d288cb;
+			color: black;
 			text-decoration: none;
 			padding: 0.13em 5px;
 			border: none;
@@ -403,28 +403,28 @@
 		}
 
 		.dropbtn:after {
-			font-family: FontAwesome;
+			font-family: FontAwesome, serif;
 			content: "\f107";
 			padding-left: 0.5em;
 			padding-right: 0.19em;
 		}
 
 		.dropbtnLight:after {
-			font-family: FontAwesome;
+			font-family: FontAwesome, serif;
 			content: "\f107";
 			padding-left: 0.5em;
 			padding-right: 0.19em;
 		}
 
 		.dropbtnRed:after {
-			font-family: FontAwesome;
+			font-family: FontAwesome, serif;
 			content: "\f107";
 			padding-left: 0.5em;
 			padding-right: 0.19em;
 		}
 
 		.dropbtnBlue:after {
-			font-family: FontAwesome;
+			font-family: FontAwesome, serif;
 			content: "\f107";
 			padding-left: 0.5em;
 			padding-right: 0.19em;
@@ -479,7 +479,7 @@
 
 		.dropArrow {
 			display: inline-block;
-			font-family: FontAwesome;
+			font-family: FontAwesome, serif;
 			padding-left: 0.5em;
 			padding-right: 0.19em;
 		}
@@ -503,7 +503,7 @@
 		}
 
 		th {
-			font: bold 100% Segoe UI;
+			font: bold 100% Segoe UI, serif;
 			color: green;
 			border: 0;
 		}
@@ -729,7 +729,7 @@
 				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour code until either another $colour code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
 				<div class="info7" style="color:#0066cc;"><i>Hover effect requires that "Hover effect (foreground): Highlight text" is enabled (display tab).</i></div>
 				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
-				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
+				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI, serif;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
 				</div>
 				<div class="info7">Item counts are a special case. They don't form part of the view pattern.<br>Align right: drawn separately; not controlled by $colour codes; already dimmed.<br>End of text: effected by $colour codes. Use $colour{} at the end of the line to reset or set to a different colour if desired ($colour{--} is used in the example above).</div>
 				<div class="info7" style="color:#0066cc;"><b>String limitation</b></div>
@@ -769,8 +769,8 @@
 		</div>
 		<!-- Regorxxx Presets tab | Preset rules -->
 		<div id='presets' class="tabcontent">
-			<span class="alignLeftH" style="margin-left: 0%;"><span style="color: #3e8e41; padding-right: 0;">If</span> / <span style="color: #cc2626; padding-right: 0;">If not</span> (match all)</span>
-			<span class="alignLeftH" style="margin-left: 31%;"><span style="color: #002ed3; padding-right: 0;">Then</span> (apply all)</span>
+			<span class="alignLeftH" style="margin-left: 0%;"><span style="color: #8994bc; padding-right: 0;">If</span> / <span style="color: #b48b8b; padding-right: 0;">If not</span> (match all)</span>
+			<span class="alignLeftH" style="margin-left: 31%;"><span style="color: #d288cb; padding-right: 0;">Then</span> (apply all)</span>
 			<div style="clear:both;"></div>
 			<hr>
 			<div style="clear:both;"></div>
@@ -925,7 +925,7 @@
 					<!-- Regorxxx Send to playlist & select -->
 					<div class="div_text4">Playlist selection behaviour:</div>
 					<div id="selectAddedToPls"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="mode_help" href="#" onclick="showHelp('plsSel_text');return false;">Playlist selection help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="playlist_help" href="#" onclick="showHelp('plsSel_text');return false;">Playlist selection help</a></div>
 					<div id="plsSel_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4">By default the selection is sent and items are selected at playlist (other panels or components tracking selection changes are updated automatically)<br><br>Disable it to restore legacy behaviour where items were sent without actually selecting them</div>
 					</div>
@@ -935,7 +935,7 @@
 					<div id="topTracksFilter"></div>
 					<div id="topTracksSorting"></div>
 					<div id="topTracksRemDupl"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="mode_help" href="#" onclick="showHelp('topTracks_text');return false;">Top tracks help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="topTracks_help" href="#" onclick="showHelp('topTracks_text');return false;">Top tracks help</a></div>
 					<div id="topTracks_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Usage:</u></b><br><br>Uses an additional query filter and sorting for current selection on top of the current view/filter.<br><br>&#x2022; Found at the Context menu or mouse action (at left)<br>&#x2022; Target playlist follows global settings above<br>&#x2022; Supports $nowplaying{}, $selected{}, ... for query and sort<br>&#x2022; Use '$rand()' as sorting to shuffle<br>&#x2022; Leave sorting empty to follow panel sorting<br>&#x2022; Selection is deduplicated to filter versions of same songs<br>&#x2022; Set duplicates removal to '[]' to skip processing; leaving it empty '' will use default settings instead<br><br><b><u>Sorting extended syntax:</u></b><br><br>&#x2022; See <a class="tooltip" id="ltReference3" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference3')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br><br>&#x2022; <b>$harmonicsort{bShuffle}</b> - Sorting by incremental KEY<br><br>&#x2022; <b>$harmonicmix{bShuffle}</b> - Sorting by harmonic mixing rules<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>true</i>, <i>1</i>, any string or empty to shuffle<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>false</i> or <i>0</i> to skip shuffling<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$harmonicmix{true}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$harmonicmix{}</i><br><br>&#x2022; <b>$shufflebytags{tagName,sortBias,sortDir}</b> - Scatters tracks with same tag values semi-randomly<br>&emsp;&#x2219; <b>tagName</b> can be set to any tag -<i>ARTIST</i>- or array of tags -<i>["ARTIST","ALBUM ARTIST"]</i>-<br>&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i>. Or omitted (<i>random</i> used)<br>&emsp;&#x2219; <b>sortDir</b> can be set to <i>1</i>, <i>-1</i> or omitted (<i>1</i> used)<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"],random,1}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"]}</i>
 						</div>
@@ -1007,7 +1007,7 @@
 					<div class="div_text2">Tags</div>
 					<div class="info5"><i>Title format can be set below</i></div>
 					<div id="dragTags"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="mode_help" href="#" onclick="showHelp('drag_text');return false;">Drag n' drop help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><a id="dragTags_help" href="#" onclick="showHelp('drag_text');return false;">Drag n' drop help</a></div>
 					<div id="drag_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Usage:</b></u><br><br>&#x2022; Tracks can be drag n' dropped to search box<br>&#x2022; Search expression is adjusted to View mode<br>&#x2022; View by Folder structure: filenames (RegExp)<br>&#x2022; Any other View: tags (Queries)<br>&#x2022; Tags used and how they are joined can be customized<br><br><b><u>Keyboard modifiers:</b></u><br><br>&#x2022; Default is used without any key pressed<br>&#x2022; Behaviour is affected by Ctrl, Alt and Shift keys<br>&#x2022; Multi-value tag operator is used between different values on same tag:<br>&emsp; 'ARTIST IS A OR ARTIST IS B'<br><br>&#x2022; Inter-tag operator is used between different tags:<br>&emsp; 'ARTIST IS Nina Simone OR GENRE IS Rock'<br><br>&#x2022; Inter-track operator is used between queries for different tracks (on multiple selection)<br><br>&#x2022; Inter-query operator is used if there is already an expression at the search box, to join or replace them</div>
 						<div><br></div>
@@ -1200,7 +1200,7 @@
 						<span id="noCoverStub" style="font:0.85em Segoe UI;" class="dropdown-content"></span>
 					</span>
 					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noArtistStub_dropdown" class="dropbtnLight" href="#" onclick="toggle('noArtistStub');"></a>
-						<span id="noArtistStub" style="font:0.85em Segoe UI;" class="dropdown-content"></span>
+						<span id="noArtistStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
 					<div class="info5"><i>Click dropdown items for full preview (provided visible in panel).</i></div>
 					<div class="div_text2">Index</div>
@@ -1342,7 +1342,7 @@
 	<!-- Regorxxx IE8 Polyfill -->
 	<script>
 		if (!('indexOf' in Array.prototype)) {
-			Array.prototype.indexOf = function (find, i /*opt*/) {
+			Array.prototype.indexOf = function (find, i /*opt*/) { // NOSONAR
 				'use strict';
 				if (typeof i === 'undefined') { i = 0; }
 				if (i < 0) { i += this.length; }
@@ -1354,12 +1354,12 @@
 			};
 		}
 		if (!('filter' in Array.prototype)) {
-			Array.prototype.filter = function (fun /*, thisp */) {
+			Array.prototype.filter = function (fun /*, thisp */) { // NOSONAR
 				'use strict';
-				if (typeof this === 'undefined' || this === null) { throw new TypeError(); }
+				if (typeof this === 'undefined' || this === null) { throw new TypeError('This is undefined or null'); }
 				var t = Object(this);
 				var len = t.length >>> 0;
-				if (typeof fun !== 'function') { throw new TypeError(); }
+				if (typeof fun !== 'function') { throw new TypeError('fun is not a function'); }
 				var res = [];
 				var thisp = arguments[1];
 				for (var i = 0; i < len; i++) {
@@ -1378,8 +1378,8 @@
 			}
 		}
 		if (!('startsWith' in String.prototype)) {
-			String.prototype.startsWith = function (search, rawPos) {
-				var pos = rawPos > 0 ? rawPos | 0 : 0;
+			String.prototype.startsWith = function (search, rawPos) { // NOSONAR
+				var pos = rawPos > 0 ? rawPos | 0 : 0; // NOSONAR
 				return this.substring(pos, pos + search.length) === search;
 			};
 		}
@@ -1472,7 +1472,8 @@
 		function getValue(id) {
 			var div = document.getElementById(id);
 			div.style.height = '1em';
-			return (em = Math.max(div.offsetHeight, 13.6));
+			em = Math.max(div.offsetHeight, 13.6);
+			return em;
 		}
 		getValue('div');
 
@@ -1550,20 +1551,24 @@
 		}
 
 		function set_btn_add_state() {
+			var ln;
 			switch (cur.page) {
-				case 'views':
-					var ln = document.getElementById("view").querySelectorAll("[id^='view_cnt']").length
-					document.getElementById("btn_add").disabled = ln > 98 ? true : false;
+				case 'views': {
+					ln = document.getElementById("view").querySelectorAll("[id^='view_cnt']").length
+					document.getElementById("btn_add").disabled = ln > 98;
 					break;
-				case 'filters':
-					var ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
-					document.getElementById("btn_add").disabled = ln > 98 ? true : false;
+				}
+				case 'filters': {
+					ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
+					document.getElementById("btn_add").disabled = ln > 98;
 					break;
+				}
 				// Regorxxx <- Presets tab | Preset rules
-				case 'presets':
-					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
-					document.getElementById("btn_add").disabled = ln > 98 ? true : false;
+				case 'presets': {
+					ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_add").disabled = ln > 98;
 					break;
+				}
 				// Regorxxx ->
 			}
 		}
@@ -1580,61 +1585,66 @@
 			if (needCustomCol) setCustomColours('value');
 			if (/statisticsNames_container/.test(id)) { setStatisticsLabels(); } // Regorxxx <- New statistics ->
 			if (/statisticsTooltip_container/.test(id)) { setStatisticsTooltip(); } // Regorxxx <- New statistics | Improve statistics tooltip ->
-			document.getElementById("btn_apply").disabled = JSON.stringify(cfg) != parsed_args[0] || JSON.stringify(ppt) != parsed_args[1] ? false : true;
+			document.getElementById("btn_apply").disabled = !(JSON.stringify(cfg) != parsed_args[0] || JSON.stringify(ppt) != parsed_args[1]);
 		}
 
 		function set_btn_del_state() {
+			var ln;
 			switch (cur.page) {
-				case 'views':
-					var ln = document.getElementById("view").querySelectorAll("[id^='view_cnt']").length
-					document.getElementById("btn_delete").disabled = ix.view != -1 && ln > 1 ? false : true;
+				case 'views': {
+					ln = document.getElementById("view").querySelectorAll("[id^='view_cnt']").length
+					document.getElementById("btn_delete").disabled = !(ix.view != -1 && ln > 1);
 					break;
-				case 'filters':
-					var ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
-					document.getElementById("btn_delete").disabled = ix.filter != -1 && ln > 1 ? false : true;
+				}
+				case 'filters': {
+					ln = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']").length
+					document.getElementById("btn_delete").disabled = !(ix.filter != -1 && ln > 1);
 					break;
+				}
 				// Regorxxx <- Presets tab | Preset rules
-				case 'presets':
-					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
-					document.getElementById("btn_delete").disabled = ix.preset != -1 && ln > 0 ? false : true;
+				case 'presets': {
+					ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_delete").disabled = !(ix.preset != -1 && ln > 0);
 					break;
+				}
 				// Regorxxx ->
 			}
 		}
 
 		function set_btn_dn_state() {
+			var element;
 			switch (cur.page) {
 				case 'views':
-					var element = document.getElementById("view_cnt" + ix.view);
-					document.getElementById("btn_down").disabled = ix.view == -1 || element.nextSibling && element.nextSibling.id == "view_cnt_folderView" ? true : false;
+					element = document.getElementById("view_cnt" + ix.view);
+					document.getElementById("btn_down").disabled = !!(ix.view == -1 || element.nextSibling && element.nextSibling.id == "view_cnt_folderView");
 					break;
 				case 'filters':
-					var element = document.getElementById("filter_cnt" + ix.filter);
-					document.getElementById("btn_down").disabled = ix.filter == -1 || element.nextSibling && element.nextSibling.id == "filter_cnt_menuName" ? true : false;
+					element = document.getElementById("filter_cnt" + ix.filter);
+					document.getElementById("btn_down").disabled = !!(ix.filter == -1 || element.nextSibling && element.nextSibling.id == "filter_cnt_menuName");
 					break;
 				// Regorxxx <- Presets tab | Preset rules
 				case 'presets':
-					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
-					document.getElementById("btn_down").disabled = ix.preset == -1 || ix.preset == ln - 1 ? true : false;
+					element = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
+					document.getElementById("btn_down").disabled = !!(ix.preset == -1 || ix.preset == element - 1);
 					break;
 				// Regorxxx ->
 			}
 		}
 
 		function set_btn_up_state() {
+			var element;
 			switch (cur.page) {
 				case 'views':
-					var element = document.getElementById("view_cnt" + ix.view);
-					document.getElementById("btn_up").disabled = ix.view == -1 || !element || !element.previousSibling ? true : false;
+					element = document.getElementById("view_cnt" + ix.view);
+					document.getElementById("btn_up").disabled = !!(ix.view == -1 || !element || !element.previousSibling);
 					break;
 				case 'filters':
-					var element = document.getElementById("filter_cnt" + ix.filter);
-					document.getElementById("btn_up").disabled = ix.filter == -1 || !element || !element.previousSibling ? true : false;
+					element = document.getElementById("filter_cnt" + ix.filter);
+					document.getElementById("btn_up").disabled = !!(ix.filter == -1 || !element || !element.previousSibling);
 					break;
 				// Regorxxx <- Presets tab | Preset rules
 				case 'presets':
-					var ln = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']").length
-					document.getElementById("btn_up").disabled = ix.preset <= 0 ? true : false;
+					document.getElementById("btn_up").disabled = ix.preset <= 0;
 					break;
 				// Regorxxx ->
 			}
@@ -1702,7 +1712,7 @@
 
 		if (parsed_args) {
 			cur = JSON.parse(parsed_args[2]);
-			document.title = 'Library Tree ' + cur.version + ': Panel Settings';
+			document.title = 'Library-Tree-SMP ' + cur.version + ': Panel Settings';
 			cfg = JSON.parse(parsed_args[0]);
 			ppt = JSON.parse(parsed_args[1]);
 			cbox_h = Math.round(Math.max(em, 13));
@@ -1909,8 +1919,8 @@
 			function setsbarType(n) {
 				window.sbarType_dropdown.innerHTML = sbarTypeLabels[n];
 				ppt['sbarType_internal'].value = n;
-				sbar_col_dropdown.style.display = n != 2 ? "inline-block" : "none";
-				sbar_icon_dropdown.style.display = n != 2 ? "inline-block" : "none";
+				sbar_col_dropdown.style.display = n == 2 ? "none" : "inline-block";
+				sbar_icon_dropdown.style.display = n == 2 ? "none" : "inline-block";
 				window.sbarType.style.display = 'none';
 			}
 
@@ -2033,7 +2043,7 @@
 				ppt['searchDragTrackOpCtrl_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragTrackOpCtrl.style.display = 'none';
 			}
-			function setDragTrackOpAlt(n) {
+			function setDragTrackOpAlt(n) { // NOSONAR
 				window.searchDragTrackOpAlt_dropdown.innerHTML = dragTrackOpAltLabels[n];
 				ppt['searchDragTrackOpAlt_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragTrackOpAlt.style.display = 'none';
@@ -2043,50 +2053,50 @@
 				ppt['searchDragQueryOp_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragQueryOpDefault.style.display = 'none';
 			}
-			function setDragQueryOpShift(n) {
+			function setDragQueryOpShift(n) { // NOSONAR
 				window.searchDragQueryOpShift_dropdown.innerHTML = dragQueryOpShiftLabels[n];
 				ppt['searchDragQueryOpShift_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragQueryOpShift.style.display = 'none';
 			}
 			// Regorxxx ->
 
-			function setTheme(n) {
+			function setTheme(n) { // NOSONAR
 				window.theme_dropdown.innerHTML = themeLabels[n];
 				ppt['theme_internal'].value = n;
 				window.themeBg.style.display = 'none';
 			}
 
-			function setthumbSize(n) {
+			function setthumbSize(n) { // NOSONAR
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[n];
 				ppt['thumbNailSize_internal'].value = n;
 				window.thumbSize.style.display = 'none';
 			}
 
-			function setClickAction(n) {
+			function setClickAction(n) { // NOSONAR
 				window.click_dropdown.innerHTML = clickLabels[n];
 				ppt['clickAction_internal'].value = n;
 				window.click.style.display = 'none';
 			}
 
-			function setDblClickAction(n) {
+			function setDblClickAction(n) { // NOSONAR
 				window.dblClick_dropdown.innerHTML = dblClickLabels[n];
 				ppt['dblClickAction_internal'].value = n;
 				window.dblClick.style.display = 'none';
 			}
 
-			function setMbtnClickAction(n) {
+			function setMbtnClickAction(n) { // NOSONAR
 				window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[n];
 				ppt['mbtnClickAction_internal'].value = n;
 				window.mbtnClick.style.display = 'none';
 			}
 
-			function setAltClickAction(n) {
+			function setAltClickAction(n) { // NOSONAR
 				window.altClick_dropdown.innerHTML = altClickLabels[n];
 				ppt['altClickAction_internal'].value = n;
 				window.altClick.style.display = 'none';
 			}
 
-			function setKeyAction(n) {
+			function setKeyAction(n) { // NOSONAR
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[n];
 				ppt['keyAction_internal'].value = n;
 				window.keystroke.style.display = 'none';
@@ -2098,15 +2108,15 @@
 				if (bWithFallback) {
 					if (rule.hasOwnProperty(condition)) {
 						return rule[condition].hasOwnProperty(typeProp)
-							? rule[condition][typeProp] !== null
-								? Array.isArray(rule[condition][typeProp])
+							? rule[condition][typeProp] === null
+								? '- Invalid -'
+								: Array.isArray(rule[condition][typeProp])
 									? rule[condition][typeProp].length
 										? rule[condition][typeProp].join('|')
 										: condition === 'then'
 											? '- Unchanged -'
 											: '- Skip -'
 									: '- Invalid -'
-								: '- Invalid -'
 							: condition === 'then'
 								? '- Unchanged -'
 								: '- Skip -';
@@ -2178,7 +2188,7 @@
 			}
 
 			var subMenus = {};
-			function toogleSubmenu(id) {
+			function toogleSubmenu(id) { // NOSONAR
 				if (window[id].style.display === 'none') {
 					window[id].style.display = 'inline-block';
 					subMenus[id] = true;
@@ -2188,22 +2198,23 @@
 				}
 			}
 
-			function setPresetRules() {
+			function setPresetRules() { // NOSONAR
 				var presetRules = JSON.parse(ppt['presetRules_internal'].default_value);
 				var rulesLen = presetRules.length;
 				var ids = getPresetColumns();
 				var idsLen = ids.length;
+				var type, id;
 				for (i = 0; i < rulesLen; i++) {
 					var rule = presetRules[i];
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
-						var id = 'presetRuleIf' + type.id + i;
+						type = ids[j];
+						id = 'presetRuleIf' + type.id + i;
 						window[id + '_dropdown'].innerHTML = rule['if'][type.prop] || 'any';
 						window[id].style.display = 'none';
 					}
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
-						var id = 'presetRuleThen' + type.id + i;
+						type = ids[j];
+						id = 'presetRuleThen' + type.id + i;
 						window[id + '_dropdown'].innerHTML = rule['if'][type.prop] || 'any';
 						window[id].style.display = 'none';
 					}
@@ -2211,7 +2222,7 @@
 				ppt['presetRules_internal'].value = ppt['presetRules_internal'].default_value;
 			}
 
-			function hidePresetRules(currId) {
+			function hidePresetRules(currId) { // NOSONAR
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				var rulesLen = presetRules.length;
 				var ids = getPresetColumns();
@@ -2230,44 +2241,44 @@
 					}
 				}
 				if (menuOpened) { return; }
+				var type, id;
 				for (i = 0; i < rulesLen; i++) {
-					var rule = presetRules[i];
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'if') { continue; }
-						var id = 'presetRuleIf' + type.id + i;
+						id = 'presetRuleIf' + type.id + i;
 						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
 					}
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'then') { continue; }
-						var id = 'presetRuleThen' + type.id + i;
+						id = 'presetRuleThen' + type.id + i;
 						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
 					}
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'if') { continue; }
-						var id = 'presetRuleIfNot' + type.id + i;
+						id = 'presetRuleIfNot' + type.id + i;
 						if (currId !== id + '_dropdown') { window[id].style.display = 'none'; }
 					}
 				}
 			}
 
-			function addPresetRule() {
+			function addPresetRule() { // NOSONAR
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				presetRules.push({ 'if': {}, 'ifNot': {}, 'then': {} });
 				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
 				setPresets(true);
 			}
 
-			function deletePresetRule(idx) {
+			function deletePresetRule(idx) { // NOSONAR
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				presetRules.splice(idx, 1);
 				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
 				setPresets(true);
 			}
 
-			function movePresetRule(idx, toIdx) {
+			function movePresetRule(idx, toIdx) { // NOSONAR
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				var rule = presetRules.splice(idx, 1);
 				presetRules.splice(toIdx, 0, rule[0]);
@@ -2295,20 +2306,20 @@
 			// Regorxxx ->
 
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
-			function setFolderSorting(n) {
+			function setFolderSorting(n) { // NOSONAR
 				window.folderSorting_dropdown.innerHTML = viewSortingLabels[n];
 				ppt['folderSorting_internal'].value = n;
 				window.folderSorting.style.display = 'none';
 			}
 
-			function setViewSorting(n) {
+			function setViewSorting(n) { // NOSONAR
 				window.viewSorting_dropdown.innerHTML = viewSortingLabels[n];
 				ppt['viewSorting_internal'].value = n;
 				window.viewSorting.style.display = 'none';
 			}
 			// Regorxxx ->
 			// Regorxxx <- Auto-DJ feature
-			function setAutoDjTrackPicking(n) {
+			function setAutoDjTrackPicking(n) { // NOSONAR
 				window.autodjPick_dropdown.innerHTML = autodjLabels[n];
 				ppt['autoDjTrackPicking_internal'].value = getAutoDjTrackPickingValue(n - 1);
 				window.autodjPick.style.display = 'none';
@@ -2323,26 +2334,26 @@
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
 				var cells = [];
-				var headings = [];
 				var columnCount = 0;
 				var imgLen = imgTable.length;
+				var labels, headers, items, n, menId;
 				switch (id) {
 					case 'imageFormat':
-						var headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
+						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
 						cells.push(headers);
 						var radioLabels = ['Regular', 'Auto-Fill', 'Circular'];
-						var items = [];
+						items = [];
 						for (j = 0; j < 3; j++) {
 							items[j] = [];
 							for (i = 0; i < imgLen; i++) {
-								var n = imgTable[i];
-								var id = imgTable[i] + j;
-								items[j].push('<input id="' + id + '" name="' + n + '" style="' + cbox + '" type="radio" />');
+								n = imgTable[i];
+								menId = imgTable[i] + j;
+								items[j].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
 								if (i == imgLen - 1) {
 									items[j].push('<div style="padding-left:0.46em; text-align:left">' + radioLabels[j] + '</div>');
 									cells.push(items[j]);
 								}
-								}
+							}
 						}
 						columnCount = imgLen + 1;
 						break;
@@ -2351,9 +2362,9 @@
 					case 'syntaxView': // Regorxxx <- Filter non-relevant functions at help ->
 					case 'syntax':
 						// Regorxxx <- Merge now playing and selected as fallback | Code cleanup
-						var headers = ['Syntax', 'Use\u00A0In\u00A0\u00A0\u00A0', 'Description'];
+						headers = ['Syntax', 'Use\u00A0In\u00A0\u00A0\u00A0', 'Description'];
 						cells.push(headers);
-						var labels = [
+						labels = [
 							['%&ltFIELD&gt%', 'Views', 'Split multiple values into separate items, e.g.<br>%&ltARTIST&gt%', 'Views'],
 							['%FIELD1%&#124%FIELD2%&#124...', 'Views', '&#124 separates different fields into different branch levels , e.g.<br>%ARTIST%&#124%ALBUM% or %&ltARTIST&gt%&#124%ALBUM%', 'Views'],
 							['%FIELD1%&#166%FIELD2%&#166...', 'Views', '&#166 combines different fields into the same branch level, e.g.<br>%ALBUM ARTIST%&#166%ARTIST% or %&ltALBUM ARTIST&gt%&#166%&ltARTIST&gt%', 'Views'],
@@ -2392,7 +2403,7 @@
 							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters\nSearch|Sorting', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>$randfloat{1,4} - $randfloat{1,4}<br>Becomes: 1.98 - 1.98', 'Views'],
 							['$pseudorandfloat{max}<br>$pseudorandfloat{min,max}', 'Views|Filters\nSearch|Sorting', 'Equal to $randfloat{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandfloat{1,4} AND %LOUDNESS% EQUAL $pseudorandfloat{1,4}<br>Becomes: %VALENCE% EQUAL 3 AND %LOUDNESS% EQUAL 3', 'Filters']
 						];
-						var items = [];
+						items = [];
 						for (j = 0; j < labels.length; j++) {
 							items[j] = [];
 							// Regorxxx <- Filter non-relevant functions at help
@@ -2413,14 +2424,14 @@
 					case 'elementColour':
 						headers = ['Buttons', 'Search', 'Separators', 'Lines', ''];
 						cells.push(headers);
-						var labels = ['Default', 'Blend', 'Text', 'Highlight'];
-						var items = [];
+						labels = ['Default', 'Blend', 'Text', 'Highlight'];
+						items = [];
 						for (j = 0; j < 4; j++) {
 							items[j] = [];
 							for (i = 0; i < menuTable.length; i++) {
-								var n = menuTable[i];
-								var id = n + j;
-								items[j].push('<input id="' + id + '" name="' + n + '" style="' + cbox + '" type="radio" />');
+								n = menuTable[i];
+								menId = n + j;
+								items[j].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
 								if (i == 3) {
 									items[j].push('<div style="padding-left:0.46em; text-align:left">' + labels[j] + '</div>');
 									cells.push(items[j]);
@@ -2469,7 +2480,7 @@
 						els[i].style.verticalAlign = "top";
 						els[i].style.border = "1px solid Gainsboro";
 					}
-					var els = document.getElementById(tb).getElementsByTagName("td");
+					els = document.getElementById(tb).getElementsByTagName("td");
 					for (i = 0; i < els.length; i++) {
 						els[i].style.lineHeight = "1.62em";
 						els[i].style.textAlign = "left";
@@ -2504,16 +2515,17 @@
 				var rulesLen = presetRules.length;
 				var ids = getPresetColumns();
 				var idsLen = ids.length;
+				var type, id, count;
 				for (i = 0; i < rulesLen; i++) {
 					var rule = presetRules[i];
 					var ruleId = 'presetRuleParent' + i;
 					window.presetRules.insertAdjacentHTML('beforeend', '<div style="clear:both;"></div><hr>');
 					window.presetRules.insertAdjacentHTML('beforeend', '<div id ="' + ruleId + '" style="padding: 0.5em 0 4em 0;"></span>');
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'if') { continue; }
-						var id = 'presetRuleIf' + type.id + i;
-						var count = getPresetRuleValueCount(rule, 'if', type.prop);
+						id = 'presetRuleIf' + type.id + i;
+						count = getPresetRuleValueCount(rule, 'if', type.prop);
 						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0"><a id="' + id + '_dropdown" class="dropbtn" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'if', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'if\', \'' + type.prop + '\');">- Any -</a>');
@@ -2521,42 +2533,46 @@
 						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 					}
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'then') { continue; }
-						var id = 'presetRuleThen' + type.id + i;
-						var count = getPresetRuleValueCount(rule, 'then', type.prop);
+						id = 'presetRuleThen' + type.id + i;
+						count = getPresetRuleValueCount(rule, 'then', type.prop);
 						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:1em"><a id="' + id + '_dropdown" class="dropbtnBlue" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'then', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'then\', \'' + type.prop + '\');">- Unchanged -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 					}
 					for (j = 0; j < idsLen; j++) {
-						var type = ids[j];
+						type = ids[j];
 						if (type.condition && type.condition !== 'if') { continue; }
-						var id = 'presetRuleIfNot' + type.id + i;
-						var count = getPresetRuleValueCount(rule, 'ifNot', type.prop);
+						id = 'presetRuleIfNot' + type.id + i;
+						count = getPresetRuleValueCount(rule, 'ifNot', type.prop);
 						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0em;"><a id="' + id + '_dropdown" class="dropbtnRed" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'ifNot', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\');">- Any -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\', \'- Skip -\');">- Skip -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 					}
+					var isPresent;
 					for (j = 0; j < sourceLen; j++) {
-						if (sourceNames[j] !== 'separator') {
-							var isPresent = hasPresetRuleValue(rule, 'if', 'source', sourceNames[j]);
-							window['presetRuleIfSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSource' + i + '\', \'if\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'then', 'source', sourceNames[j]);
-							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'then\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'ifNot', 'source', sourceNames[j]);
-							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'ifNot\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
-						} else {
+						if (sourceNames[j] === 'separator') {
 							window['presetRuleIfSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						} else {
+							isPresent = hasPresetRuleValue(rule, 'if', 'source', sourceNames[j]);
+							window['presetRuleIfSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSource' + i + '\', \'if\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'source', sourceNames[j]);
+							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'then\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#d288cb; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'source', sourceNames[j]);
+							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'ifNot\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
 						}
 					}
 					for (j = 0; j < sourceIdsLen; j++) {
-						if (sourceIds[j] !== 'separator') {
+						if (sourceIds[j] === 'separator') {
+							window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+							window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						} else {
 							switch (sourceIds[j]) {
 								case 'Input value...': {
 									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRuleWithInput(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'Input playlist/panel name or GUID:\', \'' + (getPresetRuleValue(rule, 'if', 'sourceId', false) || 'write your value') + '\');">' + sourceIds[j] + '</a>');
@@ -2570,10 +2586,10 @@
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
 									for (var k = 0; k < sourceIdsNamesLen; k++) {
 										if (sourceIdsNames[k] !== 'separator') {
-											var isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsNames[k]);
-											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
+											isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsNames[k]);
+											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
 											isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsNames[k]);
-											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
+											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
 										} else {
 											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
@@ -2588,14 +2604,14 @@
 										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
 										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
 										for (var k = 0; k < sourceIdsGUIDsLen; k++) {
-											if (sourceIdsNames[k] !== 'separator') {
-												var isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsGUIDs[k]);
-												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
-												isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsGUIDs[k]);
-												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
-											} else {
+											if (sourceIdsNames[k] === 'separator') {
 												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+											} else {
+												isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsGUIDs[k]);
+												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
+												isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsGUIDs[k]);
+												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsGUIDs[k] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceIdsGUIDs[k] + '</a>');
 											}
 										}
 									}
@@ -2606,37 +2622,34 @@
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIds[j] + '\');">' + sourceIds[j] + '</a>');
 								}
 							}
-						} else {
-							window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
-							window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 						}
 					}
 					for (j = 0; j < viewsLen; j++) {
-						if (viewNames[j] !== 'separator') {
-							var isPresent = hasPresetRuleValue(rule, 'if', 'view', viewNames[j]);
-							window['presetRuleIfView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfView' + i + '\', \'if\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'then', 'view', viewNames[j]);
-							window['presetRuleThenView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenView' + i + '\', \'then\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'ifNot', 'view', viewNames[j]);
-							window['presetRuleIfNotView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotView' + i + '\', \'ifNot\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
-						} else {
+						if (viewNames[j] === 'separator') {
 							window['presetRuleIfView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleThenView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleIfNotView' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						} else {
+							isPresent = hasPresetRuleValue(rule, 'if', 'view', viewNames[j]);
+							window['presetRuleIfView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfView' + i + '\', \'if\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'view', viewNames[j]);
+							window['presetRuleThenView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenView' + i + '\', \'then\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#d288cb; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'view', viewNames[j]);
+							window['presetRuleIfNotView' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotView' + i + '\', \'ifNot\', \'view\', \'' + viewNames[j] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + viewNames[j] + '</a>');
 						}
 					}
 					for (j = 0; j < filtersLen; j++) {
-						if (filterNames[j] !== 'separator') {
-							var isPresent = hasPresetRuleValue(rule, 'if', 'filter', filterNames[j]);
-							window['presetRuleIfFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfFilter' + i + '\', \'if\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#3e8e41; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'then', 'filter', filterNames[j]);
-							window['presetRuleThenFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenFilter' + i + '\', \'then\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#002ed3; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
-							isPresent = hasPresetRuleValue(rule, 'ifNot', 'filter', filterNames[j]);
-							window['presetRuleIfNotFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotFilter' + i + '\', \'ifNot\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#cc2626; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
-						} else {
+						if (filterNames[j] === 'separator') {
 							window['presetRuleIfFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleThenFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 							window['presetRuleIfNotFilter' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+						} else {
+							isPresent = hasPresetRuleValue(rule, 'if', 'filter', filterNames[j]);
+							window['presetRuleIfFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfFilter' + i + '\', \'if\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'then', 'filter', filterNames[j]);
+							window['presetRuleThenFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenFilter' + i + '\', \'then\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#d288cb; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
+							isPresent = hasPresetRuleValue(rule, 'ifNot', 'filter', filterNames[j]);
+							window['presetRuleIfNotFilter' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotFilter' + i + '\', \'ifNot\', \'filter\', \'' + filterNames[j] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + filterNames[j] + '</a>');
 						}
 					}
 				}
@@ -2697,10 +2710,10 @@
 				for (i = 0; i < 3; i++) { window.sbarType.insertAdjacentHTML('beforeend', '<a onclick="setsbarType(' + i + ');" >' + sbarTypeLabels[i] + '</a>'); }
 				window.sbarCol_dropdown.innerHTML = sbarColLabels[ppt['sbarCol_internal'].value];
 				for (i = 0; i < 2; i++) { window.sbarCol.insertAdjacentHTML('beforeend', '<a onclick="setSbarCol(' + i + ');" >' + sbarColLabels[i] + '</a>'); }
-				sbar_col_dropdown.style.display = ppt['sbarType_internal'].value != 2 ? "inline-block" : "none";
+				sbar_col_dropdown.style.display = ppt['sbarType_internal'].value == 2 ? "none" : "inline-block";
 				window.sbarIcon_dropdown.innerHTML = sbarIconLabels[ppt['sbarButType_internal'].value];
 				for (i = 0; i < 3; i++) { window.sbarIcon.insertAdjacentHTML('beforeend', '<a onclick="setSbarIcon(' + i + ');" >' + sbarIconLabels[i] + '</a>'); }
-				sbar_icon_dropdown.style.display = ppt['sbarType_internal'].value != 2 ? "inline-block" : "none";
+				sbar_icon_dropdown.style.display = ppt['sbarType_internal'].value == 2 ? "none" : "inline-block";
 				// Regorxxx <- Scrollbar on windows style improvements
 				for (i = 0; i < 4; i++) { window.scrolling.insertAdjacentHTML('beforeend', '<div><input id="scroll_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="scroll_checkbox' + i + '" class="checkbox_label">' + scrollLabels[i] + '</label></div>'); }
 				// Regorxxx ->
@@ -2828,7 +2841,7 @@
 				i = 4; window.rootStyle.insertAdjacentHTML('beforeend', '<div><input id="root_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="root_checkbox' + i + '" class="checkbox_label">' + rootLabels[i] + '</label></div>');
 				i = 5; window.rootStyle.insertAdjacentHTML('beforeend', '<div><input id="root_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="root_checkbox' + i + '" class="checkbox_label">' + rootLabels[i] + '</label></div>');
 
-				window.node_dropdown.innerHTML = ppt['nodeStyle_internal'].value != 7 ? nodeLabels[ppt['nodeStyle_internal'].value] : 'Squares (windows)';
+				window.node_dropdown.innerHTML = ppt['nodeStyle_internal'].value == 7 ? 'Squares (windows)' : nodeLabels[ppt['nodeStyle_internal'].value];
 				for (i = 0; i < 7; i++) { window.node.insertAdjacentHTML('beforeend', '<a id="nodeNo' + i + '" onclick="setNode(' + i + ');">' + nodeLabels[i] + '</a>'); }
 				i = 7; window.nodeLines.insertAdjacentHTML('beforeend', '<div><input id="node_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="node_checkbox' + i + '" class="checkbox_label">Show lines (squares only)</label></div>');
 
@@ -3084,7 +3097,7 @@
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
-			window.treeSortLimit_container0.parentNode.disabled =  ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
+			window.treeSortLimit_container0.parentNode.disabled = ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
 			// Regorxxx <- Preserve tree sorting at selection
 			if (window.playlistSort_container1.value.length) {
 				window.playlistSort_checkbox0.checked = false;
@@ -3107,11 +3120,11 @@
 				window.click_dropdown.innerHTML = clickLabels[ppt['clickAction_internal'].value];
 				window.click.innerHTML = '';
 				for (i = 0; i < 4; i++) { window.click.insertAdjacentHTML('beforeend', '<a onclick="setClickAction(' + i + ');">' + clickLabels[i] + '</a>'); }
-				window.click_dropdown.style.background = '#3e8e41';
+				window.click_dropdown.style.background = '#8994bc';
 				window.dblClick_dropdown.innerHTML = dblClickLabels[ppt['dblClickAction_internal'].value];
 				window.dblClick.innerHTML = '';
 				for (i = 0; i < 4; i++) { window.dblClick.insertAdjacentHTML('beforeend', '<a onclick="setDblClickAction(' + i + ');">' + dblClickLabels[i] + '</a>'); }
-				window.dblClick_dropdown.style.background = '#3e8e41';
+				window.dblClick_dropdown.style.background = '#8994bc';
 			}
 			if (ppt['actionMode_internal'].value == 2) {
 				window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[0];
@@ -3123,7 +3136,7 @@
 				window.mbtnClick.innerHTML = '';
 				// Regorxxx <- Top tracks
 				for (i = 0; i < 7; i++) { window.mbtnClick.insertAdjacentHTML('beforeend', '<a onclick="setMbtnClickAction(' + i + ');">' + mbtnClickLabels[i] + '</a>'); }
-				window.mbtnClick_dropdown.style.background = '#3e8e41';
+				window.mbtnClick_dropdown.style.background = '#8994bc';
 				// Regorxxx ->
 			}
 		}
@@ -3161,7 +3174,6 @@
 		function setViews(clear) {
 			if (clear) document.getElementById("view").innerHTML = '';
 			for (i = 0; i < cfg[0].length; i++) {
-				var v = cfg[0][i];
 				if (i < cfg[0].length - 1) window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt' + i + '"><input name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" /><input name="input_view" class="input71" /></div>')
 				else window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_folderView"><input id="checkbox_folderView" name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" /><input name="input_view" class="input71" readonly /></div>')
 			}
@@ -3171,7 +3183,6 @@
 		function setFilters(clear) {
 			if (clear) document.getElementById("filter").innerHTML = '';
 			for (i = 0; i < cfg[1].length; i++) {
-				var v = cfg[1][i];
 				if (i < cfg[1].length - 1) window.filter.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="filter_cnt' + i + '"><input name="filterCheckbox" style="' + cbox + '" type="checkbox" /><input id="filter_container' + i + '" name="filter_name" class="input21" /><input name="input_filter" class="input71" /></div>');
 				else window.filter.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="filter_cnt_menuName"><input id="checkbox_menuName" name="filterCheckbox" style="' + cbox + '" type="checkbox" /><input id="filter_container' + i + '" name="filter_name" class="input21" /><input name="input_filter" class="input71" readonly /></div>');
 			}
@@ -3277,10 +3288,11 @@
 		}
 
 		window.btn_add.onclick = function () {
+			var list;
 			switch (cur.page) {
 				case 'views':
 					new_id++;
-					var list = document.getElementById("view").querySelectorAll("[id^='view_cnt']");
+					list = document.getElementById("view").querySelectorAll("[id^='view_cnt']");
 					if (list.length > 98) return; // no limited to 100
 					list[list.length - 1].insertAdjacentHTML("beforebegin", '<div class="input_cnt1" id="view_cnt' + new_id + '"><input id="viewCheckbox' + new_id + '" name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + new_id + '" name="view_name" class="input21" value="" /><input name="input_view" class="input71" value="" /></div>');
 					document.getElementById("viewCheckbox" + new_id).checked = true;
@@ -3288,7 +3300,7 @@
 					break;
 				case 'filters':
 					new_id++;
-					var list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']");
+					list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']");
 					if (list.length > 98) return; // no limited to 100
 					list[list.length - 1].insertAdjacentHTML("beforebegin", '<div class="input_cnt1" id="filter_cnt' + new_id + '"><input id="filterCheckbox' + new_id + '" name="filterCheckbox" style="' + cbox + '" type="checkbox" /><input id="filter_container' + new_id + '" name="filter_name" class="input21" value="" /><input name="input_filter" class="input71" value="" /></div>');
 					document.getElementById("filterCheckbox" + new_id).checked = true;
@@ -3296,7 +3308,7 @@
 					break;
 				// Regorxxx <- Presets tab | Preset rules
 				case 'presets':
-					var list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']");
+					list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']");
 					addPresetRule();
 					document.getElementById("presetRuleParent" + (list.length)).focus();
 					break;
@@ -3305,15 +3317,16 @@
 		}
 
 		window.btn_up.onclick = function () {
+			var el;
 			switch (cur.page) {
 				case 'views':
 					if (ix.view == -1) break;
-					var el = document.getElementById("view_cnt" + ix.view);
+					el = document.getElementById("view_cnt" + ix.view);
 					moveUp(el);
 					break;
 				case 'filters':
 					if (ix.filter == -1) break;
-					var el = document.getElementById("filter_cnt" + ix.filter);
+					el = document.getElementById("filter_cnt" + ix.filter);
 					moveUp(el);
 					break;
 				// Regorxxx <- Presets tab | Preset rules
@@ -3326,15 +3339,16 @@
 		}
 
 		window.btn_down.onclick = function () {
+			var el;
 			switch (cur.page) {
 				case 'views':
 					if (ix.view == -1) break;
-					var el = document.getElementById("view_cnt" + ix.view);
+					el = document.getElementById("view_cnt" + ix.view);
 					moveDown(el);
 					break;
 				case 'filters':
 					if (ix.filter == -1) break;
-					var el = document.getElementById("filter_cnt" + ix.filter);
+					el = document.getElementById("filter_cnt" + ix.filter);
 					moveDown(el);
 					break;
 				// Regorxxx <- Presets tab | Preset rules
@@ -3402,7 +3416,8 @@
 				// Regorxxx ->
 			}
 
-			var nm = page.toString() + '_input', inputs = document.querySelectorAll(page == 'all' ? "[name$='_input']" : "[name=" + nm + "]");
+			var nm = page.toString() + '_input';
+			inputs = document.querySelectorAll(page == 'all' ? "[name$='_input']" : "[name=" + nm + "]");
 			for (i = 0; i < inputs.length; i++) {
 				// Regorxxx <- Expand alert popup with automatic type parsing
 				try { inputs[i].value = ppt[input[page].name[i] + '_internal'][value]; }
@@ -3493,9 +3508,9 @@
 		}
 
 		window.btn_reset.onclick = function () {
-			var msg = 'This will reset all library tree settings to default; all your settings including \'Views\' and \Filters\' will be lost.\n\nSettings are stored in panel properties, which has back-up options, and which can be opened by shift+right click of library tree.\n\nContinue with reset?'; // Regorxxx <- Fix new lines ->
+			var msg = 'This will reset all library tree settings to default; all your settings including \'Views\' and \'Filters\' will be lost.\n\nSettings are stored in panel properties, which has back-up options, and which can be opened by shift+right click of library tree.\n\nContinue with reset?'; // Regorxxx <- Fix new lines ->
 			var r = window.confirm(msg);
-			if (r == true) {
+			if (r) {
 				var new_cur = JSON.stringify(cur);
 				if (new_cur == parsed_args[2]) new_cur = '';
 				close_window();
@@ -3520,44 +3535,47 @@
 			var idx = document.activeElement.id;
 			var clickedButton = /btn_ok|btn_add|btn_delete|btn_down|btn_up/.test(idx);
 			if (!clickedButton) {
+				var activate;
+				var par;
+				var list;
 				switch (cur.page) {
 					case 'views':
-						var list = document.getElementById("view").querySelectorAll("[id^='view_cnt']");
+						list = document.getElementById("view").querySelectorAll("[id^='view_cnt']");
 						for (i = 0; i < list.length; i++) list[i].style["background"] = "none";
-						var par = document.activeElement.parentElement;
-						var activate = /view_cnt/.test(par.id) && !/folderView/.test(par.id);
-						if (!activate) ix.view = -1;
-						else {
+						par = document.activeElement.parentElement;
+						activate = /view_cnt/.test(par.id) && !/folderView/.test(par.id);
+						if (activate) {
 							ix.view = par.id.replace('view_cnt', '');
 							par.style["background"] = "lightgreen";
 						}
+						else {ix.view = -1;}
 						break;
 					case 'filters':
-						var list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']")
+						list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']")
 						for (i = 0; i < list.length; i++) list[i].style["background"] = "none";
-						var par = document.activeElement.parentElement;
-						var activate = /filter_cnt/.test(par.id) && !/menuName/.test(par.id);
-						if (!activate) ix.filter = -1;
-						else {
+						par = document.activeElement.parentElement;
+						activate = /filter_cnt/.test(par.id) && !/menuName/.test(par.id);
+						if (activate) {
 							ix.filter = par.id.replace('filter_cnt', '');
 							par.style["background"] = "lightgreen";
 						}
+						else {ix.filter = -1;}
 						break;
 					// Regorxxx <- Presets tab | Preset rules
 					case 'presets':
-						var list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']")
+						list = document.getElementById("presetRules").querySelectorAll("[id^='presetRuleParent']")
 						for (i = 0; i < list.length; i++) { list[i].style["background"] = "none"; }
-						var par = document.activeElement.parentElement;
-						var activate = /presetRuleParent/.test(par.id);
+						par = document.activeElement.parentElement;
+						activate = /presetRuleParent/.test(par.id);
 						if (!activate) {
-							var par = par.parentElement;
-							var activate = /presetRuleParent/.test(par.id);
+							par = par.parentElement;
+							activate = /presetRuleParent/.test(par.id);
 						}
-						if (!activate) { ix.preset = -1; }
-						else {
+						if (activate) {
 							ix.preset = par.id.replace('presetRuleParent', '');
 							par.style["background"] = "lightgreen";
 						}
+						else { ix.preset = -1; }
 						break;
 					// Regorxxx ->
 				}
@@ -3641,8 +3659,8 @@
 		// Regorxxx ->
 
 		function toggle(item) {
-			if (window[item].style.display != 'block') window[item].style.display = 'block'
-			else window[item].style.display = 'none';
+			if (window[item].style.display == 'block') {window[item].style.display = 'none';}
+			else {window[item].style.display = 'block'}
 		}
 
 		var h = [
