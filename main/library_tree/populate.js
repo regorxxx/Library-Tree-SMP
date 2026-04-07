@@ -178,7 +178,7 @@ class Populate {
 		);
 	}
 
-	getTopTracks(handleList = this.getHandleList(), bCustomSort) {
+	getTopTracks(handleList = this.getHandleList(), bCustomSort = false) {
 		let items = fb.GetQueryItems(handleList, panel.processCustomTf(ppt.topTracksFilter));
 		items = lib.removeDuplicates(items, $.jsonParse(ppt.topTracksRemDupl, globTags.remDupl));
 		if (bCustomSort && ppt.topTracksSorting.length) { items = lib.processCustomSort(items, ppt.topTracksSorting); }
