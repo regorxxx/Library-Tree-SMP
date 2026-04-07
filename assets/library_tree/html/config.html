@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 06/04/26 -->
+﻿<!DOCTYPE html> <!-- 07/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -2341,9 +2341,10 @@
 					case 'imageFormat':
 						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
 						cells.push(headers);
-						var radioLabels = ['Regular', 'Auto-Fill', 'Circular'];
+						var radioLabels = ['Regular', 'Auto-Fill', 'Circular', 'Star'];
+						var radioLabelsLen = radioLabels.length;
 						items = [];
-						for (j = 0; j < 3; j++) {
+						for (j = 0; j < radioLabelsLen; j++) {
 							items[j] = [];
 							for (i = 0; i < imgLen; i++) {
 								n = imgTable[i];

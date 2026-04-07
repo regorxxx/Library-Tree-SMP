@@ -44,6 +44,7 @@
 - Album art: added new art type 'File (by TF)' which allows to assign art to specific nodes by TF, independently of foobar2000 art preferences. It may be used to load art based on folders or node names, instead of being track-based. e.g. For a genre/style tree, to show custom art for every genre (instead of art from the first track for such node); or show a custom image for every folder while using folder view. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080070.html#msg1080070).
 - Album art: added menu entry to open the art cache folder (if used).
 - Album art: added new setting to show/hide the image gray frame border, which was forced on original script, at 'Album Art' tab (HTML options panel) or 'Image Frame border' (properties panel).
+- Album art: added new art style 'Star'.
 - Statistics: added 3 new customizable statistics slots based on [X-power mean](https://en.wikipedia.org/wiki/Generalized_mean). Slots and labels can be modified easily at the HTML options panel or at 'Statistics Titleformat Custom-X (p-mean5)' and 'Statistics Titleformat Custom-X (p-mean5)' and 'Statistics Titleformat Custom labels' (properties panel). By default the panel includes custom expressions as example and sets the exponent to 3.
 - Readme: added help submenu, at settings menu, showing all available docs. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
 - Readme: added Quick help entry, at help submenu, which will show a popup with the most basic functions of the panel. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).
@@ -78,6 +79,7 @@
 - UI: minor improvements related to panel repainting.
 - UI: improvements on art-based colors handling related to K-means++ with OKLAB color space when using JSplitter v3.7.10+ or v4.1.0+ as JS host. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1078415.html#msg1078415).
 - Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
+- Album art: code cleanup and refactoring of album art code.
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
 - Sorting: view submenu will now show a warning when sorting by playlist idx, queue idx or TF is not available due to sorting being forced by Search box of Filter expressions.
 - Sorting: changed behavior of smart sort (see also related fix below), to mimic the View pattern with clever substitutions for branches and other custom TF expressions, instead of using a hardcoded expression based on (%ALBUM ARTIST%|%ARTIST%) + '%ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%'. See 'Behaviour' tab (HTML options panel) or 'Playlist: Smart Sort by view' (properties panel).

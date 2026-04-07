@@ -276,7 +276,7 @@ addEventListener('on_notify_data', (name, info) => {
 		});
 	}
 
-	const art = img.getArt();
+	const art = img.getArtSchema();
 	const artShowId = [0, 4, 5].find((id) => name === window.ScriptInfo.Name + ': ' + art[id].showMenu.toLowerCase());
 	switch (name) {
 		case '!!.tags update':
