@@ -55,6 +55,8 @@ class Images {
 			root: null
 		};
 
+		this.styles = ['default', 'crop', 'circular']; // Regorxxx <- Code cleanup ->
+
 		this.style = {
 			image: 0,
 			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
@@ -240,7 +242,7 @@ class Images {
 				}
 
 				this.checkCache();
-				this.format(image, ppt.artId, ['default', 'crop', 'circular'][this.style.image], this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'display', ix, key);
+				this.format(image, ppt.artId, this.styles[this.style.image], this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'display', ix, key); // Regorxxx <- Code cleanup ->
 				if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
 			}
 
@@ -275,7 +277,7 @@ class Images {
 		try {
 			if (image) {
 				this.checkCache();
-				this.format(image, ppt.artId, ['default', 'crop', 'circular'][this.style.image], this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'displayPreload', ix, key);
+				this.format(image, ppt.artId, this.styles[this.style.image], this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'displayPreload', ix, key); // Regorxxx <- Code cleanup ->
 			}
 			if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
 		} catch (e) { // eslint-disable-line no-unused-vars
