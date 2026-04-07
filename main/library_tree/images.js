@@ -489,7 +489,7 @@ class Images {
 
 	// Regorxxx <- Fix img frame for root images (hover effect)
 	createImages() {
-		if (this.stub.root) {
+		if (this.stub.root && !ppt.frameImageRoot) {
 			this.stub.rootFrame = $.gr(this.stub.root.Width, this.stub.root.Height, true, g => {
 				g.FillSolidRect(0, 0, this.stub.root.Width, this.stub.root.Height, ui.col.frameImg);
 			});
@@ -662,7 +662,7 @@ class Images {
 	drawImageFrame(gr, style, item, x, y, w, h, col) {
 		const l_w = 3;
 		gr.SetSmoothingMode(SmoothingMode.HighQuality);
-		if (item.root) {
+		if (item.root && !ppt.frameImageRoot) {
 			if (this.stub.rootFrame) { gr.DrawImage(this.stub.rootFrame, x, y, w, h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height); }
 			else { gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col); }
 		} else {

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/26
+//07/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -19,7 +19,8 @@ addEventListener('on_colours_changed', (keepCache) => {
 	pop.createImages();
 	but.createImages();
 	if (!keepCache) img.clearCache();
-	img.createImages();
+	img.createMasks(); // Regorxxx <- Code Cleanup ->
+	img.createImages(); // Regorxxx <- Fix img frame for root images (hover effect) ->
 	but.refresh(true);
 	sbar.resetAuto();
 	ui.createImages();

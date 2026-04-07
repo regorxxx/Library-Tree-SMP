@@ -182,6 +182,7 @@ let properties = [
 	['Height Auto-Expand', 578, 'pn_h_max'],
 	['Highlight Row', 2, 'highLightRow'],
 	['Highlight Frame Image', false, 'frameImage'],
+	['Highlight Frame Root Image', false, 'frameImageRoot'], // Regorxxx <- Fix img frame for root images (hover effect) ->
 	['Highlight Text', false, 'highLightText'],
 	['Hot Key [Focus Not Needed]: 1-10 // Assign Spider Monkey Panel index in keyboard shortcuts', 'CollapseAll,0,PlaylistAdd,0,PlaylistInsert,0,PlaylistNew,0,Search,0,SearchClear,0', 'hotKeys'],
 
