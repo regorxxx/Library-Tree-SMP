@@ -929,7 +929,11 @@ class Library {
 		this.sortByLevel(this.expand);
 		if (ppt.rememberTree) {
 			const key = !ppt.rememberView ? 'def' : panel.viewName;
-			const cur_sel = this.exp[key] ? this.exp[key].sel : [];
+			// Regorxxx <- Switch forced selection remember
+			const cur_sel = ppt.rememberSelForce
+				? this.exp[key] ? this.exp[key].sel : []
+				: [];
+			// Regorxxx ->
 			this.exp[key] = {
 				exp: this.expand,
 				filter: panel.filter.menu[ppt.filterBy],
