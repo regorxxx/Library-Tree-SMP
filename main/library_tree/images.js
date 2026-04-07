@@ -53,7 +53,8 @@ class Images {
 
 		this.stub = {
 			noImg: null,
-			root: null
+			root: null,
+			rootFrame: null // Regorxxx <- Fix img frame for root images (hover effect) ->
 		};
 
 		// Regorxxx <- Code cleanup | New img styles
@@ -467,7 +468,8 @@ class Images {
 		if (this.style.image != 2) g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend);
 	}
 
-	createImages() {
+	// Regorxxx <- Code Cleanup | New img styles
+	createMasks() {
 		this.mask.circular = $.gr(500, 500, true, g => {
 			g.FillSolidRect(0, 0, 500, 500, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -477,15 +479,30 @@ class Images {
 		this.mask.fade = $.gr(500, 500, true, g => {
 			g.FillSolidRect(0, 0, 500, 500, $.RGB(175, 175, 175));
 		});
-		// Regorxxx <- New img styles
 		this.mask.star = $.gr(500, 500, true, g => {
 			g.FillSolidRect(0, 0, 500, 500, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getStarPoints(1000, 6, 1.5, -250, -250));
 			g.SetSmoothingMode();
 		});
-		// Regorxxx ->
 	}
+
+	// Regorxxx <- Fix img frame for root images (hover effect)
+	createImages() {
+		if (this.stub.root) {
+			this.stub.rootFrame = $.gr(this.stub.root.Width, this.stub.root.Height, true, g => {
+				g.FillSolidRect(0, 0, this.stub.root.Width, this.stub.root.Height, ui.col.frameImg);
+			});
+			const mask = $.gr(this.stub.root.Width, this.stub.root.Height, true, g => {
+				g.FillSolidRect(0, 0, this.stub.root.Width, this.stub.root.Height, $.RGB(255, 255, 255));
+				g.DrawImage(this.stub.root, 0, 0, this.stub.root.Width, this.stub.root.Height, 0, 0, this.stub.root.Width, this.stub.root.Height);
+			});
+			this.stub.rootFrame.ApplyMask(mask);
+		} else {
+			this.stub.rootFrame = null;
+		}
+	}
+	// Regorxxx ->
 
 	draw(gr) {
 		if (!panel.imgView) return;
@@ -553,13 +570,13 @@ class Images {
 				this.drawItemOverlay(gr, item, x1, y1, iw, ih);
 				if (i == pop.m.i) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
-						if (ppt.frameImage) { this.drawImageFrame(gr, x1, y1, iw, ih, ui.col.frameImg); }
+						if (ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImg); }
 						else { this.drawFrame(gr, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, y1, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 				}
 				if (item.sel) {
-					if (this.labels.overlay && this.style.image != 2) this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick');
-					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) this.drawImageFrame(gr, x1, y1, iw, ih, ui.col.frameImgSel);
+					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick'); }
+					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImgSel); }
 				}
 				if (!this.labels.hide) {
 					const x = box_x + this.text.x;
@@ -642,11 +659,28 @@ class Images {
 		gr.DrawRect(x, y, w, h, l_w, col);
 	}
 
-	drawImageFrame(gr, x, y, w, h, col) {
+	drawImageFrame(gr, style, item, x, y, w, h, col) {
 		const l_w = 3;
 		gr.SetSmoothingMode(SmoothingMode.HighQuality);
-		if (this.style.image == 2) { gr.DrawEllipse(x, y, w - l_w / 2, h - l_w / 2, l_w, col); }
-		else { gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col); }
+		if (item.root) {
+			if (this.stub.rootFrame) { gr.DrawImage(this.stub.rootFrame, x, y, w, h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height); }
+			else { gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col); }
+		} else {
+			switch (style.border) {
+				case 'circular': {
+					gr.DrawEllipse(x, y, w - l_w / 2, h - l_w / 2, l_w, col);
+					break;
+				}
+				case 'star': {
+					gr.DrawPolygon(col, l_w, getStarPoints((w - l_w / 2) * 2, 6, 1.5, x - (w - l_w / 2) / 2, y - (h - l_w / 2) / 2));
+					break;
+				}
+				default: {
+					gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
+					break;
+				}
+			}
+		}
 		gr.SetSmoothingMode();
 	}
 
@@ -742,7 +776,6 @@ class Images {
 		image.ApplyMask(mask);
 	}
 
-	// Regorxxx <- Code Cleanup | New img styles
 	applyStyleMask(image, style) {
 		if (style.mask) {
 			image.ApplyMask(this.mask[style.mask].Resize(image.Width, image.Height));
@@ -1302,7 +1335,7 @@ class Images {
 		}
 
 		this.cachesize.min = panel.rows * this.columns * 3 + (this.albumArtDiskCache ? panel.rows * 2 : panel.rows) * this.columns * 2;
-		this.createImages();
+		this.createMasks(); // Regorxxx <- Code Cleanup ->
 		this.getCurrentDatabase();
 		if (ppt.albumArtPreLoad && !this.zooming && this.albumArtDiskCache) this.getItemsToDraw(true);
 		this.setNoArtist();
@@ -1311,7 +1344,12 @@ class Images {
 		if (this.style.rootComposite) this.checkRootImg();
 		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
 		if (stub) this.stub.noImg = this.format(stub, ppt.artId, this.getStyle(this.style.image, true), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'noImg');
-		if (this.root_img) this.stub.root = this.format(this.root_img, ppt.artId, this.getStyleByType('default'), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'root');
+		// Regorxxx <- Fix img frame for root images (hover effect)
+		this.stub.root = this.root_img
+			? this.format(this.root_img, ppt.artId, this.getStyleByType('default'), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'root')
+			: null;
+		this.createImages();
+		// Regorxxx ->
 		panel.treePaint();
 	}
 
