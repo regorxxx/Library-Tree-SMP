@@ -1803,16 +1803,11 @@ class Populate {
 	lbtn_dn(x, y) {
 		this.lbtnDn = false;
 		this.dbl_clicked = false;
-		if (y < panel.search.h) return;
-		let ix = this.get_ix(x, y, true, false);
-		if (ix >= this.tree.length || ix < 0) return;
-		this.deactivateTooltip();
-		if (ppt.touchControl) {
-			ui.id.dragDrop = ui.id.touch_dn = ix;
-		}
-		// Regorxxx <- Rectangle selection on art view
+		if (y < panel.search.h) { return; }
+		if (x > ui.w - ui.sbar.sp) { return; }
+		const ix = this.get_ix(x, y, true, false);
 		if (ppt.selRectArt && panel.imgView) {
-			if (this.lastSelMul.length && !this.lastSelMul.includes(ix)) {
+			if (!this.lastSelMul.includes(ix)) {
 				this.selRect.down = true;
 				this.last_pressed_coord.x = this.selRect.mx = x;
 				this.last_pressed_coord.y = this.selRect.my = y;
@@ -1823,6 +1818,13 @@ class Populate {
 				this.selRect.down = false;
 				this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
 				this.selRect.over.clear();
+			}
+			if (ix >= this.tree.length || ix < 0) { return; }
+		} else {
+			if (ix >= this.tree.length || ix < 0) { return; }
+			this.deactivateTooltip();
+			if (ppt.touchControl) {
+				ui.id.dragDrop = ui.id.touch_dn = ix;
 			}
 		}
 		this.itemClickDown(ix, x, y);
@@ -1873,6 +1875,19 @@ class Populate {
 					lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 					return;
 				} else {
+					if (y < panel.search.h || this.dbl_clicked || but.Dn) { return; }
+					const ix = this.get_ix(x, y, true, false);
+					if (ix >= this.tree.length || ix < 0) {
+						// Regorxxx <- Reset selection on blank regions
+						if (ppt.resetSel && (this.sel_items.length || this.lastSelMul.length)) {
+							this.clearSelected();
+							this.sel_items = [];
+							this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view -
+							lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
+						}
+						// Regorxxx ->
+						return;
+					}
 					this.itemClickDown(this.get_ix(x, y, true, false), x, y);
 				}
 			}
@@ -1882,8 +1897,18 @@ class Populate {
 		if (y < panel.search.h || this.dbl_clicked || but.Dn) { return; }
 		const ix = this.get_ix(x, y, true, false);
 		panel.pos = ix;
-		if (ix >= this.tree.length || ix < 0) return;
-		if (ppt.touchControl && (this.autoFill.mouse || this.autoPlay.click) && ui.id.touch_dn != ix) return;
+		if (ix >= this.tree.length || ix < 0) {
+			// Regorxxx <- Reset selection on blank regions
+			if (ppt.resetSel && (this.sel_items.length || this.lastSelMul.length)) {
+				this.clearSelected();
+				this.sel_items = [];
+				this.lastSelMul = []; // Regorxxx <- Rectangle selection on art view ->
+				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
+			}
+			// Regorxxx ->
+			return;
+		}
+		if (ppt.touchControl && (this.autoFill.mouse || this.autoPlay.click) && ui.id.touch_dn != ix) { return; }
 		const item = this.tree[ix];
 		if (this.clicked_on != 'text') { return; }
 		if (!ppt.libSource) { return this.setPlaylistSelection(ix, item); }

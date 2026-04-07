@@ -443,6 +443,7 @@ let properties = [
 	['Sources|Views|Filters presets use on Playlists switch', true, 'presetRulesOnPlsUse'],
 	['Sources|Views|Filters presets use on Notify switch', false, 'presetRulesOnNotifyUse'],
 	// Regorxxx ->
+	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
 ];
 
 const ppt = new PanelProperties;
