@@ -361,15 +361,43 @@ class MenuItems {
 
 		this.addViewsEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
 
-		menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
 		// Regorxxx <- New statistics
-		[...this.statisticsTypes(), 'Configure statistics...'].forEach((v, i) => menu.newItem({
+		menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
+		const statsMenus = [
+			{ menuName: 'File properties', idx: [1, 2, 3] },
+			{ menuName: 'Rating', idx: [4, 5] },
+			{ menuName: 'Playback', idx: [7, 8, 9, 10, 11] },
+			{ menuName: 'Loved stats', idx: [12, 13, 14] },
+			{ menuName: 'File tags', idx: [6] },
+			'sep',
+			{ menuName: 'Sum [custom]', idx: [15, 16, 17] },
+			{ menuName: 'Average [custom]', idx: [18, 19, 20] },
+			{ menuName: 'P-Mean [custom]', idx: [21, 22, 23] },
+			'sep'
+		];
+		const statsEntries = this.statisticsTypes();
+		menu.newItem({
 			menuName: 'Statistics',
-			str: v,
-			func: () => this.setStatistics(i),
-			checkRadio: i == ppt.itemShowStatistics,
-			separator: !i || i == 7 || i == 11 || i == 14 || i === 17 || i === 20 || i === 23
-		}));
+			str: statsEntries[0],
+			func: () => this.setStatistics(0),
+			checkRadio: !ppt.itemShowStatistics,
+			separator: true
+		});
+		statsMenus.forEach((m) => {
+			if (m === 'sep') { menu.newItem({ menuName: 'Statistics', separator: true }); }
+			else { menu.newMenu({ ...m, appendTo: 'Statistics', flags: m.idx.includes(ppt.itemShowStatistics) ? MF_CHECKED : void (0) }); }
+		});
+		[...this.statisticsTypes(), 'Configure statistics...'].forEach((v, i) => {
+			if (i === 0) { return; }
+			const menuName = (statsMenus.find((m) => m.idx && m.idx.includes(i)) || {}).menuName || 'Statistics';
+			menu.newItem({
+				menuName,
+				str: v,
+				func: () => this.setStatistics(i),
+				checkRadio: i == ppt.itemShowStatistics,
+				separator: !i
+			});
+		});
 		// Regorxxx ->
 
 		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
