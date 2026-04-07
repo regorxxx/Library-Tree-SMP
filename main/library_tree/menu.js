@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/26
+//07/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -1066,7 +1066,7 @@ class MenuItems {
 		sbar.setCol();
 		but.createImages();
 		if (clearCache) img.clearCache();
-		if (sel === undefined) { panel.set('view', view, true); }
+		if (typeof sel === 'undefined') { panel.set('view', view, true); }
 		else {
 			const handle = sel >= panel.list.Count ? null : panel.list[sel];
 			panel.set('view', view, true);
@@ -1292,8 +1292,7 @@ class MenuItems {
 		switch (i) {
 			case 0:
 				pop.load({ bAddToPls: false, bAutoPlay: pop.autoPlay.send, bUseDefaultPls: false, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
-				panel.treePaint();
-				lib.treeState(false, ppt.rememberTree);
+				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 				break;
 			case 1:
 				pop.load({ bAddToPls: true, bAutoPlay: false, bUseDefaultPls: false, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
@@ -1301,8 +1300,7 @@ class MenuItems {
 				break;
 			case 2:
 				pop.sendToNewPlaylist();
-				panel.treePaint();
-				lib.treeState(false, ppt.rememberTree);
+				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 				break;
 			case 3:
 				pop.nowPlayingShow();
@@ -1323,8 +1321,7 @@ class MenuItems {
 			case 6:
 			case 7:
 				pop.loadTopTracks(i === 7, !ppt.sendToCur);
-				panel.treePaint();
-				lib.treeState(false, ppt.rememberTree);
+				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 				break;
 			// Regorxxx ->
 		}

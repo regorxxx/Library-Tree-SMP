@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/03/26
+//07/04/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -538,7 +538,7 @@ class Scrollbar {
 
 		if (this.vertical) this.bar.y = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
 		else this.bar.x = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
-		ppt.rememberTree ? lib.treeState(false, ppt.rememberTree) : panel.treePaint();
+		lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 		this.calcItem_y();
 		clearTimeout(this.draw_timer);
 		this.draw_timer = null;

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/26
+//07/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -110,7 +110,7 @@ class Library {
 		this.full_list_need_sort = true;
 		switch (true) {
 			case handleList.Count < 100 && (!panel.folderView || ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb): {  // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
-				let lis = this.hasFilterQueryNoSearch() // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
+				let lis = this.hasFilterQueryNoSearch() // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 					? $.query(handleList, this.filterQuery)
 					: handleList;
 				panel.sort(lis);
@@ -171,7 +171,7 @@ class Library {
 				break;
 			}
 			default:
-				if (this.hasFilterQueryNoSearch()) { // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
+				if (this.hasFilterQueryNoSearch()) { // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 					const newFilterItems = $.query(handleList, this.filterQuery);
 					this.list.InsertRange(this.list.Count, newFilterItems);
 					panel.sort(this.list);
@@ -714,11 +714,11 @@ class Library {
 		if (ppt.filterBy) {
 			this.processFilterQuery(); // Regorxxx <- Code cleanup ->
 			this.filterQueryID = this.filterQuery;
-			if (this.hasFilterQueryNoSearch()) { this.list = $.query(this.list, this.filterQuery); } // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
+			if (this.hasFilterQueryNoSearch()) { this.list = $.query(this.list, this.filterQuery); } // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 		} else {
 			this.filterQuery = '';
 			this.filterQueryID = 'N/A';
-			this.filterSort = null; // REgorxxx <- Support SORT BY query sorting ->
+			this.filterSort = null; // Regorxxx <- Support SORT BY query sorting ->
 		}
 		if (profiler) { profiler.Print('Search filter'); } // Regorxxx <- Library profiling ->
 		// Regorxxx <- Global duplicates filter
@@ -1361,13 +1361,14 @@ class Library {
 		return data;
 	}
 
+	// Regorxxx <- Code cleanup | Improve repainting
 	treeState(reset, state, handleList, handleType) {
-		if (!state) return;
+		if (!state) { return false; }
 		panel.searchPaint();
 		panel.treePaint();
 		ppt.process = false;
-		if (!reset) this.logTree();
-		if (ppt.rememberTree && state === true) return;
+		if (!reset) { this.logTree(); }
+		if (ppt.rememberTree && state === true) { return true; }
 		if (handleType == 3) {
 			this.getLibrary(true);
 			this.rootNodes(true, true);
@@ -1376,6 +1377,7 @@ class Library {
 			this.rootNodes(true, true);
 		} else this.updateLibrary(handleList, handleType);
 	}
+	// Regorxxx ->
 
 	updateLibrary(handleList, handleType) {
 		if (!this.initialised || this.list.Count != this.libNode.length) return;
@@ -1403,7 +1405,7 @@ class Library {
 					break;
 				}
 				// filter: check if not done
-				if (this.hasFilterQueryNoSearch()) { // REgorxxx <- Code cleanup | Support SORT BY query sorting ->
+				if (this.hasFilterQueryNoSearch()) { // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 					let newFilterItems = $.query(handleList, this.filterQuery);
 					let origFilter = this.list.Clone();
 					// addns

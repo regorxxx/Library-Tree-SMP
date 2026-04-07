@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/04/26
+//07/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -662,7 +662,7 @@ class Panel {
 			}
 		}
 
-		pt = undefined;
+		pt = void (0);
 		let nm = '';
 		for (let i = pptNo + 1; i < 100; i++) {
 			nm = ppt.get(`Filter ${$.padNumber(i, 2)}: Name // Query`);
@@ -774,7 +774,7 @@ class Panel {
 			}
 		}
 
-		pt = undefined;
+		pt = void (0);
 
 		let nm = '';
 		for (let i = pptNo + 1; i < 100; i++) {
@@ -961,7 +961,7 @@ class Panel {
 		this.getViews();
 		let cfgWindow = ppt.get('Library Tree Dialog Box');
 		cfgWindow = $.jsonParse(cfgWindow);
-		if (page !== undefined) cfgWindow.page = page;
+		if (typeof page !== 'undefined') { cfgWindow.page = page; }
 		cfgWindow.version = `v${window.ScriptInfo.Version}`;
 		cfgWindow = JSON.stringify(cfgWindow);
 		ppt.set('Library Tree Dialog Box', cfgWindow);

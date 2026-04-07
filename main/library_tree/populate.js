@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/04/26
+//07/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -72,8 +72,8 @@ class Populate {
 		};
 
 		this.last_pressed_coord = {
-			x: undefined,
-			y: undefined
+			x: void (0),
+			y: void (0)
 		};
 
 		this.m = {
@@ -166,8 +166,7 @@ class Populate {
 				this.tree[ix].sel = true;
 				this.getTreeSel();
 				callback();
-				if (bRepaint) { panel.treePaint(); }
-				lib.treeState(false, ppt.rememberTree);
+				lib.treeState(false, ppt.rememberTree) || bRepaint && panel.treePaint();
 			}
 		}
 	}
@@ -808,7 +807,7 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (item.statistics === undefined ? '' : this.statistics[this.statisticsShow].name + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
+						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].name + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
@@ -1239,7 +1238,7 @@ class Populate {
 					const ff = sbar.rows_drawn == this.rows || i < sbar.rows_drawn ? f : f - 1;
 					if (item.bot || i === ff - 1) {
 						for (let depth = (i === ff - 1 ? 0 : level); depth <= level; depth++) {
-							if (row[depth] !== undefined && (this.inlineRoot || !item.root)) {
+							if (typeof row[depth] !== 'undefined' && (this.inlineRoot || !item.root)) {
 								const start = row[depth];
 								let end = i + (item.bot && depth === level ? 0.5 : 1);
 								if (item_y >= panel.filter.y) end -= 1;
@@ -1253,7 +1252,7 @@ class Populate {
 								if (i <= this.row.lineMax[depth] && (!this.inlineRoot || item.level)) gr.FillSolidRect(l_x, l_y, ui.l.w, l_h, ui.col.line);
 							}
 						}
-						if (item.bot) row[level] = undefined;
+						if (item.bot) { row[level] = void (0); }
 					}
 				}
 			}
@@ -1826,7 +1825,6 @@ class Populate {
 				this.selRect.over.clear();
 			}
 		}
-		// Regorxxx ->
 		this.itemClickDown(ix, x, y);
 	}
 
@@ -1859,8 +1857,7 @@ class Populate {
 	}
 
 	lbtn_up(x, y) {
-		if (lib.empty && ppt.libSource == 1 && !ppt.fixedPlaylist && y > panel.search.h) fb.RunMainMenuCommand('Library/Configure');
-		// Regorxxx <- Rectangle selection on art view
+		if (lib.empty && ppt.libSource == 1 && !ppt.fixedPlaylist && y > panel.search.h) { fb.RunMainMenuCommand('Library/Configure'); }
 		if (ppt.selRectArt && panel.imgView) {
 			if (this.selRect.down) {
 				const bSel = this.last_pressed_coord.x !== x || this.last_pressed_coord.y !== y;
@@ -1873,25 +1870,23 @@ class Populate {
 					this.lbtnDn = false;
 					this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
 					this.selRect.over.clear();
-					panel.treePaint();
-					lib.treeState(false, ppt.rememberTree);
+					lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 					return;
 				} else {
 					this.itemClickDown(this.get_ix(x, y, true, false), x, y);
 				}
 			}
 		}
-		// Regorxxx ->
 		this.last_pressed_coord.x = this.last_pressed_coord.y = void (0); // Regorxxx <- Code cleanup ->
 		this.lbtnDn = false;
-		if (y < panel.search.h || this.dbl_clicked || but.Dn) return;
+		if (y < panel.search.h || this.dbl_clicked || but.Dn) { return; }
 		const ix = this.get_ix(x, y, true, false);
 		panel.pos = ix;
 		if (ix >= this.tree.length || ix < 0) return;
 		if (ppt.touchControl && (this.autoFill.mouse || this.autoPlay.click) && ui.id.touch_dn != ix) return;
 		const item = this.tree[ix];
-		if (this.clicked_on != 'text') return;
-		if (!ppt.libSource) return this.setPlaylistSelection(ix, item);
+		if (this.clicked_on != 'text') { return; }
+		if (!ppt.libSource) { return this.setPlaylistSelection(ix, item); }
 		if (vk.k('alt')) {
 			this.mbtnUpOrAltClickUp(x, y, '', 'alt');
 			return;
@@ -2118,7 +2113,7 @@ class Populate {
 		const seen = {};
 		for (let i = 0; i < m.length; i++) {
 			const v = m[i].srt[0].toUpperCase();
-			if (seen[v] === undefined) seen[v] = i;
+			if (typeof seen[v] === 'undefined') { seen[v] = i; }
 			else {
 				if (!mergeBrCount) m[i].item.forEach(w => m[seen[v]].item.push(w));
 				m.splice(i, 1);
@@ -2178,7 +2173,7 @@ class Populate {
 	}
 
 	notifySelection(list) {
-		if (list === undefined) list = this.getHandleList('newItems');
+		if (typeof list === 'undefined') { list = this.getHandleList('newItems'); }
 		window.NotifyOthers(window.Name, list);
 		window.NotifyOthers('Timeline-SMP: panel tracks', { handleList: list, uuid: window.Name }); // Regorxxx <- Timeline-SMP integration ->
 		if (list.Count) return true;

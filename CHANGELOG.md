@@ -72,6 +72,7 @@
 - UI: performance improvements when R. clicking on current selection, for large selections. Previously it could take up to +1 second to show the menu in such cases (while not using 'smart' sorting).
 - UI: cleanup of Quick setup menu.
 - UI: minor changes to default fonts used on panel.
+- UI: minor improvements related to panel repainting.
 - UI: improvements on art-based colors handling related to K-means++ with OKLAB color space when using JSplitter v3.7.10+ or v4.1.0+ as JS host. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1078415.html#msg1078415).
 - Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).

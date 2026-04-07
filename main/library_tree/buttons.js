@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/03/26
+//07/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
@@ -674,7 +674,7 @@ class Tooltip {
 class TooltipTimer {
 	constructor() {
 		this.delay_timer;
-		this.tt_caller = undefined;
+		this.tt_caller = void (0);
 	}
 
 	// Methods

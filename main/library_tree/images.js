@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/26
+//07/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -869,7 +869,7 @@ class Images {
 
 	getImg(key) {
 		const o = this.cache[key];
-		if (!o || o.img == 'called') return undefined;
+		if (!o || o.img == 'called') return void (0);
 		o.accessed = ++this.accessed;
 		return o.img;
 	}
@@ -963,7 +963,7 @@ class Images {
 
 	getRootImg(key) {
 		const o = this.cache[key];
-		if (!o || o.img == 'called') return undefined;
+		if (!o || o.img == 'called') return void (0);
 		o.accessed = ++this.accessed;
 		return o.img;
 	}
