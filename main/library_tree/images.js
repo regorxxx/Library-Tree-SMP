@@ -378,7 +378,7 @@ class Images {
 			for (let column = 0; column < columns; column++) {
 				const idx = column + row * columns + 1;
 				if (idx <= cells) {
-					let img = pop.tree.length && pop.tree[idx] ? this.getRootImg(pop.tree[idx].key) : null;
+					let img = pop.tree.length && pop.tree[idx] ? this.getImg(pop.tree[idx].key) : null;
 					if (!img) img = this.stub.noImg;
 					if (img) {
 						let cx = 0;
@@ -984,13 +984,6 @@ class Images {
 		}
 	}
 
-	getRootImg(key) {
-		const o = this.cache[key];
-		if (!o || o.img == 'called') return void (0);
-		o.accessed = ++this.accessed;
-		return o.img;
-	}
-
 	getSelBgCol(item, nowp) {
 		return nowp || item.sel ? this.albumArtShowLabels ? ui.col.imgBgSel : ui.col.imgOverlaySel : $.RGBA(0, 0, 0, 175);
 	}
@@ -1025,7 +1018,7 @@ class Images {
 			pop.tree[0].key = pop.tree[0].name;
 			const ln1 = pop.tree.length - 1;
 			const ln2 = panel.list.Count;
-			const nm = `${!ppt.showSource ? 'All' : panel.sourceName} (` + ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) + ')';
+			const nm = `${ppt.showSource ? panel.sourceName : 'All'} (` + ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) + ')';
 			if (ppt.rootNode == 3) pop.tree[0].grp = nm;
 			else if (panel.lines == 1) pop.tree[0].grp = panel.rootName + (ppt.nodeCounts ? ' (' + (ppt.nodeCounts == 2 && ppt.rootNode != 3 ? ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) : ln2 + (ln2 > 1 ? ' tracks' : ' track')) + ')' : '');
 			if (panel.lines == 2) {
@@ -1039,7 +1032,7 @@ class Images {
 
 	memoryLimit() {
 		if (!window.JsMemoryStats) return;
-		const limit = !ppt.memoryLimit ? window.JsMemoryStats.TotalMemoryLimit * 0.5 : Math.min(ppt.memoryLimit * 1048576, window.JsMemoryStats.TotalMemoryLimit * 0.8);
+		const limit = ppt.memoryLimit ? Math.min(ppt.memoryLimit * 1048576, window.JsMemoryStats.TotalMemoryLimit * 0.8) : window.JsMemoryStats.TotalMemoryLimit * 0.5;
 		return window.JsMemoryStats.TotalMemoryUsage > limit;
 	}
 
@@ -1070,13 +1063,13 @@ class Images {
 				this.labels = {
 					hide: !ppt.albumArtLabelType,
 					bottom: ppt.albumArtLabelType == 1 || ppt.albumArtFlowMode && ppt.albumArtLabelType == 2,
-					right: !ppt.albumArtFlowMode ? ppt.albumArtLabelType == 2 : false,
+					right: ppt.albumArtFlowMode ? false : ppt.albumArtLabelType == 2,
 					overlay: ppt.albumArtLabelType == 3 || ppt.albumArtLabelType == 4,
 					overlayDark: ppt.albumArtLabelType == 4,
 					flip: ppt.albumArtFlipLabels,
 					statistics: ppt.itemShowStatistics ? 1 : 0
 				};
-				this.bor.pad = !this.labels.hide && !this.labels.overlay ? (ppt.thumbNailGapStnd == 0 ? Math.round(this.text.h * (!this.labels.right ? 1.05 : 0.75)) : ppt.thumbNailGapStnd - Math.round(2 * $.scale)) : ppt.thumbNailGapCompact;
+				this.bor.pad = !this.labels.hide && !this.labels.overlay ? (ppt.thumbNailGapStnd == 0 ? Math.round(this.text.h * (this.labels.right ? 0.75 : 1.05)) : ppt.thumbNailGapStnd - Math.round(2 * $.scale)) : ppt.thumbNailGapCompact;
 				this.im.offset = Math.round(!this.labels.hide && !this.labels.overlay ? this.bor.pad / 2 : -2);
 
 				if (this.labels.hide || this.labels.overlay) {
@@ -1092,7 +1085,7 @@ class Images {
 				}
 
 				const margin = ppt.margin;
-				this.panel.x = (ppt.sbarShow != 2 ? Math.max(margin, ui.sbar.w) : margin) + ui.l.w;
+				this.panel.x = (ppt.sbarShow == 2 ? margin : Math.max(margin, ui.sbar.w)) + ui.l.w;
 				this.panel.w = ui.w - ui.l.w * 2 - (ui.sbar.type == 0 || ppt.sbarShow != 2 ? Math.max(margin, ui.sbar.w) * 2 : (margin * 2 + ui.sbar.w));
 				this.panel.h = ui.h - this.panel.y;
 
@@ -1100,8 +1093,8 @@ class Images {
 				this.columns = ppt.albumArtFlowMode || this.labels.right ? 1 : Math.max(Math.floor(this.panel.w / this.blockWidth), 1);
 				let gap = this.panel.w - this.columns * this.blockWidth;
 				gap = Math.floor(gap / this.columns);
-				this.columnWidth = !this.labels.right ? $.clamp(this.blockWidth + gap, 10, Math.min(this.panel.w, this.panel.h)) : $.clamp(this.blockWidth, 10, Math.min(this.panel.w, this.panel.h));
-				this.overlayHeight = !this.labels.overlay ? 0 : (panel.lines != 2 ? this.text.h * (1.2 + this.labels.statistics) : Math.round(this.text.h * (2.1 + this.labels.statistics)));
+				this.columnWidth = this.labels.right ? $.clamp(this.blockWidth, 10, Math.min(this.panel.w, this.panel.h)) : $.clamp(this.blockWidth + gap, 10, Math.min(this.panel.w, this.panel.h));
+				this.overlayHeight = this.labels.overlay ? (panel.lines == 2 ? Math.round(this.text.h * (2.1 + this.labels.statistics)) : this.text.h * (1.2 + this.labels.statistics)) : 0;
 				this.im.w = Math.round(Math.max(this.columnWidth - this.bor.side * 2 - this.bor.cov * 2 - (this.labels.hide || this.labels.overlay ? 1 : 0), 10));
 
 				if (this.labels.hide || this.labels.overlay) {
@@ -1109,7 +1102,7 @@ class Images {
 					this.row.h = this.im.w + this.bor.cov;
 				} else {
 					this.im.w = Math.round(Math.max(this.columnWidth - this.bor.cov * 2 - this.bor.side * 2, 10));
-					this.row.h = !this.labels.right ? this.im.w + this.text.h * (panel.lines + this.labels.statistics) + this.bor.cov * 2 + this.bor.side * 2 : this.im.w + this.bor.pad + 2;
+					this.row.h = this.labels.right ? this.im.w + this.bor.pad + 2 : this.im.w + this.text.h * (panel.lines + this.labels.statistics) + this.bor.cov * 2 + this.bor.side * 2;
 				}
 				if (this.row.h > this.panel.h) {
 					this.im.w -= this.row.h - this.panel.h;
@@ -1117,7 +1110,7 @@ class Images {
 					this.row.h = this.panel.h;
 				}
 				this.box.w = this.columnWidth - this.bor.side * 2;
-				this.box.h = this.row.h - (!this.labels.right ? this.bor.side * 2 : 0);
+				this.box.h = this.row.h - (this.labels.right ? 0 : this.bor.side * 2);
 				panel.rows = Math.max(Math.floor(this.panel.h / this.row.h));
 				sbar.metrics(sbar.x, sbar.y, sbar.w, sbar.h, panel.rows, this.row.h, this.style.vertical);
 				sbar.setRows(Math.ceil(pop.tree.length / this.columns));
@@ -1165,7 +1158,7 @@ class Images {
 					this.row.h = this.im.w + extra;
 				}
 				this.columns = Math.max(Math.floor(this.panel.w / this.blockWidth), 1);
-				this.overlayHeight = !this.labels.overlay ? 0 : (panel.lines != 2 ? this.text.h * (1.2 + this.labels.statistics) : Math.round(this.text.h * (2.1 + this.labels.statistics)));
+				this.overlayHeight = this.labels.overlay ? (panel.lines == 2 ? Math.round(this.text.h * (2.1 + this.labels.statistics)) : this.text.h * (1.2 + this.labels.statistics)) : 0;
 				this.box.w = this.blockWidth - this.bor.side * 2;
 				this.box.h = this.row.h - this.bor.bot;
 				panel.rows = Math.max(Math.floor(this.panel.w / this.blockWidth));
@@ -1183,16 +1176,16 @@ class Images {
 		if (this.style.dropShadow) this.getShadow();
 
 		if (!this.labels.hide) {
-			if (!this.labels.overlay) {
-				this.text.x = !this.labels.right ? Math.round((this.box.w - this.im.w) / 2) : Math.max(Math.round((this.box.w - this.im.w) / 2), 5 * $.scale) * 2 + this.im.w;
-				this.text.y1 = !this.labels.right ? this.im.w + Math.round(this.bor.cov * 0.5) : Math.round((this.im.w - this.text.h * panel.lines) / 2) - (this.labels.statistics ? this.text.h / 2 : 0);
-				this.text.y2 = !this.labels.right ? Math.round(this.text.y1 + this.text.h * 0.95) : this.text.y1 + this.text.h;
-				this.text.y3 = !this.labels.right ? Math.round(this.text.y2 + this.text.h * 0.95) : this.text.y2 + this.text.h;
-				this.text.w = !this.labels.right ? this.im.w : this.panel.w - this.text.x - 12;
-			} else {
+			if (this.labels.overlay) {
 				this.text.x = Math.round(10 + (ppt.thumbNailGapCompact - 3) / 2);
 				this.text.y1 = Math.round(this.im.w - this.overlayHeight + 2 + (this.overlayHeight - this.text.h * (panel.lines + this.labels.statistics)) / 2);
 				this.text.w = this.box.w - 20 - ppt.thumbNailGapCompact - 6;
+			} else {
+				this.text.x = this.labels.right ? Math.max(Math.round((this.box.w - this.im.w) / 2), 5 * $.scale) * 2 + this.im.w : Math.round((this.box.w - this.im.w) / 2);
+				this.text.y1 = this.labels.right ? Math.round((this.im.w - this.text.h * panel.lines) / 2) - (this.labels.statistics ? this.text.h / 2 : 0) : this.im.w + Math.round(this.bor.cov * 0.5);
+				this.text.y2 = this.labels.right ? this.text.y1 + this.text.h : Math.round(this.text.y1 + this.text.h * 0.95);
+				this.text.y3 = this.labels.right ? this.text.y2 + this.text.h : Math.round(this.text.y2 + this.text.h * 0.95);
+				this.text.w = this.labels.right ? this.panel.w - this.text.x - 12 : this.im.w;
 			}
 		}
 
@@ -1204,7 +1197,7 @@ class Images {
 		this.setNoCover();
 		this.setRoot();
 		if (this.style.rootComposite) this.checkRootImg();
-		const stub = ppt.artId != 4 ? this.no_cover_img : this.no_artist_img;
+		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
 		if (stub) this.stub.noImg = this.format(stub, ppt.artId, ['default', 'default', 'circular'][this.style.image], this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'noImg');
 		if (this.root_img) this.stub.root = this.format(this.root_img, ppt.artId, 'default', this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'root');
 		panel.treePaint();
@@ -1240,7 +1233,7 @@ class Images {
 		if (!panel.imgView) return;
 		this.preLoadItems = [];
 		let begin = this.start == 0 ? ppt.rootNode ? 1 : 0 : this.start;
-		let end = this.end != 0 ? Math.min(this.end + this.columns, pop.tree.length) : this.end;
+		let end = this.end == 0 ? this.end : Math.min(this.end + this.columns, pop.tree.length);
 		for (let i = begin; i < end; i++) {
 			const v = this.getItem(i);
 
@@ -1258,7 +1251,7 @@ class Images {
 
 		const upBegin = this.start == 0 ? ppt.rootNode ? 1 : 0 : this.start - 1;
 		const upEnd = ppt.rootNode ? 1 : 0;
-		const downBegin = this.end != 0 ? Math.min(this.end + 1 + this.columns, pop.tree.length) : this.end;
+		const downBegin = this.end == 0 ? this.end : Math.min(this.end + 1 + this.columns, pop.tree.length);
 		const downEnd = pop.tree.length;
 
 		const doPreload = () => {
