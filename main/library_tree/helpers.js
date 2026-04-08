@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/04/26
+//08/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -114,6 +114,19 @@ class Helpers {
 		return Math.max(dpi / 120, 1);
 	}
 
+	/**
+	 * Create and draw on new img
+	 *
+	 * @method
+	 * @name gr
+	 * @kind method
+	 * @memberof Helpers
+	 * @param {number} w
+	 * @param {number} h
+	 * @param {GdiBitmap|D2DBitmap} im
+	 * @param {(g: GdiGraphics, i: GdiBitmap|D2DBitmap) => void} func
+	 * @returns {GdiBitmap}
+	 */
 	gr(w, h, im, func) {
 		if (Number.isNaN(w) || Number.isNaN(h)) return;
 		let i = gdi.CreateImage(Math.max(w, 2), Math.max(h, 2));
@@ -572,7 +585,7 @@ class Helpers {
 		else if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { return 3; } // A-z
 		else if (code >= 192 && code <= 591) { return sensitivity === 'base' ? 3 : 4; } // À-ɏ
 		else if (code >= 880 && code <= 1023) { return sensitivity === 'base' ? 3 : 5; } // Greek
-		else if (code >= 1024 && code <= 1279) { return sensitivity === 'base' ? 3: 6; } // Cyrilic
+		else if (code >= 1024 && code <= 1279) { return sensitivity === 'base' ? 3 : 6; } // Cyrilic
 		else if (code >= 12352 && code <= 12543) { return sensitivity === 'base' ? 3 : 7; } // Japanese
 		else if (code >= 1424 && code <= 1535) { return sensitivity === 'base' ? 3 : 8; } // Hebrew
 		else if (code >= 1536 && code <= 1791) { return sensitivity === 'base' ? 3 : 9; } // Arab
