@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//08/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -62,7 +62,9 @@ class Images {
 			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default' },
 			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop' },
 			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular' },
-			{ idx: 3, type: 'star', mask: 'star', border: 'star', shadow: 'star' },
+			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star' },
+			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star' },
+			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star' }
 		];
 		// Regorxxx ->
 
@@ -77,12 +79,18 @@ class Images {
 		];
 		// Regorxxx ->
 
+		// Regorxxx <- Code cleanup
 		this.style = {
 			image: 0,
-			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
-			vertical: !ppt.albumArtFlowMode, // Regorxxx <- Code cleanup ->
-			y: 25
+			rootComposite: ppt.rootNode && ppt.curRootImg === 3,
+			vertical: !ppt.albumArtFlowMode,
+			y: 25,
+			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3,
+			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3 && (ppt.artId === 4 || ppt.curNoCoverImg > 2),
+			dropGrad: ppt.albumArtDropShadow && !this.dropShadow,
+			dropGradStub: ppt.albumArtDropShadow && !this.dropShadowStub,
 		};
+		// Regorxxx ->
 
 		this.im = {
 			offset: 0,
@@ -107,7 +115,10 @@ class Images {
 		this.mask = {
 			fade: null,
 			circular: null,
-			star: null,
+			starFill: null,
+			starEffect: null,
+			starOutline: null,
+			flareEffect: null
 		};
 
 		this.row = {
@@ -470,21 +481,44 @@ class Images {
 
 	// Regorxxx <- Code Cleanup | New img styles
 	createMasks() {
-		this.mask.circular = $.gr(500, 500, true, g => {
-			g.FillSolidRect(0, 0, 500, 500, $.RGB(255, 255, 255));
+		const wh = 500;
+		this.mask.circular = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
-			g.FillEllipse(3, 3, 496, 496, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			g.FillEllipse(3, 3, wh - 4, wh - 4, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.SetSmoothingMode();
 		});
-		this.mask.fade = $.gr(500, 500, true, g => {
-			g.FillSolidRect(0, 0, 500, 500, $.RGB(175, 175, 175));
+		this.mask.fade = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(175, 175, 175));
 		});
-		this.mask.star = $.gr(500, 500, true, g => {
-			g.FillSolidRect(0, 0, 500, 500, $.RGB(255, 255, 255));
+		this.mask.starFill = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
-			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getStarPoints(1000, 6, 1.5, -250, -250));
+			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2));
 			g.SetSmoothingMode();
 		});
+		this.mask.starOutline = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			const bw = wh / 5;
+			g.FillPolygon($.RGBA(0, 0, 0, 25), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.DrawPolygon($.RGBA(0, 0, 0, 255), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.SetSmoothingMode();
+		});
+		this.mask.starEffect = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			const bw = wh / 5;
+			g.DrawPolygon($.RGBA(0, 0, 0, 125), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.FillPolygon($.RGBA(0, 0, 0, 130), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.SetSmoothingMode();
+		});
+		this.mask.flareEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			g.FillPolygon($.RGB(255, 255, 255), 0, getStarPoints(wh, 50, 25));
+			g.SetSmoothingMode();
+		});
+		this.mask.flareEffect.StackBlur(5);
 	}
 
 	// Regorxxx <- Fix img frame for root images (hover effect)
@@ -572,11 +606,13 @@ class Images {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImg); }
 						else { this.drawFrame(gr, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
+						if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, y1, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 				}
 				if (item.sel) {
 					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick'); }
 					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImgSel); }
+					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
 					const x = box_x + this.text.x;
@@ -679,6 +715,17 @@ class Images {
 					gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
 					break;
 				}
+			}
+		}
+		gr.SetSmoothingMode();
+	}
+
+	drawImageEffect(gr, effect, x, y, w, h,) {
+		gr.SetSmoothingMode(SmoothingMode.HighQuality);
+		switch (effect) {
+			case 'flare': { // Regorxxx <- Flare hover effect ->
+				gr.DrawImage(this.mask.flareEffect, x, y, w, h, 0, 0, this.mask.flareEffect.Width, this.mask.flareEffect.Height);
+				break;
 			}
 		}
 		gr.SetSmoothingMode();
@@ -867,7 +914,9 @@ class Images {
 		let iw = image.Width;
 		let ih = image.Height;
 		switch (style.type) {
-			case 'star': // Regorxxx <- New img styles ->
+			case 'starfill':
+			case 'stareffect':
+			case 'staroutline':
 			case 'crop':
 			case 'circular': {
 				const s1 = iw / w;
@@ -1188,16 +1237,17 @@ class Images {
 			this.letter.w = Math.round(g.CalcTextWidth('W', ui.font.main));
 			this.text.h = Math.max(Math.round(g.CalcTextHeight('String', ui.font.group)) + lineSpacing, Math.round(g.CalcTextHeight('String', ui.font.lot)) + lineSpacing, 10);
 		});
+		// Regorxxx <- Code cleanup
 		this.style = {
-			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType != 3,
-			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType != 3 && (ppt.artId == 4 || ppt.curNoCoverImg > 2),
-			image: this.getArtStyle(ppt.artId), // Regorxxx <- Code cleanup ->
-			rootComposite: ppt.rootNode && ppt.curRootImg == 3,
-			vertical: ppt.albumArtFlowMode ? ui.h - panel.search.h > ui.w - ui.sbar.w : true, // Regorxxx <- Code cleanup ->
+			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3,
+			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3 && (ppt.artId === 4 || ppt.curNoCoverImg > 2),
+			image: this.getArtStyle(ppt.artId),
+			rootComposite: ppt.rootNode && ppt.curRootImg === 3,
+			vertical: ppt.albumArtFlowMode ? ui.h - panel.search.h > ui.w - ui.sbar.w : true,
+			dropGrad: ppt.albumArtDropShadow && !this.dropShadow,
+			dropGradStub: ppt.albumArtDropShadow && !this.dropShadowStub,
 		};
-
-		this.style.dropGrad = ppt.albumArtDropShadow && !this.style.dropShadow;
-		this.style.dropGradStub = ppt.albumArtDropShadow && !this.style.dropShadowStub;
+		// Regorxxx ->
 
 		this.letter.show = ppt.albumArtLetter;
 		this.letter.no = ppt.albumArtLetterNo;

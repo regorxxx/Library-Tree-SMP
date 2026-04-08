@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//08/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -183,6 +183,7 @@ let properties = [
 	['Highlight Row', 2, 'highLightRow'],
 	['Highlight Frame Image', false, 'frameImage'],
 	['Highlight Frame Root Image', false, 'frameImageRoot'], // Regorxxx <- Fix img frame for root images (hover effect) ->
+	['Highlight Flare Image', false, 'flareImage'], // Regorxxx <- Flare hover effect ->
 	['Highlight Text', false, 'highLightText'],
 	['Hot Key [Focus Not Needed]: 1-10 // Assign Spider Monkey Panel index in keyboard shortcuts', 'CollapseAll,0,PlaylistAdd,0,PlaylistInsert,0,PlaylistNew,0,Search,0,SearchClear,0', 'hotKeys'],
 

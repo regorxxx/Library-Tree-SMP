@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 07/04/26 -->
+﻿<!DOCTYPE html> <!-- 08/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1883,7 +1883,7 @@
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
-				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab ->
+				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'artTreeSameView', 'selRectArt', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
@@ -2329,7 +2329,7 @@
 			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
 			// Regorxxx ->
 
-			// Regorxxx <- Code cleanup | Custom TF art
+			// Regorxxx <- Code cleanup | Custom TF art | New img styles
 			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
@@ -2341,7 +2341,7 @@
 					case 'imageFormat':
 						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
 						cells.push(headers);
-						var radioLabels = ['Regular', 'Auto-Fill', 'Circular', 'Star'];
+						var radioLabels = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline'];
 						var radioLabelsLen = radioLabels.length;
 						items = [];
 						for (j = 0; j < radioLabelsLen; j++) {
@@ -2850,7 +2850,10 @@
 				for (i = 0; i < 4; i++) { window.showHl.insertAdjacentHTML('beforeend', '<a onclick="setHoverBg(' + i + ');">' + highLightLabels[i] + '</a>'); }
 				i = 0; window.frameStyle.insertAdjacentHTML('beforeend', '<div><input id="frame_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="frame_checkbox' + i + '" class="checkbox_label">Frame style (album art): image border</label></div>');
 				// Regorxxx <- Fix img frame for root images (hover effect)
-				i = 1; window.frameStyle.insertAdjacentHTML('beforeend', '<div><input id="frame_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="frame_checkbox' + i + '" class="checkbox_label">Frame style (root): album art style border</label></div>');
+				i = 1; window.frameStyle.insertAdjacentHTML('beforeend', '<div><input id="frame_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="frame_checkbox' + i + '" class="checkbox_label">Frame style (album art-root): album art style border</label></div>');
+				// Regorxxx ->
+				// Regorxxx <- Flare hover effect
+				i = 2; window.frameStyle.insertAdjacentHTML('beforeend', '<div><input id="frame_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="frame_checkbox' + i + '" class="checkbox_label">Effect style (album art): flare</label></div>');
 				// Regorxxx ->
 				for (i = 4; i < 7; i++) { window.showH2.insertAdjacentHTML('beforeend', '<div><input id="showH2_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showH2_checkbox' + i + '" class="checkbox_label">' + highLightLabels[i] + '</label></div>'); }
 				for (i = 0; i < 7; i++) { window.show.insertAdjacentHTML('beforeend', '<div><input id="show_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="show_checkbox' + i + '" class="checkbox_label">' + showLabels[i] + '</label></div>'); }
