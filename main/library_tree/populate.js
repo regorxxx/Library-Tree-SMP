@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//08/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -197,15 +197,15 @@ class Populate {
 		if (panel.playlistSort || bNoSort) { // Regorxxx <- Smart sorting based on view ->
 			node.item.forEach((item) => $.range(item.start, item.end, 1).forEach((idx) => arr.push(idx)));
 		} else {
-			if (node.root) { // When selecting all, ommit
+			if (node.root) { // When selecting all, omit
 				$.range(0, panel.list.Count - 1, 1).forEach((idx) => arr.push(idx));
 			} else if (node.child && node.child.length) {
 				node.child.forEach((subNode) => this.addItems(arr, subNode));
 			} else if (node.item.length > 1 || node.item[0].count > 1) {
-				this.branch(node, !!node.root, true);
+				this.branch(node, !!node.root, true, void (0), true);
 				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
 				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
-				this.clearChild(node);
+				this.clearChild(node, true);
 			} else {
 				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
 			}
@@ -225,7 +225,8 @@ class Populate {
 		}, []).map(function (range) { return range.min === range.max ? range.min.toString() : range.min + '-' + range.max; });
 	}
 
-	branch(br, base, node, block) {
+	// Regorxxx <- Preserve tree sorting at selection
+	branch(br, base, node, block, simulate) {
 		if (!br || br.track) return;
 		const ix = this.showTracks ? 2 : 3;
 		const l = base ? 0 : this.rootNode ? br.level : br.level + 1;
@@ -253,8 +254,9 @@ class Populate {
 			}
 		});
 		this.condense(br.child);
-		this.buildTree(lib.root, 0, node, true, block);
+		this.buildTree(lib.root, 0, node, true, block, simulate);
 	}
+	// Regorxxx ->
 
 	branchChange(br) {
 		const arr = br.level == 0 ? lib.root : this.tree[br.par].child;
@@ -348,8 +350,8 @@ class Populate {
 		return b.length;
 	}
 
-	// Regorxxx <- Support SORT BY query sorting | Code cleanup
-	buildTree(br, level, node, full, block) {
+	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection
+	buildTree(br, level, node, full, block, simulate) {
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
@@ -488,7 +490,7 @@ class Populate {
 		}
 		const br_l = br.length;
 		const par = this.tree.length - 1;
-		if (level == 0) this.clearTree();
+		if (level == 0 && !simulate) { this.clearTree(); }
 		br.forEach((v, i) => {
 			j = this.tree.length;
 			const item = this.tree[j] = v;
@@ -896,14 +898,16 @@ class Populate {
 	}
 
 	clearTree() {
-		if (panel.imgView && this.tree.length) img.trimCache(this.tree[0].key);
+		if (panel.imgView && this.tree.length) { img.trimCache(this.tree[0].key); }
 		this.tree = [];
 	}
 
-	clearChild(br) {
+	// Regorxxx <- Preserve tree sorting at selection
+	clearChild(br, simulate) {
 		br.child = [];
-		this.buildTree(lib.root, 0, true, true);
+		this.buildTree(lib.root, 0, true, true, void (0), simulate);
 	}
+	// Regorxxx ->
 
 	clickedOn(x, y, item) {
 		if (panel.imgView) return 'text';
