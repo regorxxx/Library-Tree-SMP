@@ -1,7 +1,7 @@
 ﻿'use strict';
-//07/04/26
+//08/04/26
 
-/* exported _sb, fillWithPattern, getStarPoints */
+/* exported _sb, fillWithPattern, getStarPoints, getHeartPoints */
 
 /* global SF_CENTRE:readable, IDC_HAND:readable */
 include('helpers_xxx_UI.js');
@@ -137,13 +137,9 @@ function fillWithPattern(gr, x1, y1, x2, y2, colour, lineWidth, size, pattern) {
 'use strict';
 
 function getStarPoints(nodeSize, innerCirclePoints = 5, innerOuterRadiusRatio = 2.5, offsetX = 0, offsetY = 0) {
-	const starWidth = nodeSize;
-	const starHeight = nodeSize;
-	const centerX = starWidth / 2 + offsetX;
-	const centerY = starHeight / 2 + offsetY;
-	// starWidth --> this is the beam length of each
-	// side of the SVG square that holds the star
-	const innerRadius = starWidth / innerCirclePoints;
+	const centerX = nodeSize / 2 + offsetX;
+	const centerY = nodeSize / 2 + offsetY;
+	const innerRadius = nodeSize / innerCirclePoints;
 	const outerRadius = innerRadius * innerOuterRadiusRatio;
 	return calcStarPoints(centerX, centerY, innerCirclePoints, innerRadius, outerRadius);
 }
@@ -162,5 +158,27 @@ function calcStarPoints(centerX, centerY, innerCirclePoints, innerRadius, outerR
 			centerY + Math.sin(a) * r
 		);
 	}
+	return points;
+}
+
+function getHeartPoints(nodeSize, points = 9, offsetX = 0, offsetY = 0) {
+	const centerX = nodeSize / 2 + offsetX;
+	const centerY = nodeSize / 2 + offsetY;
+	return calcHeartPoints(nodeSize, centerX, centerY, points);
+}
+
+function calcHeartPoints(nodeSize, centerX, centerY, numPoints) {
+	numPoints -= 1;
+	const angle = Math.PI / numPoints * 2;
+	const r = nodeSize / 35;
+	let points = [];
+	for (let i = 0; i < numPoints; i++) {
+		const a = i * angle;
+		points.push(
+			centerX - (a < Math.Pi * 2 ? 0 :  (16 * Math.sin(a) **3) * r),
+			centerY - (13 * Math.cos(a) - 5 * Math.cos(2*a) - 2 * Math.cos(3*a) - Math.cos(4*a)) * r
+		);
+	}
+	points.push(points[0], points[1]); // End at first point to avoid painting errors with gr.DrawPolygon();
 	return points;
 }

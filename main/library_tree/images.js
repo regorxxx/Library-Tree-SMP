@@ -4,7 +4,7 @@
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
 /* global getFiles:readable */
-/* global getStarPoints:readable */
+/* global getStarPoints:readable, getHeartPoints */
 /* global InterpolationMode:readable, SmoothingMode:readable */
 
 /* exported img */
@@ -59,12 +59,13 @@ class Images {
 
 		// Regorxxx <- Code cleanup | New img styles
 		this.styles = [
-			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default' },
-			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop' },
-			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular' },
-			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star' },
-			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star' },
-			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star' }
+			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default', collageLine: true, centerLabel: true, centerTrackCount: false, collageCondense: 1 },
+			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, collageCondense: 1 },
+			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 },
+			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.9 },
+			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 },
+			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 1 },
+			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 }
 		];
 		// Regorxxx ->
 
@@ -118,6 +119,7 @@ class Images {
 			starFill: null,
 			starEffect: null,
 			starOutline: null,
+			heart: null,
 			flareEffect: null
 		};
 
@@ -426,9 +428,12 @@ class Images {
 		this.items = [];
 	}
 
+	// Regorxxx <- Code cleanup | New img styles
 	createCollage(g, cellWidth, cellHeight, rows, columns, cells) {
 		let x = 0;
 		let y = 0;
+		const style = this.getStyle(this.style.image);
+		const condense = Math.max(style.collageCondense, 0.1);
 		for (let row = 0; row < rows; row++) {
 			for (let column = 0; column < columns; column++) {
 				const idx = column + row * columns + 1;
@@ -441,19 +446,23 @@ class Images {
 						let cw = img.Width;
 						let ch = img.Height;
 						if (ppt.albumArtLabelType == 3) {
-							if (this.style.image == 2) {
-								cx = cw * 0.1;
-								cy = ch * 0.1;
-								cw *= 0.8;
-								ch = (ch - this.overlayHeight) * 0.8;
+							if (condense !== 1) {
+								if (condense !== Infinity) {
+									cx = cw * (1 - condense) / 2;
+									cy = ch * (1 - condense) / 2;
+									cw *= condense;
+									ch = (ch - this.overlayHeight) * condense;
+								}
 							} else {
 								ch -= this.overlayHeight;
 							}
-						} else if (this.style.image == 2) {
-							cx = cw * 0.1;
-							cy = ch * 0.1;
-							cw *= 0.8;
-							ch *= 0.8;
+						} else if (condense !== 1) {
+							if (condense !== Infinity) {
+								cx = cw * (1 - condense) / 2;
+								cy = ch * (1 - condense) / 2;
+								cw *= condense;
+								ch *= condense;
+							}
 						}
 						img = img.Clone(cx, cy, cw, ch);
 						img = this.format(img, ppt.artId, this.getStyleByType('crop'), this.cellWidth, this.cellWidth, false, 'root');
@@ -468,18 +477,17 @@ class Images {
 		x = 0; y = 0; // NOSONAR
 		for (let column = 0; column < columns; column++) {
 			x += cellWidth;
-			if (this.style.image != 2) g.DrawLine(x, 0, x, cellWidth * columns, ui.l.w, ui.col.rootBlend);
+			if (style.collageLine) g.DrawLine(x, 0, x, cellWidth * columns, ui.l.w, ui.col.rootBlend);
 		}
 		x = 0; y = 0; // NOSONAR
 		for (let row = 0; row < rows; row++) {
 			y += cellHeight;
-			if (this.style.image != 2) g.DrawLine(x, y, cellWidth * columns, y, ui.l.w, ui.col.rootBlend);
+			if (style.collageLine) g.DrawLine(x, y, cellWidth * columns, y, ui.l.w, ui.col.rootBlend);
 
 		}
-		if (this.style.image != 2) g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend);
+		if (style.collageLine) g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend);
 	}
 
-	// Regorxxx <- Code Cleanup | New img styles
 	createMasks() {
 		const wh = 500;
 		this.mask.circular = $.gr(wh, wh, true, g => {
@@ -493,13 +501,13 @@ class Images {
 		});
 		this.mask.starFill = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2));
 			g.SetSmoothingMode();
 		});
 		this.mask.starOutline = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			const bw = wh / 5;
 			g.FillPolygon($.RGBA(0, 0, 0, 25), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.DrawPolygon($.RGBA(0, 0, 0, 255), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
@@ -507,14 +515,20 @@ class Images {
 		});
 		this.mask.starEffect = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			const bw = wh / 5;
 			g.DrawPolygon($.RGBA(0, 0, 0, 125), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
-			g.FillPolygon($.RGBA(0, 0, 0, 130), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.FillPolygon($.RGBA(0, 0, 0, 225), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.SetSmoothingMode();
+		});
+		this.mask.heart = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getHeartPoints(wh, 60, 0, -wh / 16));
 			g.SetSmoothingMode();
 		});
 		this.mask.flareEffect = $.gr(wh, wh, true, g => {
-			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			g.FillPolygon($.RGB(255, 255, 255), 0, getStarPoints(wh, 50, 25));
 			g.SetSmoothingMode();
 		});
@@ -601,13 +615,13 @@ class Images {
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
 					}
 				}
-				this.drawItemOverlay(gr, item, x1, y1, iw, ih);
+				this.drawItemOverlay(gr, style, item, x1, y1, iw, ih);
 				if (i == pop.m.i) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImg); }
 						else { this.drawFrame(gr, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
-						if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, y1, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
+					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 				}
 				if (item.sel) {
 					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick'); }
@@ -629,18 +643,18 @@ class Images {
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, nowp, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
 							}
 							else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, this.style.image != 1 && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, this.style.image != 1 && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, this.style.image != 1 && !item.tt[3] ? panel.cc : panel.lc); }
+							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, style.centerLabel && !item.tt[3] ? panel.cc : panel.lc); }
 						} else {
 							this.checkTooltip(gr, item, x, y1, statistics ? y2 : -1, -1, this.text.w, grp, statistics, false, ui.font.group, ui.font.statistics);
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.groupEllipsisSpace, 'group');
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, this.style.image != 1 && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							if (statistics) gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, this.style.image != 1 && !item.tt[2] ? panel.cc : panel.lc);
+							if (statistics) gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 						}
 					} else {
 						y1 = this.im.y + this.text.y1;
@@ -652,18 +666,18 @@ class Images {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.groupEllipsisSpace, 'group');
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, nowp, ui.font.lot, ui.font.lotEllipsisSpace, 'lott');
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, this.style.image != 1 && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, this.style.image != 1 && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, this.style.image != 1 && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
+							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
 						} else {
 							this.checkTooltip(gr, item, x, y1, statistics ? y2 : -1, -1, this.text.w, grp, statistics, false, ui.font.group, ui.font.statistics);
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.mainEllipsisSpace, 'group');
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, this.style.image != 1 && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, this.style.image != 1 && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
+							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
 						}
 					}
 				}
@@ -697,21 +711,33 @@ class Images {
 
 	drawImageFrame(gr, style, item, x, y, w, h, col) {
 		const l_w = 3;
-		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		if (item.root && !ppt.frameImageRoot) {
-			if (this.stub.rootFrame) { gr.DrawImage(this.stub.rootFrame, x, y, w, h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height); }
-			else { gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col); }
+			if (this.stub.rootFrame) {
+				gr.DrawImage(this.stub.rootFrame, x, y, w, h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height);
+			}
+			else {
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
+				gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
+			}
 		} else {
 			switch (style.border) {
 				case 'circular': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(x, y, w - l_w / 2, h - l_w / 2, l_w, col);
 					break;
 				}
 				case 'star': {
+					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.DrawPolygon(col, l_w, getStarPoints((w - l_w / 2) * 2, 6, 1.5, x - (w - l_w / 2) / 2, y - (h - l_w / 2) / 2));
 					break;
 				}
+				case 'heart': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.DrawPolygon(col, l_w, getHeartPoints(w - l_w / 2, 60, x - l_w / 4, y - h / 16));
+					break;
+				}
 				default: {
+					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
 					break;
 				}
@@ -731,15 +757,15 @@ class Images {
 		gr.SetSmoothingMode();
 	}
 
-	drawItemOverlay(gr, item, x, y, w) {
+	drawItemOverlay(gr, style, item, x, y, w) {
 		if (item.root) return;
 		switch (ppt.itemOverlayType) {
 			case 1: {
 				if (!item.count) break;
 				let count_w = Math.max(gr.CalcTextWidth(item.count + ' ', ui.font.tracks), 8);
 				let count_h = Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8);
-				let count_x = x + (this.style.image == 2 ? (w - count_w - 2) / 2 : w - count_w - 3);
-				const count_y = y + (this.style.image == 2 ? count_h / 1.67 : 0);
+				let count_x = x + (style.centerTrackCount ? (w - count_w - 2) / 2 : w - count_w - 3);
+				const count_y = y + (style.centerTrackCount ? count_h / 1.67 : 0);
 				let count = item.count;
 				let count_h2 = count_h;
 				// Regorxxx <- Custom album art overlay track count/year
@@ -750,8 +776,8 @@ class Images {
 					count_x = x + (this.style.image == 2 ? (w - count_w - 2) / 2 : w - count_w - 3);
 					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
-					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, this.style.image == 2 ? panel.cc : panel.rc);
-					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, this.style.image == 2 ? panel.cc : panel.rc);
+					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
+					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
 					gr.SetSmoothingMode();
 				} else {
 					gr.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -844,6 +870,12 @@ class Images {
 				gr.SetSmoothingMode();
 				break;
 			}
+			case 'heart': {
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
+				gr.DrawPolygon(ui.col.imgBor, 2, getHeartPoints(w, 60, x, y - h / 16));
+				gr.SetSmoothingMode();
+				break;
+			}
 			default: {
 				gr.DrawRect(x, y, w - 1, h - 1, 1, ui.col.imgBor);
 				break;
@@ -867,6 +899,14 @@ class Images {
 					w += 1;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getStarPoints(w * 2, 6, 1.5, x - w / 2, y - h / 2));
+					gr.SetSmoothingMode();
+					break;
+				}
+				case 'heart': {
+					w += 6;
+					y -= 3;
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getHeartPoints(w, 60, x - 3, y - h / 16));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -897,6 +937,14 @@ class Images {
 					gr.SetSmoothingMode();
 					break;
 				}
+				case 'heart': {
+					w += 6;
+					y -= 3;
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getHeartPoints(w, 60, x - 3, y - h / 16));
+					gr.SetSmoothingMode();
+					break;
+				}
 				default: {
 					gr.FillGradRect(x + w - 2 * $.scale, y, 6 * $.scale, h, 0, $.RGBA(0, 0, 0, 56), 0);
 					gr.FillGradRect(x, y + h - 2 * $.scale, w, 6 * $.scale, 90, $.RGBA(0, 0, 0, 56), 0);
@@ -917,6 +965,7 @@ class Images {
 			case 'starfill':
 			case 'stareffect':
 			case 'staroutline':
+			case 'heart':
 			case 'crop':
 			case 'circular': {
 				const s1 = iw / w;
@@ -1151,6 +1200,10 @@ class Images {
 				break;
 			case 'star':
 				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2)));
+				this.shadow.StackBlur(4);
+				break;
+			case 'heart':
+				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getHeartPoints(wh, 60, 0, -wh / 16)));
 				this.shadow.StackBlur(4);
 				break;
 			default:
