@@ -59,7 +59,7 @@ class Scrollbar {
 		};
 
 		this.narrow = {
-			show: ppt.sbarShow == 1 ? true : false,
+			show: ppt.sbarShow == 1,
 			x: 0
 		};
 
@@ -167,14 +167,15 @@ class Scrollbar {
 			panel.tree.x = 0;
 			panel.tree.y = panel.search.h;
 			this.start = this.delta;
-			if (this.event != 'drag') {
-				if (this.bar.isDragging && Math.abs(this.delta - this.scroll) > (!panel.imgView ? this.scrollbar.height : this.scrollbar.height * 3)) this.event = 'barFast';
+			if (this.event == 'drag') { this.scrollDrag(); }
+			else {
+				if (this.bar.isDragging && Math.abs(this.delta - this.scroll) > (panel.imgView ? this.scrollbar.height * 3 : this.scrollbar.height)) this.event = 'barFast';
 				this.clock = Date.now();
 				if (!this.draw_timer) {
 					this.scrollTimer();
 					this.smoothScroll();
 				}
-			} else this.scrollDrag();
+			}
 		} else {
 			this.scrollThrottle();
 			this.updDebounce();
@@ -189,24 +190,24 @@ class Scrollbar {
 			let sbar_y = this.y;
 			let sbar_h = this.h;
 			if (ppt.sbarShow == 1) {
-				sbar_x = !this.narrow.show ? this.x : this.narrow.x;
-				sbar_w = !this.narrow.show ? this.w : ui.sbar.narrowWidth;
-				sbar_y = !this.narrow.show ? this.y : this.narrow.y;
-				sbar_h = !this.narrow.show ? this.h : ui.sbar.narrowWidth;
+				sbar_x = this.narrow.show ? this.narrow.x : this.x;
+				sbar_w = this.narrow.show ? ui.sbar.narrowWidth : this.w;
+				sbar_y = this.narrow.show ? this.narrow.y : this.y;
+				sbar_h = this.narrow.show ? ui.sbar.narrowWidth : this.h;
 			}
 			switch (ui.sbar.type) {
 				case 0:
 					if (ppt.rowStripes && ppt.sbarShow == 2 && !this.vertical) gr.FillSolidRect(this.x, this.y, this.w, this.h, ui.col.bg1);
-					if (this.vertical) gr.FillSolidRect(sbar_x, this.y + this.bar.y, sbar_w, this.bar.h, this.narrow.show ? this.col[this.alpha2] : !this.bar.isDragging ? this.col[this.alpha] : this.col['max']);
-					else gr.FillSolidRect(this.x + this.bar.x, sbar_y, this.bar.h, sbar_h, this.narrow.show ? this.col[this.alpha2] : !this.bar.isDragging ? this.col[this.alpha] : this.col['max']);
+					if (this.vertical) gr.FillSolidRect(sbar_x, this.y + this.bar.y, sbar_w, this.bar.h, this.narrow.show ? this.col[this.alpha2] : this.bar.isDragging ? this.col['max'] : this.col[this.alpha]);
+					else gr.FillSolidRect(this.x + this.bar.x, sbar_y, this.bar.h, sbar_h, this.narrow.show ? this.col[this.alpha2] : this.bar.isDragging ? this.col['max'] : this.col[this.alpha]);
 					break;
 				case 1:
 					if (this.vertical) {
 						if (!this.narrow.show || ppt.sbarShow != 1) gr.FillSolidRect(sbar_x, this.y - panel.sbar_o, this.w, this.h + panel.sbar_o * 2, this.col['bg']);
-						gr.FillSolidRect(sbar_x, this.y + this.bar.y, sbar_w, this.bar.h, this.narrow.show ? this.col[this.alpha2] : !this.bar.isDragging ? this.col[this.alpha] : this.col['max']);
+						gr.FillSolidRect(sbar_x, this.y + this.bar.y, sbar_w, this.bar.h, this.narrow.show ? this.col[this.alpha2] : this.bar.isDragging ? this.col['max'] : this.col[this.alpha]);
 					} else {
 						if (!this.narrow.show || ppt.sbarShow != 1) gr.FillSolidRect(this.x - panel.sbar_o, sbar_y, this.w + panel.sbar_o * 2, this.h, this.col['bg']);
-						gr.FillSolidRect(this.x + this.bar.x, sbar_y, this.bar.h, sbar_h, this.narrow.show ? this.col[this.alpha2] : !this.bar.isDragging ? this.col[this.alpha] : this.col['max']);
+						gr.FillSolidRect(this.x + this.bar.x, sbar_y, this.bar.h, sbar_h, this.narrow.show ? this.col[this.alpha2] : this.bar.isDragging ? this.col['max'] : this.col[this.alpha]);
 					}
 					break;
 				case 2:
@@ -227,7 +228,7 @@ class Scrollbar {
 			}
 
 			if (!panel.imgView || !img.letter.show || !this.bar.isDragging) return;
-			const ix = img.style.vertical ? (Math.ceil((panel.m.y + sbar.delta - img.panel.y) / img.row.h) - 1) * (!ppt.albumArtFlowMode ? img.columns : 1) : Math.ceil((panel.m.x + sbar.delta - img.panel.x) / img.columnWidth) - 1;
+			const ix = img.style.vertical ? (Math.ceil((panel.m.y + sbar.delta - img.panel.y) / img.row.h) - 1) * (ppt.albumArtFlowMode ? 1 : img.columns) : Math.ceil((panel.m.x + sbar.delta - img.panel.x) / img.columnWidth) - 1;
 			if (ix < 0 || ix > pop.tree.length - 1) return;
 			let letter = panel.lines == 1 || !ppt.albumArtFlipLabels ? pop.tree[ix].grp : pop.tree[ix].lot;
 			if (panel.colMarker) letter = letter.replace(/@!#.*?@!#/g, '');
@@ -297,8 +298,8 @@ class Scrollbar {
 			case this.vertical:
 				if (x > this.w || y < 0 || y > this.h || this.row.count <= this.rows_drawn) return;
 				if (x < 0) {
-					if (!ppt.touchControl) return;
-					else return this.tap(p_x, p_y);
+					if (ppt.touchControl) { return this.tap(p_x, p_y); }
+					else { return; }
 				}
 				if (y < this.but_h || y > this.h - this.but_h) return;
 				if (y < this.bar.y) dir = 1; // above bar
@@ -314,8 +315,8 @@ class Scrollbar {
 			case !this.vertical:
 				if (y > this.h || x < 0 || x > this.w || this.row.count <= this.rows_drawn) return;
 				if (y < 0) {
-					if (!ppt.touchControl) return;
-					else return this.tap(p_x, p_y);
+					if (ppt.touchControl) { return this.tap(p_x, p_y); }
+					else { return; }
 				}
 				if (x < this.but_h || x > this.w - this.but_h) return;
 				if (x < this.bar.x) dir = 1; // above bar
@@ -387,7 +388,7 @@ class Scrollbar {
 		this.row.h = row_h;
 		this.but_h = ui.sbar.but_h;
 		this.scrollStep = $.clamp(ppt.scrollStep, 0, 10);
-		if (panel.imgView && this.scrollStep != 0) this.scrollStep = Math.max(Math.round(this.scrollStep /= 3), 1);
+		if (panel.imgView && this.scrollStep != 0) { this.scrollStep = Math.max(Math.round(this.scrollStep / 3), 1); }
 		// draw info
 		this.scrollbar.height = this.vertical ? Math.round(this.h - this.but_h * 2) : Math.round(this.w - this.but_h * 2);
 		this.bar.h = Math.max(Math.round(this.scrollbar.height * this.rows_drawn / this.row.count), $.clamp(this.scrollbar.height / 2, 5, ppt.sbarShow == 2 ? ppt.sbarGripHeight : ppt.sbarGripHeight * 2));
@@ -491,7 +492,7 @@ class Scrollbar {
 		clearTimeout(this.bar.timer);
 		this.bar.timer = null;
 		this.bar.timer = setInterval(() => {
-			this.alpha = this.hover ? Math.min(this.alpha += this.inStep, this.alpha2) : Math.max(this.alpha -= 3, this.alpha1);
+			this.alpha = this.hover ? Math.min(this.alpha + this.inStep, this.alpha2) : Math.max(this.alpha - 3, this.alpha1);
 			window.RepaintRect(this.x, this.y, this.w, this.h);
 			if (this.hover && this.alpha == this.alpha2 || !this.hover && this.alpha == this.alpha1) {
 				this.cur_hover = this.hover;
@@ -564,7 +565,7 @@ class Scrollbar {
 	}
 
 	scrollMemory(h, j) {
-		let scroll = !h ? j * this.row.h : (j - 3) * this.row.h;
+		let scroll = h ? (j - 3) * this.row.h : j * this.row.h;
 		if (panel.imgView && img.style.vertical) {
 			scroll /= img.columns;
 			scroll = scroll - scroll % this.row.h;
@@ -600,9 +601,9 @@ class Scrollbar {
 
 	setCol() {
 		let opaque = ui.getOpaque();
-		this.alpha = !ui.sbar.col ? 75 : (!ui.sbar.type ? 68 : 51);
+		this.alpha = ui.sbar.col ? (ui.sbar.type ? 51 : 68) : 75;
 		this.alpha1 = this.alpha;
-		this.alpha2 = !ui.sbar.col ? 128 : (!ui.sbar.type ? 119 : 85);
+		this.alpha2 = ui.sbar.col ? (ui.sbar.type ? 85 : 119) : 128;
 		this.inStep = ui.sbar.type && ui.sbar.col ? 12 : 18;
 		switch (ui.sbar.type) {
 			case 0:
@@ -702,6 +703,6 @@ class Scrollbar {
 	}
 
 	wheel(step) {
-		this.checkScroll(Math.round((this.scroll + step * -(!this.scrollStep ? this.rows_drawn - 1 : this.scrollStep) * this.row.h) / this.row.h) * this.row.h, this.scrollStep ? 'step' : 'full');
+		this.checkScroll(Math.round((this.scroll + step * -(this.scrollStep ? this.scrollStep : this.rows_drawn - 1) * this.row.h) / this.row.h) * this.row.h, this.scrollStep ? 'step' : 'full');
 	}
 }
