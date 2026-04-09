@@ -1693,7 +1693,7 @@ class Panel {
 		if (this.pn_h_auto) {
 			window.MaxHeight = window.MinHeight = ppt.pn_h;
 		}
-		if (this.pn_h_auto && !this.imgView && ppt.pn_h == ppt.pn_h_min && this.tree[0]) this.clearChild(this.tree[0]);
+		if (this.pn_h_auto && !this.imgView && ppt.pn_h == ppt.pn_h_min && this.tree[0]) pop.clearChild(this.tree[0]);
 		pop.checkAutoHeight();
 		if (sbar.scroll > sbar.max_scroll) sbar.checkScroll(sbar.max_scroll);
 		window.Repaint();
