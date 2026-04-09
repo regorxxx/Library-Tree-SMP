@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/04/26
+//09/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1673,9 +1673,11 @@ class Populate {
 	}
 
 	getNumbers(arr) { // test [0, '0', "0", "0.5", 10, '10', "", '', '-', null, true, false, 'Oh']
-		return arr.filter(v => Number(v)); // gives ["0.5", 10, "10", true]
-		//return arr.filter(v => Number.parseFloat(v) == v); // gives [0, "0", "0", "0.5", 10, "10"]
-		//return arr.filter(v => Number(v) && Number.parseFloat(v) == v); // gives ["0.5", 10, "10"]
+		return arr.filter(Number); // gives ["0.5", 10, "10", true]
+		/* NOSONAR
+			return arr.filter(v => Number.parseFloat(v) == v); // gives [0, "0", "0", "0.5", 10, "10"]
+			return arr.filter(v => Number(v) && Number.parseFloat(v) == v); // gives ["0.5", 10, "10"]
+		*/
 	}
 
 	getRowNumber(y) {
@@ -1811,17 +1813,17 @@ class Populate {
 		if (x > ui.w - ui.sbar.sp) { return; }
 		const ix = this.get_ix(x, y, true, false);
 		if (ppt.selRectArt && panel.imgView) {
-			if (!this.lastSelMul.includes(ix)) {
+			if (this.lastSelMul.includes(ix)) {
+				this.selRect.down = false;
+				this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
+				this.selRect.over.clear();
+			} else {
 				this.selRect.down = true;
 				this.last_pressed_coord.x = this.selRect.mx = x;
 				this.last_pressed_coord.y = this.selRect.my = y;
 				this.selRect.x = this.selRect.w = x;
 				this.selRect.y = this.selRect.h = y;
 				return;
-			} else {
-				this.selRect.down = false;
-				this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
-				this.selRect.over.clear();
 			}
 			if (ix >= this.tree.length || ix < 0) { return; }
 		} else {
@@ -2216,8 +2218,8 @@ class Populate {
 				if (this.inRange(this.nowp, v.item)) {
 					np_i = i;
 					if (!v.root) {
-						if (panel.imgView) i = this.tree.length;
-						else if (!v.track) this.branch(this.tree[np_i]);
+						if (panel.imgView) { break; }
+						else if (!v.track) { this.branch(this.tree[np_i]); }
 					}
 				}
 			}
@@ -2241,8 +2243,8 @@ class Populate {
 				if (this.inRange(item, v.item)) {
 					idx = i;
 					if (!v.root) {
-						if (panel.imgView) i = this.tree.length;
-						else if (!v.track) this.branch(this.tree[idx]);
+						if (panel.imgView) { break; }
+						else if (!v.track) { this.branch(this.tree[idx]); }
 					}
 				}
 			}
@@ -2714,20 +2716,20 @@ class Populate {
 		// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
 		this.statistics = [
 			{ name: '', showTrackCount: true, showTooltip: false },
-			{ name: 'Bitrate', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += ' kbps'; } },
-			{ name: 'Duration', showTrackCount: true, showTooltip: false, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Total size', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Rating', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Popularity', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Date', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Queue', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-not queued-' : ''; } },
-			{ name: 'Playcount', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' listens'; } },
-			{ name: 'First played', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Last played', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Added', showTrackCount: false, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ''; } },
-			{ name: 'Loved', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' tracks'; } },
-			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : 'tracks'; } },
-			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks'; } }
+			{ name: 'Bitrate', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + ' kbps' },
+			{ name: 'Duration', showTrackCount: true, showTooltip: false, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Total size', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Rating', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Popularity', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Date', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Queue', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : '') },
+			{ name: 'Playcount', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' listens') },
+			{ name: 'First played', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Last played', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Added', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
+			{ name: 'Loved', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' tracks') },
+			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : 'tracks') },
+			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks') }
 		];
 		{
 			const userCustomTypes = ppt.tfCustomLabels.split('|');
@@ -2737,7 +2739,7 @@ class Populate {
 					this.statistics.push({
 						name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i],
 						showTrackCount: true, showTooltip: true,
-						ttFunc: (t) => { return t += t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || ''); }
+						ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || ''))
 					});
 				});
 		}
