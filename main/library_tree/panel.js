@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//09/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -338,6 +338,13 @@ class Panel {
 			}
 		}
 		return s;
+	}
+
+	viewNeedsUpdateTf(callback, s = this.curPattern) {
+		switch (callback) {
+			case 'playlist': return ['$sourcename', '$sourcenameortype', '$sourceid'].some((v) => s.includes(v));
+			case 'source': return ['$sourcetype', '$sourcename', '$sourcenameortype', '$sourceid', '$sourcenameortype'].some((v) => s.includes(v));
+		}
 	}
 	// Regorxxx ->
 

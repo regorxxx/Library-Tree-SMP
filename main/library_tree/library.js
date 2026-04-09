@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//09/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -66,7 +66,7 @@ class Library {
 
 		this.playlist_update = $.debounce((playlistIndex) => {
 			this.searchCache = {};
-			if (['$sourcename', '$sourcenameortype', '$sourceid'].some((s) => panel.curPattern.includes(s))) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
+			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
 			if (playlistIndex) on_item_focus_change(playlistIndex);
 		}, 100);
