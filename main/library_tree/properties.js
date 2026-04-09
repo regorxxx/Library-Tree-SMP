@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/04/26
+//09/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -183,6 +183,7 @@ let properties = [
 	['Highlight Row', 2, 'highLightRow'],
 	['Highlight Frame Image', false, 'frameImage'],
 	['Highlight Frame Root Image', false, 'frameImageRoot'], // Regorxxx <- Fix img frame for root images (hover effect) ->
+	['Highlight Frame Reflection Image', false, 'frameReflection'], // Regorxxx <- Effect per art type ->
 	['Highlight Flare Image', false, 'flareImage'], // Regorxxx <- Flare hover effect ->
 	['Highlight Text', false, 'highLightText'],
 	['Hot Key [Focus Not Needed]: 1-10 // Assign Spider Monkey Panel index in keyboard shortcuts', 'CollapseAll,0,PlaylistAdd,0,PlaylistInsert,0,PlaylistNew,0,Search,0,SearchClear,0', 'hotKeys'],
@@ -198,7 +199,6 @@ let properties = [
 	['Image Current No Artist', 2, 'curNoArtistImg'],
 	['Image Current No Cover', 6, 'curNoCoverImg'],
 	['Image Disk Cache Enabled', true, 'albumArtDiskCache'],
-	['Image Drop Shadow', false, 'albumArtDropShadow'],
 	['Image Group Level', 0, 'albumArtGrpLevel'],
 	['Image Group Names', JSON.stringify({}), 'albumArtGrpNames'],
 	['Image Flip Labels', false, 'albumArtFlipLabels'],
@@ -227,12 +227,43 @@ let properties = [
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
-	['Image Frame Border', true, 'albumArtBorderShow'], // Regorxxx <-  Image border setting ->
 	// Regorxxx <- Custom TF art
 	['Image Label TF view', '.\\profile\\images\\$lower($nodename).*', 'albumArtTfView'],
 	['Image Label TF folders', '$replace($directory_path(%PATH%),$directory(%PATH%,1),)*.jpg', 'albumArtTfFolder'],
 	['Image Style [TF] Regular-0 Auto-Fill-1 Circular-2', 2, 'imgStyleTF'],
 	// Regorxxx ->
+	// Regorxxx <- Effect per art type | Image border setting | Custom TF art
+	['Image Reflection [Front]', false, 'imgFrontRefl'],
+	['Image Reflection [Back]', false, 'imgBackRefl'],
+	['Image Reflection [Disc]', false, 'imgDiscRefl'],
+	['Image Reflection [Icon]', false, 'imgIconRefl'],
+	['Image Reflection [Artist]', false, 'imgArtistRefl'],
+	['Image Reflection [TF]', false, 'imgTfRefl'],
+	['Image Reflection Style [Front]', 1, 'imgFrontReflStyle'],
+	['Image Reflection Style [Back]', 1, 'imgBackReflStyle'],
+	['Image Reflection Style [Disc]', 1, 'imgDiscReflStyle'],
+	['Image Reflection Style [Icon]', 1, 'imgIconReflStyle'],
+	['Image Reflection Style [Artist]', 1, 'imgArtistReflStyle'],
+	['Image Reflection Style [TF]', 1, 'imgTfReflStyle'],
+	['Image Reflection Root [Front]', false, 'imgFrontReflRoot'],
+	['Image Reflection Root [Back]', false, 'imgBackReflRoot'],
+	['Image Reflection Root [Disc]', false, 'imgDiscReflRoot'],
+	['Image Reflection Root [Icon]', false, 'imgIconReflRoot'],
+	['Image Reflection Root [Artist]', false, 'imgArtistReflRoot'],
+	['Image Reflection Root [TF]', false, 'imgTfReflRoot'],
+	['Image Border [Front]', true, 'imgFrontBorder'],
+	['Image Border [Back]', true, 'imgBackBorder'],
+	['Image Border [Disc]', true, 'imgDiscBorder'],
+	['Image Border [Icon]', true, 'imgIconBorder'],
+	['Image Border [Artist]', true, 'imgArtistBorder'],
+	['Image Border [TF]', true, 'imgTfBorder'],
+	['Image Shadow [Front]', false, 'imgFrontShadow'],
+	['Image Shadow [Back]', false, 'imgBackShadow'],
+	['Image Shadow [Disc]', false, 'imgDiscShadow'],
+	['Image Shadow [Icon]', false, 'imgIconShadow'],
+	['Image Shadow [Artist]', false, 'imgArtistShadow'],
+	['Image Shadow [TF]', false, 'imgTfShadow'],
+	 // Regorxxx ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],

@@ -521,6 +521,10 @@
 			width: 76.5%;
 		}
 
+		.table95 {
+			width: 95%;
+		}
+
 		.table98 {
 			line-height: 1.62em;
 			text-align: left;
@@ -1153,22 +1157,18 @@
 
 				<div class="column33">
 					<div class="div_text3">Style</div>
-					<table id="imageFormat" class="table77">
+					<table id="imageFormat" class="table95">
 						<colgroup>
 							<col span="5" style="width:15%">
 						</colgroup>
 					</table>
+					<div class="info5"><i>Reflection effect may require increasing padding values to be visible.</i></div>
 					<div class="row">
 						<div class="column50">
 							<div class="div_text7">Thumbnail padding</div>
 							<div id="gap"></div>
 							<div style="padding:1.01em 0 0.31em;" class="div_text2">Flow mode</div>
 							<div id="flowMode"></div>
-							<!-- Regorxxx Image border setting -->
-							<div style="padding:1.01em 0 0.31em;" class="div_text2">Thumbnail effects</div>
-							<div id="dropShadow"></div>
-							<div id="albumArtBorderShow"></div>
-							<!-- Regorxxx -->
 						</div>
 						<div class="column50">
 							<div id="thumbNailSize" class="div_text7">Thumbnail Size</div>
@@ -1885,7 +1885,7 @@
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'albumArtDropShadow', 'albumArtBorderShow', 'artTreeSameView', 'selRectArt', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view ->
+				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'albumArtFlowMode', 'artTreeSameView', 'selRectArt', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view | Effect per art type ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
 			}
@@ -1900,7 +1900,7 @@
 				search: [], // Regorxxx <- Drag n' drop to search box ->
 				display: [],
 				statistics: ['itemShowStatistics'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'], // Regorxxx <- Custom TF art ->
+				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF', 'imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'], // Regorxxx <- Custom TF art | Effect per art type ->
 				custom: [],
 				advanced: []
 			}
@@ -2329,8 +2329,15 @@
 			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
 			// Regorxxx ->
 
-			// Regorxxx <- Code cleanup | Custom TF art | New img styles
+			// Regorxxx <- Code cleanup | Custom TF art | New img styles | Effect per art type
 			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
+			var imgTableEffects = [
+				['imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'Reflection'],
+				['imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'Reflection Root'],
+				['imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'Border'],
+				['imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'Shadow']
+			];
+			var imgTableReflection = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
 				var cells = [];
@@ -2343,15 +2350,68 @@
 						cells.push(headers);
 						var radioLabels = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart'];
 						var radioLabelsLen = radioLabels.length;
+						var cboxLabels = ['Reflection', 'Reflection Root', 'Border', 'Shadow'];
+						var cboxLabelsLen = cboxLabels.length;
+						var radioReflLabels = ['Asymmetric', 'Symmetric'];
+						var radioReflLen = radioReflLabels.length;
 						items = [];
+						var subItems = [];
 						for (j = 0; j < radioLabelsLen; j++) {
 							items[j] = [];
 							for (i = 0; i < imgLen; i++) {
 								n = imgTable[i];
-								menId = imgTable[i] + j;
+								menId = n + j;
 								items[j].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
 								if (i == imgLen - 1) {
 									items[j].push('<div style="padding-left:0.46em; text-align:left">' + radioLabels[j] + '</div>');
+									cells.push(items[j]);
+								}
+							}
+						}
+						for (j = 0; j < 2; j++) {
+							items[j] = [];
+							subItems[j] = [];
+							for (i = 0; i < imgTableEffects[j].length; i++) {
+								n = imgTableEffects[j][i];
+								if (i < imgLen) {
+									items[j].push('<input id="' + n + '" name="image_checkbox" style="' + cbox + '" type="checkbox" />');
+								} else {
+									items[j].push('');
+								}
+								if (i == imgLen - 1) {
+									items[j].push('<div style="padding-left:0.46em; text-align:left">' + cboxLabels[j] + '</div>');
+									cells.push(items[j]);
+								}
+							}
+						}
+						j = 1;
+						for (k = 0; k < radioReflLen; k++) {
+							subItems[j][k] = [];
+							for (i = 0; i < imgTableEffects[j].length; i++) {
+								n = imgTableReflection[i];
+								menId = n + i + k;
+								if (i < imgLen) {
+									subItems[j][k].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
+								} else {
+									subItems[j][k].push('');
+								}
+								if (i == imgLen - 1) {
+									subItems[j][k].push('<div style="padding-left:0.46em; text-align:left">' + radioReflLabels[k] + '</div>');
+									cells.push(subItems[j][k]);
+								}
+							}
+						}
+						for (j = 2; j < cboxLabelsLen; j++) {
+							items[j] = [];
+							for (i = 0; i < imgTableEffects[j].length; i++) {
+								n = imgTableEffects[j][i];
+								if (i < imgLen) {
+									items[j].push('<input id="' + n + '" name="image_checkbox" style="' + cbox + '" type="checkbox" />');
+								} else {
+									items[j].push('');
+								}
+								if (i == imgLen - 1) {
+									items[j].push('<div style="padding-left:0.46em; text-align:left">' + cboxLabels[j] + '</div>');
 									cells.push(items[j]);
 								}
 							}
@@ -2470,6 +2530,7 @@
 						var cell = row.insertCell(-1);
 						cell.innerHTML = cells[i][j];
 						if (tb != 'syntax' && tb != 'syntaxFilter' && tb != 'syntaxView' && i % 2 == 1) cell.style.background = '#E8E8E8'; // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
+						if (tb == 'imageFormat' && i == 7) cell.style.borderBottom = "1px solid green"; // Regorxxx <- Effect per art type ->
 					}
 				}
 
@@ -2920,10 +2981,6 @@
 				generateTable('imageFormat');
 				for (i = 0; i < 2; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
 				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
-				// Regorxxx <- Image border setting
-				window.dropShadow.insertAdjacentHTML('beforeend', '<div><input id="dropShadow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="dropShadow_checkbox" class="checkbox_label">Drop shadow</label></div>');
-				window.albumArtBorderShow.insertAdjacentHTML('beforeend', '<div><input id="albumArtBorderShow_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="albumArtBorderShow_checkbox" class="checkbox_label">Gray frame border</label></div>');
-				// Regorxxx ->
 				// Regorxxx <- Rectangle selection on art view
 				window.selRectArt.insertAdjacentHTML('beforeend', '<div><input id="selRectArt_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="selRectArt_checkbox" class="checkbox_label">Allow mouse rectangle selection </label></div>');
 				// Regorxxx ->

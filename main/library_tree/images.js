@@ -1,11 +1,12 @@
 ﻿'use strict';
-//08/04/26
+//09/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
 /* global getFiles:readable */
-/* global getStarPoints:readable, getHeartPoints */
-/* global InterpolationMode:readable, SmoothingMode:readable */
+/* global applyMask:readable */
+/* global getStarPoints:readable, getHeartPoints:readable */
+/* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
 
 /* exported img */
 
@@ -69,14 +70,15 @@ class Images {
 		];
 		// Regorxxx ->
 
-		// Regorxxx <- Code cleanup | External integration | Custom TF art
+		// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Image border setting
+		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, showMenu: string, switchIdx: number[]}[]} */
 		this.art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', showMenu: 'Show artists', switchIdx: [0, 5] },
-			{ idx: 5, type: 'File (by TF)...', cacheName: (folderView) => folderView ? 'foldertf' : 'viewtf', lines: 1, style: 'imgStyleTF', showMenu: 'Show art (tf)', switchIdx: [0, 4] }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgFrontShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgBackShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'imgIconShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', showMenu: 'Show artists', switchIdx: [0, 5] },
+			{ idx: 5, type: 'File (by TF)...', cacheName: (folderView) => folderView ? 'foldertf' : 'viewtf', lines: 1, style: 'imgStyleTF', reflection: 'imgTfRefl', reflectionStyle: 'imgTfReflStyle', reflectionRoot: 'imgTfReflRoot', border: 'imgTfBorder', shadow: 'imgTfShadow', showMenu: 'Show art (tf)', switchIdx: [0, 4] }
 		];
 		// Regorxxx ->
 
@@ -86,10 +88,10 @@ class Images {
 			rootComposite: ppt.rootNode && ppt.curRootImg === 3,
 			vertical: !ppt.albumArtFlowMode,
 			y: 25,
-			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3,
-			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3 && (ppt.artId === 4 || ppt.curNoCoverImg > 2),
-			dropGrad: ppt.albumArtDropShadow && !this.dropShadow,
-			dropGradStub: ppt.albumArtDropShadow && !this.dropShadowStub,
+			dropShadow: false,
+			dropShadowStub: false,
+			dropGrad: false,
+			dropGradStub: false,
 		};
 		// Regorxxx ->
 
@@ -171,7 +173,7 @@ class Images {
 
 	// Methods
 
-	// Regorxxx <- Code cleanup | New img styles
+	// Regorxxx <- Code cleanup | New img styles | Effect per art type | Image border setting
 	getStyleSchema() {
 		return this.styles.map((s) => {
 			return { ...s };
@@ -192,12 +194,13 @@ class Images {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Code cleanup | External integration | Custom TF art
+	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type
 	formatArt(a, folderView) {
+		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, showMenu: string, switchIdx: number[]}} */
 		const copy = { ...a };
 		if (typeof copy.cacheName === 'function') { copy.cacheName = copy.cacheName(folderView); }
-		copy.switchIdx = [...copy.switchIdx];
-		copy.style = ppt[copy.style];
+		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
+		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow'].forEach((k) => copy[k] = ppt[copy[k]]);
 		return copy;
 	}
 
@@ -446,15 +449,15 @@ class Images {
 						let cw = img.Width;
 						let ch = img.Height;
 						if (ppt.albumArtLabelType == 3) {
-							if (condense !== 1) {
+							if (condense === 1) {
+								ch -= this.overlayHeight;
+							} else {
 								if (condense !== Infinity) {
 									cx = cw * (1 - condense) / 2;
 									cy = ch * (1 - condense) / 2;
 									cw *= condense;
 									ch = (ch - this.overlayHeight) * condense;
 								}
-							} else {
-								ch -= this.overlayHeight;
 							}
 						} else if (condense !== 1) {
 							if (condense !== Infinity) {
@@ -486,6 +489,10 @@ class Images {
 
 		}
 		if (style.collageLine) g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend);
+	}
+
+	getHeartPoints(w, h, x = 0, y = 0) {
+		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 60, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
 	}
 
 	createMasks() {
@@ -524,7 +531,7 @@ class Images {
 		this.mask.heart = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
-			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, getHeartPoints(wh, 60, 0, -wh / 16));
+			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh));
 			g.SetSmoothingMode();
 		});
 		this.mask.flareEffect = $.gr(wh, wh, true, g => {
@@ -558,6 +565,7 @@ class Images {
 		this.getItemsToDraw();
 		this.column = 0;
 		const style = this.getStyle(this.style.image);
+		const art = this.getArt(ppt.artId);
 		for (let i = this.start; i < this.end; i++) {
 			const row = this.style.vertical ? Math.floor(i / this.columns) : 0;
 			box_x = this.style.vertical ? Math.floor(this.panel.x + this.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + i * this.columnWidth + this.bor.side - sbar.delta);
@@ -588,14 +596,11 @@ class Images {
 					ih = cur_img.Height;
 					x1 = box_x + Math.round((this.box.w - iw) / 2);
 					y1 = this.im.y + 2 + this.im.w - ih;
-					this.drawStyleShadow(gr, style, x1, y1, iw, ih);
-					gr.DrawImage(cur_img, x1, y1, iw, ih, 0, 0, iw, ih);
+					const bPaintBorder = art.border && (!item.sel || !this.labels.overlay || this.style.image != 2);
+					this.drawArt(gr, art, style, cur_img, x1, y1, iw, ih, bPaintBorder, true, item.root ? art.reflectionRoot : art.reflection);
 					if (this.labels.overlayDark) {
 						if (item.sel || nowp) gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, $.RGBA(150, 150, 150, 150));
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
-					}
-					if (ppt.albumArtBorderShow && (!item.sel || !this.labels.overlay || this.style.image != 2)) { // Regorxxx <-  Image frame setting ->
-						this.drawStyleBorder(gr, style, x1, y1, iw, ih);
 					}
 				} else {
 					iw = this.im.w;
@@ -603,9 +608,10 @@ class Images {
 					x1 = box_x + Math.round((this.box.w - iw) / 2);
 					y1 = this.im.y + 2 + iw - ih;
 					if (!item.root) {
-						this.drawStyleShadow(gr, style, x1, y1, iw, ih);
-						this.stub.noImg && gr.DrawImage(this.stub.noImg, x1, y1, iw, ih, 0, 0, iw, ih);
-					} else if (!this.style.rootComposite && this.stub.root) gr.DrawImage(this.stub.root, x1, y1, iw, ih, 0, 0, iw, ih);
+						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, x1, y1, iw, ih, false, true, art.reflection); }
+					} else if (!this.style.rootComposite && this.stub.root) {
+						this.drawArt(gr, art, style, this.stub.root, x1, y1, iw, ih, false, false, art.reflectionRoot);
+					}
 					if (this.labels.overlay) {
 						gr.FillGradRect(x1, y2 - 1, iw / 2, ui.l.w, 1, $.RGBA(0, 0, 0, 0), ui.col.imgBor);
 						gr.FillGradRect(x1 + iw / 2, y2 - 1, iw / 2, ui.l.w, 1, ui.col.imgBor, $.RGBA(0, 0, 0, 0));
@@ -618,14 +624,14 @@ class Images {
 				this.drawItemOverlay(gr, style, item, x1, y1, iw, ih);
 				if (i == pop.m.i) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
-						if (ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImg); }
+						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, x1, y1, iw, ih, ui.col.frameImg); }
 						else { this.drawFrame(gr, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, y1, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 				}
 				if (item.sel) {
 					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick'); }
-					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, style, item, x1, y1, iw, ih, ui.col.frameImgSel); }
+					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, x1, y1, iw, ih, ui.col.frameImgSel); }
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', x1, y1, iw, ih); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
@@ -688,6 +694,15 @@ class Images {
 		ui.drawTopBarUnderlay(gr);
 	}
 
+	drawArt(gr, art, style, image, x, y, w, h, border, shadow, reflection) {
+		const offsetX = art.reflection && art.reflectionStyle === 0 ? this.bor.pad / 4 : 0;
+		if (shadow) { this.drawStyleShadow(gr, style, x - offsetX, y, w, h); }
+		if (reflection) { this.drawReflection(gr, art, image, x, y, w, h); }
+		gr.DrawImage(image, x - offsetX, y, w, h, 0, 0, w, h);
+		if (border) { this.drawStyleBorder(gr, style, x - offsetX, y, w, h); } // Regorxxx <- Image border setting | Effect per art type ->
+		return { x, y, w, h };
+	};
+
 	drawFrame(gr, box_x, box_y, col, weight) {
 		let x, y, w, h, l_w;
 		switch (weight) {
@@ -709,17 +724,25 @@ class Images {
 		gr.DrawRect(x, y, w, h, l_w, col);
 	}
 
-	drawImageFrame(gr, style, item, x, y, w, h, col) {
+	drawImageFrame(gr, art, style, item, x, y, w, h, col) {
 		const l_w = 3;
 		if (item.root && !ppt.frameImageRoot) {
 			if (this.stub.rootFrame) {
+				if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 				gr.DrawImage(this.stub.rootFrame, x, y, w, h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height);
 			}
 			else {
+				if (art.reflection) {
+					if (ppt.frameReflection) {
+						if (art.reflectionStyle === 0) { x -= this.bor.pad / 4; w += this.bor.pad / 2; }
+						if (art.reflectionStyle === 1) { x -= this.bor.pad / 2; w += this.bor.pad; }
+					} else if (art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
+				}
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				gr.DrawRect(x + 1, y + 1, w - l_w / 2 - 1, h - l_w / 2 - 1, l_w, col);
 			}
 		} else {
+			if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 			switch (style.border) {
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
@@ -733,7 +756,7 @@ class Images {
 				}
 				case 'heart': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.DrawPolygon(col, l_w, getHeartPoints(w - l_w / 2, 60, x - l_w / 4, y - h / 16));
+					gr.DrawPolygon(col, l_w, this.getHeartPoints(w, h, x - l_w / 4, y));
 					break;
 				}
 				default: {
@@ -872,7 +895,7 @@ class Images {
 			}
 			case 'heart': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
-				gr.DrawPolygon(ui.col.imgBor, 2, getHeartPoints(w, 60, x, y - h / 16));
+				gr.DrawPolygon(ui.col.imgBor, 2, this.getHeartPoints(w - 2, h, x + 1, y));
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -906,7 +929,7 @@ class Images {
 					w += 6;
 					y -= 3;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getHeartPoints(w, 60, x - 3, y - h / 16));
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -941,7 +964,7 @@ class Images {
 					w += 6;
 					y -= 3;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getHeartPoints(w, 60, x - 3, y - h / 16));
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -953,8 +976,44 @@ class Images {
 			}
 		}
 	}
-	// Regorxxx ->
 
+	drawReflection(gr, art, image, x, y, w, h) {
+		const alpha = 102; // Art alpha * 0.4
+		switch (art.reflectionStyle) {
+			case 0: { // asymmetric right
+				const offsetX = this.bor.pad / 2;
+				const clone = image.Clone(0, 0, image.Width, image.Height);
+				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				applyMask(
+					clone,
+					(mask, gr, w, h) => {
+						gr.FillGradRect(0, 0, offsetX, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
+					},
+					true
+				);
+				gr.DrawImage(clone, x + image.Width - offsetX / 2, y, Math.ceil(offsetX), h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				break;
+			}
+			case 1: // symmetric
+			default: {
+				const offsetX = this.bor.pad / 2;
+				const clone = image.Clone(0, 0, image.Width, image.Height);
+				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				applyMask(
+					clone,
+					(mask, gr, w, h) => {
+						gr.FillGradRect(w - offsetX, 0, offsetX, h, 0.15, $.RGB(255, 255, 255), $.RGB(0, 0, 0));
+						gr.FillGradRect(0, 0, offsetX, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
+					},
+					true
+				);
+				gr.DrawImage(clone, Math.floor(x - offsetX), y, Math.ceil(offsetX), h, Math.floor(image.Width - offsetX), 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				gr.DrawImage(clone, x + image.Width, y, Math.ceil(offsetX), h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				break;
+			}
+		}
+	};
+	// Regorxxx ->
 
 	format(image, n, style, w, h, fade, caller, i, key) {
 		let ix = 0;
@@ -1203,7 +1262,7 @@ class Images {
 				this.shadow.StackBlur(4);
 				break;
 			case 'heart':
-				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getHeartPoints(wh, 60, 0, -wh / 16)));
+				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh)));
 				this.shadow.StackBlur(4);
 				break;
 			default:
@@ -1290,15 +1349,16 @@ class Images {
 			this.letter.w = Math.round(g.CalcTextWidth('W', ui.font.main));
 			this.text.h = Math.max(Math.round(g.CalcTextHeight('String', ui.font.group)) + lineSpacing, Math.round(g.CalcTextHeight('String', ui.font.lot)) + lineSpacing, 10);
 		});
-		// Regorxxx <- Code cleanup
+		// Regorxxx <- Code cleanup | Effect per art type | Image border setting
+		const art = this.getArt(ppt.artId);
 		this.style = {
-			dropShadow: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3,
-			dropShadowStub: ppt.albumArtDropShadow && ppt.albumArtLabelType !== 3 && (ppt.artId === 4 || ppt.curNoCoverImg > 2),
+			dropShadow: art.shadow && ppt.albumArtLabelType !== 3,
+			dropShadowStub: art.shadow && ppt.albumArtLabelType !== 3 && (ppt.artId === 4 || ppt.curNoCoverImg > 2),
 			image: this.getArtStyle(ppt.artId),
 			rootComposite: ppt.rootNode && ppt.curRootImg === 3,
 			vertical: ppt.albumArtFlowMode ? ui.h - panel.search.h > ui.w - ui.sbar.w : true,
-			dropGrad: ppt.albumArtDropShadow && !this.dropShadow,
-			dropGradStub: ppt.albumArtDropShadow && !this.dropShadowStub,
+			dropGrad: art.shadow && !this.dropShadow,
+			dropGradStub: art.shadow && !this.dropShadowStub,
 		};
 		// Regorxxx ->
 
@@ -1317,9 +1377,14 @@ class Images {
 					flip: ppt.albumArtFlipLabels,
 					statistics: ppt.itemShowStatistics ? 1 : 0
 				};
-				this.bor.pad = !this.labels.hide && !this.labels.overlay ? (ppt.thumbNailGapStnd == 0 ? Math.round(this.text.h * (this.labels.right ? 0.75 : 1.05)) : ppt.thumbNailGapStnd - Math.round(2 * $.scale)) : ppt.thumbNailGapCompact;
+				// Regorxxx <- Code cleanup | Effect per art type
+				this.bor.pad = !this.labels.hide && !this.labels.overlay
+					? ppt.thumbNailGapStnd == 0
+						? Math.round(this.text.h * (this.labels.right ? 0.75 : 1.05) * (art.reflection || art.reflectionRoot? 2.5 : 1))
+						: ppt.thumbNailGapStnd - Math.round(2 * $.scale)
+					: ppt.thumbNailGapCompact;
+				// Regorxxx ->
 				this.im.offset = Math.round(!this.labels.hide && !this.labels.overlay ? this.bor.pad / 2 : -2);
-
 				if (this.labels.hide || this.labels.overlay) {
 					this.panel.y = panel.search.h + Math.round(this.bor.pad / 2);
 					this.bor.bot = 0;
@@ -1331,7 +1396,6 @@ class Images {
 					this.bor.side = Math.round(2 * $.scale);
 					this.bor.bot = this.bor.side * 2;
 				}
-
 				const margin = ppt.margin;
 				this.panel.x = (ppt.sbarShow == 2 ? margin : Math.max(margin, ui.sbar.w)) + ui.l.w;
 				this.panel.w = ui.w - ui.l.w * 2 - (ui.sbar.type == 0 || ppt.sbarShow != 2 ? Math.max(margin, ui.sbar.w) * 2 : (margin * 2 + ui.sbar.w));
@@ -1374,7 +1438,13 @@ class Images {
 					flip: ppt.albumArtFlipLabels,
 					statistics: ppt.itemShowStatistics ? 1 : 0
 				};
-				this.bor.pad = !this.labels.hide && !this.labels.overlay ? (ppt.thumbNailGapStnd == 0 ? Math.round(this.text.h * 1.05) : ppt.thumbNailGapStnd - Math.round(2 * $.scale)) : ppt.thumbNailGapCompact;
+				// Regorxxx <- Code cleanup | Effect per art type
+				this.bor.pad = !this.labels.hide && !this.labels.overlay
+					? ppt.thumbNailGapStnd == 0
+						? Math.round(this.text.h * 1.05 * (art.reflection || art.reflectionRoot? 2.5 : 1))
+						: ppt.thumbNailGapStnd - Math.round(2 * $.scale)
+					: ppt.thumbNailGapCompact;
+				// Regorxxx ->
 				this.im.offset = Math.round(!this.labels.hide && !this.labels.overlay ? this.bor.pad / 2 : -2);
 				if (this.labels.hide || this.labels.overlay) {
 					this.bor.bot = 0;
