@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/03/26
+//09/04/26
 
 /* global ppt:readable, $:readable, WshShell:readable, doc:readable */
 /* global folders:readable */
@@ -118,7 +118,7 @@ class PopUpBox {
 	}
 
 	isIEInstalled() {
-		const diskLetters = Array.from(Array(26)).map((e, i) => i + 65).map((x) => `${String.fromCharCode(x)}:\\`);
+		const diskLetters = Array.from({ length: 26 }, (e, i) => `${String.fromCodePoint(i + 65)}:\\`);
 		const paths = ['Program Files\\Internet Explorer\\ieinstal.exe', 'Program Files (x86)\\Internet Explorer\\ieinstal.exe'];
 		return diskLetters.some(d => {
 			try { // Needed when permission error occurs and current SMP implementation is broken for some devices....
