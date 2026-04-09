@@ -202,10 +202,10 @@ class Populate {
 			} else if (node.child && node.child.length) {
 				node.child.forEach((subNode) => this.addItems(arr, subNode));
 			} else if (node.item.length > 1 || node.item[0].count > 1) {
-				this.branch(node, !!node.root, true, void (0), true);
+				this.branch(node, !!node.root, true, void (0), false);
 				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
 				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
-				this.clearChild(node, true);
+				this.clearChild(node, false);
 			} else {
 				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
 			}
@@ -226,7 +226,7 @@ class Populate {
 	}
 
 	// Regorxxx <- Preserve tree sorting at selection
-	branch(br, base, node, block, simulate) {
+	branch(br, base, node, block, clearArt) {
 		if (!br || br.track) return;
 		const ix = this.showTracks ? 2 : 3;
 		const l = base ? 0 : this.rootNode ? br.level : br.level + 1;
@@ -254,7 +254,7 @@ class Populate {
 			}
 		});
 		this.condense(br.child);
-		this.buildTree(lib.root, 0, node, true, block, simulate);
+		this.buildTree(lib.root, 0, node, true, block, clearArt);
 	}
 	// Regorxxx ->
 
@@ -351,7 +351,7 @@ class Populate {
 	}
 
 	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection
-	buildTree(br, level, node, full, block, simulate) {
+	buildTree(br, level, node, full, block, clearArt) {
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
@@ -490,7 +490,7 @@ class Populate {
 		}
 		const br_l = br.length;
 		const par = this.tree.length - 1;
-		if (level == 0 && !simulate) { this.clearTree(); }
+		if (level == 0) { this.clearTree(clearArt); }
 		br.forEach((v, i) => {
 			j = this.tree.length;
 			const item = this.tree[j] = v;
@@ -897,15 +897,15 @@ class Populate {
 		this.tree.forEach(v => v.sel = false);
 	}
 
-	clearTree() {
-		if (panel.imgView && this.tree.length) { img.trimCache(this.tree[0].key); }
+	clearTree(clearArt = true) {
+		if (clearArt && panel.imgView && this.tree.length) { img.trimCache(this.tree[0].key); }
 		this.tree = [];
 	}
 
 	// Regorxxx <- Preserve tree sorting at selection
-	clearChild(br, simulate) {
+	clearChild(br, clearArt) {
 		br.child = [];
-		this.buildTree(lib.root, 0, true, true, void (0), simulate);
+		this.buildTree(lib.root, 0, true, true, void (0), clearArt);
 	}
 	// Regorxxx ->
 
