@@ -30,7 +30,7 @@ class PanelProperty {
 
 class PanelProperties {
 	constructor() {
-		// this.name_list = {}; debug
+		this.name_list = {}; // debug
 	}
 
 	// Methods
@@ -39,7 +39,7 @@ class PanelProperties {
 		switch (type) {
 			case 'auto':
 				properties.forEach(v => {
-					// this.validate(v); debug
+					this.validate(v); //debug
 					this.add(v);
 				});
 				break;
@@ -51,24 +51,24 @@ class PanelProperties {
 
 	validate(item) {
 		if (!$.isArray(item) || item.length !== 3 || typeof item[2] !== 'string') {
-			throw ('invalid property: requires array: [string, any, string]');
+			throw new Error('invalid property: requires array: [string, any, string]');
 		}
 
 		if (item[2] === 'add') {
-			throw (`property_id: ${item[2]}\nThis id is reserved`);
+			throw new Error(`property_id: ${item[2]}\nThis id is reserved`);
 		}
 
 		if (this[item[2]] != null || this[item[2] + '_internal'] != null) {
-			throw (`property_id: ${item[2]}\nThis id is already occupied`);
+			throw new Error(`property_id: ${item[2]}\nThis id is already occupied`);
 		}
 
 		if (this.name_list[item[0]] != null) {
-			throw (`property_name: ${item[0]}\nThis name is already occupied`);
+			throw new Error(`property_name: ${item[0]}\nThis name is already occupied`);
 		}
 	}
 
 	add(item) {
-		// this.name_list[item[0]] = 1; debug
+		this.name_list[item[0]] = 1; // debug
 		this[`${item[2]}_internal`] = new PanelProperty(item[0], item[1]);
 
 		Object.defineProperty(this, item[2], {
