@@ -1711,7 +1711,7 @@ class Populate {
 	}
 
 	isDate(n) {
-		return isNaN(n) && !isNaN(Date.parse(n));
+		return isNaN(n) && !isNaN(Date.parse(n)); // NOSONAR
 	}
 
 	inRange(num, item) {
