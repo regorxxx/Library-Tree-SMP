@@ -263,7 +263,7 @@ let properties = [
 	['Image Shadow [Icon]', false, 'imgIconShadow'],
 	['Image Shadow [Artist]', false, 'imgArtistShadow'],
 	['Image Shadow [TF]', false, 'imgTfShadow'],
-	 // Regorxxx ->
+	// Regorxxx ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],
@@ -490,4 +490,4 @@ if (ppt.get('Tree List View')) {
 if (ppt.get('Image Type') > 5) { ppt.set('Image Type', 0); } // Regorxxx <- Custom TF art safety check ->
 ppt.set('Image Show Index Number', null);
 ppt.set('Image Show Index Year Auto', null);
-properties = void(0);
+properties = void (0);

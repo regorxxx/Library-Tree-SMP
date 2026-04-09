@@ -771,7 +771,7 @@ class Images {
 
 	drawImageEffect(gr, effect, x, y, w, h,) {
 		gr.SetSmoothingMode(SmoothingMode.HighQuality);
-		switch (effect) {
+		switch (effect) { // NOSONAR
 			case 'flare': { // Regorxxx <- Flare hover effect ->
 				gr.DrawImage(this.mask.flareEffect, x, y, w, h, 0, 0, this.mask.flareEffect.Width, this.mask.flareEffect.Height);
 				break;
@@ -1380,7 +1380,7 @@ class Images {
 				// Regorxxx <- Code cleanup | Effect per art type
 				this.bor.pad = !this.labels.hide && !this.labels.overlay
 					? ppt.thumbNailGapStnd == 0
-						? Math.round(this.text.h * (this.labels.right ? 0.75 : 1.05) * (art.reflection || art.reflectionRoot? 2.5 : 1))
+						? Math.round(this.text.h * (this.labels.right ? 0.75 : 1.05) * (art.reflection || art.reflectionRoot ? 2.5 : 1))
 						: ppt.thumbNailGapStnd - Math.round(2 * $.scale)
 					: ppt.thumbNailGapCompact;
 				// Regorxxx ->
@@ -1441,7 +1441,7 @@ class Images {
 				// Regorxxx <- Code cleanup | Effect per art type
 				this.bor.pad = !this.labels.hide && !this.labels.overlay
 					? ppt.thumbNailGapStnd == 0
-						? Math.round(this.text.h * 1.05 * (art.reflection || art.reflectionRoot? 2.5 : 1))
+						? Math.round(this.text.h * 1.05 * (art.reflection || art.reflectionRoot ? 2.5 : 1))
 						: ppt.thumbNailGapStnd - Math.round(2 * $.scale)
 					: ppt.thumbNailGapCompact;
 				// Regorxxx ->
