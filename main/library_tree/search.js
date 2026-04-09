@@ -192,11 +192,10 @@ class Search {
 			this.getOffset(gr);
 			gr.GdiDrawText(panel.search.txt.substr(this.offset), ui.font.main, ui.col.search, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
 		} else {
-			if (!ui.img.blurDark) gr.GdiDrawText('Search', ui.font.search, ui.col.txt_box, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
-			else {
+			if (ui.img.blurDark) {
 				gr.SetTextRenderingHint(5);
 				gr.DrawString('Search', ui.font.search, ui.col.txt_box, panel.search.x, -1, panel.search.w, panel.search.sp, panel.s_lc);
-			}
+			} else { gr.GdiDrawText('Search', ui.font.search, ui.col.txt_box, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l); }
 		}
 		this.drawCursor(gr);
 	}
@@ -257,11 +256,7 @@ class Search {
 	lbtn_dn(x, y) {
 		panel.searchPaint();
 		this.lbtnDn = panel.search.active = this.trace(x, y, 'button'); // Regorxxx <- Code cleanup ->
-		if (!this.lbtnDn) {
-			this.offset = this.start = this.end = this.cx = 0;
-			timer.clear(timer.cursor);
-			return;
-		} else {
+		if (this.lbtnDn) {
 			if (this.shift) {
 				this.start = this.cx;
 				this.end = this.cx = this.getCursorChrPos(x);
@@ -270,6 +265,10 @@ class Search {
 				this.start = this.end = this.cx;
 			}
 			timer.searchCursor(true);
+		} else {
+			this.offset = this.start = this.end = this.cx = 0;
+			timer.clear(timer.cursor);
+			return;
 		}
 		panel.searchPaint();
 	}
@@ -322,7 +321,7 @@ class Search {
 
 	on_char(code, force) {
 		let searchDone = false;
-		let text = String.fromCharCode(code) || '';
+		let text = String.fromCodePoint(code) || '';
 		if (force) panel.search.active = true;
 		if (!panel.search.active || code == 5 || code == 9 || code == 12) return;
 		panel.search.cursor = false;
@@ -335,7 +334,7 @@ class Search {
 					pop.cache.search = {};
 					lib.setNodes();
 					panel.setHeight(true);
-					if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, !lib.list.Count ? lib.list : panel.list);
+					if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);
 					else if (!panel.search.txt.length) pop.notifySelection();
 					lib.search.cancel();
 					this.logHistory(true); // Regorxxx <- Fix search history on enter ->
@@ -500,14 +499,7 @@ class Search {
 			case vk.left:
 			case vk.right:
 				if (vkey == vk.left) {
-					if (!this.ctrl) {
-						if (this.offset > 0) {
-							if (this.cx <= this.offset) {
-								this.offset--;
-								this.cx--;
-							} else this.cx--;
-						} else if (this.cx > 0) this.cx--;
-					} else {
+					if (this.ctrl) {
 						let boundary = 0;
 						for (let k = this.cx - 1; k > 0; k--) {
 							if (panel.search.txt[k] != ' ' && panel.search.txt[k - 1] == ' ') {
@@ -520,11 +512,17 @@ class Search {
 						}
 						this.cx = boundary;
 						this.offset = this.offset >= this.end - this.start ? this.offset - this.end + this.start : 0;
+					} else {
+						if (this.offset > 0) {
+							if (this.cx <= this.offset) {
+								this.offset--;
+								this.cx--;
+							} else this.cx--;
+						} else if (this.cx > 0) this.cx--;
 					}
 				}
 				if (vkey == vk.right && this.cx < panel.search.txt.length) {
-					if (!this.ctrl) this.cx++;
-					else {
+					if (this.ctrl) {
 						let boundary = panel.search.txt.length;
 						for (let k = this.cx; k < panel.search.txt.length; k++) {
 							if (panel.search.txt[k] == ' ' && panel.search.txt[k + 1] != ' ') {
@@ -533,7 +531,7 @@ class Search {
 							}
 						}
 						this.cx = boundary;
-					}
+					} else { this.cx++; }
 				}
 				this.start = this.end = this.cx;
 				if (this.shift) {
@@ -569,7 +567,7 @@ class Search {
 					let newRightSide = rightSide.slice(boundary);
 					if (newRightSide.length && !/\s$/.test(leftSide) && !/^\s/.test(newRightSide)) newRightSide = ' ' + newRightSide;
 					panel.search.txt = leftSide + newRightSide;
-					this.cx = !/\s$/.test(leftSide) ? leftSide.length + 1 : leftSide.length;
+					this.cx = /\s$/.test(leftSide) ? leftSide.length : leftSide.length + 1;
 					if (this.offset > 0) {
 						this.offset -= initial - panel.search.txt.length;
 					}
@@ -594,7 +592,7 @@ class Search {
 	}
 
 	rbtn_up(x, y) {
-		this.paste = $.getClipboardData() ? true : false;
+		this.paste = !!$.getClipboardData();
 		searchMenu.load(x, y);
 	}
 
@@ -663,7 +661,7 @@ class Find {
 			else { code += 32; }
 		}
 		// Regorxxx <- Quick-search at any position of string
-		const text = String.fromCharCode(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
+		const text = String.fromCodePoint(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
 			const char = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase();
@@ -847,11 +845,12 @@ class Find {
 		let first = -1;
 		pop.tree.some((v, i) => {
 			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
-			const name = ppt.findTrans
-				? $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''), { languages: panel.sortingTransLangs }))
-				: $.asciify(v.name.replace(/@!#.*?@!#/g, ''));
+			const name = v.name.replace(/@!#.*?@!#/g, '');
+			const nameNorm = ppt.findTrans
+				? $.asciify(Language.transliterate(name, { languages: panel.sortingTransLangs }))
+				: $.asciify(name);
 			// Regorxxx ->
-			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
+			if (nameNorm != panel.rootName && (name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch) || nameNorm.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch))) {
 				if (i <= currPos) {
 					if (first === -1) { first = i; }
 					return false;
@@ -871,11 +870,12 @@ class Find {
 		for (let i = len, v; i >= 0; i--) {
 			v = pop.tree[i];
 			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
-			const name = ppt.findTrans
-				? $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, ''), { languages: panel.sortingTransLangs }))
-				: $.asciify(v.name.replace(/@!#.*?@!#/g, ''));
+			const name = v.name.replace(/@!#.*?@!#/g, '');
+			const nameNorm = ppt.findTrans
+				? $.asciify(Language.transliterate(name, { languages: panel.sortingTransLangs }))
+				: $.asciify(name);
 			// Regorxxx ->
-			if (name != panel.rootName && name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch)) {
+			if (name != panel.rootName && (name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch) || nameNorm.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch))) {
 				if (i >= currPos) {
 					if (first === -1) { first = i; }
 				} else {

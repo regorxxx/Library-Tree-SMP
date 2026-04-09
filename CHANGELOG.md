@@ -94,6 +94,7 @@
 		- sourcePanel and sourcePlaylistName allow multiple values, joined with '|'.
 		- performance improvements and code cleanup.
 - Quick-search: changed the default timer for every next char to 300 ms (from 500 ms previously hard-coded). The initial char has now a 50 ms delay (from 500 ms previously hard-coded). Note CUI/DUI album list panels have an almost instant initial char  (which also feels "faster" due to non-smooth scrolling usage). The new default values should offer a more responsive behavior.
+- Quick-search: asymmetric search for non ascii values. e.g. E matches E and É, but É matches only É.
 - Helpers: support for long paths (>260 chars) in multiple internal file handling functions.
 - HTML: added inline links to navigate within tabs at multiple help related sections.
 - HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
