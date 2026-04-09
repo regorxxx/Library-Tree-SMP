@@ -1810,7 +1810,8 @@ class Populate {
 		this.lbtnDn = false;
 		this.dbl_clicked = false;
 		if (y < panel.search.h) { return; }
-		if (x > ui.w - ui.sbar.sp) { return; }
+		const vertical = !ppt.albumArtFlowMode || ui.h - panel.search.h > ui.w - ui.sbar.w;
+		if ((!panel.imgView || vertical) && x > ui.w - ui.sbar.sp || panel.imgView && !vertical && y > ui.h - ui.sbar.sp) { return; }
 		const ix = this.get_ix(x, y, true, false);
 		if (ppt.selRectArt && panel.imgView) {
 			if (this.lastSelMul.includes(ix)) {
