@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 08/04/26 -->
+﻿<!DOCTYPE html> <!-- 09/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1111,7 +1111,7 @@
 					<div id="statisticsTooltip"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><a id="stats_help" href="#" onclick="showHelp('stats_text');return false;">Statistics help</a></div>
 					<div id="stats_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Can be any real number from -&#x221E; to &#x221E; (not included)<br>&emsp;&#x25E6; Use X&gt; for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
+						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Can be any real number from -&#x221E; to &#x221E; (not included)<br>&emsp;&#x25E6; Use X&gt;1 for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
 						<div><br></div>
 					</div>
 				</div>
@@ -1467,7 +1467,7 @@
 	</script>
 	<!-- Regorxxx -->
 	<script>
-		var em, i = 0, is_closed_manually = false, j = 0, height, left, top, window_h, window_w;
+		var em, i = 0, is_closed_manually = false, j = 0, k = 0, height, left, top, window_h, window_w;
 
 		function getValue(id) {
 			var div = document.getElementById(id);
@@ -2395,8 +2395,8 @@
 							['$nowplayingorselected{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.', 'Filters'],
 							['$iterate{\'X\',N,C}', 'Views|Filters\nSearch|Sorting', 'Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). Note X TF expression must be enclosed on single quotes \'X\' and contain the string $counter, to be replaced on every step. e.g.<br>$iterate{\'$meta(ARTIST,$counter)\',2,¦}<br>Becomes: $meta(ARTIST,0)¦$meta(ARTIST,1)', 'Views'],
 							['$iterate{\'X\',N,C}', 'Views|Filters\nSearch|Sorting', 'Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). Note X TF expression must be enclosed on single quotes \'X\' and contain the string $counter, to be replaced on every step. e.g.<br>$iterate{\'ARTIST IS $nowplaying{$meta(ARTIST,$counter)}\',2,OR}<br>Becomes: (ARTIST IS $nowplaying{$meta(ARTIST,0)}) OR (ARTIST IS $nowplaying{$meta(ARTIST,1)})', 'Filters'],
-							['$randint{max}<br>$randint{min,max}', 'Views|Filters\nSearch|Sorting', 'Returns a random float number between min and max (included), e.g.<br>$colour{$randint{255}-$randint{255}-$randint{255}}%ARTIST%|$colour{$randint{255}-$randint{255}-$randint{255}}%ALBUM%<br>Displays all artist with a random color and all albums with another random color.', 'Views'],
-							['$randint{max}<br>$randint{min,max}', 'Views|Filters\nSearch|Sorting', 'Returns a random float number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3', 'Filters'],
+							['$randint{max}<br>$randint{min,max}', 'Views|Filters\nSearch|Sorting', 'Returns a random integer number between min and max (included), e.g.<br>$colour{$randint{255}-$randint{255}-$randint{255}}%ARTIST%|$colour{$randint{255}-$randint{255}-$randint{255}}%ALBUM%<br>Displays all artist with a random color and all albums with another random color.', 'Views'],
+							['$randint{max}<br>$randint{min,max}', 'Views|Filters\nSearch|Sorting', 'Returns a random integer number between min and max (included), e.g.<br>%VALENCE% EQUAL $randint{1,4} AND %LOUDNESS% EQUAL $randint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 3', 'Filters'],
 							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters\nSearch|Sorting', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>$colour{$pseudorandint{255}-$pseudorandint{255}-$pseudorandint{255}}%ARTIST%|$colour{$randint{255}-$randint{255}-$randint{255}}%ALBUM%<br>Displays all artist with a random shade of gray and all albums with another random color.', 'Views'],
 							['$pseudorandint{max}<br>$pseudorandint{min,max}', 'Views|Filters\nSearch|Sorting', 'Equal to $randint{} but every function instance will return the same random value, e.g.<br>%VALENCE% EQUAL $pseudorandint{1,4} AND %LOUDNESS% EQUAL $pseudorandint{1,4}<br>Becomes: %VALENCE% EQUAL 2 AND %LOUDNESS% EQUAL 2', 'Filters'],
 							['$randfloat{max}<br>$randfloat{min,max}', 'Views|Filters\nSearch|Sorting', 'Returns a random float number between min and max (included), e.g.<br>$randfloat{3,5}<br>Becomes: 3.78', 'Views'],
@@ -2585,7 +2585,7 @@
 									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
-									for (var k = 0; k < sourceIdsNamesLen; k++) {
+									for (k = 0; k < sourceIdsNamesLen; k++) {
 										if (sourceIdsNames[k] !== 'separator') {
 											isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsNames[k]);
 											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
@@ -2604,7 +2604,7 @@
 										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
 										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
 										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
-										for (var k = 0; k < sourceIdsGUIDsLen; k++) {
+										for (k = 0; k < sourceIdsGUIDsLen; k++) {
 											if (sourceIdsNames[k] === 'separator') {
 												window['presetRuleIfSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 												window['presetRuleIfNotSourceIdGUIDs' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
@@ -3556,7 +3556,7 @@
 							ix.view = par.id.replace('view_cnt', '');
 							par.style["background"] = "lightgreen";
 						}
-						else {ix.view = -1;}
+						else { ix.view = -1; }
 						break;
 					case 'filters':
 						list = document.getElementById("filter").querySelectorAll("[id^='filter_cnt']")
@@ -3567,7 +3567,7 @@
 							ix.filter = par.id.replace('filter_cnt', '');
 							par.style["background"] = "lightgreen";
 						}
-						else {ix.filter = -1;}
+						else { ix.filter = -1; }
 						break;
 					// Regorxxx <- Presets tab | Preset rules
 					case 'presets':
@@ -3667,8 +3667,8 @@
 		// Regorxxx ->
 
 		function toggle(item) {
-			if (window[item].style.display == 'block') {window[item].style.display = 'none';}
-			else {window[item].style.display = 'block'}
+			if (window[item].style.display == 'block') { window[item].style.display = 'none'; }
+			else { window[item].style.display = 'block' }
 		}
 
 		var h = [
