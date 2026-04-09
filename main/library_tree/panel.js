@@ -1387,51 +1387,48 @@ class Panel {
 				lib.searchCache = {};
 				pop.cache.filter = {};
 				pop.cache.search = {};
-				switch (i) {
-					case this.filter.menu.length:
-						ppt.toggle('reset');
-						if (ppt.reset) {
-							this.searchPaint();
-							lib.treeState(true, 2);
-						}
-						break;
-					default:
-						// Regorxxx <- Preset rules
-						if (ppt.presetRulesOnFilterUse) {
-							const rule = this.getPresetRule({ filterBy: i });
-							if (this.applyPresetRule(rule)) { break; };
-						}
-						// Regorxxx ->
-						ppt.filterBy = i;
-						if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
-						but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
-						this.calcText();
-						if (this.search.txt) lib.upd_search = true;
-						if (!ppt.reset) {
-							const ix = pop.get_ix(this.imgView ? img.panel.x + 1 : 0, (!this.imgView || img.style.vertical ? this.tree.y : this.tree.x) + sbar.row.h / 2, true, false);
-							let l = Math.min(Math.floor(ix + this.rows), pop.tree.length);
-							if (ix != -1) {
-								for (i = ix; i < l; i++) {
-									if (pop.tree[i].sel) {
-										sbar.checkScroll(sbar.row.h * i, 'full', true);
-										lib.logTree();
-										break;
-									}
+				if (i === this.filter.menu.length) {
+					ppt.toggle('reset');
+					if (ppt.reset) {
+						this.searchPaint();
+						lib.treeState(true, 2);
+					}
+				} else {
+					// Regorxxx <- Preset rules
+					if (ppt.presetRulesOnFilterUse) {
+						const rule = this.getPresetRule({ filterBy: i });
+						if (this.applyPresetRule(rule)) { break; };
+					}
+					// Regorxxx ->
+					ppt.filterBy = i;
+					if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
+					but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
+					this.calcText();
+					if (this.search.txt) lib.upd_search = true;
+					if (!ppt.reset) {
+						const ix = pop.get_ix(this.imgView ? img.panel.x + 1 : 0, (!this.imgView || img.style.vertical ? this.tree.y : this.tree.x) + sbar.row.h / 2, true, false);
+						let l = Math.min(Math.floor(ix + this.rows), pop.tree.length);
+						if (ix != -1) {
+							for (i = ix; i < l; i++) {
+								if (pop.tree[i].sel) {
+									sbar.checkScroll(sbar.row.h * i, 'full', true);
+									lib.logTree();
+									break;
 								}
 							}
-							if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
-							else if (ppt.rememberTree) { lib.logFilter(); }
 						}
-						lib.getLibrary();
-						lib.rootNodes(ppt.reset ? 0 : 1, true);
-						but.refresh(true);
-						this.searchPaint();
-						if (!pop.notifySelection()) {
-							const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-							window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
-						}
-						if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
-						break;
+						if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
+						else if (ppt.rememberTree) { lib.logFilter(); }
+					}
+					lib.getLibrary();
+					lib.rootNodes(ppt.reset ? 0 : 1, true);
+					but.refresh(true);
+					this.searchPaint();
+					if (!pop.notifySelection()) {
+						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
+						window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+					}
+					if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 				}
 				pop.checkAutoHeight();
 				break;

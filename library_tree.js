@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//09/04/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '1.0.0', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -22,8 +22,9 @@ const files = [
 	'helpers\\helpers_xxx_flags.js',
 	'helpers\\helpers_xxx_input.js',
 	'helpers\\helpers_xxx_language.js',
-	'helpers\\callbacks_xxx.js',
+	'helpers\\helpers_xxx_prototypes_smp.js',
 	'helpers\\helpers_xxx_tags.js',
+	'helpers\\callbacks_xxx.js',
 	'helpers\\helpers_xxx_prototypes_smp_post.js',
 	'helpers\\helpers_xxx_UI_draw.js',
 	'main\\filter_and_query\\remove_duplicates.js',

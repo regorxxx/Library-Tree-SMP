@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/04/26
+//09/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -148,7 +148,7 @@ class Helpers {
 	}
 
 	jsonParse(n, defaultVal, type) {
-		switch (type) {
+		switch (type) { // NOSONAR
 			case 'file':
 				try {
 					return JSON.parse(this.open(n));
@@ -162,10 +162,6 @@ class Helpers {
 					return defaultVal;
 				}
 		}
-	}
-
-	objHasOwnProperty(obj, key) {
-		return Object.prototype.hasOwnProperty.call(obj, key);
 	}
 
 	open(f) {
@@ -415,10 +411,9 @@ class Helpers {
 		return (tag.includes('%') || tag.includes('$') ? tag : '%' + tag + '%');
 	}
 
-	getHandleListTags(handleList, tagsArray, options = { bMerged: false, bCached: false }) {
+	getHandleListTags(handleList, tagsArray, { bMerged = false } = {}) {
 		if (!this.isArrayStrings(tagsArray)) { return null; }
 		if (!handleList) { return null; }
-		options = { bMerged: false, bCached: false, ...(options || {}) };
 		const tagArray_length = tagsArray.length;
 		/** @type {any[]|any[][]} */
 		let outputArray = [];
@@ -432,13 +427,13 @@ class Helpers {
 				: tagsArray[i].includes('%')
 					? tagsArray[i]
 					: '%' + tagsArray[i] + '%';
-			if (options.bMerged) { tagString += this._b((i === 0 ? '' : ', ') + tagStr); } // We have all values separated by comma
+			if (bMerged) { tagString += this._b((i === 0 ? '' : ', ') + tagStr); } // We have all values separated by comma
 			else { tagString += (i === 0 ? '' : sep) + this._b(tagStr); } // We have tag values separated by comma and different tags by 'sep'
 			i++;
 		}
 		let tfo = fb.TitleFormat(tagString);
 		outputArray = tfo.EvalWithMetadbs(handleList);
-		if (options.bMerged) { // Just an array of values per track: n x 1
+		if (bMerged) { // Just an array of values per track: n x 1
 			for (let i = 0; i < outputArray_length; i++) {
 				outputArray[i] = outputArray[i].split(', ');
 			}
@@ -454,7 +449,7 @@ class Helpers {
 	}
 
 	getTagsFromTf(tf, exclude = ['%DISCNUMBER%', '%TRACKNUMBER%', '%TRACK NUMBER%', '%TOTALTRACKS%', '%TOTALDISCS%', '%SUBSONG%', '%__CHANNELS%', '%COMPILATION%']) {
-		return [...(new Set(tf.match(/%.+?%||\$meta\(.+?,.+?\)/gi)
+		return [...(new Set(tf.match(/%.+?%|\$meta\(.+?,.+?\)/gi)
 			.map((tag) => tag.replace(/[<>]|\$meta\(|,\d\)/gi, ''))
 			.filter(Boolean)
 			.map((tag) => this._t(tag.toUpperCase()))

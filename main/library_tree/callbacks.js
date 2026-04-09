@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/04/26
+//08/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -272,7 +272,6 @@ addEventListener('on_notify_data', (name, info) => {
 					if (ppt.libSourceChained) { pop.notifySelection(lib.list); } // Regorxxx <- Chained facets updates.
 				}
 				// Regorxxx ->
-				return;
 			}
 		});
 	}
@@ -394,14 +393,14 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': quicksearch': {
 			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
-			info.search.split('').forEach((s) => on_char(s.charCodeAt(0)));
+			info.search.split('').forEach((s) => on_char(s.codePointAt(0)));
 			break;
 		}
 		case window.ScriptInfo.Name + ': search': {
 			if (!ppt.searchShow) { break; }
 			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
-			info.search.split('').forEach((s) => search.on_char(s.charCodeAt(0), true));
+			info.search.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
 			search.on_char(vk.enter);
 			break;
 		}
@@ -482,11 +481,9 @@ addEventListener('on_notify_data', (name, info) => {
 			}
 			if (idx !== -1) {
 				// Don't update unless needed
-				if (idx === 0 && ppt.libSource === 1) { return; }
-				else if (idx === 1 && ppt.libSource === 2) { return; }
-				else if (idx === 2 && plsIdx.length && ppt.libSource === 1 && ppt.fixedPlaylist) { return; }
-				else if (idx === 2 && !plsIdx.length && ppt.libSource === 0 && !ppt.fixedPlaylist) { return; }
-				else if (idx === 3 && ppt.libSource === 3) { return; }
+				const sameSourceType = idx === 0 && ppt.libSource === 1  || idx === 1 && ppt.libSource === 2 || idx === 3 && ppt.libSource === 3 || idx === 4 && ppt.libSource === 4;
+				const sameSourcePlaylist = idx === 2 && (plsIdx.length && ppt.libSource === 1 && ppt.fixedPlaylist || !plsIdx.length && ppt.libSource === 0 && !ppt.fixedPlaylist);
+				if (sameSourceType || sameSourcePlaylist) { return; }
 				men.setSource(idx, { bOmitMsg: true, bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse });
 			}
 			break;
@@ -783,7 +780,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
 			search.clear();
 			if (input.length) {
-				input.split('').forEach((s) => search.on_char(s.charCodeAt(0), true));
+				input.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
 				search.on_char(vk.enter);
 			}
 		} else if (ppt.libSource === 3) {

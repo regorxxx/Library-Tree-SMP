@@ -859,7 +859,7 @@ class Library {
 	logFilter() {
 		ppt.process = true;
 		const key = ppt.rememberView ? panel.viewName : 'def';
-		if (!$.objHasOwnProperty(this.exp, key)) this.exp[key] = {};
+		if (!Object.hasOwn(this.exp, key)) this.exp[key] = {};
 		this.exp[key].filter = panel.filter.menu[ppt.filterBy];
 		ppt.set(this.rememberViewProp(), JSON.stringify(this.exp));
 	}

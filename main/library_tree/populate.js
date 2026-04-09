@@ -668,13 +668,13 @@ class Populate {
 					rawValue = 0;
 					value = panel.imgView && this.label
 						? 'Now playing'
-						: String.fromCharCode(9654) /* ▶ */;
+						: String.fromCodePoint(9654) /* ▶ */;
 				} else if (index && index.length > 0) {
 					const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
 					rawValue = index;
 					value = panel.imgView && this.label
-						? 'Queue ' + (bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index)
-						: bIsNowPlaying ? [String.fromCharCode(9654), ...index.slice(1)] : index;
+						? 'Queue ' + (bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index)
+						: bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
 				}
 				break;
 			}

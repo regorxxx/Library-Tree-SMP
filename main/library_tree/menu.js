@@ -1181,12 +1181,11 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Preset rules
-	setActivePlaylist(options = { bSkipPresets: false }) {
-		options = { bSkipPresets: false, ...options };
+	setActivePlaylist({ bSkipPresets = false } = {}) {
 		ppt.libSource = 0;
 		ppt.fixedPlaylist = false;
 		ppt.fixedPlaylistName = 'ActivePlaylist';
-		if (!options.bSkipPresets && ppt.presetRulesOnSourceUse) {
+		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
 		}
@@ -1265,11 +1264,10 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	setFixedPlaylist(i, options = { bUseUUID: vk.k('ctrl'), bSkipPresets: false }) {
-		options = { bUseUUID: vk.k('ctrl'), bSkipPresets: false, ...options };
+	setFixedPlaylist(i, { bUseUUID = vk.k('ctrl'), bSkipPresets = false } = {}) {
 		if (Array.isArray(i)) {
 			i.forEach((j) => {
-				const id = options.bUseUUID
+				const id = bUseUUID
 					? this.pl[j].guid || this.pl[j].name
 					: this.pl[j].name;
 				ppt.fixedPlaylistName = ppt.fixedPlaylistName.length
@@ -1277,7 +1275,7 @@ class MenuItems {
 					: id;
 			});
 		} else {
-			const id = options.bUseUUID
+			const id = bUseUUID
 				? this.pl[i].guid || this.pl[i].name
 				: this.pl[i].name;
 			ppt.fixedPlaylistName = vk.k('shift') && ppt.fixedPlaylistName.length
@@ -1285,7 +1283,7 @@ class MenuItems {
 				: id;
 		}
 		ppt.fixedPlaylist = true;
-		if (!options.bSkipPresets && ppt.presetRulesOnSourceUse) {
+		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
 		}
@@ -1394,8 +1392,7 @@ class MenuItems {
 	}
 
 	// Regorxxx <- External integration | Internal cache of views | Preset rules
-	setSource(i, options = { bOmitMsg: false, bProcessTree: true, bSkipPresets: false }) {
-		options = { bOmitMsg: false, bProcessTree: true, bSkipPresets: false, ...options };
+	setSource(i, { bOmitMsg = false, bProcessTree = true, bSkipPresets = false } = {}) {
 		switch (i) {
 			case 0: // Library
 				ppt.libSource = 1;
@@ -1404,7 +1401,7 @@ class MenuItems {
 			case 1: // Panel
 				ppt.libSource = 2;
 				ppt.fixedPlaylist = false;
-				if (!options.bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
+				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			case 2: { // Playlist
 				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
@@ -1412,7 +1409,7 @@ class MenuItems {
 				ppt.fixedPlaylist = fixedPlaylistIndex.length !== 0;
 				// Regorxxx ->
 				ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
-				if (!options.bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
+				if (!bOmitMsg && ppt.panelSourceMsg && popUpBox.isHtmlDialogSupported()) { popUpBox.message(); } // Regorxxx <- External integration ->
 				break;
 			}
 			// Regorxxx <- Queue source
@@ -1428,7 +1425,7 @@ class MenuItems {
 			}
 			// Regorxxx ->
 		}
-		if (!options.bSkipPresets && ppt.presetRulesOnSourceUse) {
+		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
 		}
@@ -1436,7 +1433,7 @@ class MenuItems {
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button |  Expand TF support on view patterns->
 		// Regorxxx <- Internal cache of views
-		if (options.bProcessTree) {
+		if (bProcessTree) {
 			if (panel.viewNeedsUpdateTf('source')) { panel.getView(panel.grp[ppt.viewBy].type); }
 			lib.treeState(false, 2);
 		}
@@ -1469,15 +1466,14 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Internal cache of views | Preset rules
-	setCachedSource(i, from, to, options = { bOmitMsg: false, bSkipPresets: false }) {
-		options = { bOmitMsg: false, bSkipPresets: false, ...options };
+	setCachedSource(i, from, to, { bOmitMsg = false, bSkipPresets = false } = {}) {
 		if (ppt.libSourceCache) {
 			if (typeof from !== 'undefined') { lib.setViewCache(from); }
 			if (lib.getViewCache(to)) {
-				return this.setSource(i, { ...options, bProcessTree: false });
+				return this.setSource(i, { bOmitMsg, bSkipPresets, bProcessTree: false });
 			}
 		}
-		return this.setSource(i, { ...options });
+		return this.setSource(i, { bOmitMsg, bSkipPresets });
 	}
 	// Regorxxx ->
 
@@ -1523,10 +1519,9 @@ class MenuItems {
 	}
 
 	// Regorxxx <- Preset rules
-	setView(i, options = { bSkipPresets: false }) {
-		options = { bSkipPresets: false, ...options };
+	setView(i, { bSkipPresets = false } = {}) {
 		if (i < panel.menu.length) {
-			const bSkipPresets = options.bSkipPresets && ppt.presetRulesOnViewUse;
+			bSkipPresets = bSkipPresets && ppt.presetRulesOnViewUse;
 			if (bSkipPresets) { ppt.toggle('presetRulesOnViewUse'); }
 			if (ppt.artTreeSameView) {
 				ppt.treeViewBy = i;

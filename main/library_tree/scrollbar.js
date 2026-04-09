@@ -238,7 +238,7 @@ class Scrollbar {
 					if (/\d{4}/.test(sub)) letter = sub;
 					else {
 						sub = letter.substring(0, 6);
-						if (/(\[|\()\d{4}(\]|\))/.test(sub)) letter = sub;
+						if (/([[(])\d{4}([\])])/.test(sub)) letter = sub;
 						else {
 							letter = letter.substring(0, img.letter.no);
 						}
