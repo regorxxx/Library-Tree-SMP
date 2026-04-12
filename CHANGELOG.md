@@ -104,7 +104,7 @@
 - HTML: disable thumbnail size dropdown using flow mode instead of hiding it.
 - HTML: cleanup of all help sections, now using buttons (to improve accessibility using screen readers).
 - HTML: multiple minor text fixes.
-- HTML: Pressing shift on any dropdown button no longer opens a new window on IE.
+- HTML: Pressing shift on any dropdown button no longer opens a new window on IE. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080448.html#msg1080448).
 - Syntax: updated syntax docs with relevant changes and examples.
 - Syntax: updated syntax docs favicon for html page.
 - Debug: improvements to profiling logging for library loading.
