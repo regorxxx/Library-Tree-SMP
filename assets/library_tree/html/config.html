@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 09/04/26 -->
+﻿<!DOCTYPE html> <!-- 10/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -692,8 +692,8 @@
 			<div id="view"></div>
 			<div class="info1">Selected items will be displayed in the menu. A separator may be added by setting name to 'separator' and pattern to any non-empty string.</div>
 			<!-- Regorxxx Text cleanup -->
-			<button id="syntax_button" name="syntax_button" style="margin-left:0px;margin-right:2em;" type="button">Show Multi-Panel Mode (Facets) & Extended Syntax Help</button><a class="tooltip" id="tfReference" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference1" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference1')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
-			<div id="syntax_help" style="display: none;">
+			<div style="display:inline-block; padding-top:0em;"><button id="syntax_help" onclick="showHelp('syntax_text');return false;">Show Multi-Panel Mode (Facets) & Extended Syntax Help</button></div><a class="tooltip" id="tfReference" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference1" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference1')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
+			<div id="syntax_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 				<!-- Regorxxx -->
 				<div class="info5"><b>Multi-Panel Mode (facets)</b></div>
 				<div class="info5">Each panel can contain either a tree, album art or facet view and don't need to be contiguous. Example to set-up Facets with 3-panel layout: Genre|Artist|Album.</div>
@@ -750,8 +750,8 @@
 			<div id="filter"></div>
 			<!-- Regorxxx Add help to filter tab | Support SORT BY query sorting -->
 			<div class="info1">Selected items will be displayed in the menu. A separator may be added by setting name to 'separator' and query to any non-empty string.</div>
-			<button id="syntaxFilter_button" name="syntaxFilter_button" style="margin-left:0px;margin-right:2em;" type="button">Extended Syntax Help</button><a class="tooltip" id="tfReference2" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference2')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference2" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference2')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="queryReference" href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax" target="_blank" oncontextmenu="copyToClipboardId('queryReference')">foobar2000 Query Syntax reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
-			<div id="syntaxFilter_help" style="display: none;">
+			<div style="display:inline-block; padding-top:0em;"><button id="syntaxFilter_help" onclick="showHelp('syntaxFilter_text');return false;">Extended Syntax Help</button></div><a class="tooltip" id="tfReference2" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference2')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference2" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference2')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="queryReference" href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Query_syntax" target="_blank" oncontextmenu="copyToClipboardId('queryReference')">foobar2000 Query Syntax reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
+			<div id="syntaxFilter_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 				<div class="info5"><b>Extended syntax</b></div>
 				<div class="info7">Note new functions only available at Library-Tree-SMP use curly braces {} instead of parentheses (). e.g. $nowplaying{}.<br>Sorting expressions are also allowed (check query syntax reference) and will override any View (TF) or Source sorting (queue idx, etc.)</div>
 				<table id="syntaxFilter" class="table98">
@@ -827,7 +827,7 @@
 				<div class="column38" style="margin-right:1%;">
 					<div class="div_text1">Mode</div>
 					<div id="actionType"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="mode_help" href="#" onclick="showHelp('mode_text');return false;">Mode help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="mode_help" onclick="showHelp('mode_text');return false;">Mode help</button></div>
 					<div id="mode_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4600"><b><u>Default</b></u></div>
 						<div class="info4">&#x2022; Choose options</div>
@@ -877,7 +877,7 @@
 						<span id="contextMenu" class="dropdown-content"></span>
 					</span>
 					<br>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="contextMenu_help" href="#" onclick="showHelp('contextMenu_text');return false;">Contextual menu (tracks) help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="contextMenu_help" onclick="showHelp('contextMenu_text');return false;">Contextual menu (tracks) help</button></div>
 					<div id="contextMenu_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4">Showing the contextual menu associated to tracks on huge selections will delay menu creation due to heavy processing.<br><br>To avoid this delay, it can be set to disabled or run secondary menu (on click) -processed when needed-.</div>
 					</div>
@@ -929,7 +929,7 @@
 					<!-- Regorxxx Send to playlist & select -->
 					<div class="div_text4">Playlist selection behaviour:</div>
 					<div id="selectAddedToPls"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="playlist_help" href="#" onclick="showHelp('plsSel_text');return false;">Playlist selection help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="playlist_help" onclick="showHelp('plsSel_text');return false;">Playlist selection help</button></div>
 					<div id="plsSel_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4">By default the selection is sent and items are selected at playlist (other panels or components tracking selection changes are updated automatically)<br><br>Disable it to restore legacy behaviour where items were sent without actually selecting them</div>
 					</div>
@@ -939,7 +939,7 @@
 					<div id="topTracksFilter"></div>
 					<div id="topTracksSorting"></div>
 					<div id="topTracksRemDupl"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="topTracks_help" href="#" onclick="showHelp('topTracks_text');return false;">Top tracks help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="topTracks_help" onclick="showHelp('topTracks_text');return false;">Top tracks help</button></div>
 					<div id="topTracks_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Usage:</u></b><br><br>Uses an additional query filter and sorting for current selection on top of the current view/filter.<br><br>&#x2022; Found at the Context menu or mouse action (at left)<br>&#x2022; Target playlist follows global settings above<br>&#x2022; Supports $nowplaying{}, $selected{}, ... for query and sort<br>&#x2022; Use '$rand()' as sorting to shuffle<br>&#x2022; Leave sorting empty to follow panel sorting<br>&#x2022; Selection is deduplicated to filter versions of same songs<br>&#x2022; Set duplicates removal to '[]' to skip processing; leaving it empty '' will use default settings instead<br><br><b><u>Sorting extended syntax:</u></b><br><br>&#x2022; See <a class="tooltip" id="ltReference3" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference3')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br><br>&#x2022; <b>$harmonicsort{bShuffle}</b> - Sorting by incremental KEY<br><br>&#x2022; <b>$harmonicmix{bShuffle}</b> - Sorting by harmonic mixing rules<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>true</i>, <i>1</i>, any string or empty to shuffle<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>false</i> or <i>0</i> to skip shuffling<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$harmonicmix{true}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$harmonicmix{}</i><br><br>&#x2022; <b>$shufflebytags{tagName,sortBias,sortDir}</b> - Scatters tracks with same tag values semi-randomly<br>&emsp;&#x2219; <b>tagName</b> can be set to any tag -<i>ARTIST</i>- or array of tags -<i>["ARTIST","ALBUM ARTIST"]</i>-<br>&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i>. Or omitted (<i>random</i> used)<br>&emsp;&#x2219; <b>sortDir</b> can be set to <i>1</i>, <i>-1</i> or omitted (<i>1</i> used)<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"],random,1}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"]}</i>
 						</div>
@@ -1011,7 +1011,7 @@
 					<div class="div_text2">Tags</div>
 					<div class="info5"><i>Title format can be set below</i></div>
 					<div id="dragTags"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="dragTags_help" href="#" onclick="showHelp('drag_text');return false;">Drag n' drop help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="dragTags_help" onclick="showHelp('drag_text');return false;">Drag n' drop help</button></div>
 					<div id="drag_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Usage:</b></u><br><br>&#x2022; Tracks can be drag n' dropped to search box<br>&#x2022; Search expression is adjusted to View mode<br>&#x2022; View by Folder structure: filenames (RegExp)<br>&#x2022; Any other View: tags (Queries)<br>&#x2022; Tags used and how they are joined can be customized<br><br><b><u>Keyboard modifiers:</b></u><br><br>&#x2022; Default is used without any key pressed<br>&#x2022; Behaviour is affected by Ctrl, Alt and Shift keys<br>&#x2022; Multi-value tag operator is used between different values on same tag:<br>&emsp; 'ARTIST IS A OR ARTIST IS B'<br><br>&#x2022; Inter-tag operator is used between different tags:<br>&emsp; 'ARTIST IS Nina Simone OR GENRE IS Rock'<br><br>&#x2022; Inter-track operator is used between queries for different tracks (on multiple selection)<br><br>&#x2022; Inter-query operator is used if there is already an expression at the search box, to join or replace them</div>
 						<div><br></div>
@@ -1030,7 +1030,7 @@
 						<span id="searchSend" class="dropdown-content"></span>
 					</span>
 					<div id="searchEnter" style="padding-top:0.5em;"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="searcg_help" href="#" onclick="showHelp('search_text');return false;">Search help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="searcg_help" onclick="showHelp('search_text');return false;">Search help</button></div>
 					<div id="search_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>General usage:</b></u><br><br>&#x2022; Queries, RegExp and drag n' drop are supported<br>&#x2022; Queries support $nowplaying{}, $selected{}, ...<br>&#x2022; RegExp must be written in /[expression]/[flags] form<br>&#x2022; For drag n' drop see its own section<br><br><br><b><u>RegExp usage:</b></u><br><br>&#x2022; <a class="tooltip" id="regexpReference" href="https://regexr.com/" target="_blank" oncontextmenu=" copyToClipboardId('regexpReference')">RegExp reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br>&#x2022; /[expression]/[flags]<br>&#x2022; Flags can be any of: 'gimsuyt'<br>&#x2022; Special 't' flag to apply transliteration to Latin script<br>&#x2022; Lookup tags retrieved from current View TF expression<br>&#x2022; On folder view, paths are used instead for lookup<br><br><br><b><u>Queries usage:</b></u><br><br>&#x2022; Supports $nowplaying{}, $nowplayingorselected{} and $selected{}<br>&#x2022; If auto-refresh is disabled, search results will not be updated when using above syntax on playback/selection changes<br>&#x2022; Auto-refresh may have a performance impact with $selected{} (or similar) on selection changes, use filters instead whenever possible</div>
 						<div><br></div>
@@ -1113,7 +1113,7 @@
 					<div class="div_text2">Custom tooltip text</div>
 					<div class="info5"><i>Custom-X slots tooltips are shown at mouse over. Separated by |</i></div>
 					<div id="statisticsTooltip"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="stats_help" href="#" onclick="showHelp('stats_text');return false;">Statistics help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="stats_help" onclick="showHelp('stats_text');return false;">Statistics help</button></div>
 					<div id="stats_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Can be any real number from -&#x221E; to &#x221E; (not included)<br>&emsp;&#x25E6; Use X&gt;1 for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
 						<div><br></div>
@@ -1128,7 +1128,7 @@
 						<span id="itemCounts" class="dropdown-content"></span>
 					</span>
 					<div id="countsRight" style="padding-top:0.5em;"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="counts_help" href="#" onclick="showHelp('counts_text');return false;">Item counts help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="counts_help" onclick="showHelp('counts_text');return false;">Item counts help</button></div>
 					<div id="counts_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4">The first available entry at Settings > Statistics will follow the option chosen, showing either no values, total number of track or items at every node.<br><br>Alignment is only available while using this mode, greyed out for any other.
 						</div>
@@ -1281,7 +1281,7 @@
 					<!-- Regorxxx Don't create cache playlists if possible. Chained facets updates -->
 					<div class="div_text1">Multi-panel mode (facets)</div>
 					<div id="facets"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="facets_help" href="#" onclick="showHelp('facets_text');return false;">Multi-panel mode help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="facets_help" onclick="showHelp('facets_text');return false;">Multi-panel mode help</button></div>
 					<div id="facets_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Chained source notifications:</b></u><br><br>&#x2022; Facets mode is enabled when setting source to panel. More info at <a class="internalLink" onclick="openPage('views', 'viewsCfg', 'red')">Views tab</a><br>&#x2022; Every panel will send updates to other panels when being refreshed<br>&#x2022; No need to set multiple sources, only the most immediate parent's name<br>&#x2022; The entire chain will be updated if needed<br>&#x2022; Disable the setting to roll back to legacy behaviour<br>&#x2022; For example: Genre|Artist|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' panel uses 'Artist' as source, and 'Artist' panel uses 'Genre'<br>&emsp;&#x25E6; Any change on 'Genre' would immediately refresh the other 2 child panels<br>&emsp;&#x25E6; If disabled (legacy behaviour), then third panel should use 'Genre|Artist' instead<br><br><br><b><u>Multiple sources:</b></u><br><br>&#x2022; Multiple sources are only needed if they are fully independent<br>&#x2022; Along chained source notifications, sources are merged and deduplicated<br>&#x2022; Can merge selections from total different views/filters (for ex. artist and genres)<br>&#x2022; Destination panel's sorting and display don't follow sources' settings<br>&#x2022; If disabled (legacy behaviour), the last one selected on UI is used instead<br>&#x2022; For example: Artist1|Artist2|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' uses 'Artist1|Artist2' as sources<br>&emsp;&#x25E6; Selection from both 'Artist' panels are merged and used on 'Album' panel<br>&emsp;&#x25E6; Legacy behaviour uses either 'Artist1' or 'Artist2', last one selected on UI, not both<br><br><br><b><u>Internal cache:</b></u><br><br>&#x2022; To use a panel as source, its selection must be stored somewhere<br>&#x2022; This can be done using playlists (legacy behaviour) or internal caching<br>&#x2022; A dummy playlist is required per panel with legacy behaviour<br>&#x2022; Internal caching requires methods available only at latest JSplitter and SMP versions<br>&#x2022; if not supported, it fallbacks to legacy behaviour instead<br>&#x2022; Internal caching is preferable to avoid filling your playlist list with dummy playlists
 						</div>
@@ -1326,7 +1326,7 @@
 					<span class="dropdown" style="margin-top:0"><a id="autodjPick_dropdown" class="dropbtn" href="#" onclick="toggle('autodjPick');"></a>
 						<span id="autodjPick" class="dropdown-content"></span>
 					</span>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="autodjPick_help" href="#" onclick="showHelp('autodjPick_text');return false;">Track picking help</a></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="autodjPick_help" onclick="showHelp('autodjPick_text');return false;">Track picking help</button></div>
 					<div id="autodjPick_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Auto-DJ track picking:</b></u><br><br>&#x2022; Auto-DJ wil choose tracks randomly or based on tags<br>&#x2022; On tag-based mode, compares next track against playing track's tags<br>&#x2022; Genre matching looks for genre and style tags<br>&#x2022; Mood matching looks for both mood tag<br>&#x2022; Tags used are based on '[FB2K_PROFILE]\js_data\presets\global\globTags.json'
 						</div>
