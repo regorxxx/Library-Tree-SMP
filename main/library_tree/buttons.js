@@ -446,6 +446,7 @@ class Buttons {
 	}
 
 	multiBtnSetName(name, bRepaint) {
+		bRepaint = bRepaint && this.multiBtn.name !== name;
 		this.multiBtn.name = name;
 		if (bRepaint) {
 			panel.calcText();
@@ -455,8 +456,9 @@ class Buttons {
 	}
 
 	multiBtnSetTooltip(tt) {
+		const bUpdateTT = this.multiBtn.tooltip !== tt;
 		this.multiBtn.tooltip = tt;
-		if (this.btns.filter.state === 'hover') {
+		if (bUpdateTT && this.btns.filter && this.cur === this.btns.filter) {
 			this.btns.filter.tt.showImmediate(this.btns.filter.tiptext());
 		}
 	}
