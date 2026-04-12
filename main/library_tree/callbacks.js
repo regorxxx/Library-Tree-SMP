@@ -553,6 +553,7 @@ addEventListener('on_playback_new_track', (handle) => {
 	if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.updateAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
+	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
 
 addEventListener('on_playback_stop', (reason) => {
