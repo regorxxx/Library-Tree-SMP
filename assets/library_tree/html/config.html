@@ -2120,7 +2120,7 @@
 									: '- Invalid -'
 							: condition === 'then'
 								? '- Unchanged -'
-								: '- Skip -';
+								: '- Any -';
 					} else {
 						return condition === 'then'
 							? '- Unchanged -'
@@ -2161,12 +2161,17 @@
 						: '- Unchanged -';
 					if (presetRules[idx][condition].hasOwnProperty(typeProp)) { delete presetRules[idx][condition][typeProp]; }
 				} else {
+					var cutLen = getPresetColumnCut();
 					var bSkip = (condition === 'if' || condition === 'ifNot') && val === '- Skip -';
+					var propArr = presetRules[idx][condition][typeProp];
 					if (bAppend && !bSkip && Array.isArray(presetRules[idx][condition][typeProp])) {
-						presetRules[idx][condition][typeProp].push(val);
-						window[id + '_dropdown'].innerHTML = (window[id + '_dropdown'].innerHTML + '|' + val).cut(Math.round(25 * window_w / 1300)) + ' (' + presetRules[idx][condition][typeProp].length + ')';
+						var valIdx = propArr.indexOf(val);
+						if (valIdx === -1) { propArr.push(val); }
+						else { propArr.splice(valIdx, 1); }
+						var propArrLen = propArr.length;
+						window[id + '_dropdown'].innerHTML = (propArr.join('|')).cut(cutLen) + (propArrLen > 1 ? ' (' + propArr.length + ')' : '');
 					} else {
-						window[id + '_dropdown'].innerHTML = val.cut(Math.round(25 * window_w / 1300));
+						window[id + '_dropdown'].innerHTML = val.cut(cutLen);
 						presetRules[idx][condition][typeProp] = bSkip
 							? []
 							: [val];
@@ -2174,6 +2179,7 @@
 				}
 				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
 				window[id].style.display = 'none';
+				setPresets(true);
 			}
 
 			function setPresetRuleWithInput(idx, id, condition, typeProp, msg, defValue) {
@@ -2295,6 +2301,18 @@
 					{ id: 'View', prop: 'view', html: 'column16', cut: 3000 },
 					{ id: 'Filter', prop: 'filter', html: 'column14', cut: 3000 }
 				];
+			}
+
+			function getPresetColumnCut(idOrProp) {
+				var columns = getPresetColumns();
+				var len = columns.length;
+				var col;
+				var cut;
+				for (var i = 0; i < len; i++) {
+					col = columns[i];
+					if ((col.id === idOrProp || col.prop === idOrProp) && col.hasOwnProperty(cut)) { cut = col.cut; break; }
+				}
+				return Math.round(25 * window_w / (cut || 3000));
 			}
 
 			function getPresetSourceNames() {
@@ -2590,7 +2608,7 @@
 						if (type.condition && type.condition !== 'if') { continue; }
 						id = 'presetRuleIf' + type.id + i;
 						count = getPresetRuleValueCount(rule, 'if', type.prop);
-						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0"><a id="' + id + '_dropdown" class="dropbtn" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0"><a id="' + id + '_dropdown" class="dropbtn" href="#" onclick="return toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'if', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'if\', \'' + type.prop + '\');">- Any -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'if\', \'' + type.prop + '\', \'- Skip -\');">- Skip -</a>');
@@ -2601,7 +2619,7 @@
 						if (type.condition && type.condition !== 'then') { continue; }
 						id = 'presetRuleThen' + type.id + i;
 						count = getPresetRuleValueCount(rule, 'then', type.prop);
-						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:1em"><a id="' + id + '_dropdown" class="dropbtnBlue" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:1em"><a id="' + id + '_dropdown" class="dropbtnBlue" href="#" onclick="return toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'then', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'then\', \'' + type.prop + '\');">- Unchanged -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
@@ -2611,7 +2629,7 @@
 						if (type.condition && type.condition !== 'if') { continue; }
 						id = 'presetRuleIfNot' + type.id + i;
 						count = getPresetRuleValueCount(rule, 'ifNot', type.prop);
-						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0em;"><a id="' + id + '_dropdown" class="dropbtnRed" href="#" onclick="toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
+						window[ruleId].insertAdjacentHTML('beforeend', '<span class="dropdown ' + type.html + '" style="margin-top:0em;"><a id="' + id + '_dropdown" class="dropbtnRed" href="#" onclick="return toggle(\'' + id + '\');"></a><span id="' + id + '" class="dropdown-content"></span></span');
 						window[id + '_dropdown'].innerHTML = getPresetRuleValue(rule, 'ifNot', type.prop).cut(Math.round(25 * window_w / type.cut)) + (count > 1 ? ' (' + count + ')' : '');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\');">- Any -</a>');
 						window[id].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'' + id + '\', \'ifNot\', \'' + type.prop + '\', \'- Skip -\');">- Skip -</a>');
@@ -2629,7 +2647,7 @@
 							isPresent = hasPresetRuleValue(rule, 'then', 'source', sourceNames[j]);
 							window['presetRuleThenSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'then\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#d288cb; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
 							isPresent = hasPresetRuleValue(rule, 'ifNot', 'source', sourceNames[j]);
-							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleThenSource' + i + '\', \'ifNot\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
+							window['presetRuleIfNotSource' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSource' + i + '\', \'ifNot\', \'source\', \'' + sourceNames[j] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceNames[j] + '</a>');
 						}
 					}
 					for (j = 0; j < sourceIdsLen; j++) {
@@ -2644,9 +2662,9 @@
 									break;
 								}
 								case 'Playlist by name...': {
-									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
+									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="return toggleSubmenu(\'presetRuleIfSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
 									window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
-									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
+									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="return toggleSubmenu(\'presetRuleIfNotSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
 									for (k = 0; k < sourceIdsNamesLen; k++) {
 										if (sourceIdsNames[k] !== 'separator') {
@@ -2663,9 +2681,9 @@
 								}
 								case 'Playlist by GUID...': {
 									if (sourceIdsGUIDsLen > 0) {
-										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
+										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="return toggleSubmenu(\'presetRuleIfSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
 										window['presetRuleIfSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
-										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="toogleSubmenu(\'presetRuleIfNotSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
+										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="return toggleSubmenu(\'presetRuleIfNotSourceIdGUIDs' + i + '\')">' + sourceIds[j] + '</a>');
 										window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdGUIDs' + i + '" style="display:none; margin-left:2em;"></span>');
 										for (k = 0; k < sourceIdsGUIDsLen; k++) {
 											if (sourceIdsNames[k] === 'separator') {
@@ -3428,10 +3446,11 @@
 		}
 
 		window.btn_delete.onclick = function () {
+			var next;
 			switch (cur.page) {
 				case 'views':
 					if (ix.view == -1) break;
-					var next = document.getElementById("view_cnt" + ix.view).nextSibling;
+					next = document.getElementById("view_cnt" + ix.view).nextSibling;
 					if (next && next.id == "view_cnt_folderView") next = document.getElementById("view_cnt" + ix.view).previousSibling;
 					remove(document.getElementById("view_cnt" + ix.view));
 					if (next) ix.view = next.id.replace('view_cnt', '');
@@ -3439,7 +3458,7 @@
 					break;
 				case 'filters':
 					if (ix.filter == -1) break;
-					var next = document.getElementById("filter_cnt" + ix.filter).nextSibling;
+					next = document.getElementById("filter_cnt" + ix.filter).nextSibling;
 					if (next && next.id == "filter_cnt_menuName") next = document.getElementById("filter_cnt" + ix.filter).previousSibling;
 					remove(document.getElementById("filter_cnt" + ix.filter));
 					if (next) ix.filter = next.id.replace('filter_cnt', '');
@@ -3728,6 +3747,7 @@
 		function toggle(item) {
 			if (window[item].style.display == 'block') { window[item].style.display = 'none'; }
 			else { window[item].style.display = 'block' }
+			return false; // Regorxxx <- Disable opening new window while pressing shift ->
 		}
 
 		var h = [
