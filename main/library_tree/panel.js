@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//10/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -2101,7 +2101,7 @@ class Panel {
 			if (rule) {
 				const then = { ...rule.then };
 				then.filterBy = Object.hasOwn(then, 'filter')
-					? then.filter[0].toLowerCase() === '- none -' ? 0 : this.filter.mode.findIndex((f) => f.name.toLowerCase() === rule.filter.toLowerCase())
+					? then.filter[0].toLowerCase() === '- none -' ? 0 : this.filter.mode.findIndex((f) => f.name.toLowerCase() === then.filter[0].toLowerCase())
 					: bSetFilter ? filterBy : -1;
 				then.viewBy = Object.hasOwn(then, 'view')
 					? this.grp.findIndex((v) => v.name.toLowerCase() === then.view[0].toLowerCase())
