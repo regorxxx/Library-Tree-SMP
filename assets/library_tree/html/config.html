@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 10/04/26 -->
+﻿<!DOCTYPE html> <!-- 12/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -12,40 +12,48 @@
 			margin: 0;
 		}
 
+		/* Regorxxx <- Accesibility improvements converting elements to buttons */
 		.tablink {
 			background-color: #e5e5e5;
 			overflow: hidden;
 			font: 1em Arial, serif;
 		}
 
-		.tablink a {
+		.tablink button {
 			margin: 0;
 			background-color: #555;
 			color: white;
 			text-align: center;
 			float: left;
 			border: none;
-			border-bottom: 1px solid #d0d0d0;
+			border-bottom: 2px solid #d0d0d0;
 			outline: none;
 			cursor: pointer;
 			padding: 0.31em 2px;
-			width: 13%;
+			min-width: 10%;
+			max-width: 13%;
 		}
 
-		.tablink a:hover {
+		.tablink button:hover {
 			padding: 0.31em 2px;
 			background-color: #777;
 		}
 
-		.tablink a:focus {
+		.tablink button:focus {
 			padding: 0.31em 2px;
 			background-color: #777;
 		}
 
-		.tablink a:focus a:hover {
+		.tablink button:focus button:hover {
 			padding: 0.31em 2px;
 			background-color: #777;
 		}
+
+		.tablink button:active {
+			border-style: none;
+			padding: 0.31em 2px;
+		}
+		/* Regorxxx -> */
 
 		.tabcontent {
 			display: none;
@@ -608,12 +616,16 @@
 			clear: both;
 		}
 
-		/* Regorxxx <- Allow inline links for navigation */
+		/* Regorxxx <- Allow inline links for navigation | Accesibility improvements converting elements to buttons */
 		.internalLink {
 			border-bottom: 1px dotted rgb(0, 0, 0);
 			cursor: pointer;
 		}
 
+		button.internalLink {
+			border: 1px dotted rgb(0, 0, 0);
+			cursor: pointer;
+		}
 		/* Regorxxx -> */
 
 		/* Regorxxx <- Add tooltip to links */
@@ -670,16 +682,16 @@
 	<div style="clear:both;"></div>
 	<div id="tablink" class="tablink">
 		<!-- Regorxxx New Tabs | New statistics | Presets tab | Add colors -->
-		<a onclick="openPage('views', this, 'red')" id="viewsCfg">Views</a>
-		<a onclick="openPage('filters', this, 'green')" id="filtersCfg">Filters</a>
-		<a onclick="openPage('presets', this, 'blue')" id="presetsCfg">Presets</a>
-		<a onclick="openPage('behaviour', this, 'orange')" id="behaviourCfg">Behaviour</a>
-		<a onclick="openPage('search', this, 'purple')" id="searchCfg">Search</a>
-		<a onclick="openPage('display', this, 'olive')" id="displayCfg">Display</a>
-		<a onclick="openPage('statistics', this, 'coral')" id="statisticsCfg">Statistics</a>
-		<a onclick="openPage('albumArt', this, 'deeppink')" id="albumArtCfg">Album Art</a>
-		<a onclick="openPage('custom', this, 'navy')" id="customCfg">Custom</a>
-		<a onclick="openPage('advanced', this, 'maroon')" id="advancedCfg">Advanced</a>
+		<button onclick="openPage('views', this, 'red')" id="viewsCfg">Views</button>
+		<button onclick="openPage('filters', this, 'green')" id="filtersCfg">Filters</button>
+		<button onclick="openPage('presets', this, 'blue')" id="presetsCfg">Presets</button>
+		<button onclick="openPage('behaviour', this, 'orange')" id="behaviourCfg">Behaviour</button>
+		<button onclick="openPage('search', this, 'purple')" id="searchCfg">Search</button>
+		<button onclick="openPage('display', this, 'olive')" id="displayCfg">Display</button>
+		<button onclick="openPage('statistics', this, 'coral')" id="statisticsCfg">Statistics</button>
+		<button onclick="openPage('albumArt', this, 'deeppink')" id="albumArtCfg">Album Art</button>
+		<button onclick="openPage('custom', this, 'navy')" id="customCfg">Custom</button>
+		<button onclick="openPage('advanced', this, 'maroon')" id="advancedCfg">Advanced</button>
 		<!-- Regorxxx -->
 	</div>
 	<!-- Regorxxx Code cleanup -->
@@ -705,7 +717,7 @@
 						<li>For each panel press Shift + Windows key, choose 'Configure panel...'.At 'Script' tab set the panel name of the first panel to 'Genre', second to 'Artist' and third to 'Album'</li>
 						<li>For the second panel set Settings > Source to Panel, then choose select panel source and enter 'Genre' (it's case-sensitive)</li>
 						<li>For the third panel set the source to panel, then choose select panel source and enter 'Artist' (it's case-sensitive)"</li>
-						<li>Check <a class="internalLink" onclick="openPage('advanced', 'advancedCfg', 'maroon')">Advanced tab</a> for more info about chained source notifications. If using legacy behaviour, then third panel should use 'Genre|Artist' instead</li>
+						<li>Check <button class="internalLink" onclick="openPage('advanced', 'advancedCfg', 'maroon')">Advanced tab</button> for more info about chained source notifications. If using legacy behaviour, then third panel should use 'Genre|Artist' instead</li>
 					</ul><i>Options</i>
 					<ul style="white-space: normal;">
 						<li>Optionally change the second panel at Context menu > Show album art if preferred and set the type to artist & may be circular style images</li>
@@ -731,7 +743,7 @@
 				</table>
 				<div class="info8" style="color:#0066cc;"><b>$colour{normal,hover,selected}</b></div>
 				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour code until either another $colour code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
-				<div class="info7" style="color:#0066cc;"><i>Hover effect requires "Hover effect (foreground): Highlight text" to be enabled (at <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a>).</i></div>
+				<div class="info7" style="color:#0066cc;"><i>Hover effect requires "Hover effect (foreground): Highlight text" to be enabled (at <button class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</button>).</i></div>
 				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
 				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI, serif;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
 				</div>
@@ -895,7 +907,7 @@
 					<div id="selection"></div>
 					<div class="div_text1">Follow selection</div>
 					<div id="followCurrent"></div>
-					<div class="info9"><a id="setSize" style="text-decoration:none;" href="#" onclick="setWindowSize();return false;">Click to reset window size</a></div>
+					<div class="info9"><button id="setSize" style="text-decoration:none;" href="#" onclick="setWindowSize();return false;">Click to reset window size</button></div>
 					<div class="div_text1">Views sorting</div>
 					<div class="info5600">By folder:</div>
 					<!-- View by Folder structure sorting. Custom sorting for standard views -->
@@ -1233,7 +1245,7 @@
 				<div class="info5"><b>Follow selection</b></div>
 				<div class="info5">If enabled, the &quot;File>Preferences>Display>Selection viewers&quot; setting is used.</div>
 				<div class="info5"><b>Tree only mode</b></div>
-				<div class="info5">Switch off 'Show Album Art Options' on the <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a> while in tree view. Album art loading, disk caching plus the <a class="internalLink" onclick="openPage('albumArt', 'albumArtCfg', 'deeppink')">Album Art tab</a> and menu options are disabled. Switch the option back on to allow album art mode.</div>
+				<div class="info5">Switch off 'Show Album Art Options' on the <button class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</button> while in tree view. Album art loading, disk caching plus the <button class="internalLink" onclick="openPage('albumArt', 'albumArtCfg', 'deeppink')">Album Art tab</button> and menu options are disabled. Switch the option back on to allow album art mode.</div>
 				<div><br></div>
 			</div>
 		</div>
@@ -1277,13 +1289,13 @@
 					<div id="cusScroll"></div>
 					<div class="div_text1">Scrollbar</div>
 					<div id="scrollbar"></div>
-					<div class="info5" style="padding-right:20%;"><i>Select custom scrollbar icon in <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a> under 'Scroll: Arrows' (N/A if windows scrollbar set). Set custom node icon in <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a> under 'Node style'. Ensure icons are supported by fonts.</i></div>
+					<div class="info5" style="padding-right:20%;"><i>Select custom scrollbar icon in <button class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</button> under 'Scroll: Arrows' (N/A if windows scrollbar set). Set custom node icon in <button class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</button> under 'Node style'. Ensure icons are supported by fonts.</i></div>
 					<!-- Regorxxx Don't create cache playlists if possible. Chained facets updates -->
 					<div class="div_text1">Multi-panel mode (facets)</div>
 					<div id="facets"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><button id="facets_help" onclick="showHelp('facets_text');return false;">Multi-panel mode help</button></div>
 					<div id="facets_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4"><b><u>Chained source notifications:</b></u><br><br>&#x2022; Facets mode is enabled when setting source to panel. More info at <a class="internalLink" onclick="openPage('views', 'viewsCfg', 'red')">Views tab</a><br>&#x2022; Every panel will send updates to other panels when being refreshed<br>&#x2022; No need to set multiple sources, only the most immediate parent's name<br>&#x2022; The entire chain will be updated if needed<br>&#x2022; Disable the setting to roll back to legacy behaviour<br>&#x2022; For example: Genre|Artist|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' panel uses 'Artist' as source, and 'Artist' panel uses 'Genre'<br>&emsp;&#x25E6; Any change on 'Genre' would immediately refresh the other 2 child panels<br>&emsp;&#x25E6; If disabled (legacy behaviour), then third panel should use 'Genre|Artist' instead<br><br><br><b><u>Multiple sources:</b></u><br><br>&#x2022; Multiple sources are only needed if they are fully independent<br>&#x2022; Along chained source notifications, sources are merged and deduplicated<br>&#x2022; Can merge selections from total different views/filters (for ex. artist and genres)<br>&#x2022; Destination panel's sorting and display don't follow sources' settings<br>&#x2022; If disabled (legacy behaviour), the last one selected on UI is used instead<br>&#x2022; For example: Artist1|Artist2|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' uses 'Artist1|Artist2' as sources<br>&emsp;&#x25E6; Selection from both 'Artist' panels are merged and used on 'Album' panel<br>&emsp;&#x25E6; Legacy behaviour uses either 'Artist1' or 'Artist2', last one selected on UI, not both<br><br><br><b><u>Internal cache:</b></u><br><br>&#x2022; To use a panel as source, its selection must be stored somewhere<br>&#x2022; This can be done using playlists (legacy behaviour) or internal caching<br>&#x2022; A dummy playlist is required per panel with legacy behaviour<br>&#x2022; Internal caching requires methods available only at latest JSplitter and SMP versions<br>&#x2022; if not supported, it fallbacks to legacy behaviour instead<br>&#x2022; Internal caching is preferable to avoid filling your playlist list with dummy playlists
+						<div class="info4"><b><u>Chained source notifications:</b></u><br><br>&#x2022; Facets mode is enabled when setting source to panel. More info at <button class="internalLink" onclick="openPage('views', 'viewsCfg', 'red')">Views tab</button><br>&#x2022; Every panel will send updates to other panels when being refreshed<br>&#x2022; No need to set multiple sources, only the most immediate parent's name<br>&#x2022; The entire chain will be updated if needed<br>&#x2022; Disable the setting to roll back to legacy behaviour<br>&#x2022; For example: Genre|Artist|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' panel uses 'Artist' as source, and 'Artist' panel uses 'Genre'<br>&emsp;&#x25E6; Any change on 'Genre' would immediately refresh the other 2 child panels<br>&emsp;&#x25E6; If disabled (legacy behaviour), then third panel should use 'Genre|Artist' instead<br><br><br><b><u>Multiple sources:</b></u><br><br>&#x2022; Multiple sources are only needed if they are fully independent<br>&#x2022; Along chained source notifications, sources are merged and deduplicated<br>&#x2022; Can merge selections from total different views/filters (for ex. artist and genres)<br>&#x2022; Destination panel's sorting and display don't follow sources' settings<br>&#x2022; If disabled (legacy behaviour), the last one selected on UI is used instead<br>&#x2022; For example: Artist1|Artist2|Album 3-panel layout<br>&emsp;&#x25E6; 'Album' uses 'Artist1|Artist2' as sources<br>&emsp;&#x25E6; Selection from both 'Artist' panels are merged and used on 'Album' panel<br>&emsp;&#x25E6; Legacy behaviour uses either 'Artist1' or 'Artist2', last one selected on UI, not both<br><br><br><b><u>Internal cache:</b></u><br><br>&#x2022; To use a panel as source, its selection must be stored somewhere<br>&#x2022; This can be done using playlists (legacy behaviour) or internal caching<br>&#x2022; A dummy playlist is required per panel with legacy behaviour<br>&#x2022; Internal caching requires methods available only at latest JSplitter and SMP versions<br>&#x2022; if not supported, it fallbacks to legacy behaviour instead<br>&#x2022; Internal caching is preferable to avoid filling your playlist list with dummy playlists
 						</div>
 						<div><br></div>
 					</div>
@@ -1295,7 +1307,7 @@
 					<!-- Regorxxx Sorting transliteration -->
 					<div class="div_text1">Languages</div>
 					<div id="sortingTransLangs"></div>
-					<div class="info5" style="padding-right:20%;"><i>Specific languages may be skipped by removing their ISO 639-1 code.<br>Leave it empty yo use all available languages. Check <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a> to disable transliteration.</i></div>
+					<div class="info5" style="padding-right:20%;"><i>Specific languages may be skipped by removing their ISO 639-1 code.<br>Leave it empty yo use all available languages. Check <button class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</button> to disable transliteration.</i></div>
 					<!-- Regorxxx -->
 				</div>
 
@@ -1496,7 +1508,7 @@
 			for (i = 0; i < tabcontent.length; i++) {
 				tabcontent[i].style.display = "none";
 			}
-			tablinks = document.getElementsByTagName("a");
+			tablinks = document.getElementsByTagName("button"); // Regorxxx <- Accesibility improvements converting elements to buttons ->
 			for (i = 0; i < tablinks.length; i++) {
 				tablinks[i].style.backgroundColor = "";
 			}
