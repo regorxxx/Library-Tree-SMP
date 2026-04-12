@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//12/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -281,7 +281,7 @@ class Search {
 	// Regorxxx <- Tooltip over search input box | Code cleanup
 	trace(x, y, element) {
 		switch ((element || '').toLowerCase()) {
-			case 'input': return y < panel.search.h && x > (but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
+			case 'input': return y < panel.search.h && x > (but.q.x + but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
 			case 'button': return y < panel.search.h && x > (but.q.x - but.margin / 2 + but.q.h + but.margin) && x < (panel.search.x + panel.search.w);
 			default: return y < panel.search.h && x > panel.search.x && x < (panel.search.w + panel.search.x);
 		}
