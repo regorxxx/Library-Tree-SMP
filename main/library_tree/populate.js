@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//12/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1692,11 +1692,8 @@ class Populate {
 		this.tree.forEach((v, idx) => {
 			if (v.sel) { this.lastSelMul.push(idx); }
 		});
-		if (!panel.playlistSort && this.lastSelMul.reduce((prev, idx) => prev + this.trackCount(this.tree[idx].item), 0) > (Number(ppt.treeSortLimit) || Infinity)) {
-			this.tree.forEach((v) => this.addItems(this.sel_items, v, true));
-		} else {
-			this.lastSelMul.forEach((idx) => this.addItems(this.sel_items, this.tree[idx]));
-		}
+		const bNoSort = !panel.playlistSort && this.lastSelMul.reduce((prev, idx) => prev + this.trackCount(this.tree[idx].item), 0) > (Number(ppt.treeSortLimit) || Infinity);
+		this.lastSelMul.forEach((idx) => this.addItems(this.sel_items, this.tree[idx], bNoSort));
 		this.sel_items = [...new Set(this.sel_items)];
 	}
 	// Regorxxx ->
