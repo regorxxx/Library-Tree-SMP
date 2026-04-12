@@ -3561,7 +3561,7 @@
 			setCheckboxes(cur.page, 'default_value');
 			setInputs(cur.page, 'default_value');
 			setRadioBtns(cur.page, 'default_value');
-			if (cur.page == 'presets') { setPresetRules(); } // Regorxxx <- Presets tab | Preset rules ->
+			if (cur.page == 'presets') { setPresetRules(); setPresets(true); } // Regorxxx <- Presets tab | Preset rules ->
 			// Regorxxx <- Fix reset
 			if (cur.page == 'behaviour') {
 				setClickAction(ppt['clickAction_internal'].default_value);
