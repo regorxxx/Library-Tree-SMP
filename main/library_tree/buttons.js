@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//12/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
@@ -456,7 +456,7 @@ class Buttons {
 
 	multiBtnSetTooltip(tt) {
 		this.multiBtn.tooltip = tt;
-		if (this.btns.filter.hand) {
+		if (this.btns.filter.state === 'hover') {
 			this.btns.filter.tt.showImmediate(this.btns.filter.tiptext());
 		}
 	}
