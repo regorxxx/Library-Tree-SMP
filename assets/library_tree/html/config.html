@@ -723,7 +723,7 @@
 				<div class="info5"><b>Extended syntax</b></div>
 				<!-- Regorxxx Filter non-relevant functions at help -->
 				<div class="info7">Note new functions only available at Library-Tree-SMP use curly braces {} instead of parentheses (). e.g. $nowplaying{}.</div>
-				<table id="syntaxView" class="table98">
+				<table id="syntaxView" class="table98"><!-- //NOSONAR Headers added later -->
 					<br>
 					<colgroup>
 						<col span="1" style="width:20%">
@@ -731,7 +731,7 @@
 				</table>
 				<div class="info8" style="color:#0066cc;"><b>$colour{normal,hover,selected}</b></div>
 				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour code until either another $colour code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
-				<div class="info7" style="color:#0066cc;"><i>Hover effect requires that "Hover effect (foreground): Highlight text" is enabled (display tab).</i></div>
+				<div class="info7" style="color:#0066cc;"><i>Hover effect requires "Hover effect (foreground): Highlight text" to be enabled (at <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a>).</i></div>
 				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
 				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI, serif;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
 				</div>
@@ -754,7 +754,7 @@
 			<div id="syntaxFilter_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 				<div class="info5"><b>Extended syntax</b></div>
 				<div class="info7">Note new functions only available at Library-Tree-SMP use curly braces {} instead of parentheses (). e.g. $nowplaying{}.<br>Sorting expressions are also allowed (check query syntax reference) and will override any View (TF) or Source sorting (queue idx, etc.)</div>
-				<table id="syntaxFilter" class="table98">
+				<table id="syntaxFilter" class="table98"><!-- //NOSONAR Headers added later -->
 					<br>
 					<colgroup>
 						<col span="1" style="width:20%">
@@ -773,24 +773,24 @@
 		</div>
 		<!-- Regorxxx Presets tab | Preset rules -->
 		<div id='presets' class="tabcontent">
-			<span class="alignLeftH" style="margin-left: 0%;"><span style="color: #8994bc; padding-right: 0;">If</span> / <span style="color: #b48b8b; padding-right: 0;">If not</span> (match all)</span>
-			<span class="alignLeftH" style="margin-left: 31%;"><span style="color: #d288cb; padding-right: 0;">Then</span> (apply all)</span>
+			<span class="alignLeftH" style="margin-left: 0%; color: green;"><span style="color: #8994bc; padding-right: 0;">If</span> / <span style="color: #b48b8b; padding-right: 0;">If not</span> (match all)</span>
+			<span class="alignLeftH" style="margin-left: 31%; color: green;"><span style="color: #d288cb; padding-right: 0;">Then</span> (apply all)</span>
 			<div style="clear:both;"></div>
 			<hr>
 			<div style="clear:both;"></div>
-			<span class="div_text1 column12">Source</span>
-			<span class="div_text1 column12">Source Id</span>
-			<span class="div_text1 column16">View</span>
-			<span class="div_text1 column14">Filter</span>
-			<span class="div_text1 column12">Source</span>
-			<span class="div_text1 column16">View</span>
-			<span class="div_text1 column14">Filter</span>
+			<span class="div_text1 column12" style="color: green;">Source</span>
+			<span class="div_text1 column12" style="color: green;">Source Id</span>
+			<span class="div_text1 column16" style="color: green;">View</span>
+			<span class="div_text1 column14" style="color: green;">Filter</span>
+			<span class="div_text1 column12" style="color: green;">Source</span>
+			<span class="div_text1 column16" style="color: green;">View</span>
+			<span class="div_text1 column14" style="color: green;">Filter</span>
 			<div style="clear:both;"></div>
 			<div id="presetRules"></div>
 			<div style="clear:both;"></div>
 			<hr>
-			<div class="info1">Sources, Views and Filters can be associated by rules so that any setting change also sets other settings by default.</div>
-			<div style="display:inline-block; padding-top:0em;"><a id="presets_help" href="#" onclick="showHelp('presets_text');return false;">Preset rules help</a></div>
+			<div class="info1"><i></i>Sources, Views and Filters can be associated by rules so that any setting change also sets other settings by default.<br>Press Shift while clicking at dropdown box entries to add/delete multiple values.</i></div>
+			<div style="display:inline-block; padding-top:0em;"><button id="presets_help" onclick="showHelp('presets_text');return false;">Preset rules help</button></div>
 			<div id="presets_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 				<div class="info4">&#x2022; Use buttons at bottom to create/move/delete rules.<br><br>&#x2022; Rules do not disallow manually changing any related setting at a later point using the menus.<br><br>&#x2022; Rules are evaluated in order, from top to bottom, until any of them is matched.<br><br>&#x2022; Chaining and loops are not allowed, only 1 rule can be fully evaluated (when conditions are met).<br><br>&#x2022; Beware of setting mutually exclusive if/if not conditions, since rule wil never be applied.<br><br>&#x2022; Multiple values are allowed for the same if/if not condition by pressing Shift while clicking at dropdown box entries.<br>&emsp;&#x2219; e.g. A rule which applies by matching any of multiple possible views.<br>&emsp;&#x2219; If conditions will match any value on list, while if not conditions will match any value not on list.<br>&emsp;&#x2219; The dropdown button will show a counter if there is more than 1 value set. For ex. 'Value... (2)'.<br>&emsp;&#x2219; Adding a value without pressing Shift will simply replace all values with selected one.<br>&emsp;&#x2219; Note already selected values also have a different text color.<br><br>&#x2022; A rule which would apply a setting triggered by a change on same setting will always be skipped.<br>&emsp;&#x2219; Rules should usually only change settings different to the ones evaluated.<br>&emsp;&#x2219; e.g. A View change which matches all conditions of a rule which also changes the View will be skipped.<br>&emsp;&#x2219; e.g. If you want to set a default View for some Source, don't try to trigger the rule with View changes via menus.<br><br>&#x2022; If no conditions are set ('- Any -'), rule will apply to any Source, View and Filter.<br><br>&#x2022; If condition is skipped ('- Skip -'), rule will not apply when changing associated setting (even if the conditions are matched), but only when non-skipped settings change.<br><br>&#x2022; Rule triggers can be switched below. Note all conditions are checked in any case, triggers only control at which events the checks are done (associated setting change).<br><br>&#x2022; Place more specific rules at top, and generic ones at bottom, so the former override later ones. e.g.<br>&emsp;&#x2219; A rule at top for playlist sources which sets filter to 'Lossless'.<br>&emsp;&#x2219; A rule at bottom with no conditions to set the filter to '- None - by default.<br>&emsp;&#x2219; Any source will automatically use no filter, except playlists which will use 'Lossless'.<br><br>&#x2022; Selective settings trigger for specific rules can be emulated by setting all other conditions to '- Skip -'. e.g.<br>&emsp;&#x2219; A rule with Source and View conditions set to '- Skip -' and filter to 'Lossless'.<br>&emsp;&#x2219; Changing the Source or View using the menus will never trigger the rule.<br>&emsp;&#x2219; Changing the filter using menus to 'Lossless' will trigger the rule (and apply 'Then' section).<br>&emsp;&#x2219; Note the difference with setting conditions to '- Any -', which also triggers while changing Source/View via menus (Filter being 'Lossless' still required though).</div>
 			</div>
@@ -837,43 +837,43 @@
 						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & nowplaying indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are set if enabled</div>
 					</div>
 					<div class="info5600">Single-click:</div>
-					<span class="dropdown" style="margin-top:0"><a id="click_dropdown" class="dropbtn" href="#" onclick="toggle('click');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="click_dropdown" class="dropbtn" href="#" onclick="return toggle('click');"></a>
 						<span id="click" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">Double-click:</div>
-					<span class="dropdown" style="margin-top:0;"><a id="dblClick_dropdown" class="dropbtn" href="#" onclick="toggle('dblClick');"></a>
+					<span class="dropdown" style="margin-top:0;"><a id="dblClick_dropdown" class="dropbtn" href="#" onclick="return toggle('dblClick');"></a>
 						<span id="dblClick" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">Mbtn-click:</div>
-					<span class="dropdown" style="margin-top:0"><a id="mbtnClick_dropdown" class="dropbtn" href="#" onclick="toggle('mbtnClick');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="mbtnClick_dropdown" class="dropbtn" href="#" onclick="return toggle('mbtnClick');"></a>
 						<span id="mbtnClick" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">Alt+click:</div>
-					<span class="dropdown" style="margin-top:0"><a id="altClick_dropdown" class="dropbtn" href="#" onclick="toggle('altClick');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="altClick_dropdown" class="dropbtn" href="#" onclick="return toggle('altClick');"></a>
 						<span id="altClick" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">Keystroke:</div>
-					<span class="dropdown" style="margin-top:0"><a id="keystroke_dropdown" class="dropbtn" href="#" onclick="toggle('keystroke');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="keystroke_dropdown" class="dropbtn" href="#" onclick="return toggle('keystroke');"></a>
 						<span id="keystroke" class="dropdown-content"></span>
 					</span>
 					<div class="div_text6">Scroll</div>
 					<span class="info3">Bar:</span>
-					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarShow_dropdown" class="dropbtn" href="#" onclick="toggle('sbarShow');"></a>
+					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarShow_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarShow');"></a>
 						<span id="sbarShow" class="dropdown-content"></span>
 					</span>
-					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarType_dropdown" class="dropbtn" href="#" onclick="toggle('sbarType');"></a>
+					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarType_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarType');"></a>
 						<span id="sbarType" class="dropdown-content"></span>
 					</span>
-					<span style="margin:0 0 0.31em;" id="sbar_col_dropdown" class="dropdown"><a id="sbarCol_dropdown" class="dropbtn" href="#" onclick="toggle('sbarCol');"></a>
+					<span style="margin:0 0 0.31em;" id="sbar_col_dropdown" class="dropdown"><a id="sbarCol_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarCol');"></a>
 						<span id="sbarCol" class="dropdown-content"></span>
 					</span>
-					<span style="margin:0 0 0.31em;" id="sbar_icon_dropdown" class="dropdown"><a id="sbarIcon_dropdown" class="dropbtn" href="#" onclick="toggle('sbarIcon');"></a>
+					<span style="margin:0 0 0.31em;" id="sbar_icon_dropdown" class="dropdown"><a id="sbarIcon_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarIcon');"></a>
 						<span id="sbarIcon" class="dropdown-content"></span>
 					</span>
 					<div id="scrolling"></div>
 					<!-- Regorxxx Contextual menu options -->
 					<div class="div_text6">Contextual menu (tracks)</div>
-					<span style="margin:0 0 0.31em;" class="dropdown"><a id="contextMenu_dropdown" class="dropbtn" href="#" onclick="toggle('contextMenu');"></a>
+					<span style="margin:0 0 0.31em;" class="dropdown"><a id="contextMenu_dropdown" class="dropbtn" href="#" onclick="return toggle('contextMenu');"></a>
 						<span id="contextMenu" class="dropdown-content"></span>
 					</span>
 					<br>
@@ -899,13 +899,13 @@
 					<div class="div_text1">Views sorting</div>
 					<div class="info5600">By folder:</div>
 					<!-- View by Folder structure sorting. Custom sorting for standard views -->
-					<span class="dropdown" style="margin-top:0"><a id="folderSorting_dropdown" class="dropbtn" href="#" onclick="toggle('folderSorting');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="folderSorting_dropdown" class="dropbtn" href="#" onclick="return toggle('folderSorting');"></a>
 						<span id="folderSorting" class="dropdown-content"></span>
 					</span>
 					<div style="margin:0.31em 0 0;" id="folderSortingFb"></div>
 					<div style="margin:0.31em 0 0;" id="folderSortingTrans"></div>
 					<div class="info5600">By TF:</div>
-					<span class="dropdown" style="margin-top:0"><a id="viewSorting_dropdown" class="dropbtn" href="#" onclick="toggle('viewSorting');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="viewSorting_dropdown" class="dropbtn" href="#" onclick="return toggle('viewSorting');"></a>
 						<span id="viewSorting" class="dropdown-content"></span>
 					</span>
 					<div style="margin:0.31em 0 0;" id="viewSortingTrans"></div>
@@ -958,41 +958,41 @@
 					<div class="div_text1">Drag n' Drop</div>
 					<div class="div_text2">Multi-value tag Operator</div>
 					<div class="info5600">Default:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpDefault');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpDefault_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragValOpDefault');"></a>
 						<span id="searchDragValOpDefault" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Ctrl:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpCtrl');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpCtrl_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragValOpCtrl');"></a>
 						<span id="searchDragValOpCtrl" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Alt:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragValOpAlt');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragValOpAlt_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragValOpAlt');"></a>
 						<span id="searchDragValOpAlt" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2">Inter-tag Operator</div>
 					<div class="info5600">Default:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpDefault');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpDefault_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTagOpDefault');"></a>
 						<span id="searchDragTagOpDefault" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Ctrl:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpCtrl');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpCtrl_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTagOpCtrl');"></a>
 						<span id="searchDragTagOpCtrl" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Alt:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTagOpAlt');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTagOpAlt_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTagOpAlt');"></a>
 						<span id="searchDragTagOpAlt" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2" style="margin-top:0">Inter-track Operator</div>
 					<div class="info5600" style="margin-top:0">Default:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpDefault');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpDefault_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTrackOpDefault');"></a>
 						<span id="searchDragTrackOpDefault" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Ctrl:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpCtrl_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpCtrl');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpCtrl_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTrackOpCtrl');"></a>
 						<span id="searchDragTrackOpCtrl" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Alt:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpAlt_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragTrackOpAlt');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragTrackOpAlt_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragTrackOpAlt');"></a>
 						<span id="searchDragTrackOpAlt" class="dropdown-content"></span>
 					</span>
 				</div>
@@ -1001,11 +1001,11 @@
 					<div class="div_text1">Drag n' Drop</div>
 					<div class="div_text2">Inter-query operator</div>
 					<div class="info5600">Default:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpDefault_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragQueryOpDefault');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpDefault_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragQueryOpDefault');"></a>
 						<span id="searchDragQueryOpDefault" class="dropdown-content"></span>
 					</span>
 					<div class="info5600">On Shift:</div>
-					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpShift_dropdown" class="dropbtn" href="#" onclick="toggle('searchDragQueryOpShift');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="searchDragQueryOpShift_dropdown" class="dropbtn" href="#" onclick="return toggle('searchDragQueryOpShift');"></a>
 						<span id="searchDragQueryOpShift" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2">Tags</div>
@@ -1026,7 +1026,7 @@
 				<div class="column33">
 					<div class="div_text1">Search box</div>
 					<div class="div_text1">Results</div>
-					<span class="dropdown"><a id="searchSend_dropdown" class="dropbtn" href="#" onclick="toggle('searchSend');"></a>
+					<span class="dropdown"><a id="searchSend_dropdown" class="dropbtn" href="#" onclick="return toggle('searchSend');"></a>
 						<span id="searchSend" class="dropdown-content"></span>
 					</span>
 					<div id="searchEnter" style="padding-top:0.5em;"></div>
@@ -1048,7 +1048,7 @@
 					<div id="bar"></div>
 					<div style="padding-right:10%;" class="info4"><i>*If hidden, right click over filter or icon. If all hidden, use context menu.</i></div>
 					<div class="div_text2">Theme</div>
-					<span class="dropdown"><a id="theme_dropdown" class="dropbtn" href="#" onclick="toggle('themeBg');"></a>
+					<span class="dropdown"><a id="theme_dropdown" class="dropbtn" href="#" onclick="return toggle('themeBg');"></a>
 						<span id="themeBg" class="dropdown-content"></span>
 					</span>
 					<div id="themeStyle" style="padding-top:0.5em;"></div>
@@ -1059,12 +1059,12 @@
 				<!-- Regorxxx New Statistics. Adjust column width -->
 				<div class="column29">
 					<div class="div_text1">Root</div>
-					<span class="dropdown"><a id="root_dropdown" class="dropbtn" href="#" onclick="toggle('root');"></a>
+					<span class="dropdown"><a id="root_dropdown" class="dropbtn" href="#" onclick="return toggle('root');"></a>
 						<span id="root" class="dropdown-content"></span>
 					</span>
 					<div id="rootStyle" style="padding-top:0.5em;"></div>
 					<div class="div_text2">Node style</div>
-					<span class="dropdown"><a id="node_dropdown" class="dropbtn" href="#" onclick="toggle('node');"></a>
+					<span class="dropdown"><a id="node_dropdown" class="dropbtn" href="#" onclick="return toggle('node');"></a>
 						<span id="node" class="dropdown-content"></span>
 					</span>
 					<div id="nodeLines" style="padding-top:0.5em;"></div>
@@ -1075,7 +1075,7 @@
 				<!-- Regorxxx New Statistics. Adjust column width -->
 				<div class="column32">
 					<div class="div_text1">Hover effect (background)</div>
-					<span class="dropdown"><a id="showHl_dropdown" class="dropbtn" href="#" onclick="toggle('showHl');"></a>
+					<span class="dropdown"><a id="showHl_dropdown" class="dropbtn" href="#" onclick="return toggle('showHl');"></a>
 						<span id="showHl" class="dropdown-content"></span>
 					</span>
 					<div id="frameStyle" style="padding-top:0.5em;"></div>
@@ -1124,7 +1124,7 @@
 					<div class="div_text2">Display</div>
 					<div id="labelStatistics"></div>
 					<div class="div_text2">Item counts</div>
-					<span class="dropdown"><a id="itemCounts_dropdown" class="dropbtn" href="#" onclick="toggle('itemCounts');"></a>
+					<span class="dropdown"><a id="itemCounts_dropdown" class="dropbtn" href="#" onclick="return toggle('itemCounts');"></a>
 						<span id="itemCounts" class="dropdown-content"></span>
 					</span>
 					<div id="countsRight" style="padding-top:0.5em;"></div>
@@ -1147,7 +1147,7 @@
 					<div id="labels"></div>
 					<div id="flip"></div>
 					<div class="div_text2">Overlay</div>
-					<span class="dropdown"><a id="overlay_dropdown" class="dropbtn" href="#" onclick="toggle('overlay');"></a>
+					<span class="dropdown"><a id="overlay_dropdown" class="dropbtn" href="#" onclick="return toggle('overlay');"></a>
 						<span id="overlay" class="dropdown-content"></span>
 					</span>
 					<div class="div_text2">Disk cache</div>
@@ -1157,7 +1157,7 @@
 
 				<div class="column33">
 					<div class="div_text3">Style</div>
-					<table id="imageFormat" class="table95">
+					<table id="imageFormat" class="table95"><!-- //NOSONAR Headers added later -->
 						<colgroup>
 							<col span="5" style="width:15%">
 						</colgroup>
@@ -1172,7 +1172,7 @@
 						</div>
 						<div class="column50">
 							<div id="thumbNailSize" class="div_text7">Thumbnail Size</div>
-							<span class="dropdown"><a id="thumbSize_dropdown" class="dropbtn" href="#" onclick="toggle('thumbSize');"></a>
+							<span class="dropdown"><a id="thumbSize_dropdown" class="dropbtn" href="#" onclick="return toggle('thumbSize');"></a>
 								<span id="thumbSize" class="dropdown-content"></span>
 							</span>
 							<div class="div_text2">View</div>
@@ -1193,13 +1193,13 @@
 
 				<div class="column41">
 					<div class="div_text1">Stub</div>
-					<span style="margin:0 0 0.31em;" class="dropdown"><a id="rootStub_dropdown" class="dropbtnLight" href="#" onclick="toggle('rootStub');"></a>
-						<span id="rootStub" style="font:0.85em Segoe UI;" class="dropdown-content"></span>
+					<span style="margin:0 0 0.31em;" class="dropdown"><a id="rootStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('rootStub');"></a>
+						<span id="rootStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
-					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noCoverStub_dropdown" class="dropbtnLight" href="#" onclick="toggle('noCoverStub');"></a>
-						<span id="noCoverStub" style="font:0.85em Segoe UI;" class="dropdown-content"></span>
+					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noCoverStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('noCoverStub');"></a>
+						<span id="noCoverStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
-					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noArtistStub_dropdown" class="dropbtnLight" href="#" onclick="toggle('noArtistStub');"></a>
+					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noArtistStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('noArtistStub');"></a>
 						<span id="noArtistStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
 					<div class="info5"><i>Click dropdown items for full preview (provided visible in panel).</i></div>
@@ -1212,7 +1212,7 @@
 					<!-- Regorxxx -->
 				</div>
 			</div>
-			<div id="help_text" style="display: none;">
+			<div id="albumArt_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 				<div class="info5"><b>Cache</b></div>
 				<div class="info5">Enable the disk cache for best performance. It contains resized images that facilitate faster loading and is built as images are initially loaded. Optimum performance will be achieved when the cache is fully built. If new images are obtained or images replaced, the cache copy can be refreshed from the refresh context menu item.<br><br>Optionally cached images can be preloaded in the background. Preloading completes shortly after initialisation. After that images should always show immediately on scrolling, subject to memory available.</div>
 				<div class="info5" style="white-space: normal;"><b>Image and text size</b>
@@ -1233,7 +1233,7 @@
 				<div class="info5"><b>Follow selection</b></div>
 				<div class="info5">If enabled, the &quot;File>Preferences>Display>Selection viewers&quot; setting is used.</div>
 				<div class="info5"><b>Tree only mode</b></div>
-				<div class="info5">Switch off 'Show Album Art Options' on the <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display</a> b while in tree view. Album art loading, disk caching plus the album art tab and menu options are disabled. Switch the option back on to allow album art mode.</div>
+				<div class="info5">Switch off 'Show Album Art Options' on the <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a> while in tree view. Album art loading, disk caching plus the <a class="internalLink" onclick="openPage('albumArt', 'albumArtCfg', 'deeppink')">Album Art tab</a> and menu options are disabled. Switch the option back on to allow album art mode.</div>
 				<div><br></div>
 			</div>
 		</div>
@@ -1277,7 +1277,7 @@
 					<div id="cusScroll"></div>
 					<div class="div_text1">Scrollbar</div>
 					<div id="scrollbar"></div>
-					<div class="info5" style="padding-right:20%;"><i>Select custom scrollbar icon in 'Behaviour Tab' under 'Scroll: Arrows' (N/A if windows scrollbar set). Set custom node icon in 'Display Tab' under 'Node style'. Ensure icons are supported by fonts.</i></div>
+					<div class="info5" style="padding-right:20%;"><i>Select custom scrollbar icon in <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a> under 'Scroll: Arrows' (N/A if windows scrollbar set). Set custom node icon in <a class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</a> under 'Node style'. Ensure icons are supported by fonts.</i></div>
 					<!-- Regorxxx Don't create cache playlists if possible. Chained facets updates -->
 					<div class="div_text1">Multi-panel mode (facets)</div>
 					<div id="facets"></div>
@@ -1295,7 +1295,7 @@
 					<!-- Regorxxx Sorting transliteration -->
 					<div class="div_text1">Languages</div>
 					<div id="sortingTransLangs"></div>
-					<div class="info5" style="padding-right:20%;"><i>Specific languages may be skipped by removing their ISO 639-1 language code.<br>Leaving it empty will use all available languages. To disable transliteration check <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a>.</i></div>
+					<div class="info5" style="padding-right:20%;"><i>Specific languages may be skipped by removing their ISO 639-1 code.<br>Leave it empty yo use all available languages. Check <a class="internalLink" onclick="openPage('behaviour', 'behaviourCfg', 'orange')">Behaviour tab</a> to disable transliteration.</i></div>
 					<!-- Regorxxx -->
 				</div>
 
@@ -1323,7 +1323,7 @@
 					<div class="div_text1">Auto-DJ</div>
 					<div id="autodj"></div>
 					<div class="info5600">Next track picking method:</div>
-					<span class="dropdown" style="margin-top:0"><a id="autodjPick_dropdown" class="dropbtn" href="#" onclick="toggle('autodjPick');"></a>
+					<span class="dropdown" style="margin-top:0"><a id="autodjPick_dropdown" class="dropbtn" href="#" onclick="return toggle('autodjPick');"></a>
 						<span id="autodjPick" class="dropdown-content"></span>
 					</span>
 					<div style="display:inline-block; padding-top:0.7em;"><button id="autodjPick_help" onclick="showHelp('autodjPick_text');return false;">Track picking help</button></div>
@@ -1342,7 +1342,7 @@
 	<!-- Regorxxx IE8 Polyfill -->
 	<script>
 		if (!('indexOf' in Array.prototype)) {
-			Array.prototype.indexOf = function (find, i /*opt*/) { // NOSONAR
+			Array.prototype.indexOf = function (find, i) { // NOSONAR
 				'use strict';
 				if (typeof i === 'undefined') { i = 0; }
 				if (i < 0) { i += this.length; }
@@ -1354,7 +1354,7 @@
 			};
 		}
 		if (!('filter' in Array.prototype)) {
-			Array.prototype.filter = function (fun /*, thisp */) { // NOSONAR
+			Array.prototype.filter = function (fun) { // NOSONAR
 				'use strict';
 				if (typeof this === 'undefined' || this === null) { throw new TypeError('This is undefined or null'); }
 				var t = Object(this);
@@ -2188,7 +2188,7 @@
 			}
 
 			var subMenus = {};
-			function toogleSubmenu(id) { // NOSONAR
+			function toggleSubmenu(id) { // NOSONAR
 				if (window[id].style.display === 'none') {
 					window[id].style.display = 'inline-block';
 					subMenus[id] = true;
@@ -2196,6 +2196,7 @@
 					window[id].style.display = 'none'
 					subMenus[id] = false;
 				}
+				return false; // Regorxxx <- Disable opening new window while pressing shift ->
 			}
 
 			function setPresetRules() { // NOSONAR
