@@ -1152,7 +1152,11 @@
 					</span>
 					<div class="div_text2">Disk cache</div>
 					<div id="useCache"></div>
-					<button id="help_button" name="help_button" style="margin:2em 0 0;" type="button">Show Album Art Help</button>
+					<div class="div_text2">Flow mode</div>
+					<div id="flowMode"></div>
+					<div class="div_text2">View</div>
+					<div id="sameAsTree"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="albumArt_help" onclick="showHelp('albumArt_text');return false;">Show Album Art Help</button></div>
 				</div>
 
 				<div class="column33">
@@ -1167,28 +1171,14 @@
 						<div class="column50">
 							<div class="div_text7">Thumbnail padding</div>
 							<div id="gap"></div>
-							<div style="padding:1.01em 0 0.31em;" class="div_text2">Flow mode</div>
-							<div id="flowMode"></div>
 						</div>
 						<div class="column50">
 							<div id="thumbNailSize" class="div_text7">Thumbnail Size</div>
 							<span class="dropdown"><a id="thumbSize_dropdown" class="dropbtn" href="#" onclick="return toggle('thumbSize');"></a>
 								<span id="thumbSize" class="dropdown-content"></span>
 							</span>
-							<div class="div_text2">View</div>
-							<div id="sameAsTree"></div>
 						</div>
 					</div>
-					<!-- Regorxxx Rectangle selection on art view -->
-					<div style="padding:1.01em 0 0.31em;" class="div_text2">Other settings</div>
-					<div id="selRectArt"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><a id="selRectArt_help" href="#" onclick="showHelp('selRectArt_text');return false;">Rectangle selection help</a></div>
-					<div id="selRectArt_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4"><br>&#x2022; Mouse rectangle selection will disable drag n' drop unless the item(s) were already selected before clicking down and dragging.<br>&#x2022; Instead draws a selection rectangle, which works across rows/columns. <br>&#x2022; To use drag n' drop, first select the desired items and then drag.<br>&#x2022; To select, always start from a point outside any current selection.
-						</div>
-						<div><br></div>
-					</div>
-					<!-- Regorxxx -->
 				</div>
 
 				<div class="column41">
@@ -1209,6 +1199,16 @@
 					<div class="div_text2">TF style</div>
 					<div id="albumArtTf"></div>
 					<div class="info5"><i>In addition to <a class="tooltip" id="ltReference4" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference4')">custom TF syntax<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>, <b>$nodename</b> is available to retrieve node names as shown on the panel. Paths starting with '<b>.\profile\</b>' are relative to foobar profile folder.<br>'<b>%FB2K_PROFILE_PATH%</b>' or '<b>%PROFILE%</b>' may also be used.<br><br>This can be used to display custom art related to actual View TF pattern instead of track-based. e.g. To display a genre/style tree with custom images for every genre, add rock genre image at '[FB2K_PROFILE]\images\rock.jpg'</i></div>
+					<!-- Regorxxx -->
+					<!-- Regorxxx Rectangle selection on art view -->
+					<div style="padding:1.01em 0 0.31em;" class="div_text2">Other settings</div>
+					<div id="selRectArt"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="selRectArt_help" onclick="showHelp('selRectArt_text');return false;">Rectangle selection help</button></div>
+					<div id="selRectArt_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4"><br>&#x2022; Mouse rectangle selection will disable drag n' drop unless the item(s) were already selected before clicking down and dragging.<br>&#x2022; Instead draws a selection rectangle, which works across rows/columns. <br>&#x2022; To use drag n' drop, first select the desired items and then drag.<br>&#x2022; To select, always start from a point outside any current selection.
+						</div>
+						<div><br></div>
+					</div>
 					<!-- Regorxxx -->
 				</div>
 			</div>
@@ -1885,7 +1885,7 @@
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'albumArtFlowMode', 'artTreeSameView', 'selRectArt', 'albumArtLetter', 'albumArtYearAuto'], // Regorxxx <- Rectangle selection on art view | Effect per art type ->
+				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'], // Regorxxx <- Rectangle selection on art view | Effect per art type ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
 			}
@@ -2350,40 +2350,40 @@
 			// Regorxxx ->
 
 			// Regorxxx <- Code cleanup | Custom TF art | New img styles | Effect per art type
-			var imgTable = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
-			var imgTableEffects = [
+			var imgTableStylesId = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
+			var imgTableEffectsId = [
 				['imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'Reflection'],
 				['imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'Reflection Root'],
 				['imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'Border'],
 				['imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'Shadow']
 			];
-			var imgTableReflection = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'];
+			var imgTableReflectionId = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'];
+			var imgTableStyles = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart'];
+			var imgTableEffects = ['Reflection', 'Reflection Root', 'Border', 'Shadow'];
+			var imgTableReflection = ['Asymmetric', 'Symmetric'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
 			function getTableData(id) {
 				var cells = [];
 				var columnCount = 0;
-				var imgLen = imgTable.length;
 				var labels, headers, items, n, menId;
 				switch (id) {
 					case 'imageFormat':
+						var imgStylesIdLen = imgTableStylesId.length;
+						var imgStylesLen = imgTableStyles.length;
+						var imgTableEffectsLen = imgTableEffects.length;
+						var imgTableReflectionLen = imgTableReflection.length;
 						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
 						cells.push(headers);
-						var radioLabels = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart'];
-						var radioLabelsLen = radioLabels.length;
-						var cboxLabels = ['Reflection', 'Reflection Root', 'Border', 'Shadow'];
-						var cboxLabelsLen = cboxLabels.length;
-						var radioReflLabels = ['Asymmetric', 'Symmetric'];
-						var radioReflLen = radioReflLabels.length;
 						items = [];
 						var subItems = [];
-						for (j = 0; j < radioLabelsLen; j++) {
+						for (j = 0; j < imgStylesLen; j++) {
 							items[j] = [];
-							for (i = 0; i < imgLen; i++) {
-								n = imgTable[i];
+							for (i = 0; i < imgStylesIdLen; i++) {
+								n = imgTableStylesId[i];
 								menId = n + j;
 								items[j].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
-								if (i == imgLen - 1) {
-									items[j].push('<div style="padding-left:0.46em; text-align:left">' + radioLabels[j] + '</div>');
+								if (i == imgStylesIdLen - 1) {
+									items[j].push('<div style="padding-left:0.46em; text-align:left">' + imgTableStyles[j] + '</div>');
 									cells.push(items[j]);
 								}
 							}
@@ -2391,52 +2391,52 @@
 						for (j = 0; j < 2; j++) {
 							items[j] = [];
 							subItems[j] = [];
-							for (i = 0; i < imgTableEffects[j].length; i++) {
-								n = imgTableEffects[j][i];
-								if (i < imgLen) {
+							for (i = 0; i < imgTableEffectsId[j].length; i++) {
+								n = imgTableEffectsId[j][i];
+								if (i < imgStylesIdLen) {
 									items[j].push('<input id="' + n + '" name="image_checkbox" style="' + cbox + '" type="checkbox" />');
 								} else {
 									items[j].push('');
 								}
-								if (i == imgLen - 1) {
-									items[j].push('<div style="padding-left:0.46em; text-align:left">' + cboxLabels[j] + '</div>');
+								if (i == imgStylesIdLen - 1) {
+									items[j].push('<div style="padding-left:0.46em; text-align:left">' + imgTableEffects[j] + '</div>');
 									cells.push(items[j]);
 								}
 							}
 						}
 						j = 1;
-						for (k = 0; k < radioReflLen; k++) {
+						for (k = 0; k < imgTableReflectionLen; k++) {
 							subItems[j][k] = [];
-							for (i = 0; i < imgTableEffects[j].length; i++) {
-								n = imgTableReflection[i];
+							for (i = 0; i < imgTableEffectsId[j].length; i++) {
+								n = imgTableReflectionId[i];
 								menId = n + i + k;
-								if (i < imgLen) {
+								if (i < imgStylesIdLen) {
 									subItems[j][k].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
 								} else {
 									subItems[j][k].push('');
 								}
-								if (i == imgLen - 1) {
-									subItems[j][k].push('<div style="padding-left:0.46em; text-align:left">' + radioReflLabels[k] + '</div>');
+								if (i == imgStylesIdLen - 1) {
+									subItems[j][k].push('<div style="padding-left:0.46em; text-align:left">' + imgTableReflection[k] + '</div>');
 									cells.push(subItems[j][k]);
 								}
 							}
 						}
-						for (j = 2; j < cboxLabelsLen; j++) {
+						for (j = 2; j < imgTableEffectsLen; j++) {
 							items[j] = [];
-							for (i = 0; i < imgTableEffects[j].length; i++) {
-								n = imgTableEffects[j][i];
-								if (i < imgLen) {
+							for (i = 0; i < imgTableEffectsId[j].length; i++) {
+								n = imgTableEffectsId[j][i];
+								if (i < imgStylesIdLen) {
 									items[j].push('<input id="' + n + '" name="image_checkbox" style="' + cbox + '" type="checkbox" />');
 								} else {
 									items[j].push('');
 								}
-								if (i == imgLen - 1) {
-									items[j].push('<div style="padding-left:0.46em; text-align:left">' + cboxLabels[j] + '</div>');
+								if (i == imgStylesIdLen - 1) {
+									items[j].push('<div style="padding-left:0.46em; text-align:left">' + imgTableEffects[j] + '</div>');
 									cells.push(items[j]);
 								}
 							}
 						}
-						columnCount = imgLen + 1;
+						columnCount = imgStylesIdLen + 1;
 						break;
 					// Regorxxx ->
 					case 'syntaxFilter': // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
@@ -2531,6 +2531,7 @@
 				var headerCount = items[1];
 				var table = document.getElementById(tb);
 				var columnCount = items[2];
+				var imgStylesLen = imgTableStyles.length;
 
 				//Add the header row.
 				var row;
@@ -2540,6 +2541,12 @@
 						var headerCell = document.createElement("TH");
 						headerCell.innerHTML = cells[0][i];
 						row.appendChild(headerCell);
+						// Regorxxx <- Add help to filter tab | Filter non-relevant functions at help | UI cleanup
+						if (tb === 'syntax' || tb === 'syntaxFilter' || tb == 'syntaxView') {
+							headerCell.style.background = 'green';
+							headerCell.style.color = '#f2f2f2';
+						}
+						// Regorxxx ->
 					}
 				}
 
@@ -2549,8 +2556,14 @@
 					for (j = 0; j < columnCount; j++) {
 						var cell = row.insertCell(-1);
 						cell.innerHTML = cells[i][j];
-						if (tb != 'syntax' && tb != 'syntaxFilter' && tb != 'syntaxView' && i % 2 == 1) cell.style.background = '#E8E8E8'; // Regorxxx <- Add help to filter tab | Filter non-relevant functions at help ->
-						if (tb == 'imageFormat' && i == 7) cell.style.borderBottom = "1px solid green"; // Regorxxx <- Effect per art type ->
+						// Regorxxx <- Add help to filter tab | Filter non-relevant functions at help | UI cleanup
+						if (tb === 'syntax' || tb === 'syntaxFilter' || tb == 'syntaxView') {
+							cell.style.background = i % 2 === 1 ? '#f2f2f2' : '#E8E8E8';
+						} else {
+							if (i % 2 == 1) { cell.style.background = '#E8E8E8'; }
+						}
+						// Regorxxx ->
+						if (tb === 'imageFormat' && i === imgStylesLen) { cell.style.borderBottom = "1px solid green"; } // Regorxxx <- Effect per art type ->
 					}
 				}
 
@@ -2986,6 +2999,10 @@
 				for (i = 0; i < 3; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
 
 				for (i = 0; i < 2; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox" class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); }
+
+				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
+				window.sameAsTree.insertAdjacentHTML('beforeend', '<div><input id="sameAsTree_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="sameAsTree_checkbox" class="checkbox_label">Same As Tree</label></div>');
+
 				var pth = '[*YOUR PATH*]\\art_img\\$lower($cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),1))\\$cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),40)\\*';
 				var pthExmpl = '\'C:\\foobar2000\\profile\\foo_spider_monkey_panel\\package_data\\{BA9557CE-7B4B-4E0E-9373-99F511E81252}\\biography-cache\\art_img\\$lower($cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),1))\\$cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),40)\\*\'';
 				window.photoPath.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_photoPath"><input name="photoPath_view" class="input98" readonly value="' + pth + '" /></div><br>Change \'[*YOUR PATH*]\' as required; pattern assumes biography is saving to default folder<br><br>i.e. ' + pthExmpl)
@@ -3000,11 +3017,6 @@
 				for (i = 0; i < noCoverStubLabels.length; i++) { window.noCoverStub.insertAdjacentHTML('beforeend', '<a onclick="setNoCoverImage(' + i + ');"> <img src="' + noCoverStubLabels[i].path + '" alt="' + noCoverStubLabels[i].name + '" width="' + em + '" height="' + em + '" style="vertical-align:middle;"/> ' + noCoverStubLabels[i].name + '</a>'); }
 				generateTable('imageFormat');
 				for (i = 0; i < 2; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
-				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
-				// Regorxxx <- Rectangle selection on art view
-				window.selRectArt.insertAdjacentHTML('beforeend', '<div><input id="selRectArt_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="selRectArt_checkbox" class="checkbox_label">Allow mouse rectangle selection </label></div>');
-				// Regorxxx ->
-				window.sameAsTree.insertAdjacentHTML('beforeend', '<div><input id="sameAsTree_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="sameAsTree_checkbox" class="checkbox_label">Same As Tree</label></div>');
 
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[ppt['thumbNailSize_internal'].value];
 				for (i = 0; i < 8; i++) { window.thumbSize.insertAdjacentHTML('beforeend', '<a onclick="setthumbSize(' + i + ');">' + thumbnailSizeLabels[i] + '</a>'); }
@@ -3015,6 +3027,9 @@
 
 				// Regorxxx <- Custom TF art
 				for (i = 0; i < 2; i++) { window.albumArtTf.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="albumArtTf_container' + i + '" name="albumart_input" class="input70" /><label for="albumArtTf_container' + i + '" class="inp_label2">' + albumArtTfLabels[i] + '</label></div>'); }
+				// Regorxxx ->
+				// Regorxxx <- Rectangle selection on art view
+				window.selRectArt.insertAdjacentHTML('beforeend', '<div><input id="selRectArt_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="selRectArt_checkbox" class="checkbox_label">Allow mouse rectangle selection </label></div>');
 				// Regorxxx ->
 			}
 
@@ -3683,17 +3698,6 @@
 		}
 
 		var divToggleVis = document.getElementById('help_text');
-		var help_btn = document.getElementById('help_button');
-
-		help_btn.onclick = function () {
-			if (divToggleVis.style.display === 'none') {
-				divToggleVis.style.display = 'block';
-				help_btn.innerHTML = 'Hide Album Art Help';
-			} else {
-				divToggleVis.style.display = 'none';
-				help_btn.innerHTML = 'Show Album Art Help';
-			}
-		}
 
 		function showModeHelp() {
 			var divToggleMode = document.getElementById('mode_text');
@@ -3705,7 +3709,7 @@
 			}
 		}
 
-		// Regorxxx <- Drag n' drop to search box | Send to playlist & select
+		// Regorxxx <- Drag n' drop to search box | Send to playlist & select | Add help to filter tab
 		function showHelp(id) { // plsSel_text, drag_text, mode_text, topTracks_text
 			var divToggleMode = document.getElementById(id);
 			if (divToggleMode.style.display === 'none') {
@@ -3713,33 +3717,6 @@
 				divToggleMode.scrollIntoView();
 			} else {
 				divToggleMode.style.display = 'none';
-			}
-		}
-		// Regorxxx ->
-
-		var divToggleSyn = document.getElementById('syntax_help');
-		var syntax_btn = document.getElementById('syntax_button');
-
-		syntax_btn.onclick = function () {
-			if (divToggleSyn.style.display === 'none') {
-				divToggleSyn.style.display = 'block';
-				syntax_btn.innerHTML = 'Hide Help';
-			} else {
-				divToggleSyn.style.display = 'none';
-				syntax_btn.innerHTML = 'Show Multi-Panel Mode (Facets) & Extended Syntax Help'; // Regorxxx <- Text cleanup ->
-			}
-		}
-		// Regorxxx <- Add help to filter tab
-		var divToggleSynFilter = document.getElementById('syntaxFilter_help');
-		var syntaxFilter_btn = document.getElementById('syntaxFilter_button');
-
-		syntaxFilter_btn.onclick = function () {
-			if (divToggleSynFilter.style.display === 'none') {
-				divToggleSynFilter.style.display = 'block';
-				syntaxFilter_btn.innerHTML = 'Hide Help';
-			} else {
-				divToggleSynFilter.style.display = 'none';
-				syntaxFilter_btn.innerHTML = 'Extended Syntax Help';
 			}
 		}
 		// Regorxxx ->
