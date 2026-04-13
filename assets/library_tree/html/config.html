@@ -1687,14 +1687,14 @@
 		}
 
 		function clamp(num, min, max) {
-			num = num <= max ? num : max; num = num >= min ? num : min; return num;
+			return Math.max(Math.min(num, max), min);
 		}
 
 		function getSelCol(c) {
 			var cc = [], v = 1;
 			for (i = 0; i < c.length; i++) {
 				v = c[i] / 255;
-				cc.push(v <= 0.03928 ? v /= 12.92 : Math.pow(((v + 0.055) / 1.055), 2.4));
+				cc.push(v <= 0.03928 ? v / 12.92 : Math.pow(((v + 0.055) / 1.055), 2.4));
 			}
 			var L = 0.2126 * cc[0] + 0.7152 * cc[1] + 0.0722 * cc[2]; if (L > 0.31) return 'black'; else return 'white';
 		}
@@ -1716,6 +1716,9 @@
 		var plsIds = []; // Regorxxx <- Preset rules ->
 		var ppt = {};
 		var sizes = [];
+		var input, cbox, box, radio;
+		var heightOffset, widthOffset;
+		var clickLabels, dblClickLabels, mbtnClickLabels;
 
 		try {
 			parsed_args = window.external.dialogArguments.toArray();
@@ -1729,7 +1732,7 @@
 			ppt = JSON.parse(parsed_args[1]);
 			cbox_h = Math.round(Math.max(em, 13));
 			cbox_w = cbox_h + 2;
-			var cbox = "width:" + cbox_w + "px; height:" + cbox_h + "px;"
+			cbox = "width:" + cbox_w + "px; height:" + cbox_h + "px;"
 			window_w = cur.w * em || screen.width * 0.67;
 			window_h = cur.h * em || screen.height * 0.85;
 			if (cur.w == cur.def_w) window_w = Math.min(window_w, screen.width * 0.67);
@@ -1739,8 +1742,8 @@
 			window.resizeTo(window_w, window_h);
 			window.moveTo(left, top);
 			height = document.documentElement.clientHeight || document.body.clientHeight;
-			var heightOffset = window_h - height;
-			var widthOffset = window_w - (document.documentElement.clientWidth || document.body.clientWidth);
+			heightOffset = window_h - height;
+			widthOffset = window_w - (document.documentElement.clientWidth || document.body.clientWidth);
 			checkWindowDefaultSize();
 			// Regorxxx <- Catch wrong page settings and load first page if not available
 			var page = document.getElementById(cur.page + 'Cfg') || document.getElementById('viewsCfg');
@@ -1754,12 +1757,20 @@
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
 			var altClickLabels = ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist']; // Regorxxx <- Top tracks ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
-			var clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
+			clickLabels = ppt['actionMode_internal'].value == 1
+				? ['Send to playlist']
+				: ppt['actionMode_internal'].value == 2
+					? ['Select']
+					: ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
 			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
 			var cusNodeLabels = ['Custom icon expand|collapse', 'Custom icon font name', 'Custom icon padding (+/-)', 'Square nodes: use windows'];
 			var cusScrollLabels = ['Step (0 = page)', 'Smooth duration max (ms)', 'Touch duration max (ms)', 'Touch sensitivity 0-10'];
-			var dblClickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist & play'] : ppt['actionMode_internal'].value == 2 ? ['Send to playback queue and play'] : ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
+			dblClickLabels = ppt['actionMode_internal'].value == 1
+				? ['Send to playlist & play']
+				: ppt['actionMode_internal'].value == 2
+					? ['Send to playback queue and play']
+					: ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
 			var diskCacheLabels = ['Enable', 'Preload cached images']
 			var followCurrentLabels = ['Standard mode', 'Album art flow mode'];
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
@@ -1777,7 +1788,7 @@
 			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			var metricsLabels = ['Margin', 'Tree indent', 'Line padding tree', 'Line padding album art', 'Margin overide top/bottom (no top bar)', 'Side marker width (0 = auto)'];
 			// Regorxxx <- Top tracks
-			var mbtnClickLabels = ppt['actionMode_internal'].value == 2
+			mbtnClickLabels = ppt['actionMode_internal'].value == 2
 				? ['Add to playback queue (middle dblclk removes)']
 				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
 			// Regorxxx ->
@@ -1811,9 +1822,9 @@
 			var targetPlaylistLabels = ['Default', 'Current'];
 			var tfInput = ['Library View'];
 			// Regorxxx <- Add setting to follow/skip selection image
-			var themeLabels = !ppt['themed_internal'].value
-				? ['User interface', 'Dark', 'Blend', 'Light', 'Random', 'Cover', 'Swap colours', 'Panel source: use received item image', 'Theme: use selection image while not playing']
-				: ['N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set'];
+			var themeLabels = ppt['themed_internal'].value
+				? ['N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set', 'N/A: central set']
+				: ['User interface', 'Dark', 'Blend', 'Light', 'Random', 'Cover', 'Swap colours', 'Panel source: use received item image', 'Theme: use selection image while not playing'];
 			// Regorxxx ->
 			var themeBlurLabels = ['Auto-fill', 'Level (%)', 'Opacity (%)', '%'];
 			var thumbNailGapLabels = ['Thumbnail gap'];
@@ -1838,12 +1849,12 @@
 			var findLabels = ['On first char', 'On next chars', 'Transliterate values to Latin']; // Regorxxx <- Customizable quicksearch timer | Quicksearch transliteration ->
 
 			function setNodeLabels() {
-				nodeLabels[0] = !ppt['winNode_internal'].value ? 'Squares' : 'Squares (windows)';
+				nodeLabels[0] = ppt['winNode_internal'].value ? 'Squares (windows)' : 'Squares';
 				if (ppt['nodeStyle_internal'].value == 0 || ppt['nodeStyle_internal'].value == 7) window.node_dropdown.innerHTML = nodeLabels[0];
 				window.nodeNo0.innerHTML = nodeLabels[0];
 			}
 
-			var input = {
+			input = {
 				behaviour: {
 					name: ['autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl'], // Regorxxx <- Top tracks ->
 					type: ['int', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Top tracks ->
@@ -1891,7 +1902,7 @@
 			if (input.all.name.length !== input.all.type.length) { throw new Error('Input names length (' + input.all.name.length + ') does not match type length (' + input.all.type.length + ')'); }
 			// Regorxxx ->
 			// Regorxxx ->
-			var box = {
+			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
@@ -1905,7 +1916,7 @@
 			box.all = box.presets.concat(box.behaviour, box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
 			// Regorxxx ->
 
-			var radio = {
+			radio = {
 				views: [],
 				filters: [],
 				presets: [], // Regorxxx <- Presets tab ->
