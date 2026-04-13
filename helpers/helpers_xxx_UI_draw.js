@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/04/26
+//13/04/26
 
 /* exported _sb, fillWithPattern, getStarPoints, getHeartPoints */
 
@@ -78,7 +78,7 @@ function drawDottedLine(gr, x1, y1, x2, y2, line_width, colour, dot_sep) {
 		}
 	} else { // Any angle: Would work alone, but checking coordinates first is faster for vertical and horizontal...
 		const numberDots = Math.floor(((x2 - x1) ** 2 + (y2 - y1) ** 2) ** (1 / 2) / dot_sep / 2);
-		const angle = (y2 !== y1) ? Math.atan((x2 - x1) / (y2 - y1)) : 0;
+		const angle = (y2 === y1) ? 0 : Math.atan((x2 - x1) / (y2 - y1));
 		const xStep = dot_sep * Math.cos(angle);
 		const yStep = dot_sep * Math.sin(angle);
 		let newX1 = x1;
@@ -133,8 +133,6 @@ function fillWithPattern(gr, x1, y1, x2, y2, colour, lineWidth, size, pattern) {
 		}
 	}
 }
-
-'use strict';
 
 function getStarPoints(nodeSize, innerCirclePoints = 5, innerOuterRadiusRatio = 2.5, offsetX = 0, offsetY = 0) {
 	const centerX = nodeSize / 2 + offsetX;
