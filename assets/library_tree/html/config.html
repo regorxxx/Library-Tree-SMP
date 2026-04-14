@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 12/04/26 -->
+﻿<!DOCTYPE html> <!-- 14/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -868,6 +868,7 @@
 					<span class="dropdown" style="margin-top:0"><a id="keystroke_dropdown" class="dropbtn" href="#" onclick="return toggle('keystroke');"></a>
 						<span id="keystroke" class="dropdown-content"></span>
 					</span>
+					<div id="keystrokeDelay"><br></div>
 					<div class="div_text6">Scroll</div>
 					<span class="info3">Bar:</span>
 					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarShow_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarShow');"></a>
@@ -1855,14 +1856,16 @@
 			}
 
 			input = {
+				// Regorxxx <- Top tracks | Throttle selection playlist update | Performance improvements
 				behaviour: {
-					name: ['autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl'], // Regorxxx <- Top tracks ->
-					type: ['int', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Top tracks ->
+					name: ['plsRefreshLimit', 'autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl'],
+					type: ['int', 'int', 'text', 'text', 'text', 'text', 'text']
 				},
-				// Regorxxx <- Drag n' drop to search box
+				// Regorxxx ->
+				// Regorxxx <- Drag n' drop to search box | Customizable quicksearch timer
 				search: {
-					name: ['searchDragTags', 'searchDragTagsCtrl', 'searchDragTagsAlt', 'findTimerInit', 'findTimerNext'], // Regorxxx <- Customizable quicksearch timer ->
-					type: ['text', 'text', 'text', 'int', 'int'] // Regorxxx <- Customizable quicksearch timer ->
+					name: ['searchDragTags', 'searchDragTagsCtrl', 'searchDragTagsAlt', 'findTimerInit', 'findTimerNext'],
+					type: ['text', 'text', 'text', 'int', 'int']
 				},
 				// Regorxxx ->
 				// Regorxxx <- New statistics
@@ -1881,10 +1884,10 @@
 					type: ['int', 'int', 'int', 'text', 'text']
 				},
 				// Regorxxx ->
-				// Regorxxx <- Tooltip font
+				// Regorxxx <- Tooltip font | Custom album art overlay track count
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'], // Regorxxx <- Custom album art overlay track count ->
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'] // Regorxxx <- Custom album art overlay track count ->
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Sorting transliteration | Preserve tree sorting at selection | Performance improvements
@@ -2821,7 +2824,9 @@
 
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[ppt['keyAction_internal'].value];
 				for (i = 0; i < 2; i++) { window.keystroke.insertAdjacentHTML('beforeend', '<a onclick="setKeyAction(' + i + ');">' + keystrokeLabels[i] + '</a>'); }
-
+				 // Regorxxx <- Throttle selection playlist update | Performance improvements
+				i = 0; window.keystrokeDelay.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="keystroke_container' + i + '" name="behaviour_input" class="input35" /><label for="keystroke_container' + i + '" class="inp_label2">Send to playlist delay (ms)</label></div>');
+				 // Regorxxx ->
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[ppt['sbarShow_internal'].value];
 				for (i = 0; i < 3; i++) { window.sbarShow.insertAdjacentHTML('beforeend', '<a onclick="setSbarShow(' + i + ');" >' + sbarShowLabels[i] + '</a>'); }
 				window.sbarType_dropdown.innerHTML = sbarTypeLabels[ppt['sbarType_internal'].value];
@@ -3221,6 +3226,7 @@
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
 			window.treeSortLimit_container0.parentNode.disabled = ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
+			window.keystrokeDelay.style.display = ppt['keyAction_internal'].value === 1 ? 'block' : 'none'; // Regorxxx <- Throttle selection playlist update | Performance improvements ->
 			// Regorxxx <- Preserve tree sorting at selection
 			if (window.playlistSort_container1.value.length) {
 				window.playlistSort_checkbox0.checked = false;

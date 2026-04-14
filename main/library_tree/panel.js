@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/04/26
+//14/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -65,9 +65,9 @@ class Panel {
 		// Regorxxx ->
 		ppt.zoomFilter = this.zoomFilter * 100;
 		// Regorxxx <- Sorting transliteration
-		this.sortingTransLangs = ppt.sortingTransLangs.toLowerCase() === 'el|ru|jp|ch'
-			? null
-			: ppt.sortingTransLangs.split('|').filter(Boolean);
+		this.sortingTransLangs = ppt.sortingTransLangs.length && ppt.sortingTransLangs.toLowerCase() !== 'el|ru|jp|ch'
+			? ppt.sortingTransLangs.split('|').filter(Boolean)
+			: null;
 		// Regorxxx ->
 
 		this.filter = {
@@ -1595,6 +1595,7 @@ class Panel {
 		};
 
 		pop.setTf(); // Regorxxx <- New statistics. Fix sorting not being applied after HTML options panel change. ->
+		pop.setAsyncFunc(); // Throttle selection playlist update | Performance improvements ->
 
 		pop.tree.forEach(v => {
 			v.id = '';

@@ -87,6 +87,7 @@
 - Sorting: changed behavior of smart sort (see also related fix below), to mimic the View pattern with clever substitutions for branches and other custom TF expressions, instead of using a hardcoded expression based on (%ALBUM ARTIST%|%ARTIST%) + '%ALBUM%  [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%'. See 'Behaviour' tab (HTML options panel) or 'Playlist: Smart Sort by view' (properties panel).
 - Drag n' drop: drag n' drop to perform a search is now only allowed within the input box for all sources.
 - Shortcuts: changed 'Ctrl + A' shortcut so it works as a toggle. i.e. Selects All or Selects None.
+- Shortcuts: while using 'Select' keystroke mode, arrow keys navigation no longer immediately sends selection to playlist, but only once with a configurable delay (by default 250 ms) after releasing the key. Setting can be ound at 'Behaviour' tab (HTML options panel) and 'Limit Up/Down Scroll Playlist Refresh: 0-1000' (properties panel). This change has been made for a more responsive scrolling if up/down arrows are kept pressed, so only the last node selected is sent to the playlist instead of unnecessarily updating on all intermediate nodes.
 - External integration: changed callbacks.
 	* 'Library-Tree-SMP: switch source'		-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string}
 		- sourceName allows alternate names. i.e. Playlist|Playlists|Playlist(s) and Panel|Panels|Panel(s)
