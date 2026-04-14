@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//14/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -392,9 +392,10 @@ class Images {
 		o.img = $.gr(this.cellWidth * n, this.cellWidth * n, true, g => this.createCollage(g, this.cellWidth, this.cellWidth, n, n, cells));
 		this.applyStyleMask(o.img, this.getStyle(this.style.image)); // Regorxxx <- Code cleanup |New img styles ->
 		// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
-		if (o.img.Width !== this.im.w || o.img.Height !== this.im.w) {
-			o.img = o.img.Resize(this.im.w + 2, this.im.w + 2, InterpolationMode.HighQualityBicubic);
-			o.img = o.img.Clone(2, 2, this.im.w, this.im.w);
+		const w = Math.round(this.im.w);
+		if (o.img.Width !== w || o.img.Height !== w) {
+			o.img = o.img.Resize(w + 2, w + 2, InterpolationMode.HighQualityBicubic);
+			o.img = o.img.Clone(2, 2, w, w);
 		}
 		// Regorxxx ->
 		if (ppt.albumArtLabelType == 3) this.fadeMask(o.img, o.img.Width, o.img.Height);
@@ -467,6 +468,10 @@ class Images {
 								ch *= condense;
 							}
 						}
+						cx = Math.round(cx);
+						cy = Math.round(cy);
+						cw = Math.round(cw);
+						ch = Math.round(ch);
 						img = img.Clone(cx, cy, cw, ch);
 						img = this.format(img, ppt.artId, this.getStyleByType('crop'), this.cellWidth, this.cellWidth, false, 'root');
 						g.DrawImage(img, x, y, img.Width, img.Height, 0, 0, img.Width, img.Height);
