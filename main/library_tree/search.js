@@ -321,7 +321,7 @@ class Search {
 
 	on_char(code, force) {
 		let searchDone = false;
-		let text = String.fromCodePoint(code) || '';
+		let text = typeof code === 'number' ? String.fromCodePoint(code) : '';
 		if (force) panel.search.active = true;
 		if (!panel.search.active || code == 5 || code == 9 || code == 12) return;
 		panel.search.cursor = false;
