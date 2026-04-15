@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/04/26
+//15/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3117,13 +3117,13 @@ class Populate {
 	upDnKeyCheckScroll(vkey) {
 		const bAsync = ppt.plsRefreshLimit > 0;
 		const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
-		if (sbar.rows_drawn - row < 3 || row < 0) sbar.checkScroll((panel.pos + 3) * ui.row.h - sbar.rows_drawn * ui.row.h, void(0), bAsync);
-		else if (row < 2 && vkey == vk.up) sbar.checkScroll((panel.pos - 1) * ui.row.h, void(0), bAsync);
+		if (sbar.rows_drawn - row < 3 || row < 0) sbar.checkScroll((panel.pos + 3) * ui.row.h - sbar.rows_drawn * ui.row.h, void (0), bAsync);
+		else if (row < 2 && vkey == vk.up) sbar.checkScroll((panel.pos - 1) * ui.row.h, void (0), bAsync);
 		this.m.i = panel.pos;
 		this.setTreeSel(panel.pos);
 		panel.treePaint();
-		if (bAsync)  { this.debounce.setPlaylist(panel.pos, this.tree[panel.pos]); }
-		else  { this.setPlaylist(panel.pos, this.tree[panel.pos]); }
+		if (bAsync) { this.debounce.setPlaylist(panel.pos, this.tree[panel.pos]); }
+		else { this.setPlaylist(panel.pos, this.tree[panel.pos]); }
 		lib.treeState(false, ppt.rememberTree);
 	}
 	// Regorxxx ->
