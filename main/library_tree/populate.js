@@ -2843,7 +2843,9 @@ class Populate {
 			default: // NOSONAR
 			case 0: {
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs })); }
+					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
+						data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs }));
+					}
 					data.sort((a, b) => this.collator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
 				} else {
 					data.sort((a, b) => this.collator.compare(a.srt[2], b.srt[2]) || (a.srt[3] && !b.srt[3] ? 1 : 0));
@@ -2855,7 +2857,9 @@ class Populate {
 				switch (type) {
 					case 'standard':
 						if (ppt.viewSortingTrans) {
-							if (data[0] && typeof data[0].srt[4] === 'undefined') { data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs })); }
+							if (data.some((v) => typeof v.srt[4] === 'undefined')) {
+								data.forEach((v) => v.srt[4] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs }));
+							}
 							data.sort((a, b) => {
 								return this.folderCollator.compare(a.srt[4], b.srt[4]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 							});
@@ -2867,7 +2871,7 @@ class Populate {
 						break;
 					case 'folders':
 						if (ppt.folderSortingTrans) {
-							if (data[0] && typeof data[0].srt[4] === 'undefined') {
+							if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 								data.forEach((v) => {
 									v.srt[4] = Language.transliterate(v.srt[0], { languages: panel.sortingTransLangs });
 									v.srt[5] = Language.transliterate(v.srt[2], { languages: panel.sortingTransLangs });
@@ -2888,7 +2892,7 @@ class Populate {
 			case 2: {
 				const idx = type === 'standard' ? 2 : 0;
 				if (ppt.viewSortingTrans && type === 'standard' || ppt.folderSortingTrans && type === 'folders') {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 						data.forEach((v) => {
 							v.srt[4] = Language.transliterate(v.srt[idx].trim(), { languages: panel.sortingTransLangs });
 							v.srt[5] = $.getTypeWeight(v.srt[4]);
@@ -2906,7 +2910,7 @@ class Populate {
 						return this.folderCollator.compare(a.srt[4], b.srt[4]) || this.collator.compare(a.srt[7], b.srt[7]) || (a.srt[3] && !b.srt[3] ? 1 : 0);
 					});
 				} else {
-					if (data[0] && typeof data[0].srt[4] === 'undefined') {
+					if (data.some((v) => typeof v.srt[4] === 'undefined')) {
 						data.forEach((v) => {
 							v.srt[4] = v.srt[idx].trim();
 							v.srt[5] = $.getTypeWeight(v.srt[4]);
