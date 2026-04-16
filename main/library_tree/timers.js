@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/11/25
+//16/04/26
 
 /* global panel:readable, pop:readable */
 
@@ -7,7 +7,7 @@
 
 class Timers {
 	constructor() {
-		['cursor', 'jsearch1', 'jsearch2', 'jsearch3', 'tt'].forEach(v => this[v] = { // Regorxxx <- Fixed quick-search on same letter
+		['cursor', 'jsearch1', 'jsearch2', 'jsearch3', 'tt', 'searchTplClck'].forEach(v => this[v] = { // Regorxxx <- Fixed quick-search on same letter | Search triple click ->
 			id: null
 		});
 	}

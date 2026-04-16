@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/04/26
+//16/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -244,14 +244,31 @@ class Search {
 		}
 	}
 
+	// Regorxxx <- Search double click and triple click selection
 	lbtn_dblclk(x, y) {
 		if (this.trace(x, y, 'input') && panel.search.txt.length) { // Regorxxx <- Code cleanup ->
+			panel.search.cursor = false;
+			let anchor = panel.search.txt.split('').slice(this.start).indexOf(' ');
+			this.end = anchor === -1
+				? panel.search.txt.length
+				: this.start + anchor;
+			anchor = panel.search.txt.split('').slice(0, this.start).reverse().indexOf(' ');
+			this.start = anchor === -1
+				? 0
+				: this.start - anchor;
+			panel.searchPaint();
+		}
+	}
+
+	lbtn_tplclk(x, y) {
+		if (this.trace(x, y, 'input') && panel.search.txt.length) {
 			panel.search.cursor = false;
 			this.start = 0;
 			this.end = panel.search.txt.length;
 			panel.searchPaint();
 		}
 	}
+	// Regorxxx ->
 
 	lbtn_dn(x, y) {
 		panel.searchPaint();
@@ -274,7 +291,7 @@ class Search {
 	}
 
 	lbtn_up() {
-		if (this.start != this.end) timer.clear(timer.cursor);
+		if (this.start != this.end) { timer.clear(timer.cursor); }
 		this.lbtnDn = false;
 	}
 

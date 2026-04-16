@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/04/26
+//16/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -817,5 +817,11 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 			}
 		}
 	}
+});
+// Regorxxx ->
+
+// Regorxxx <- Search double click and triple click selection
+addEventListener('on_mouse_lbtn_tplclk', (x, y, mask) => {
+	if (ppt.searchShow) { search.lbtn_tplclk(x, y, mask); }
 });
 // Regorxxx ->
