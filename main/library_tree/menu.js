@@ -1,5 +1,5 @@
-﻿'use strict';
-//09/04/26
+'use strict';
+//17/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -360,200 +360,84 @@ class MenuItems {
 		const mainMenu = () => this.show_context ? 'Settings' : 'baseMenu';
 
 		this.addViewsEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
-
-		// Regorxxx <- New statistics
-		menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
-		const statsMenus = [
-			{ menuName: 'File properties', idx: [1, 2, 3] },
-			{ menuName: 'Rating', idx: [4, 5] },
-			{ menuName: 'Playback', idx: [7, 8, 9, 10, 11] },
-			{ menuName: 'Loved stats', idx: [12, 13, 14] },
-			{ menuName: 'File tags', idx: [6] },
-			'sep',
-			{ menuName: 'Sum [custom]', idx: [15, 16, 17] },
-			{ menuName: 'Average [custom]', idx: [18, 19, 20] },
-			{ menuName: 'P-Mean [custom]', idx: [21, 22, 23] },
-			'sep'
-		];
-		const statsEntries = this.statisticsTypes();
-		menu.newItem({
-			menuName: 'Statistics',
-			str: statsEntries[0],
-			func: () => this.setStatistics(0),
-			checkRadio: !ppt.itemShowStatistics,
-			separator: true
-		});
-		statsMenus.forEach((m) => {
-			if (m === 'sep') { menu.newItem({ menuName: 'Statistics', separator: true }); }
-			else { menu.newMenu({ ...m, appendTo: 'Statistics', flags: m.idx.includes(ppt.itemShowStatistics) ? MF_CHECKED : void (0) }); }
-		});
-		[...this.statisticsTypes(), 'Configure statistics...'].forEach((v, i) => {
-			if (i === 0) { return; }
-			const menuName = (statsMenus.find((m) => m.idx && m.idx.includes(i)) || {}).menuName || 'Statistics';
-			menu.newItem({
-				menuName,
-				str: v,
-				func: () => this.setStatistics(i),
-				checkRadio: i == ppt.itemShowStatistics,
-				separator: !i
-			});
-		});
-		// Regorxxx ->
-
-		menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
-		// Regorxxx <- Code cleanup
-		img.getArtTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration | Code cleanup -> ->
-			menuName: 'Album art',
-			str: v,
-			func: () => this.setAlbumartType(i),
-			checkRadio: i == ppt.artId,
-		}));
-		menu.newItem({ menuName: 'Album art', separator: true });
-		['Group: auto', 'Group: top level', 'Group: two levels', 'Change group name...'].forEach((v, i) => menu.newItem({
-			menuName: 'Album art',
-			str: v,
-			func: () => this.setAlbumartGroup(i),
-			flags: i === 3 && (panel.folderView || ppt.rootNode != 3) ? MF_GRAYED : MF_STRING,
-			checkRadio: i === ppt.albumArtGrpLevel,
-			separator: i == 2
-		}));
-		menu.newItem({ menuName: 'Album art', separator: true });
-		menu.newItem({ // Regorxxx <- External integration ->
-			menuName: 'Album art',
-			str: 'Configure album art...',
-			func: () => panel.open('albumArt'),
-		});
-		// Regorxxx ->
-		// Regorxxx <- Art cache folder
-		menu.newItem({ menuName: 'Album art', separator: true });
-		menu.newItem({
-			menuName: 'Album art',
-			str: 'Open cache',
-			flags: ppt.albumArtDiskCache ? MF_STRING : MF_GRAYED,
-			func: () => {
-				if ($.folder(img.cachePath)) { _explorer(img.cachePath); }
-				else { $.buildPth(img.cachePath); }
-			}
-		});
-		// Regorxxx ->
-
-		// Regorxxx <- Code cleanup | New quicksetup presets
-		menu.newMenu({ menuName: 'Quick setup', appendTo: mainMenu() });
-		[
-			{ name: 'Traditional', idx: 0 },
-			{ name: 'Modern [default]', idx: 1 },
-			{ name: 'Ultra-Modern', idx: 2 },
-			{ name: 'Clean', idx: 3, separator: true },
-			{ name: 'Facets', idx: 4, },
-			{ name: 'Playback Queue viewer', idx: 13 },
-			{ name: 'Playback Queue flow', idx: 14, separator: true },
-
-		].forEach((v) => menu.newItem({
-			menuName: 'Quick setup',
-			str: v.name,
-			func: () => panel.set('quickSetup', v.idx),
-			flags: v.flags || MF_STRING,
-			checkItem: v.checkItem || false,
-			separator: v.separator
-		}));
-
-		if (ppt.albumArtOptionsShow) {
-			menu.newMenu({ menuName: 'Art options', appendTo: 'Quick setup' });
-			[
-				{ name: 'Covers [labels right]', idx: 5 },
-				{ name: 'Covers [labels bottom]', idx: 6 },
-				{ name: 'Covers [labels blend]', idx: 7, separator: true },
-				{ name: 'Artist photos [labels right]', idx: 8, separator: true },
-				{ name: 'Album art size +', idx: 9, flags: ppt.thumbNailSize == 7 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING },
-				{ name: 'Album art size -', idx: 10, flags: ppt.thumbNailSize == 0 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING, separator: true },
-				{ name: 'Flow mode', idx: 11 }
-
-			].forEach((v) => menu.newItem({
-				menuName: 'Art options',
-				str: v.name,
-				func: () => panel.set('quickSetup', v.idx),
-				flags: v.flags || MF_STRING,
-				checkItem: v.checkItem || false,
-				separator: v.separator
-			}));
-			// Regorxxx <- Background image position
-			menu.newItem({ menuName: 'Art options', separator: true });
-			menu.newItem({
-				menuName: 'Art options',
-				str: 'Background grid mode...',
-				func: () => {
-					let panels = 1;
-					try {
-						panels = utils.InputBox(0, 'Set total number of Library Tree panels:\n\nBackground image will be adjusted to extend over all panels, showing only a portion of the image in every panel.\n\nIt only works on horizontal rows.', 'Background grid mode: number of panels', 1, true);
-					} catch (e) { return; } // eslint-disable-line no-unused-vars
-					if (!panels || panels < 1) { return; }
-					let pos = 1;
-					try {
-						pos = utils.InputBox(0, 'Set panel position within the row:' + '\nFrom 1 to ' + panels, 'Background grid mode: panel position', 1, true);
-					} catch (e) { return; } // eslint-disable-line no-unused-vars
-					if (!pos || pos < 1) { return; }
-					ppt.xOffsetBg = 100 / panels * (pos - 1);
-					ppt.wOffsetBg = 100 / panels * (panels - pos);
-					panel.load();
-				},
-				flags: panel.imgView ? MF_GRAYED : MF_STRING,
-				checkItem: ppt.xOffsetBg !== 0 || ppt.wOffsetBg !== 0
-			});
-			// Regorxxx ->
-			menu.newItem({ menuName: 'Quick setup', separator: true });
-		}
-		// Regorxxx ->
-		// Regorxxx <- Code cleanup
-		[
-			{ name: 'Keep current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 }
-
-		].forEach((v) => menu.newItem({
-			menuName: 'Quick setup',
-			str: v.name,
-			func: () => panel.set('quickSetup', v.idx),
-			flags: v.flags || MF_STRING,
-			checkItem: v.checkItem || false,
-			separator: v.separator
-		}));
-		// Regorxxx ->
-
 		this.addSourceEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
-
-		menu.newMenu({ menuName: 'Refresh', appendTo: mainMenu(), separator: true });
-
-		// Regorxxx <- Code cleanup | Art cache folder
-		if (panel.imgView) {
-			['Refresh selected images', 'Refresh all images'].forEach((str, i) => {
+		menu.newItem({ menuName: mainMenu(), separator: true });
+		// Regorxxx <- New statistics
+		{
+			menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
+			const statsMenus = [
+				{ menuName: 'File properties', idx: [1, 2, 3] },
+				{ menuName: 'Rating', idx: [4, 5] },
+				{ menuName: 'Playback', idx: [7, 8, 9, 10, 11] },
+				{ menuName: 'Loved stats', idx: [12, 13, 14] },
+				{ menuName: 'File tags', idx: [6] },
+				'sep',
+				{ menuName: 'Sum [custom]', idx: [15, 16, 17] },
+				{ menuName: 'Average [custom]', idx: [18, 19, 20] },
+				{ menuName: 'P-Mean [custom]', idx: [21, 22, 23] },
+				'sep'
+			];
+			const statsEntries = this.statisticsTypes();
+			menu.newItem({
+				menuName: 'Statistics',
+				str: statsEntries[0],
+				func: () => this.setStatistics(0),
+				checkRadio: !ppt.itemShowStatistics,
+				separator: true
+			});
+			statsMenus.forEach((m) => {
+				if (m === 'sep') { menu.newItem({ menuName: 'Statistics', separator: true }); }
+				else { menu.newMenu({ ...m, appendTo: 'Statistics', flags: m.idx.includes(ppt.itemShowStatistics) ? MF_CHECKED : void (0) }); }
+			});
+			[...this.statisticsTypes(), 'Configure statistics...'].forEach((v, i) => {
+				if (i === 0) { return; }
+				const menuName = (statsMenus.find((m) => m.idx && m.idx.includes(i)) || {}).menuName || 'Statistics';
 				menu.newItem({
-					menuName: 'Refresh',
-					str,
-					func: () => this.setMode(i),
-					flags: this.items.Count ? MF_STRING : MF_GRAYED
+					menuName,
+					str: v,
+					func: () => this.setStatistics(i),
+					checkRadio: i == ppt.itemShowStatistics,
+					separator: !i
 				});
 			});
-			menu.newItem({ menuName: 'Refresh', separator: true });
 		}
-		if (!ppt.libAutoSync) {
-			menu.newItem({
-				menuName: 'Refresh',
-				str: 'Refresh library',
-				func: () => this.setMode(3)
-			});
-			menu.newItem({ menuName: 'Refresh', separator: true });
-		}
-		menu.newItem({
-			menuName: 'Refresh',
-			str: 'Reset zoom',
-			func: () => this.setMode(2),
-		});
-		menu.newItem({ menuName: 'Refresh', separator: true });
-		menu.newItem({
-			menuName: 'Refresh',
-			str: 'Reload panel',
-			func: () => this.setMode(4),
-		});
 		// Regorxxx ->
-
+		// Regorxxx <- Code cleanup | Art cache folder
+		{
+			menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
+			img.getArtTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration  ->
+				menuName: 'Album art',
+				str: v,
+				func: () => this.setAlbumartType(i),
+				checkRadio: i == ppt.artId,
+			}));
+			menu.newItem({ menuName: 'Album art', separator: true });
+			['Group: auto', 'Group: top level', 'Group: two levels', 'Change group name...'].forEach((v, i) => menu.newItem({
+				menuName: 'Album art',
+				str: v,
+				func: () => this.setAlbumartGroup(i),
+				flags: i === 3 && (panel.folderView || ppt.rootNode != 3) ? MF_GRAYED : MF_STRING,
+				checkRadio: i === ppt.albumArtGrpLevel,
+				separator: i == 2
+			}));
+			menu.newItem({ menuName: 'Album art', separator: true });
+			menu.newItem({ // Regorxxx <- External integration ->
+				menuName: 'Album art',
+				str: 'Configure album art...',
+				func: () => panel.open('albumArt'),
+			});
+			menu.newItem({ menuName: 'Album art', separator: true });
+			menu.newItem({
+				menuName: 'Album art',
+				str: 'Open cache',
+				flags: ppt.albumArtDiskCache ? MF_STRING : MF_GRAYED,
+				func: () => {
+					if ($.folder(img.cachePath)) { _explorer(img.cachePath); }
+					else { $.buildPth(img.cachePath); }
+				}
+			});
+		}
+		// Regorxxx ->
 		// Regorxxx <- Auto-DJ feature
 		{
 			menu.newMenu({ menuName: 'Auto-DJ', appendTo: mainMenu(), separator: true, flags: panel.autoDj.running ? MF_CHECKED : MF_STRING });
@@ -617,7 +501,121 @@ class MenuItems {
 			}
 		}
 		// Regorxxx ->
+		// Regorxxx <- Code cleanup | New quicksetup presets
+		{
+			menu.newMenu({ menuName: 'Quick setup', appendTo: mainMenu() });
+			[
+				{ name: 'Traditional', idx: 0 },
+				{ name: 'Modern [default]', idx: 1 },
+				{ name: 'Ultra-Modern', idx: 2 },
+				{ name: 'Clean', idx: 3, separator: true },
+				{ name: 'Facets', idx: 4, },
+				{ name: 'Playback Queue viewer', idx: 13 },
+				{ name: 'Playback Queue flow', idx: 14, separator: true },
 
+			].forEach((v) => menu.newItem({
+				menuName: 'Quick setup',
+				str: v.name,
+				func: () => panel.set('quickSetup', v.idx),
+				flags: v.flags || MF_STRING,
+				checkItem: v.checkItem || false,
+				separator: v.separator
+			}));
+
+			if (ppt.albumArtOptionsShow) {
+				menu.newMenu({ menuName: 'Art options', appendTo: 'Quick setup' });
+				[
+					{ name: 'Covers [labels right]', idx: 5 },
+					{ name: 'Covers [labels bottom]', idx: 6 },
+					{ name: 'Covers [labels blend]', idx: 7, separator: true },
+					{ name: 'Artist photos [labels right]', idx: 8, separator: true },
+					{ name: 'Album art size +', idx: 9, flags: ppt.thumbNailSize == 7 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING },
+					{ name: 'Album art size -', idx: 10, flags: ppt.thumbNailSize == 0 || !panel.imgView || ppt.albumArtFlowMode ? MF_GRAYED : MF_STRING, separator: true },
+					{ name: 'Flow mode', idx: 11 }
+
+				].forEach((v) => menu.newItem({
+					menuName: 'Art options',
+					str: v.name,
+					func: () => panel.set('quickSetup', v.idx),
+					flags: v.flags || MF_STRING,
+					checkItem: v.checkItem || false,
+					separator: v.separator
+				}));
+				// Regorxxx <- Background image position
+				menu.newItem({ menuName: 'Art options', separator: true });
+				menu.newItem({
+					menuName: 'Art options',
+					str: 'Background grid mode...',
+					func: () => {
+						let panels = 1;
+						try {
+							panels = utils.InputBox(0, 'Set total number of Library Tree panels:\n\nBackground image will be adjusted to extend over all panels, showing only a portion of the image in every panel.\n\nIt only works on horizontal rows.', 'Background grid mode: number of panels', 1, true);
+						} catch (e) { return; } // eslint-disable-line no-unused-vars
+						if (!panels || panels < 1) { return; }
+						let pos = 1;
+						try {
+							pos = utils.InputBox(0, 'Set panel position within the row:' + '\nFrom 1 to ' + panels, 'Background grid mode: panel position', 1, true);
+						} catch (e) { return; } // eslint-disable-line no-unused-vars
+						if (!pos || pos < 1) { return; }
+						ppt.xOffsetBg = 100 / panels * (pos - 1);
+						ppt.wOffsetBg = 100 / panels * (panels - pos);
+						panel.load();
+					},
+					flags: panel.imgView ? MF_GRAYED : MF_STRING,
+					checkItem: ppt.xOffsetBg !== 0 || ppt.wOffsetBg !== 0
+				});
+				// Regorxxx ->
+				menu.newItem({ menuName: 'Quick setup', separator: true });
+			}
+
+			[
+				{ name: 'Keep current \'view\' pattern', checkItem: ppt.presetLoadCurView, idx: 12 }
+
+			].forEach((v) => menu.newItem({
+				menuName: 'Quick setup',
+				str: v.name,
+				func: () => panel.set('quickSetup', v.idx),
+				flags: v.flags || MF_STRING,
+				checkItem: v.checkItem || false,
+				separator: v.separator
+			}));
+		}
+		// Regorxxx ->
+		// Regorxxx <- Code cleanup | Art cache folder
+		{
+			menu.newMenu({ menuName: 'Refresh', appendTo: mainMenu(), separator: true });
+			if (panel.imgView) {
+				['Refresh selected images', 'Refresh all images'].forEach((str, i) => {
+					menu.newItem({
+						menuName: 'Refresh',
+						str,
+						func: () => this.setMode(i),
+						flags: this.items.Count ? MF_STRING : MF_GRAYED
+					});
+				});
+				menu.newItem({ menuName: 'Refresh', separator: true });
+			}
+			if (!ppt.libAutoSync) {
+				menu.newItem({
+					menuName: 'Refresh',
+					str: 'Refresh library',
+					func: () => this.setMode(3)
+				});
+				menu.newItem({ menuName: 'Refresh', separator: true });
+			}
+			menu.newItem({
+				menuName: 'Refresh',
+				str: 'Reset zoom',
+				func: () => this.setMode(2),
+			});
+			menu.newItem({ menuName: 'Refresh', separator: true });
+			menu.newItem({
+				menuName: 'Refresh',
+				str: 'Reload panel',
+				func: () => this.setMode(4),
+			});
+		}
+		// Regorxxx ->
 		// Regorxxx <- Quick help | External integration | Preset rules
 		{
 			menu.newMenu({ menuName: 'Help', appendTo: mainMenu() });
@@ -752,16 +750,16 @@ class MenuItems {
 				}
 			});
 		}
-		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx ->
-
-		for (let i = 0; i < 2; i++) menu.newItem({
+		menu.newItem({ menuName: mainMenu(), separator: true });
+		// Regorxxx <- Code cleanup
+		menu.newItem({
 			menuName: mainMenu(),
-			str: [popUpBox.ok ? 'Options...' : 'Options: see console', 'Configure...'][i],
-			func: () => i ? window.EditScript() : panel.open(),
-			separator: !i && this.shift,
-			hide: !this.settingsBtnDn && ppt.settingsShow && this.validItem && !this.shift || i && !this.shift
+			str: popUpBox.ok ? 'More settings...' : 'Settings: see console',
+			func: () => panel.open(),
+			hide: !this.settingsBtnDn && ppt.settingsShow && this.validItem && !this.shift
 		});
+		// Regorxxx ->
 	}
 
 	// Regorxxx <- Filter / View / Source button
@@ -827,7 +825,7 @@ class MenuItems {
 	}
 
 	addViewsEntries(menu, appendTo) {
-		if (appendTo) { menu.newMenu({ menuName: 'Views', appendTo, separator: true }); }
+		if (appendTo) { menu.newMenu({ menuName: 'Views', appendTo }); }
 		// Regorxxx <- Allow separators on views
 		panel.menu.forEach((v, i) => {
 			const bSeparator = (v || '').toLowerCase() === 'separator';
@@ -908,7 +906,7 @@ class MenuItems {
 	}
 
 	addSourceEntries(menu, appendTo) {
-		if (appendTo) { menu.newMenu({ menuName: 'Source', appendTo, separator: true }); }
+		if (appendTo) { menu.newMenu({ menuName: 'Source', appendTo }); }
 		// Regorxxx <- External integration | Queue source
 		const sourceIdx = ppt.libSource - 1 < 0 || ppt.fixedPlaylist
 			? 2

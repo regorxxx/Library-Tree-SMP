@@ -78,6 +78,7 @@
 - UI: performance improvements when clicking on settings button while a large selection is active. Previously it could take up to +1 second to show the menu in such cases (while not using 'smart' sorting).
 - UI: performance improvements when R. clicking on current selection, for large selections. Previously it could take up to +1 second to show the menu in such cases (while not using 'smart' sorting).
 - UI: cleanup of Quick setup menu.
+- UI: cleanup of settings menu.
 - UI: minor changes to default fonts used on panel.
 - UI: minor improvements related to panel repainting.
 - UI: improvements on art-based colors handling related to K-means++ with OKLAB color space when using JSplitter v3.7.10+ or v4.1.0+ as JS host. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1078415.html#msg1078415).
