@@ -1,8 +1,10 @@
 ﻿'use strict';
-//09/04/26
+//20/04/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
+/* global invert:readable, opaqueColor:readable, blendColors:readable */
+/* global mostContrastColor:readable */
 
 /* exported UserInterface, Vkeys, sync */
 
@@ -69,7 +71,8 @@ class UserInterface {
 			cur: null,
 			cur_pth: '',
 			isBlur: false,
-			stub: []
+			stub: [],
+			colors: [] // Regorxxx <- Set dynamic colors from artwork ->
 		};
 
 		this.l = {
@@ -189,6 +192,7 @@ class UserInterface {
 
 	blurReset(clear) {
 		this.img.cur = null;
+		this.resetImgColors(); // Regorxxx <- Set dynamic colors from artwork ->
 		this.img.cur_pth = '';
 		if (clear) on_colours_changed();
 		this.on_playback_new_track();
@@ -359,6 +363,7 @@ class UserInterface {
 					break;
 			}
 		});
+		this.getImgColors(this.img.cur); // Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork ->
 		window.Repaint();
 	}
 
@@ -475,6 +480,7 @@ class UserInterface {
 		const image = this.setStub(1);
 		if (!image) {
 			this.img.cur = null;
+			this.resetImgColors(); // Regorxxx <- Set dynamic colors from artwork ->
 			return;
 		}
 		this.formatImg(image);
@@ -580,6 +586,24 @@ class UserInterface {
 		this.getFbImg();
 		this.get = false;
 	}
+
+	// Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork
+	getImgColors(image) {
+		this.img.colors = JSON.parse(image.GetColourSchemeJSONV2 ? image.GetColourSchemeJSONV2(6) : image.GetColourSchemeJSON(10));
+		this.col.dynSearchSel = opaqueColor(blendColors(
+			mostContrastColor(this.img.colors, [0xffffffff, 0xff000000, invert(this.col.searchSel, false), this.col.searchSel]).color,
+			this.img.colors[0].col,
+			0.1
+		), 80);
+		this.col.dynSearch = mostContrastColor(this.col.dynSearchSel, [invert(this.col.search, false, true), this.col.search]).color;
+	}
+
+	resetImgColors() {
+		this.img.colors = [];
+		this.col.dynSearchSel = this.col.searchSel;
+		this.col.dynSearch = this.col.search;
+	}
+	// Regorxxx ->
 
 	getItemColours() {
 		const lightBg = this.isLightBackground();
@@ -689,9 +713,17 @@ class UserInterface {
 		this.icon.col_e = this.col.icon_e;
 		this.icon.col_h = this.col.icon_h;
 		this.setIconCol();
-		this.col.searchSel = window.IsTransparent || !this.col.bgSel ? 0xff0099ff : this.getContrast(this.col.search, this.col.bgSel) > 3 ? this.col.bgSel : this.getBlend(this.col.search, this.col.bg == 0 || this.img.blurDark ? 0xff000000 : this.col.bg, 0.25);
+		this.col.searchSel = window.IsTransparent || !this.col.bgSel
+			? 0xff0099ff
+			: this.getContrast(this.col.search, this.col.bgSel) > 3
+				? this.col.bgSel
+				: this.getBlend(this.col.search, this.col.bg == 0 || this.img.blurDark ? 0xff000000 : this.col.bg, 0.25);
 		this.sbar.col = this.img.blurDark || this.img.blurLight ? 1 : ppt.sbarCol;
 		this.col.txtArr = [this.col.text, this.col.text_h, this.col.textSel];
+		// Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork
+		if (!Object.hasOwn(this.col, 'dynSearchSel')) { this.col.dynSearchSel = this.col.searchSel; }
+		if (!Object.hasOwn(this.col, 'dynSearch')) { this.col.dynSearch = this.col.search; }
+		// Regorxxx ->
 	}
 
 	getLuminance(c, bypass) {
@@ -823,6 +855,7 @@ class UserInterface {
 		if (!image) image = this.setStub(0);
 		if (!image) {
 			this.img.cur = null;
+			this.resetImgColors(); // Regorxxx <- Set dynamic colors from artwork ->
 			return;
 		}
 		this.formatImg(image);

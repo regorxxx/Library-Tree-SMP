@@ -201,7 +201,7 @@ class Search {
 		pop.notifySelection();
 	}
 
-	draw(gr) {
+	draw(/** @type {GdiGraphics} */gr) {
 		if (!ppt.searchShow) return;
 		this.start = $.clamp(this.start, 0, panel.search.txt.length);
 		this.end = $.clamp(this.end, 0, panel.search.txt.length);
@@ -212,6 +212,16 @@ class Search {
 			this.drawSel(gr);
 			this.getOffset(gr);
 			gr.GdiDrawText(panel.search.txt.slice(this.offset), ui.font.main, ui.col.search, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
+			// Regorxxx <- Dynamic search selection color
+			if (this.start !== this.end && ui.img.cur && ui.img.colors.length && ui.col.dynSearch !== ui.col.search) {
+				const clamp = panel.search.x + panel.search.w;
+				const left = Math.min(this.start, this.end);
+				const right = Math.max(this.start, this.end);
+				gr.SetTextRenderingHint(3);
+				gr.GdiDrawText(panel.search.txt.slice(left, right), ui.font.main, ui.col.dynSearch, Math.min(panel.search.x + this.get_cursor_x(left), clamp), 0, Math.min(panel.search.x + this.get_cursor_x(right), clamp), panel.search.sp, panel.l);
+				gr.SetTextRenderingHint();
+			}
+			// Regorxxx ->
 		} else {
 			if (ui.img.blurDark) {
 				gr.SetTextRenderingHint(5);
@@ -229,9 +239,9 @@ class Search {
 	}
 
 	drawSel(gr) {
-		if (this.start == this.end) return;
+		if (this.start == this.end) { return; }
 		const clamp = panel.search.x + panel.search.w;
-		gr.DrawLine(Math.min(panel.search.x + this.get_cursor_x(this.start), clamp), panel.search.sp / 2, Math.min(panel.search.x + this.get_cursor_x(this.end), clamp), panel.search.sp / 2, ui.row.h - 3, ui.col.searchSel);
+		gr.DrawLine(Math.min(panel.search.x + this.get_cursor_x(this.start), clamp), panel.search.sp / 2, Math.min(panel.search.x + this.get_cursor_x(this.end), clamp), panel.search.sp / 2, ui.row.h - 3, ui.col.dynSearchSel); // Regorxxx <- Dynamic search selection color ->
 	}
 
 	get_cursor_x(pos) {

@@ -82,6 +82,7 @@
 - UI: minor changes to default fonts used on panel.
 - UI: minor improvements related to panel repainting.
 - UI: improvements on art-based colors handling related to K-means++ with OKLAB color space when using JSplitter v3.7.10+ or v4.1.0+ as JS host. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1078415.html#msg1078415).
+- UI: improvements on search selection background contrast while using blend theme mode. Color is now dynamically adjusted according to artwork colors, to ensure selection rectangle and text is visible.
 - Album art: usage of HQ Bicubic interpolation mode instead of HQ Bilinear, to get sharper images when resizing ('Refresh all images' will be needed if using caching). Also improved resampling logic to avoid artifacts. See [here](https://stackoverflow.com/questions/4772273/interpolationmode-highqualitybicubic-introducing-artefacts-on-edge-of-resized-im).
 - Album art: code cleanup and refactoring of album art code.
 - Sorting: up to 90% performance improvement to sorting logic while using transliteration to Latin setting (e.g. from ~2000 ms to ~190 ms).
