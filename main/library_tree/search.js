@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/04/26
+//19/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -672,10 +672,9 @@ class Find {
 		// Regorxxx <- Quick-search at any position of string
 		const bCtrl = utils.IsKeyPressed(vk.ctrl);
 		const bShift = utils.IsKeyPressed(vk.shift);
-		if (bCtrl || bShift) {
+		if (bCtrl) {
 			if (vk.hasKey(code)) { return; }
-			if (bCtrl) { code += 96; }
-			else { code += 32; }
+			code += 96;
 		}
 		// Regorxxx <- Quick-search at any position of string
 		const text = String.fromCodePoint(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
