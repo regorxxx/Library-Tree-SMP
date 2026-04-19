@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/04/26
+//19/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable */
@@ -1722,6 +1722,7 @@ class Panel {
 
 	// Regorxx ->
 	getDragDropTooltipText(method, mask, x, y, bInternal) {
+		let text = '';
 		if (y < this.search.h || (ppt.libSource !== 3 && ppt.libSource !== 4)) {
 			if (method === 0 && this.folderView) { // Auto: tags or path
 				return 'Add paths to search box';
@@ -1729,13 +1730,13 @@ class Panel {
 				const searchTags = search.getDragDropTags(mask);
 				const operators = search.getDragDropOperators(mask);
 				const tagsDisplay = operators.tag
-					? searchTags.join(' ' + operators.tag + ' ')
-					: searchTags[0];
-				return (operators.query || !this.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
+					? [...new Set(searchTags.map((t) => t.to))].join(' ' + operators.tag + ' ')
+					: searchTags[0].to;
+				text = (operators.query || !this.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
 			}
 		} else if (ppt.libSource === 3) {
 			const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
-			return ppt.queueSorting && pop.row.i >= 0
+			text = ppt.queueSorting && pop.row.i >= 0
 				? idx < 0
 					? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 					: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
@@ -1743,10 +1744,11 @@ class Panel {
 					? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 					: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
 		} else if (ppt.libSource === 4) {
-			return (mask & MK_CONTROL) === MK_CONTROL
+			text = (mask & MK_CONTROL) === MK_CONTROL
 				? 'Add items to Auto-DJ (top tracks)'
 				: 'Add items to Auto-DJ';
 		}
+		return text.cut(46);
 	}
 
 	// Regorxxx <- Auto-DJ feature

@@ -480,9 +480,9 @@ let properties = [
 	['Library Source: Chained source notifications', true, 'libSourceChained'], // Regorxxx <- Chained facets updates
 	// Regorxxx <- Drag n' drop to search box
 	['Search Drag n\' Drop Method (Auto=0, Tags=1, Disabled=-1)', 0, 'searchDragMethod'],
-	['Search Drag n\' Drop Tags (no modifier)', JSON.stringify([globTags.artistRaw]), 'searchDragTags'],
-	['Search Drag n\' Drop Tags (ctrl modifier)', JSON.stringify([globTags.artistRaw, globTags.genre]), 'searchDragTagsCtrl'],
-	['Search Drag n\' Drop Tags (alt modifier)', JSON.stringify([globTags.artistRaw, globTags.genre]), 'searchDragTagsAlt'],
+	['Search Drag n\' Drop Tags (no modifier)', JSON.stringify([{from:[globTags.artistRaw,'ALBUMARTISTS','INVOLVEDPEOPLE'], to:[globTags.artistRaw]}]), 'searchDragTags'],
+	['Search Drag n\' Drop Tags (ctrl modifier)', JSON.stringify([{from:[globTags.artistRaw,'ALBUMARTISTS','INVOLVEDPEOPLE'], to:['INVOLVEDPEOPLE']}]), 'searchDragTagsCtrl'],
+	['Search Drag n\' Drop Tags (alt modifier)', JSON.stringify([{from:[globTags.genre], to:[globTags.genre]}, {from:[globTags.style], to:[globTags.style]}]), 'searchDragTagsAlt'],
 	['Search Drag n\' Drop Multi-value Operator (no modifier)', 'OR', 'searchDragValOp'],
 	['Search Drag n\' Drop Multi-value Operator (ctrl modifier)', 'OR', 'searchDragValOpCtrl'],
 	['Search Drag n\' Drop Multi-value Operator (alt modifier)', 'AND', 'searchDragValOpAlt'],

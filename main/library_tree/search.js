@@ -34,7 +34,7 @@ class Search {
 
 		this.searchTooltipText = () => {
 			if (!panel.search.txt || !panel.search.txt.length) { return ''; }
-			let tooltipText = panel.search.txt;
+			let tooltipText = panel.search.txt.replace(/&/g, '&&');
 			tooltipText += '\n----------------------------------------------';
 			const count = pop.tree[0] && pop.tree[0].root && pop.tree[0].tracksCount ? pop.tree[0].tracksCount : panel.list.Count;
 			tooltipText += '\nFound ' + count + ' tracks';
@@ -56,7 +56,31 @@ class Search {
 				bAlt
 					? [globTags.artistRaw]
 					: [globTags.artistRaw, globTags.genre]
-			);
+			).flatMap((tag) => {
+				if (typeof tag === 'object') {
+					const [hasFrom, hasTo] = [Object.hasOwn(tag, 'from'), Object.hasOwn(tag, 'to')];
+					const [isArrFrom, isArrTo] = [Array.isArray(tag.from), Array.isArray(tag.to)];
+					const fromArr = [];
+					const toArr = [];
+					if (hasFrom) {
+						if (isArrFrom) { fromArr.push(...tag.from); }
+						else { fromArr.push(tag.from); }
+					} else if (hasTo) {
+						if (isArrTo) { fromArr.push(...tag.to); }
+						else { fromArr.push(tag.to); }
+					}
+					if (hasTo) {
+						if (isArrTo) { toArr.push(...tag.to); }
+						else { toArr.push(tag.to); }
+					} else if (hasFrom) {
+						if (isArrFrom) { toArr.push(...tag.from); }
+						else { toArr.push(tag.from); }
+					}
+					return fromArr.flatMap((from) => toArr.map((to) => { return { from, to: to }; }));
+				} else {
+					return [{ from: tag, to: tag }];
+				}
+			});
 		};
 
 		this.getDragDropOperators = (mask) => {
@@ -83,18 +107,18 @@ class Search {
 
 		this.getDragDropQuery = (selItems, searchTags, operators) => {
 			if (!operators.track) { selItems = new FbMetadbHandleList(selItems[0]); }
-			const trackQueries = $.getHandleListTags(selItems, searchTags).map((trackTags) => {
+			const trackQueries = $.getHandleListTags(selItems, searchTags.map((t) => t.from)).map((trackTags) => {
 				return $.queryJoin(
 					searchTags.map((searchTag, i) => {
 						if (!operators.tag && i > 0) { return; }
 						const values = [...new Set(trackTags[i].filter(Boolean).map(s => s.toLowerCase()))];
 						if (!operators.value) { values.length = 1; }
-						return searchTag.toUpperCase() === 'ALBUM ARTIST'
+						return searchTag.to.toUpperCase() === 'ALBUM ARTIST'
 							? $.queryJoin([
 								$.queryCombinations(values, 'ALBUM ARTIST', operators.value),
 								$.queryCombinations(values, 'ARTIST', operators.value),
 							].filter(Boolean), 'OR')
-							: $.queryCombinations(values, searchTag, operators.value);
+							: $.queryCombinations(values, searchTag.to, operators.value);
 					}).filter(Boolean),
 					operators.tag
 				);
