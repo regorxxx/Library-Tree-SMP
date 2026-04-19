@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 14/04/26 -->
+﻿<!DOCTYPE html> <!-- 17/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -53,6 +53,7 @@
 			border-style: none;
 			padding: 0.31em 2px;
 		}
+
 		/* Regorxxx -> */
 
 		.tabcontent {
@@ -626,6 +627,7 @@
 			border: 1px dotted rgb(0, 0, 0);
 			cursor: pointer;
 		}
+
 		/* Regorxxx -> */
 
 		/* Regorxxx <- Add tooltip to links */
@@ -2434,15 +2436,16 @@
 						for (k = 0; k < imgTableReflectionLen; k++) {
 							subItems[j][k] = [];
 							for (i = 0; i < imgTableEffectsId[j].length; i++) {
-								n = imgTableReflectionId[i];
-								menId = n + i + k;
 								if (i < imgStylesIdLen) {
-									subItems[j][k].push('<input id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
+									n = imgTableReflectionId[i];
+									menId = n + i + k;
+									subItems[j][k].push('<input class="reflectionRow" id="' + menId + '" name="' + n + '" style="' + cbox + '" type="radio" />');
 								} else {
 									subItems[j][k].push('');
 								}
 								if (i == imgStylesIdLen - 1) {
-									subItems[j][k].push('<div style="padding-left:0.46em; text-align:left">' + imgTableReflection[k] + '</div>');
+									n = imgTableReflection[k];
+									subItems[j][k].push('<div class="reflectionRow" name="' + n + '" style="padding-left:0.46em; text-align:left">' + n + '</div>');
 									cells.push(subItems[j][k]);
 								}
 							}
@@ -2824,9 +2827,9 @@
 
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[ppt['keyAction_internal'].value];
 				for (i = 0; i < 2; i++) { window.keystroke.insertAdjacentHTML('beforeend', '<a onclick="setKeyAction(' + i + ');">' + keystrokeLabels[i] + '</a>'); }
-				 // Regorxxx <- Throttle selection playlist update | Performance improvements
+				// Regorxxx <- Throttle selection playlist update | Performance improvements
 				i = 0; window.keystrokeDelay.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="keystroke_container' + i + '" name="behaviour_input" class="input35" /><label for="keystroke_container' + i + '" class="inp_label2">Send to playlist delay (ms)</label></div>');
-				 // Regorxxx ->
+				// Regorxxx ->
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[ppt['sbarShow_internal'].value];
 				for (i = 0; i < 3; i++) { window.sbarShow.insertAdjacentHTML('beforeend', '<a onclick="setSbarShow(' + i + ');" >' + sbarShowLabels[i] + '</a>'); }
 				window.sbarType_dropdown.innerHTML = sbarTypeLabels[ppt['sbarType_internal'].value];
@@ -3234,6 +3237,18 @@
 			} else {
 				window.playlistSort_checkbox0.disabled = false;
 			}
+			// Regorxxx ->
+			// Regorxxx <- Custom TF art | Effect per art type ->
+			var labels = [
+				'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl',
+				'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot'
+			];
+			var showRefl = false;
+			for (i = 0; i < labels.length; i++) {
+				if (window[labels[i]].checked) { showRefl = true; break; }
+			}
+			var list = document.querySelectorAll("[class='reflectionRow']");
+			for (j = 0; j < list.length; j++) { list[j].style.display = showRefl ? '' : 'none'; }
 			// Regorxxx ->
 
 			if (ppt['actionMode_internal'].value) {
