@@ -333,12 +333,12 @@ function RGB(r, g, b) {
 }
 
 function toRGB(color) { // returns an array like [192, 0, 0]
-	const a = color - 0xFF000000;
+	const a = color | 0xFF000000;
 	return [clampRGB((a >> 16) & 0xff), clampRGB((a >> 8) & 0xFF), clampRGB(a & 0xFF)];
 }
 
 function toRGBA(color) { // returns an array like [192, 0, 0, 25]
-	const a = color - 0xFF000000;
+	const a = color | 0xFF000000;
 	return [clampRGB((a >> 16) & 0xff), clampRGB((a >> 8) & 0xFF), clampRGB(a & 0xFF), clampRGB((a >> 24) & 0xff)];
 }
 
