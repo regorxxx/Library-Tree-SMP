@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//19/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -940,7 +940,7 @@ class Library {
 			pr.forEach((v, i) => {
 				this.prefix.forEach(w => {
 					ln = w.length + 1;
-					if (v.substr(0, ln) == w + ' ') pr[i] = v.slice(ln);
+					if (v.slice(0, ln) == w + ' ') { pr[i] = v.slice(ln); }
 				});
 			});
 			pr2.shift();
@@ -955,7 +955,7 @@ class Library {
 			pr.forEach((v, i) => {
 				this.prefix.forEach(w => {
 					ln = w.length + 1;
-					if (v.substr(0, ln) == w + ' ') pr[i] = v.substr(ln) + ', ' + w;
+					if (v.slice(0, ln) == w + ' ') { pr[i] = v.slice(ln) + ', ' + w; }
 				});
 			});
 			pr2.shift();

@@ -3,7 +3,6 @@
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
-/* global globTags:readable */
 /* global Language:readable */
 
 /* exported Search, Find */
@@ -186,7 +185,7 @@ class Search {
 	// Methods
 
 	calcText() {
-		$.gr(1, 1, false, g => this.txt_w = g.CalcTextWidth(panel.search.txt.substr(this.offset), ui.font.main, true));
+		$.gr(1, 1, false, g => this.txt_w = g.CalcTextWidth(panel.search.txt.slice(this.offset), ui.font.main, true));
 	}
 
 	clear() {
@@ -212,7 +211,7 @@ class Search {
 		if (panel.search.txt) {
 			this.drawSel(gr);
 			this.getOffset(gr);
-			gr.GdiDrawText(panel.search.txt.substr(this.offset), ui.font.main, ui.col.search, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
+			gr.GdiDrawText(panel.search.txt.slice(this.offset), ui.font.main, ui.col.search, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
 		} else {
 			if (ui.img.blurDark) {
 				gr.SetTextRenderingHint(5);
@@ -238,7 +237,7 @@ class Search {
 	get_cursor_x(pos) {
 		let x = 0;
 		$.gr(1, 1, false, g => {
-			if (pos >= this.offset) x = g.CalcTextWidth(panel.search.txt.substr(this.offset, pos - this.offset), ui.font.main, true);
+			if (pos >= this.offset) x = g.CalcTextWidth(panel.search.txt.slice(this.offset, pos), ui.font.main, true);
 		});
 		return x;
 	}
@@ -249,7 +248,7 @@ class Search {
 			const nx = x - panel.search.x;
 			let pos = 0;
 			for (i = this.offset; i < panel.search.txt.length; i++) {
-				pos += g.CalcTextWidth(panel.search.txt.substr(i, 1), ui.font.main, true);
+				pos += g.CalcTextWidth(panel.search.txt.slice(i, i + 1), ui.font.main, true);
 				if (pos >= nx + 3) break;
 			}
 		});
@@ -258,11 +257,11 @@ class Search {
 
 	getOffset(gr) {
 		let j = 0;
-		let tx = gr.CalcTextWidth(panel.search.txt.substr(this.offset, this.cx - this.offset), ui.font.main, true);
+		let tx = gr.CalcTextWidth(panel.search.txt.slice(this.offset, this.cx), ui.font.main, true);
 		while (tx >= panel.search.w && panel.search.w > 0 && j < 500) {
 			j++;
 			this.offset++;
-			tx = gr.CalcTextWidth(panel.search.txt.substr(this.offset, this.cx - this.offset), ui.font.main, true);
+			tx = gr.CalcTextWidth(panel.search.txt.slice(this.offset, this.cx), ui.font.main, true);
 		}
 	}
 
@@ -410,7 +409,7 @@ class Search {
 				this.record();
 				if (this.start == this.end) {
 					if (this.cx > 0) {
-						panel.search.txt = panel.search.txt.substr(0, this.cx - 1) + panel.search.txt.substr(this.cx, panel.search.txt.length - this.cx);
+						panel.search.txt = panel.search.txt.slice(0, this.cx - 1) + panel.search.txt.slice(this.cx);
 						if (this.offset > 0) this.offset--;
 						this.cx--;
 					}
@@ -463,7 +462,7 @@ class Search {
 				this.record();
 				if (this.start == this.end) {
 					if (this.cx < panel.search.txt.length) {
-						panel.search.txt = panel.search.txt.substr(0, this.cx) + panel.search.txt.substr(this.cx + 1, panel.search.txt.length - this.cx - 1);
+						panel.search.txt = panel.search.txt.slice(0, this.cx) + panel.search.txt.slice(this.cx + 1);
 					}
 				} else {
 					if (this.end - this.start == panel.search.txt.length) {
@@ -785,7 +784,7 @@ class Find {
 			let ms = 500; // Regorxxx <- Customizable quicksearch timer ->
 			switch (code) {
 				case vk.back:
-					this.jSearch = this.jSearch.substr(0, this.jSearch.length - 1);
+					this.jSearch = this.jSearch.slice(0, - 1);
 					break;
 				// Regorxxx <- Quick-search at any position of string
 				case vk.enter:

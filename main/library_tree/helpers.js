@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//19/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -174,7 +174,7 @@ class Helpers {
 
 	padNumber(num, len, base) {
 		if (!base) base = 10;
-		return ('000000' + num.toString(base)).substr(-len);
+		return ('000000' + num.toString(base)).slice(-len);
 	}
 
 	query(h, q) {
@@ -273,8 +273,8 @@ class Helpers {
 
 	titlecase(n) {
 		return n.replace(/[A-Za-z0-9\u00C0-\u00FF]+[^\s-/]*/g, match => {
-			if (match.substr(1).search(/[A-Z]|\../) > -1) return match;
-			return match.charAt(0).toUpperCase() + match.substr(1);
+			if (match.slice(1).search(/[A-Z]|\../) > -1) return match;
+			return match.charAt(0).toUpperCase() + match.slice(1);
 		});
 	}
 
