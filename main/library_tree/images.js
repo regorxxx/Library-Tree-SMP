@@ -1,10 +1,10 @@
 ﻿'use strict';
-//14/04/26
+//19/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
 /* global getFiles:readable */
-/* global applyMask:readable */
+/* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable , BlendMode:readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
 
@@ -71,15 +71,17 @@ class Images {
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Image border setting
-		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, showMenu: string, switchIdx: number[]}[]} */
+		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
 		this.art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgFrontShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgBackShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'imgIconShadow', showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', showMenu: 'Show artists', switchIdx: [0, 5] },
-			{ idx: 5, type: 'File (by TF)...', cacheName: (folderView) => folderView ? 'foldertf' : 'viewtf', lines: 1, style: 'imgStyleTF', reflection: 'imgTfRefl', reflectionStyle: 'imgTfReflStyle', reflectionRoot: 'imgTfReflRoot', border: 'imgTfBorder', shadow: 'imgTfShadow', showMenu: 'Show art (tf)', switchIdx: [0, 4] }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', trim: false, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur',  vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale',trim: true, showMenu: 'Show artists', switchIdx: [0, 5] },
+			{ idx: 5, type: 'File (by TF)...', cacheName: (folderView) => folderView ? 'foldertf' : 'viewtf', lines: 1, style: 'imgStyleTF', reflection: 'imgTfRefl', reflectionStyle: 'imgTfReflStyle', reflectionRoot: 'imgTfReflRoot', border: 'imgTfBorder', shadow: 'imgTfShadow', mute: 'imgTfMute', edgeGlow: 'imgTfEdgeGlow', bloom: 'imgTfBloom', blur: 'imgTfBlur', vignette: 'imgTfVignette', grayScale: 'imgTfGrayScale',trim: true, showMenu: 'Show art (tf)', switchIdx: [0, 4] }
 		];
+
+		this.useD2D = window.DrawMode === 1 && typeof Effects !== 'undefined';
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup
@@ -196,12 +198,17 @@ class Images {
 
 	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type
 	formatArt(a, folderView) {
-		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, showMenu: string, switchIdx: number[]}} */
+		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, trim: boolean, showMenu: string, switchIdx: number[]}} */
 		const copy = { ...a };
 		if (typeof copy.cacheName === 'function') { copy.cacheName = copy.cacheName(folderView); }
 		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
-		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow'].forEach((k) => copy[k] = ppt[copy[k]]);
+		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale'].forEach((k) => copy[k] = ppt[copy[k]]);
 		return copy;
+	}
+
+	disableArtEffects(a) {
+		['reflection', 'border', 'shadow', 'mute', 'bloom', 'blur', 'vignette', 'grayScale'].forEach((k) => a[k] = false);
+		return a;
 	}
 
 	getArtSchema(folderView) {
@@ -292,7 +299,7 @@ class Images {
 						});
 					}
 					if (!this.database[key] || !$.file(this.cacheFolder + saveName)) {
-						image = this.format(image, 1, this.getStyleByType('default'), this.saveSize, this.saveSize, false, 'save');
+						image = this.format(image, { trim: true }, this.getStyleByType('default'), this.saveSize, this.saveSize, false, 'save');
 						this.toSave.unshift({
 							key: key,
 							image: image.Clone(0, 0, image.Width, image.Height),
@@ -304,7 +311,7 @@ class Images {
 				}
 
 				this.checkCache();
-				this.format(image, ppt.artId, this.getStyle(this.style.image), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'display', ix, key); // Regorxxx <- Code cleanup ->
+				this.format(image, this.getArt(ppt.artId), this.getStyle(this.style.image), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'display', ix, key); // Regorxxx <- Code cleanup ->
 				if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
 			}
 
@@ -339,7 +346,7 @@ class Images {
 		try {
 			if (image) {
 				this.checkCache();
-				this.format(image, ppt.artId, this.getStyle(this.style.image), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'displayPreload', ix, key); // Regorxxx <- Code cleanup ->
+				this.format(image, this.getArt(ppt.artId), this.getStyle(this.style.image), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'displayPreload', ix, key); // Regorxxx <- Code cleanup ->
 			}
 			if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
 		} catch (e) { // eslint-disable-line no-unused-vars
@@ -473,7 +480,7 @@ class Images {
 						cw = Math.round(cw);
 						ch = Math.round(ch);
 						img = img.Clone(cx, cy, cw, ch);
-						img = this.format(img, ppt.artId, this.getStyleByType('crop'), this.cellWidth, this.cellWidth, false, 'root');
+						img = this.format(img, this.disableArtEffects(this.getArt(ppt.artId)), this.getStyleByType('crop'), this.cellWidth, this.cellWidth, false, 'root');
 						g.DrawImage(img, x, y, img.Width, img.Height, 0, 0, img.Width, img.Height);
 					}
 					x += cellWidth;
@@ -884,6 +891,212 @@ class Images {
 		return image;
 	}
 
+	applyArtEffect(image, art) {
+		if (this.useD2D) {
+			let intensity;
+			image = applyEffect(image, (img) => {
+				let prevEffect, effect;
+				if (art.mute && ppt.imgMute !== 0 && Number.isInteger(ppt.imgMute)) {
+					intensity = Math.max(Math.min(ppt.imgMute / 100, 1), 0);
+					const brightness = d2d.Effect(Effects.Brightness.ID);
+					brightness.SetInput(0, img);
+					brightness.SetValue(Effects.Brightness.BlackPoint, new Float32Array([0, 1 - intensity]));
+					const blur = d2d.Effect(Effects.GaussianBlur.ID);
+					blur.SetInputEffect(0, brightness);
+					blur.SetValue(Effects.GaussianBlur.StandardDeviation, 1);
+					blur.SetValue(Effects.GaussianBlur.BorderMode, BorderMode.Hard);
+					effect = d2d.Effect(Effects.Blend.ID);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					effect.SetInputEffect(1, blur);
+					effect.SetValue(Effects.Blend.Mode, BlendMode.Luminosity);
+					prevEffect = effect;
+					const tint = d2d.Effect(Effects.TemperatureTint.ID);
+					tint.SetInput(0, img);
+					tint.SetValue(Effects.TemperatureTint.Temperature, -0.25);
+					effect = d2d.Effect(Effects.Blend.ID);
+					effect.SetInputEffect(0, prevEffect);
+					effect.SetInputEffect(1, tint);
+					effect.SetValue(Effects.Blend.Mode, BlendMode.Darken);
+					prevEffect = effect;
+					effect = d2d.Effect(Effects.HighlightsShadows.ID);
+					effect.SetInputEffect(0, prevEffect);
+					effect.SetValue(Effects.HighlightsShadows.Shadows, 0.75);
+					effect.SetValue(Effects.HighlightsShadows.Highlights, -0.25);
+					effect.SetValue(Effects.HighlightsShadows.Clarity, -1);
+					effect.SetValue(Effects.HighlightsShadows.MaskBlurRadius, 5);
+					prevEffect = effect;
+				}
+				if (art.edgeGlow && ppt.imgEdgeGlow !== 0 && Number.isInteger(ppt.imgEdgeGlow)) {
+					intensity = Math.max(Math.min(ppt.imgEdgeGlow / 100, 1), 0);
+					effect = d2d.Effect(Effects.EdgeDetection.ID);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					effect.SetValue(Effects.EdgeDetection.Strength, intensity);
+					prevEffect = effect;
+				}
+				if (art.bloom && ppt.imgBloom !== 0 && Number.isInteger(ppt.imgBloom)) {
+					intensity = Math.max(Math.min(ppt.imgBloom / 100, 1), 0);
+					const brightness = d2d.Effect(Effects.Brightness.ID);
+					brightness.SetInput(0, img);
+					brightness.SetValue(Effects.Brightness.WhitePoint, new Float32Array([0.5, intensity]));
+					intensity = Math.max(img.Width, img.Height) / 100;
+					const blur = d2d.Effect(Effects.GaussianBlur.ID);
+					blur.SetInputEffect(0, brightness);
+					blur.SetValue(Effects.GaussianBlur.StandardDeviation, intensity);
+					blur.SetValue(Effects.GaussianBlur.BorderMode, BorderMode.Hard);
+					effect = d2d.Effect(Effects.Blend.ID);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					effect.SetInputEffect(1, blur);
+					effect.SetValue(Effects.Blend.Mode, prevEffect ? BlendMode.SoftLight : BlendMode.Screen);
+					prevEffect = effect;
+				}
+				if (art.blur && ppt.imgBlur !== 0 && Number.isInteger(ppt.imgBlur)) {
+					intensity = ppt.imgCircularBlur
+						? Math.min(Math.max(ppt.imgBlur, 0) / 5 / 2, 1)
+						: Math.max(ppt.imgBlur, 0);
+					const id = ppt.imgDirectionalBlur
+						? Effects.DirectionalBlur.ID
+						: Effects.GaussianBlur.ID;
+					effect = d2d.Effect(id);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					effect.SetValue(Effects.GaussianBlur.StandardDeviation, intensity);
+					effect.SetValue(Effects.GaussianBlur.BorderMode, BorderMode.Hard);
+					prevEffect = effect;
+					if (ppt.imgCircularBlur) {
+						intensity = Math.max(ppt.imgBlur, 0) / 2;
+						prevEffect = effect = applyEffectAsMaskEffect(img, effect, (img, effect) => {
+							const innerBlur = d2d.Effect(id);
+							innerBlur.SetInputEffect(0, effect);
+							innerBlur.SetValue(Effects.GaussianBlur.StandardDeviation, intensity);
+							return innerBlur;
+						}, (mask, gr) => {
+							gr.FillEllipse(mask.Width / 4, mask.Height / 4, mask.Width / 2, mask.Height / 2, 0xFF000000);
+							mask.ReleaseGraphics(gr);
+							mask.StackBlur(mask.Width / 10);
+							return true;
+						}, true);
+					}
+				}
+				if (art.grayScale) {
+					effect = d2d.Effect(Effects.Grayscale.ID);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					prevEffect = effect;
+				}
+				if (art.vignette && ppt.imgVignette !== 0 && Number.isInteger(ppt.imgVignette)) {
+					intensity = Math.max(Math.min(ppt.imgVignette  / 100, 1), 0);
+					effect = d2d.Effect(Effects.Vignette.ID);
+					if (prevEffect) { effect.SetInputEffect(0, prevEffect); }
+					else { effect.SetInput(0, img); }
+					const color = [...$.toRGB(ppt.imgVignetteColor || this.getAvgUiColor()).map((v) => v / 255), 1];
+					effect.SetValue(Effects.Vignette.Color, new Float32Array(color));
+					effect.SetValue(Effects.Vignette.TransitionSize, intensity);
+					effect.SetValue(Effects.Vignette.Strength, 0.8);
+					prevEffect = effect; // NOSONAr
+				}
+				return effect;
+			});
+		} else {
+			let intensity;
+			if (art.mute && ppt.imgMute !== 0 && Number.isInteger(ppt.imgMute)) {
+				intensity = Math.max(Math.min(ppt.imgMute / 100 * 255, 255), 0);
+				applyMask(image, (mask, gr, w, h) => {
+					gr.DrawImage(image, 0, 0, w, h, 0, 0, w, h, 0, intensity / 2);
+					mask.ReleaseGraphics(gr);
+					mask.StackBlur(5);
+					return true;
+				});
+				applyMask(image, (mask, gr, w, h) => {
+					gr.DrawImage(image.InvertColours(), 0, 0, w, h, 0, 0, w, h, 0, intensity);
+					mask.ReleaseGraphics(gr);
+					mask.StackBlur(10);
+					return true;
+				});
+			}
+			if (art.edgeGlow && ppt.imgEdgeGlow !== 0 && Number.isInteger(ppt.imgEdgeGlow)) {
+				intensity = Math.max(Math.min(ppt.imgEdgeGlow / 100 * 255, 255), 0);
+				applyAsMask(
+					image,
+					(img, gr, w, h) => {
+						gr.FillSolidRect(0, 0, w, h, $.RGB(0, 0, 0));
+					},
+					(mask, gr, w, h) => {
+						gr.DrawImage(image.InvertColours(), 0, 0, w, h, 0, 0, w, h, 0, intensity);
+						mask.ReleaseGraphics(gr);
+						mask.StackBlur(1);
+						return true;
+					}, true
+				);
+			}
+			if (art.bloom && ppt.imgBloom !== 0 && Number.isInteger(ppt.imgBloom)) {
+				intensity = Math.max(Math.min(ppt.imgBloom / 100 * 255, 255), 0);
+				applyAsMask(
+					image,
+					(img, gr, w, h) => {
+						gr.FillSolidRect(0, 0, w, h, $.RGB(255, 255, 255));
+					},
+					(mask, gr, w, h) => {
+						gr.DrawImage(image.InvertColours(), 0, 0, w, h, 0, 0, w, h, 0, intensity);
+						mask.ReleaseGraphics(gr);
+						mask.StackBlur(50);
+						return true;
+					}, true
+				);
+				applyAsMask(
+					image,
+					(img, gr) => {
+						img.ReleaseGraphics(gr);
+						img.StackBlur(10);
+						return true;
+					},
+					(mask, gr, w, h) => { gr.DrawImage(image.InvertColours(), 0, 0, w, h, 0, 0, w, h); },
+				);
+			}
+			if (art.blur && ppt.imgBlur !== 0 && Number.isInteger(ppt.imgBlur)) {
+				intensity = Math.max(ppt.imgBlur, 0);
+				if (ppt.imgCircularBlur) {
+					image.StackBlur(Math.min(intensity / 5, 1));
+					applyAsMask(
+						image,
+						(img, gr) => {
+							img.ReleaseGraphics(gr);
+							img.StackBlur(intensity);
+							return true;
+						},
+						(mask, gr, w, h) => {
+							gr.FillEllipse(w / 4, h / 4, w / 2, h / 2, 0xFFFFFFFF);
+							mask.ReleaseGraphics(gr);
+							mask.StackBlur(w / 10);
+							return true;
+						},
+					);
+				} else {
+					image.StackBlur(intensity);
+				}
+			}
+			if (art.vignette && ppt.imgVignette !== 0 && Number.isInteger(ppt.imgVignette)) {
+				intensity = Math.max(Math.min(ppt.imgVignette / 100, 1), 0);
+				applyAsMask(
+					image,
+					(img, gr, w, h) => gr.FillSolidRect(0, 0, w, h, 0xFF000000),
+					(mask, gr, w, h) => {
+						const x = intensity * w / 7;
+						const y = intensity * h / 7;
+						const ww = w - 2 * x;
+						const hh = h - 2 * y;
+						gr.FillEllipse(x, y, ww, hh, 0xFFFFFFFF);
+						mask.ReleaseGraphics(gr);
+						mask.StackBlur(w / 3.5);
+					},
+				);
+			}
+		}
+		return image;
+	}
+
 	drawStyleBorder(gr, style, x, y, w, h) {
 		switch (style.border) {
 			case 'circular': {
@@ -1018,9 +1231,8 @@ class Images {
 			}
 		}
 	};
-	// Regorxxx ->
 
-	format(image, n, style, w, h, fade, caller, i, key) {
+	format(image, art, style, w, h, fade, caller, i, key) {
 		let ix = 0;
 		let iy = 0;
 		let iw = image.Width;
@@ -1035,7 +1247,7 @@ class Images {
 				const s1 = iw / w;
 				const s2 = ih / h;
 				const r = s1 / s2;
-				if (this.needTrim(n, r)) {
+				if (this.needTrim(art.trim, r)) {
 					if (s1 > s2) {
 						iw = Math.round(w * s2);
 						ix = Math.round((image.Width - iw) / 2);
@@ -1068,8 +1280,9 @@ class Images {
 				break;
 			}
 		}
-		this.applyStyleMask(image, style); // Regorxxx <- Code Cleanup | New img styles ->
-		if (fade) this.fadeMask(image, image.Width, image.Height);
+		this.applyStyleMask(image, style);
+		image = this.applyArtEffect(image, art);
+		if (fade) { this.fadeMask(image, image.Width, image.Height); }
 		if (caller.startsWith('display')) {
 			this.cache[key] = {
 				img: image,
@@ -1077,6 +1290,7 @@ class Images {
 			};
 		} else { return image; }
 	}
+	// Regorxxx ->
 
 	getCurrentDatabase() {
 		this.albumArtDiskCache = ppt.albumArtDiskCache;
@@ -1521,19 +1735,21 @@ class Images {
 		this.setRoot();
 		if (this.style.rootComposite) this.checkRootImg();
 		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
-		if (stub) this.stub.noImg = this.format(stub, ppt.artId, this.getStyle(this.style.image, true), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'noImg');
+		if (stub) this.stub.noImg = this.format(stub, art, this.getStyle(this.style.image, true), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'noImg');
 		// Regorxxx <- Fix img frame for root images (hover effect)
 		this.stub.root = this.root_img
-			? this.format(this.root_img, ppt.artId, this.getStyleByType('default'), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'root')
+			? this.format(this.root_img, art, this.getStyleByType('default'), this.im.w, this.im.w, ppt.albumArtLabelType == 3, 'root')
 			: null;
 		this.createImages();
 		// Regorxxx ->
 		panel.treePaint();
 	}
 
-	needTrim(n, ratio) {
-		return n || Math.abs(ratio - 1) >= 0.05;
+	// Regorxxx <- Code cleanup | New img styles
+	needTrim(bForce, ratio) {
+		return bForce || Math.abs(ratio - 1) >= 0.05;
 	}
+	// Regorxxx ->
 
 	newDatabase() {
 		return {
