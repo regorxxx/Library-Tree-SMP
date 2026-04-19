@@ -53,9 +53,7 @@ class Search {
 				bAlt
 					? ppt.searchDragTagsAlt
 					: bCtrl ? ppt.searchDragTagsCtrl : ppt.searchDragTags,
-				bAlt
-					? [globTags.artistRaw]
-					: [globTags.artistRaw, globTags.genre]
+				[]
 			).flatMap((tag) => {
 				if (typeof tag === 'object') {
 					const [hasFrom, hasTo] = [Object.hasOwn(tag, 'from'), Object.hasOwn(tag, 'to')];
@@ -78,7 +76,7 @@ class Search {
 					}
 					return fromArr.flatMap((from) => toArr.map((to) => { return { from, to: to }; }));
 				} else {
-					return [{ from: tag, to: tag }];
+					return [{ from: tag, to: tag, bInternalRemap: true }];
 				}
 			});
 		};
@@ -113,7 +111,7 @@ class Search {
 						if (!operators.tag && i > 0) { return; }
 						const values = [...new Set(trackTags[i].filter(Boolean).map(s => s.toLowerCase()))];
 						if (!operators.value) { values.length = 1; }
-						return searchTag.to.toUpperCase() === 'ALBUM ARTIST'
+						return searchTag.bInternalRemap && searchTag.to.toUpperCase() === 'ALBUM ARTIST'
 							? $.queryJoin([
 								$.queryCombinations(values, 'ALBUM ARTIST', operators.value),
 								$.queryCombinations(values, 'ARTIST', operators.value),
