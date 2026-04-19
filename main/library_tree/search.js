@@ -213,7 +213,7 @@ class Search {
 			this.getOffset(gr);
 			gr.GdiDrawText(panel.search.txt.slice(this.offset), ui.font.main, ui.col.search, panel.search.x, 0, panel.search.w, panel.search.sp, panel.l);
 			// Regorxxx <- Dynamic search selection color
-			if (this.start !== this.end && ui.img.cur && ui.img.colors.length && ui.col.dynSearch !== ui.col.search) {
+			if (this.start !== this.end && ui.col.dynSearch !== ui.col.search) {
 				const clamp = panel.search.x + panel.search.w;
 				const left = Math.min(this.start, this.end);
 				const right = Math.max(this.start, this.end);
