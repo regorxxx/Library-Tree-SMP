@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 19/04/26 -->
+﻿<!DOCTYPE html> <!-- 20/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -12,7 +12,7 @@
 			margin: 0;
 		}
 
-		/* Regorxxx <- Accesibility improvements converting elements to buttons */
+		/* Regorxxx <- Accessibility improvements converting elements to buttons */
 		.tablink {
 			background-color: #e5e5e5;
 			overflow: hidden;
@@ -617,7 +617,7 @@
 			clear: both;
 		}
 
-		/* Regorxxx <- Allow inline links for navigation | Accesibility improvements converting elements to buttons */
+		/* Regorxxx <- Allow inline links for navigation | Accessibility improvements converting elements to buttons */
 		.internalLink {
 			border-bottom: 1px dotted rgb(0, 0, 0);
 			cursor: pointer;
@@ -754,6 +754,7 @@
 				<div class="info7">$nodisplay & $colour are generally unsafe inside string manipulation functions that remove a part of a string or insert a substring by position. Instead, they should be put before the string function, e.g.<br>Use $colour{255-0-0}$substr(str,from,to). Don't use $substr($colour{255-0-0}str,from,to).<br>Use $colour{0-255-0}$swapbranchprefix{%&ltARTIST&gt%}. Don't use $swapbranchprefix{$colour{0-255-0}%&ltARTIST&gt%}.</div>
 				<div><br></div>
 			</div>
+			<div><br></div>
 		</div>
 		<!-- Regorxxx -->
 		<div style="clear:both;"></div>
@@ -784,6 +785,7 @@
 			<div style="clear:both;"></div>
 			<div id="filterDuplBy"></div>
 			<!-- Regorxxx -->
+			<br>
 		</div>
 		<!-- Regorxxx Presets tab | Preset rules -->
 		<div id='presets' class="tabcontent">
@@ -815,7 +817,7 @@
 			<div id="presetRulesOnPlsUse"></div>
 			<div id="presetRulesOnNotifyUse"></div>
 			<div class="info1">Note all <b>presets rules can be temporarily bypassed by pressing Shift</b> when switching Sources, Views or Filters via menus.</div>
-
+			<br>
 		</div>
 		<!-- Regorxxx -->
 		<div style="clear:both;"></div>
@@ -963,6 +965,7 @@
 					<!-- Regorxxx -->
 				</div>
 			</div>
+			<br>
 			<!-- Regorxxx -->
 		</div>
 
@@ -1028,7 +1031,7 @@
 					<div id="dragTags"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><button id="dragTags_help" onclick="showHelp('drag_text');return false;">Drag n' drop help</button></div>
 					<div id="drag_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4"><b><u>Usage:</b></u><br><br>&#x2022; Tracks can be drag n' dropped to search box<br>&#x2022; Search expression is adjusted to View mode<br>&#x2022; View by Folder structure: filenames (RegExp)<br>&#x2022; Any other View: tags (Queries)<br>&#x2022; Tags used and how they are joined can be customized<br><br><b><u>Keyboard modifiers:</b></u><br><br>&#x2022; Default is used without any key pressed<br>&#x2022; Behaviour is affected by Ctrl, Alt and Shift keys<br>&#x2022; Multi-value tag operator is used between different values on same tag:<br>&emsp; 'ARTIST IS A OR ARTIST IS B'<br><br>&#x2022; Inter-tag operator is used between different tags:<br>&emsp; 'ARTIST IS Nina Simone OR GENRE IS Rock'<br><br>&#x2022; Inter-track operator is used between queries for different tracks (on multiple selection)<br><br>&#x2022; Inter-query operator is used if there is already an expression at the search box, to join or replace them<br><br><b><u>Tags:</b></u><br><br>&#x2022; Can be an array of strings:<br>&emsp; ["GENRE", "STYLE"]<br><br>&#x2022; Or an array of objects:<br>&emsp;	[{"from":["GENRE"],"to":["GENRE"]},{"from":["STYLE"],"to":["STYLE"]}]<br><br>&#x2022; Remapping is allowed by setting different from/to values:<br>&emsp; [{"from":["ALBUM ARTIST"], "to":["INVOLVEDPEOPLE"]}]<br><br>&#x2022; An array of strings is just a shorthand for an array of objects where from/to values are identical.<br><br>&#x2022; When adding multiple from/to values, remap is done by creating queries with all possible combinations.<br>&emsp; [{"from":["A","B"], "to":["C","D"]}]<br>&emsp;&emsp; is equal to <br>&emsp; [{"from":["A"], "to":["C"]},{"from":["A"], "to":["D"]},{"from":["B"], "to":["C"]},{"from":["C"], "to":["D"]}]</div>
+						<div class="info4"><b><u>Usage:</b></u><br><br>&#x2022; Tracks can be drag n' dropped to search box<br>&#x2022; Search expression is adjusted to View mode<br>&#x2022; View by Folder structure: filenames (RegExp)<br>&#x2022; Any other View: tags (Queries)<br>&#x2022; Tags used and how they are joined can be customized<br><br><b><u>Keyboard modifiers:</b></u><br><br>&#x2022; Default is used without any key pressed<br>&#x2022; Behaviour is affected by Ctrl, Alt and Shift keys<br>&#x2022; Multi-value tag operator is used between different values on same tag:<br>&emsp; 'ARTIST IS A OR ARTIST IS B'<br><br>&#x2022; Inter-tag operator is used between different tags:<br>&emsp; 'ARTIST IS Nina Simone OR GENRE IS Rock'<br><br>&#x2022; Inter-track operator is used between queries for different tracks (on multiple selection)<br><br>&#x2022; Inter-query operator is used if there is already an expression at the search box, to join or replace them<br><br><b><u>Tags:</b></u><br><br>&#x2022; Can be an array of strings:<br>&emsp; ["GENRE", "STYLE"]<br><br>&#x2022; Or an array of objects:<br>&emsp; [{"from":["GENRE"],"to":["GENRE"]},{"from":["STYLE"],"to":["STYLE"]}]<br><br>&#x2022; Remapping is allowed by setting different from/to values:<br>&emsp; [{"from":["ALBUM ARTIST"], "to":["INVOLVEDPEOPLE"]}]<br><br>&#x2022; An array of strings is just a shorthand for an array of objects where from/to values are identical.<br><br>&#x2022; When adding multiple from/to values, remap is done by creating queries with all possible combinations.<br>&emsp; [{"from":["A","B"], "to":["C","D"]}]<br>&emsp;&emsp; is equal to <br>&emsp; [{"from":["A"], "to":["C"]},{"from":["A"], "to":["D"]},{"from":["B"], "to":["C"]},{"from":["C"], "to":["D"]}]</div>
 						<div><br></div>
 					</div>
 					<div class="div_text1">Quick-search</div>
@@ -1052,6 +1055,7 @@
 					</div>
 				</div>
 			</div>
+			<br>
 		</div>
 
 		<div id="display" class="tabcontent">
@@ -1110,6 +1114,7 @@
 					<div id="metrics3"></div>
 				</div>
 			</div>
+			<br>
 			<!-- Regorxxx -->
 		</div>
 
@@ -1151,6 +1156,7 @@
 					</div>
 				</div>
 			</div>
+			<br>
 		</div>
 		<!-- Regorxxx -->
 
@@ -1251,6 +1257,7 @@
 				<div class="info5">Switch off 'Show Album Art Options' on the <button class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</button> while in tree view. Album art loading, disk caching plus the <button class="internalLink" onclick="openPage('albumArt', 'albumArtCfg', 'deeppink')">Album Art tab</button> and menu options are disabled. Switch the option back on to allow album art mode.</div>
 				<div><br></div>
 			</div>
+			<br>
 		</div>
 		<!-- Regorxxx -->
 
@@ -1281,6 +1288,7 @@
 					<div class="info1"><i>Colours</i>: flexible entry, e.g. 255,0,0 or 0-255-0 or rgba(255,0,0,64)<br><i>Alpha</i>: 0-255 or 0-1 scale<br><i>Transparent</i>: main background N/A; transparent fill can be used</div>
 				</div>
 			</div>
+			<br>
 		</div>
 		<!-- Regorxxx -->
 
@@ -1351,6 +1359,7 @@
 					<!-- Regorxxx -->
 				</div>
 			</div>
+			<br>
 		</div>
 	</div>
 	<div id="div" style="height:0; width:0;outline:none; border:none; padding:none; margin:none; box-sizing:content-box;"></div>
@@ -1387,24 +1396,40 @@
 				return res;
 			};
 		}
+		if (!('includes' in Array.prototype)) {
+			Array.prototype.includes = function (el) {
+				return !!~this.indexOf(el);
+			};
+		}
 		if (!('isArray' in Array)) {
 			Array.isArray = function (obj) {
 				return Object.prototype.toString.call(obj) === '[object Array]';
 			}
 		}
+		if (!('trunc' in Math)) {
+			Math.trunc = function (v) {
+				return v < 0 ? Math.ceil(v) : Math.floor(v);
+			};
+		}
 		if (!('startsWith' in String.prototype)) {
 			String.prototype.startsWith = function (search, rawPos) { // NOSONAR
-				var pos = rawPos > 0 ? rawPos | 0 : 0; // NOSONAR
+				var pos = rawPos > 0 ? Math.trunc(rawPos) : 0; // NOSONAR
 				return this.substring(pos, pos + search.length) === search;
 			};
 		}
-		if (!String.prototype.cut) {
+		if (!('cut' in String.prototype)) {
 			var cutRegex = { multiLine: {}, singleLine: {} };
 			String.prototype.cut = function cut(c, bMultiLine) { // NOSONAR
 				if (!bMultiLine && !cutRegex.singleLine.hasOwnProperty(c)) { cutRegex.singleLine[c] = new RegExp('^([\\s\\S]{' + c + '})[\\s\\S]{2,}', 'g'); } // eslint-disable-line no-prototype-builtins
 				else if (bMultiLine && !cutRegex.multiLine.hasOwnProperty(c)) { cutRegex.multiLine[c] = new RegExp('^(.{' + c + '}).{2,}', 'gm'); } // eslint-disable-line no-prototype-builtins
 				return this.replace(bMultiLine ? cutRegex.multiLine[c] : cutRegex.singleLine[c], '$1\u2026'); // …
 			};
+		}
+		if (!('parseFloat' in Number)) {
+			Number.parseFloat = parseFloat; // NOSONAR
+		}
+		if (!('parseInt' in Number)) {
+			Number.parseInt = parseInt; // NOSONAR
 		}
 		// Expand alert popup with automatic type parsing
 		var formatArg = function (arg) {
@@ -1506,12 +1531,14 @@
 
 		function openPage(pageName, elmnt, color) {
 			cur.page = pageName;
+			cur.elmnt = elmnt;
+			cur.color = color;
 			var i, tabcontent, tablinks;
 			tabcontent = document.querySelectorAll(".tabcontent");
 			for (i = 0; i < tabcontent.length; i++) {
 				tabcontent[i].style.display = "none";
 			}
-			tablinks = document.getElementsByTagName("button"); // Regorxxx <- Accesibility improvements converting elements to buttons ->
+			tablinks = document.getElementsByTagName("button"); // Regorxxx <- Accessibility improvements converting elements to buttons ->
 			for (i = 0; i < tablinks.length; i++) {
 				tablinks[i].style.backgroundColor = "";
 			}
@@ -1536,6 +1563,7 @@
 			cur.w = Math.round(window_w / em);
 			cur.h = Math.round(window_h / em);
 			checkWindowDefaultSize();
+			openPage(cur.page, cur.elmnt, cur.color);
 		}
 
 		function checkWindowDefaultSize() {
@@ -1669,7 +1697,7 @@
 			c = c.replace(/[^0-9.,-]/g, '').replace(/-/g, ',').split(',');
 			var cc = ''; if (c.length != 3 && c.length != 4) return [255, 255, 255];
 			for (i = 0; i < c.length; i++) {
-				c[i] = parseFloat(c[i]);
+				c[i] = Number.parseFloat(c[i]);
 				if (i < 3) c[i] = clamp(Math.round(c[i]), 0, 255);
 				else if (i == 3) {
 					if (c[i] <= 1) c[i] = Math.round(255 * c[i]);
@@ -2174,7 +2202,7 @@
 			function hasPresetRuleValue(rule, condition, typeProp, val) {
 				return rule.hasOwnProperty(condition) && rule[condition].hasOwnProperty(typeProp)
 					? Array.isArray(rule[condition][typeProp])
-						? rule[condition][typeProp].indexOf(val) !== -1
+						? rule[condition][typeProp].includes(val)
 						: false
 					: false;
 			}
@@ -2213,7 +2241,7 @@
 			function setPresetRuleWithInput(idx, id, condition, typeProp, msg, defValue) {
 				var val = inputValue(msg, defValue);
 				if (val === null) { return; }
-				if (val.indexOf('|') !== -1) {
+				if (val.includes('|')) {
 					val = val.split('|');
 					for (var i = 0; i < val.length; i++) {
 						setPresetRule(idx, id, condition, typeProp, val[i]);
@@ -2523,8 +2551,8 @@
 						for (j = 0; j < labels.length; j++) {
 							items[j] = [];
 							// Regorxxx <- Filter non-relevant functions at help
-							if (id === 'syntaxFilter' && labels[j][3].split('|').indexOf('Filters') === -1) { continue; }
-							else if (id === 'syntaxView' && labels[j][3].split('|').indexOf('Views') === -1) { continue; }
+							if (id === 'syntaxFilter' && !labels[j][3].split('|').includes('Filters')) { continue; }
+							else if (id === 'syntaxView' && !labels[j][3].split('|').includes('Views')) { continue; }
 							for (i = 0; i < 3; i++) {
 								items[j].push('<div class=info5;">' + labels[j][i] + '</div>');
 								if (i == 2) {
@@ -2715,14 +2743,14 @@
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<a onclick="return toggleSubmenu(\'presetRuleIfNotSourceIdNames' + i + '\')">' + sourceIds[j] + '</a>');
 									window['presetRuleIfNotSourceId' + i].insertAdjacentHTML('beforeend', '<span id="presetRuleIfNotSourceIdNames' + i + '" style="display:none; margin-left:2em;"></span>');
 									for (k = 0; k < sourceIdsNamesLen; k++) {
-										if (sourceIdsNames[k] !== 'separator') {
+										if (sourceIdsNames[k] === 'separator') {
+											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
+										} else {
 											isPresent = hasPresetRuleValue(rule, 'if', 'sourceId', sourceIdsNames[k]);
 											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfSourceId' + i + '\', \'if\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#8994bc; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
 											isPresent = hasPresetRuleValue(rule, 'ifNot', 'sourceId', sourceIdsNames[k]);
 											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a onclick="setPresetRule(' + i + ', \'presetRuleIfNotSourceId' + i + '\', \'ifNot\', \'sourceId\', \'' + sourceIdsNames[k] + '\');"' + (isPresent ? ' style="color:#b48b8b; font-weight:bold;"' : '') + '>' + sourceIdsNames[k] + '</a>');
-										} else {
-											window['presetRuleIfSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
-											window['presetRuleIfNotSourceIdNames' + i].insertAdjacentHTML('beforeend', '<a disabled><hr></a>');
 										}
 									}
 									break;
@@ -3382,7 +3410,7 @@
 
 			inputs = document.querySelectorAll("[name$='_input']");
 			for (i = 0; i < inputs.length; i++) {
-				(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = input.all.type[i] == 'text' ? inputs[i].value : input.all.type[i] == 'int' ? parseInt(inputs[i].value) : parseFloat(inputs[i].value);
+				(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = input.all.type[i] == 'text' ? inputs[i].value : input.all.type[i] == 'int' ? Number.parseInt(inputs[i].value) : Number.parseFloat(inputs[i].value);
 			}
 
 			var boxes = document.querySelectorAll("[name$='_checkbox']");
