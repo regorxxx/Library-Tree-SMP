@@ -1679,6 +1679,12 @@ class Panel {
 		if (this.imgView && pop.tree.length) {
 			img.trimCache(pop.tree[0].key);
 			img.metrics();
+			// Regorxxx <- New img styles
+			const art = img.getArt(ppt.artId);
+			if ((art.reflection || art.reflectionRoot) && !img.canShowReflection()) {
+				fb.ShowPopupMessage('Art reflection effect is enabled but current pad settings don\'t allow such effect to be displayed.\n\nCheck your pad settings (normal and/or compact).', window.ScriptInfo.Name + ': Art reflection settings');
+			}
+			// Regorxxx ->
 		}
 		if (!bRefreshLib) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;

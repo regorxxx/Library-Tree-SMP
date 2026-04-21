@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/04/26
+//21/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -1209,10 +1209,11 @@ class Images {
 	}
 
 	drawReflection(gr, art, image, coords) {
+		if (!this.canShowReflection()) { return false; }
 		const alpha = 102; // Art alpha * 0.4
+		const offsetX = this.bor.pad / 2;
 		switch (art.reflectionStyle) {
 			case 0: { // asymmetric right
-				const offsetX = this.bor.pad / 2;
 				const clone = image.Clone(0, 0, image.Width, image.Height);
 				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
 				applyMask(
@@ -1227,7 +1228,6 @@ class Images {
 			}
 			case 1: // symmetric
 			default: {
-				const offsetX = this.bor.pad / 2;
 				const clone = image.Clone(0, 0, image.Width, image.Height);
 				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
 				applyMask(
@@ -1243,7 +1243,12 @@ class Images {
 				break;
 			}
 		}
+		return true;
 	};
+
+	canShowReflection() {
+		return this.bor.pad / 2 > 5;
+	}
 
 	format(image, art, style, w, h, fade, caller) {
 		let ix = 0;
