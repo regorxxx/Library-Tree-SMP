@@ -72,7 +72,10 @@ class UserInterface {
 			cur_pth: '',
 			isBlur: false,
 			stub: [],
-			colors: [] // Regorxxx <- Set dynamic colors from artwork ->
+			// Regorxxx <- Set dynamic colors from artwork
+			colorsBg: [], // Art colors when drawed over background
+			colors: []	// "pure" Art colors
+			// Regorxxx ->
 		};
 
 		this.l = {
