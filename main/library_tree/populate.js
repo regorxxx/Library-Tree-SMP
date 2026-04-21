@@ -2479,9 +2479,9 @@ class Populate {
 			case vk.pgUp:
 				if (this.tree.length == 0) break;
 				if (panel.imgView) {
-					panel.pos = panel.pos - img.columns * (panel.rows - 1);
+					panel.pos = panel.pos - img.columns * Math.max(panel.rows - 1, 1); // Regorxxx <- Fix scrolling not working when a single row was drawn ->
 					panel.pos = $.clamp(panel.pos, 0, this.tree.length - 1);
-				} else panel.pos = Math.max(Math.round(sbar.scroll / ui.row.h + 0.4) - Math.floor(panel.rows) + 1, this.rootNode ? 1 : 0);
+				} else { panel.pos = Math.max(Math.round(sbar.scroll / ui.row.h + 0.4) - Math.floor(panel.rows) + 1, this.rootNode ? 1 : 0); }
 				sbar.pageThrottle(1);
 				this.setTreeSel(this.tree[panel.pos].ix);
 				panel.treePaint();
@@ -2492,9 +2492,9 @@ class Populate {
 			case vk.pgDn:
 				if (this.tree.length == 0) break;
 				if (panel.imgView) {
-					panel.pos = panel.pos + img.columns * (panel.rows - 1);
+					panel.pos = panel.pos + img.columns * Math.max(panel.rows - 1, 1); // Regorxxx <- Fix scrolling not working when a single row was drawn ->
 					panel.pos = $.clamp(panel.pos, 0, this.tree.length - 1);
-				} else panel.pos = Math.min(Math.round(sbar.scroll / ui.row.h + 0.4) + Math.floor(panel.rows) * 2 - 2, this.tree.length - 1);
+				} else { panel.pos = Math.min(Math.round(sbar.scroll / ui.row.h + 0.4) + Math.floor(panel.rows) * 2 - 2, this.tree.length - 1); }
 				sbar.pageThrottle(-1);
 				this.setTreeSel(this.tree[panel.pos].ix);
 				panel.treePaint();

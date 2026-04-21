@@ -104,7 +104,7 @@ class Scrollbar {
 		this.duration.bar = this.duration.full;
 		this.duration.barFast = this.duration.step;
 
-		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -(this.rows_drawn - 1) * this.row.h) / this.row.h) * this.row.h, 'full', false), 100); // Regorxxx <- Update current item  under mouse while scrolling ->
+		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -Math.max(this.rows_drawn - 1, 1) * this.row.h) / this.row.h) * this.row.h, 'full', false), 100); // Regorxxx <- Update current item  under mouse while scrolling | Fix scrolling not working when a single row was drawn ->
 
 		this.scrollThrottle = $.throttle(() => {
 			this.delta = this.scroll;
@@ -641,7 +641,7 @@ class Scrollbar {
 	}
 
 	shift(dir, nearest_y) {
-		let target = Math.round((this.scroll + dir * -(((this.rows_drawn - 1) || 1) * this.row.h)) / this.row.h) * this.row.h;
+		let target = Math.round((this.scroll + dir * -(Math.max(this.rows_drawn - 1, 1) * this.row.h)) / this.row.h) * this.row.h; // Regorxxx <- Fix scrolling not working when a single row was drawn ->
 		if (dir == 1) target = Math.max(target, nearest_y);
 		else target = Math.min(target, nearest_y);
 		return target;
@@ -710,6 +710,6 @@ class Scrollbar {
 	}
 
 	wheel(step) {
-		this.checkScroll(Math.round((this.scroll + step * -(this.scrollStep ? this.scrollStep : this.rows_drawn - 1) * this.row.h) / this.row.h) * this.row.h, this.scrollStep ? 'step' : 'full');
+		this.checkScroll(Math.round((this.scroll + step * -(this.scrollStep ? this.scrollStep : Math.max(this.rows_drawn - 1, 1)) * this.row.h) / this.row.h) * this.row.h, this.scrollStep ? 'step' : 'full'); // Regorxxx <- Fix scrolling not working when a single row was drawn ->
 	}
 }
