@@ -215,10 +215,10 @@ class Populate {
 			} else if (node.child && node.child.length) {
 				node.child.forEach((subNode) => this.addItems(arr, subNode));
 			} else if (node.item.length > 1 || node.item[0].count > 1) {
-				this.branch(node, !!node.root, true, void (0), false);
+				this.branch(node, !!node.root, true, true, false);
 				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
 				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
-				this.clearChild(node, false);
+				this.clearChild(node, true, false);
 			} else {
 				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
 			}
@@ -534,7 +534,7 @@ class Populate {
 				if (!item.nm.endsWith(str)) { item.nm += str; }
 			}
 			item.name = panel.noDisplay ? item.nm.replace(/#@#.*?#@#/g, '') : item.nm;
-			if (v.child.length > 0) { this.buildTree(v.child, level + 1, node, !!item.root); }
+			if (v.child.length > 0) { this.buildTree(v.child, level + 1, node, !!item.root, true, false); }
 		});
 		if (ui.style.squareNode && ui.col.line) {
 			this.row.lineMax = [];
@@ -916,9 +916,9 @@ class Populate {
 	}
 
 	// Regorxxx <- Preserve tree sorting at selection
-	clearChild(br, clearArt) {
+	clearChild(br, block, clearArt) {
 		br.child = [];
-		this.buildTree(lib.root, 0, true, true, void (0), clearArt);
+		this.buildTree(lib.root, 0, true, true, block, clearArt);
 	}
 	// Regorxxx ->
 
