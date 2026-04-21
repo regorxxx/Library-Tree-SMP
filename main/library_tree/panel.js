@@ -1,8 +1,8 @@
 ﻿'use strict';
-//19/04/26
+//21/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
-/* global MK_CONTROL:readable */
+/* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable */
@@ -12,13 +12,6 @@
 
 class Panel {
 	constructor() {
-		const DT_CENTER = 0x00000001;
-		const DT_RIGHT = 0x00000002;
-		const DT_VCENTER = 0x00000004;
-		const DT_SINGLELINE = 0x00000020;
-		const DT_NOPREFIX = 0x00000800;
-		const DT_END_ELLIPSIS = 0x00008000;
-
 		this.cc = DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX;
 		this.cce = this.cc | DT_END_ELLIPSIS;
 		this.curPattern = '';
@@ -135,6 +128,7 @@ class Panel {
 		ppt.initialLoadFilters = false;
 		ppt.initialLoadViews = false;
 		this.getFields(ppt.viewBy, ppt.filterBy);
+		if (img.useD2D) { this.adjustUiD2D(); } // Regorxxx <- GDI/D2D draw mode ->
 	}
 
 	// Methods
@@ -2235,4 +2229,13 @@ class Panel {
 		}
 	}
 	// Regorxxx->
+
+	// Regorxxx <- GDI/D2D draw mode
+	adjustUiD2D() {
+		this.cc |=  DT_CALCRECT;
+		this.l |= DT_CALCRECT;
+		this.lc |= DT_CALCRECT;
+		this.rc |= DT_CALCRECT;
+	}
+	// Regorxxx ->
 }
