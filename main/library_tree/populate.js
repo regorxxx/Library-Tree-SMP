@@ -2006,7 +2006,7 @@ class Populate {
 	}
 
 	leftKeyCheckScroll() {
-		const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
+		const row = this.getTreeRow(panel.pos);
 		if (sbar.scroll > panel.pos * ui.row.h) sbar.checkScroll(panel.pos * ui.row.h);
 		else if (row - sbar.rows_drawn > 0) {
 			sbar.checkScroll((panel.pos + 3 - sbar.rows_drawn) * ui.row.h);
@@ -2468,7 +2468,7 @@ class Populate {
 				this.m.i = panel.pos = item.ix;
 				this.setPlaylist(panel.pos, item);
 				sbar.setRows(this.tree.length);
-				const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
+				const row = this.getTreeRow(panel.pos);
 				if (row + n + item.child.length > sbar.rows_drawn || row < 0) {
 					if (item.child.length > (sbar.rows_drawn - n) || row < 0) sbar.checkScroll(panel.pos * ui.row.h);
 					else sbar.checkScroll(Math.min(panel.pos * ui.row.h, (panel.pos + n - sbar.rows_drawn + item.child.length) * ui.row.h));
@@ -3157,7 +3157,7 @@ class Populate {
 	// Regorxxx <- Throttle selection playlist update
 	upDnKeyCheckScroll(vkey) {
 		const bAsync = ppt.plsRefreshLimit > 0;
-		const row = (panel.pos * ui.row.h - sbar.scroll) / ui.row.h;
+		const row = this.getTreeRow(panel.pos);
 		if (sbar.rows_drawn - row < 3 || row < 0) sbar.checkScroll((panel.pos + 3) * ui.row.h - sbar.rows_drawn * ui.row.h, void (0), bAsync);
 		else if (row < 2 && vkey == vk.up) sbar.checkScroll((panel.pos - 1) * ui.row.h, void (0), bAsync);
 		this.m.i = panel.pos;
