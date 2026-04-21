@@ -1,5 +1,5 @@
-﻿'use strict';
-//20/04/26
+'use strict';
+//21/04/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -363,7 +363,7 @@ class UserInterface {
 					break;
 			}
 		});
-		this.getImgColors(this.img.cur); // Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork ->
+		this.getImgColors(this.img.cur, true); // Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork ->
 		window.Repaint();
 	}
 
@@ -588,17 +588,28 @@ class UserInterface {
 	}
 
 	// Regorxxx <- Dynamic search selection color | Set dynamic colors from artwork
-	getImgColors(image) {
-		this.img.colors = JSON.parse(image.GetColourSchemeJSONV2 ? image.GetColourSchemeJSONV2(6) : image.GetColourSchemeJSON(10));
+	getImgColors(image, withBg) {
+		const img = withBg
+			? $.gr(image.Width, image.Height, true, (g) => {
+				// Image may have transparencies and will be drawn over a solid background in any case, so colors are affected by it
+				g.FillSolidRect(0, 0, image.Width, image.Height, this.style.bg ? this.col.bg : 0xffffffff);
+				g.DrawImage(image, 0, 0, image.Width, image.Height, 0, 0, image.Width, image.Height);
+			})
+			: image;
+		this.img.colorsBg = JSON.parse(img.GetColourSchemeJSONV2 ? img.GetColourSchemeJSONV2(6) : img.GetColourSchemeJSON(6));
+		this.img.colors = withBg
+			? JSON.parse(image.GetColourSchemeJSONV2 ? image.GetColourSchemeJSONV2(6) : image.GetColourSchemeJSON(6))
+			: this.img.colorsBg;
 		this.col.dynSearchSel = opaqueColor(blendColors(
-			mostContrastColor(this.img.colors, [0xffffffff, 0xff000000, invert(this.col.searchSel, false), this.col.searchSel]).color,
-			this.img.colors[0].col,
+			mostContrastColor(this.img.colorsBg, [0xffffffff, 0xff000000, invert(this.col.searchSel, false), this.col.searchSel]).color,
+			this.img.colorsBg[0].col,
 			0.1
 		), 80);
 		this.col.dynSearch = mostContrastColor(this.col.dynSearchSel, [invert(this.col.search, false, true), this.col.search]).color;
 	}
 
 	resetImgColors() {
+		this.img.colorsBg = [];
 		this.img.colors = [];
 		this.col.dynSearchSel = this.col.searchSel;
 		this.col.dynSearch = this.col.search;
