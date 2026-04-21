@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/04/26
+//21/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1655,12 +1655,49 @@ class Populate {
 			}
 			return -1;
 		}
-		if (y > panel.tree.y && y < panel.tree.y + this.rows * ui.row.h) ix = Math.round((y + sbar.delta - panel.search.h - ui.row.h * 0.5) / ui.row.h);
+		if (y > panel.tree.y && y <= panel.tree.y + this.rows * ui.row.h) ix = Math.round((y + sbar.delta - panel.search.h - ui.row.h * 0.5) / ui.row.h);
 		else ix = -1;
 		if (simple) return ix;
 		if (this.tree.length > ix && ix >= 0 && x < panel.tree.w && y > panel.tree.y && y < panel.tree.y + this.rows * ui.row.h && this.check_ix(this.tree[ix], x, y, type)) return ix;
 		else return -1;
 	}
+
+	// Regorxxx <- Update current item  under mouse while scrolling
+	getTreeRow(pos) {
+		return (pos * ui.row.h - sbar.scroll) / ui.row.h;
+	}
+
+	getArtColumn(pos) {
+		return img.style.vertical
+			? (pos % img.columns * img.columnWidth - sbar.scroll) / img.columnWidth
+			: (pos * img.columnWidth - sbar.scroll) / img.columnWidth;
+	}
+
+	getArtRow(pos) {
+		return img.style.vertical
+			? (Math.floor(pos / img.columns) * img.columnWidth - sbar.scroll) / img.columnWidth
+			: 0;
+	}
+
+	getXY(ix) {
+		let x = -1, y = -1;
+		if (ix >= 0 && ix <= this.tree.length - 1) {
+			if (panel.imgView) {
+				if (img.style.vertical) {
+					x = this.getArtColumn(ix) * img.columnWidth + img.columnWidth / 2 + img.bor.cov;
+					y = this.getArtRow(ix) * img.columnWidth + img.columnWidth / 2 + img.bor.cov;
+				} else {
+					x = this.getArtColumn(ix) * img.columnWidth + img.columnWidth / 2;
+					y = ui.h / 2;
+				}
+			} else {
+				x = ui.w / 2;
+				y = Math.min(this.getTreeRow(ix + 1) * ui.row.h + ui.row.h / 2, panel.tree.y + this.rows * ui.row.h);
+			}
+		}
+		return [x, y];
+	}
+	// Regorxxx ->
 
 	getKey(v) {
 		const level = v.level;
@@ -2164,7 +2201,7 @@ class Populate {
 		}
 	}
 
-	move(x, y) {
+	move(x, y, scrolling) { // Regorxxx <- Update current item  under mouse while scrolling ->
 		if (but.Dn) return;
 		// Regorxxx <- Rectangle selection on art view
 		if (ppt.selRectArt && panel.imgView && this.selRect.down) {
@@ -2191,7 +2228,7 @@ class Populate {
 			this.selRect.my = y;
 		}
 		// Regorxxx ->
-		const ix = this.get_ix(x, y, false, false);
+		const ix = this.get_ix(x, y, scrolling, false); // Regorxxx <- Update current item  under mouse while scrolling ->
 		this.row.i = this.checkRow(x, y);
 		this.m.i = -1;
 		if (ix != -1) {
@@ -2208,7 +2245,7 @@ class Populate {
 		window.SetCursor(this.hand ? 32649 : !but.Dn && y < panel.search.h && ppt.searchShow && x > but.q.h + but.margin && x < panel.search.x + panel.search.w ? 32513 : 32512);
 		const same = this.m.i == this.cur_ix && this.m.br == this.m.cur_br && this.row.i == this.row.cur;
 		if (same && !sbar.touch.dn) return;
-		if (!sbar.draw_timer && !same) panel.treePaint();
+		if (!scrolling && !sbar.draw_timer && !same) { panel.treePaint(); } // Regorxxx <- Update current item  under mouse while scrolling ->
 		this.cur_ix = this.m.i;
 		this.m.cur_br = this.m.br;
 		this.row.cur = this.row.i;

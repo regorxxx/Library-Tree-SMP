@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/04/26
+//21/04/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -104,7 +104,7 @@ class Scrollbar {
 		this.duration.bar = this.duration.full;
 		this.duration.barFast = this.duration.step;
 
-		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -(this.rows_drawn - 1) * this.row.h) / this.row.h) * this.row.h, 'full'), 100);
+		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -(this.rows_drawn - 1) * this.row.h) / this.row.h) * this.row.h, 'full', false), 100); // Regorxxx <- Update current item  under mouse while scrolling ->
 
 		this.scrollThrottle = $.throttle(() => {
 			this.delta = this.scroll;
@@ -172,8 +172,10 @@ class Scrollbar {
 				if (this.bar.isDragging && Math.abs(this.delta - this.scroll) > (panel.imgView ? this.scrollbar.height * 3 : this.scrollbar.height)) this.event = 'barFast';
 				this.clock = Date.now();
 				if (!this.draw_timer) {
-					this.scrollTimer();
-					this.smoothScroll();
+					// Regorxxx <- Update current item  under mouse while scrolling
+					this.scrollTimer(type);
+					this.smoothScroll(type);
+					// Regorxxx ->
 				}
 			}
 		} else {
@@ -533,17 +535,20 @@ class Scrollbar {
 		this.updDebounce();
 	}
 
-	scrollFinish() {
+	// Regorxxx <- Update current item  under mouse while scrolling
+	scrollFinish(type) {
 		if (!this.draw_timer) return;
 		this.delta = this.scroll;
-
 		if (this.vertical) this.bar.y = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
 		else this.bar.x = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
+		if (type === 'full') { pop.move(...pop.getXY(panel.pos), true);	}
+		else if (type !== 'full' && panel.m.x !== -1 && panel.m.y !== -1 && pop.m.i !== -1) { pop.move(panel.m.x, panel.m.y, true); }
 		lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 		this.calcItem_y();
 		clearTimeout(this.draw_timer);
 		this.draw_timer = null;
 	}
+	// Regorxxx ->
 
 	scrollRound() {
 		if (this.vertical) {
@@ -583,9 +588,9 @@ class Scrollbar {
 		this.updDebounce();
 	}
 
-	scrollTimer() {
+	scrollTimer(type) {
 		this.draw_timer = setInterval(() => {
-			this.smoothScroll();
+			this.smoothScroll(type); // Regorxxx <- Update current item  under mouse while scrolling ->
 		}, 16);
 	}
 
@@ -653,11 +658,13 @@ class Scrollbar {
 		}
 	}
 
-	smoothScroll() {
+	// Regorxxx <- Update current item  under mouse while scrolling
+	smoothScroll(type) {
 		this.delta = this.position(this.start, this.scroll, Date.now() - this.clock + this.elap, this.duration[this.event], this.event);
-		if (Math.abs(this.scroll - this.delta) > 0.5) this.scrollTo();
-		else this.scrollFinish();
+		if (Math.abs(this.scroll - this.delta) > 0.5) { this.scrollTo(); }
+		else { this.scrollFinish(type); }
 	}
+	// Regorxxx ->
 
 	tap(p_x, p_y) {
 		if (this.touch.amplitude) {

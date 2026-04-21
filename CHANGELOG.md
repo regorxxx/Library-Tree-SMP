@@ -105,7 +105,7 @@
 - HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
 - HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
 - HTML: minor improvements to Album Art help and updated Biography default settings (to match latest versions).
-- HTML: minor improvements and cleanup at HTML options panel.
+- HTML: minor improvements and cleanup at HTML options panel regarding layout, resizing and general behavior.
 - HTML: disable thumbnail size dropdown using flow mode instead of hiding it.
 - HTML: cleanup multiple UI elements and help sections, now using buttons (to improve accessibility using screen readers).
 - HTML: multiple minor text fixes.
@@ -131,6 +131,7 @@
 - UI: fixed bug, on original script, related to scrollbar not showing the arrow buttons on 'Windows' style except on mouse over. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078988.html#msg1078988).
 - UI: added setting for Windows bug workaround regarding Scrollbar 'Windows' style usage. While using dark theme on OS, the scrollbar is not dark themed too due a Windows limitation. As workaround a black mask can be applied over every element so it somewhat looks "dark themed". This fix is now applied by default if foobar2000 is set to use dark theme too and JS-host supports checking for it. Otherwise it can be switched at 'Behaviour' tab (HTML options panel) or 'Scrollbar Windows style dark theme fix' (properties panel). In any case note this "bugged" behaviour is a Windows problem, not a script error, and it was also present on original script. Wine users should never experience this problem since the 'Windows' style (win32 theme) is simply unsupported and fallbacks to 'Styled' style. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078988.html#msg1078988).
 - UI: minor tooltip fix for search button in some cases.
+- UI: fixed bug, on original script, related to hover item not being updated after scrolling (unless the mouse was moved afterwards). This affected both mouse wheel and key scrolling (Pg Up, Pg Down, Home, End).
 - HTML: fixed bug, on original script, related to some settings not being properly applied without a panel reload.
 
 ## [1.0.0] - 2026-01-30
