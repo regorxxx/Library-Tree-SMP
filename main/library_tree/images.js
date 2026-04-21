@@ -601,7 +601,7 @@ class Images {
 				const nowp = this.checkNowPlaying(item);
 				const grpCol = this.getGrpCol(item, nowp, pop.highlight.text && i == pop.m.i);
 				const lotCol = this.getLotCol(item, nowp, pop.highlight.text && i == pop.m.i);
-				this.drawSelBg(gr, cur_img, box_x, box_y, i, nowp || item.sel);
+				this.drawSelBg(gr, art, cur_img, box_x, box_y, i, nowp || item.sel);
 				this.im.y = this.im.offset + box_y;
 
 				if (pop.rowStripes && this.labels.right) {
@@ -611,6 +611,7 @@ class Images {
 				let x2 = Math.round(box_x + (this.bor.cov) / 2);
 				let y1 = 0;
 				let y2 = this.im.y + 2 + this.im.w - this.overlayHeight;
+				if (art.reflection && art.reflectionStyle === 0) { x2 = Math.floor(x2 - this.bor.pad / 4); }
 				if (cur_img) {
 					coords = {
 						x: box_x + Math.round((this.box.w - cur_img.Width) / 2),
@@ -625,7 +626,6 @@ class Images {
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
 					}
 				} else {
-					;
 					coords = {
 						x: box_x + Math.round((this.box.w - this.im.w) / 2),
 						y: this.im.y + 2,
@@ -646,16 +646,17 @@ class Images {
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
 					}
 				}
-				this.drawItemOverlay(gr, style, item, coords);
+				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
+				this.drawItemOverlay(gr, art, style, item, coords);
 				if (i == pop.m.i) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg); }
-						else { this.drawFrame(gr, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
+						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (item.sel) {
-					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, box_x, box_y, ui.col.frameImgSel, 'thick'); }
+					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick'); }
 					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel); }
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
@@ -728,7 +729,7 @@ class Images {
 		return coords;
 	};
 
-	drawFrame(gr, box_x, box_y, col, weight) {
+	drawFrame(gr, art, box_x, box_y, col, weight) {
 		let x, y, w, h, l_w;
 		switch (weight) {
 			case 'stnd':
@@ -746,6 +747,7 @@ class Images {
 				l_w = 3;
 				break;
 		}
+		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		gr.DrawRect(x, y, w, h, l_w, col);
 	}
 
@@ -753,10 +755,8 @@ class Images {
 		const l_w = 3;
 		if (item.root && !ppt.frameImageRoot) {
 			if (this.stub.rootFrame) {
-				if (art.reflection && art.reflectionStyle === 0) { coords.x -= this.bor.pad / 4; }
 				gr.DrawImage(this.stub.rootFrame, coords.x, coords.y, coords.w, coords.h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height);
-			}
-			else {
+			} else {
 				if (art.reflection) {
 					if (ppt.frameReflection) {
 						if (art.reflectionStyle === 0) { coords.x -= this.bor.pad / 4; coords.w += this.bor.pad / 2; }
@@ -767,7 +767,6 @@ class Images {
 				gr.DrawRect(coords.x + 1, coords.y + 1, coords.w - l_w / 2 - 1, coords.h - l_w / 2 - 1, l_w, col);
 			}
 		} else {
-			if (art.reflection && art.reflectionStyle === 0) { coords.x -= this.bor.pad / 4; }
 			switch (style.border) {
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
@@ -805,7 +804,7 @@ class Images {
 		gr.SetSmoothingMode();
 	}
 
-	drawItemOverlay(gr, style, item, coords) {
+	drawItemOverlay(gr, art, style, item, coords) {
 		if (item.root) return;
 		switch (ppt.itemOverlayType) {
 			case 1: {
@@ -853,7 +852,7 @@ class Images {
 		}
 	}
 
-	drawSelBg(gr, cur_img, box_x, box_y, i, nowpOrSel) {
+	drawSelBg(gr, art, cur_img, box_x, box_y, i, nowpOrSel) {
 		if (this.labels.hide && (this.style.image != 2 || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
@@ -889,6 +888,7 @@ class Images {
 				}
 				break;
 		}
+		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		if (typeof col !== 'undefined') { gr.FillSolidRect(x, y, w, h, col); } // Regorxxx <- Code cleanup don't call method if unused! ->
 	}
 
