@@ -1685,7 +1685,7 @@ class Populate {
 			if (panel.imgView) {
 				if (img.style.vertical) {
 					x = this.getArtColumn(ix) * img.columnWidth + img.columnWidth / 2 + img.bor.cov;
-					y = this.getArtRow(ix) * img.columnWidth + img.columnWidth / 2 + img.bor.cov;
+					y = this.getArtRow(ix) * sbar.row.h + sbar.row.h / 2 + img.bor.cov;
 				} else {
 					x = this.getArtColumn(ix) * img.columnWidth + img.columnWidth / 2;
 					y = ui.h / 2;
