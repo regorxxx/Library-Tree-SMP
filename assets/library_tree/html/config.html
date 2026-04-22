@@ -377,6 +377,8 @@
 			padding: 0.13em 5px;
 			border: none;
 			cursor: pointer;
+			outline: 2px groove #a3a9c0;
+			outline-offset: -1px;
 		}
 
 		.dropbtnRed {
@@ -388,6 +390,8 @@
 			padding: 0.13em 5px;
 			border: none;
 			cursor: pointer;
+			outline: 2px groove #b79898;
+			outline-offset: -1px;
 		}
 
 		.dropbtnBlue {
@@ -399,6 +403,8 @@
 			padding: 0.13em 5px;
 			border: none;
 			cursor: pointer;
+			outline: 2px groove #d49ecf;
+			outline-offset: -1px;
 		}
 
 		.dropbtnLight {
@@ -409,6 +415,8 @@
 			padding: 0.13em 5px;
 			border: none;
 			cursor: pointer;
+			outline: 2px groove #4b4b4b;
+			outline-offset: -1px;
 		}
 
 		.dropbtn:after {
@@ -442,6 +450,11 @@
 			min-width: 10em;
 			white-space: nowrap;
 			box-shadow: 0 8px 1.01em 0 rgba(0, 0, 0, 0.2);
+			zoom: 1;
+			filter: progid:DXImageTransform.Microsoft.Shadow(Color=#eeeeee, Strength=5, Direction=0),
+				progid:DXImageTransform.Microsoft.Shadow(Color=#eeeeee, Strength=5, Direction=270),
+				progid:DXImageTransform.Microsoft.Shadow(Color=#cecece, Strength=10, Direction=90),
+				progid:DXImageTransform.Microsoft.Shadow(Color=#cecece, Strength=10, Direction=180);
 			z-index: 1;
 		}
 
@@ -460,20 +473,37 @@
 			display: none;
 		}
 
-		.dropdown:hover .dropbtn {
+		.dropbtn:hover {
 			background-color: #4CAF50;
 		}
 
-		.dropdown:hover .dropbtnLight {
+		.dropbtnLight:hover {
 			background-color: Gainsboro;
 		}
 
-		.dropdown:hover .dropbtnRed {
+		.dropbtnRed:hover {
 			background-color: rgb(206, 67, 67);
 		}
 
-		.dropdown:hover .dropbtnBlue {
+		.dropbtnBlue:hover {
 			background-color: rgb(54, 74, 250);
+		}
+
+		.dropbtn[disabled],
+		.dropbtnBlue[disabled],
+		.dropbtnRed[disabled],
+		.dropbtnLight[disabled] {
+			color: black;
+			background-color: rgb(222, 222, 222);
+			outline: 1px solid rgb(230, 230, 230);
+			outline-offset: -1px;
+		}
+
+		.dropbtn[disabled]:hover,
+		.dropbtnBlue[disabled]:hover,
+		.dropbtnRed[disabled]:hover,
+		.dropbtnLight[disabled]:hover {
+			background-color: rgb(200, 200, 200);
 		}
 
 		.dropArrow {
