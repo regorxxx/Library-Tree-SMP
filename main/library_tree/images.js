@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/04/26
+//22/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -898,9 +898,7 @@ class Images {
 	}
 
 	applyStyleMask(image, style) {
-		if (style.mask) {
-			image.ApplyMask(this.mask[style.mask].Resize(image.Width, image.Height));
-		}
+		if (style.mask) { image.ApplyMask(this.mask[style.mask].Resize(image.Width, image.Height)); }
 		return image;
 	}
 

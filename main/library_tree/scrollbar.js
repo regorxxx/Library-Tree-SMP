@@ -541,7 +541,7 @@ class Scrollbar {
 		this.delta = this.scroll;
 		if (this.vertical) this.bar.y = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
 		else this.bar.x = this.but_h + this.scrollbar.travel * (this.delta * this.ratio) / (this.row.count * this.row.h);
-		if (type === 'full') { pop.move(...pop.getXY(panel.pos), true);	}
+		if (type === 'full') { pop.move(...pop.getXY(panel.pos), true); }
 		else if (type !== 'full' && panel.m.x !== -1 && panel.m.y !== -1 && pop.m.i !== -1) { pop.move(panel.m.x, panel.m.y, true); }
 		lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 		this.calcItem_y();

@@ -2238,7 +2238,7 @@ class Panel {
 
 	// Regorxxx <- GDI/D2D draw mode
 	adjustUiD2D() {
-		this.cc |=  DT_CALCRECT;
+		this.cc |= DT_CALCRECT;
 		this.l |= DT_CALCRECT;
 		this.lc |= DT_CALCRECT;
 		this.rc |= DT_CALCRECT;
