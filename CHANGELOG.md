@@ -135,7 +135,7 @@
 - UI: fixed bug, on original script, related to scrolling not working in some cases when only a single row/column was displayed on panel. This usually happens on album art mode if panel height or width is not great enough to fully display multiple rows (vertical) or columns (horizontal). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080906.html#msg1080906).
 - UI: fixed bug, on original script, which caused a panel crash on small panel sizes while using blend theme. It also happened in some case for foo_flowin panels at startup.
 - HTML: fixed bug, on original script, related to some settings not being properly applied without a panel reload.
-- Album art: fixed bug, on original script, which caused Out Of Memory panel crashes related to Album art cache while using auto mode (0) under some situations. Memory management should now be automatically adjusted to the actual artwork size used, minimizing the probability of such errors.
+- Album art: fixed bug, on original script, which caused Out Of Memory panel crashes related to Album art cache while using auto mode (0) under some situations. Memory management should now be automatically adjusted to the actual artwork size used to have a better estimation of RAM increases when loading new items without reaching the limit, this in turn should help minimizing the probability of such errors.
 
 ## [1.0.0] - 2026-01-30
 ### Added
