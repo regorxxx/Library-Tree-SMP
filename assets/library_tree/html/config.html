@@ -418,20 +418,8 @@
 			padding-right: 0.19em;
 		}
 
-		.dropbtnLight:after {
-			font-family: FontAwesome, serif;
-			content: "\f107";
-			padding-left: 0.5em;
-			padding-right: 0.19em;
-		}
-
-		.dropbtnRed:after {
-			font-family: FontAwesome, serif;
-			content: "\f107";
-			padding-left: 0.5em;
-			padding-right: 0.19em;
-		}
-
+		.dropbtnLight:after,
+		.dropbtnRed:after,
 		.dropbtnBlue:after {
 			font-family: FontAwesome, serif;
 			content: "\f107";
@@ -440,9 +428,11 @@
 		}
 
 		.dropdown {
+			margin-left: 1px;
 			margin-top: 10px;
 			position: relative;
 			display: inline-block;
+			padding-right: 0px;
 		}
 
 		.dropdown-content {
@@ -1204,10 +1194,10 @@
 
 				<div class="column41">
 					<div class="div_text1">Stub</div>
-					<span style="margin:0 0 0.31em;" class="dropdown"><a id="rootStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('rootStub');"></a>
+					<span style="margin:0 0.1em 0.31em;" class="dropdown"><a id="rootStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('rootStub');"></a>
 						<span id="rootStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
-					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noCoverStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('noCoverStub');"></a>
+					<span style="margin:1em 0.15em 0.31em 0;" class="dropdown"><a id="noCoverStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('noCoverStub');"></a>
 						<span id="noCoverStub" style="font:0.85em Segoe UI, serif;" class="dropdown-content"></span>
 					</span>
 					<span style="margin:1em 0 0.31em 0;" class="dropdown"><a id="noArtistStub_dropdown" class="dropbtnLight" href="#" onclick="return toggle('noArtistStub');"></a>
@@ -2678,7 +2668,7 @@
 					var rule = presetRules[i];
 					var ruleId = 'presetRuleParent' + i;
 					window.presetRules.insertAdjacentHTML('beforeend', '<div style="clear:both;"></div><hr>');
-					window.presetRules.insertAdjacentHTML('beforeend', '<div id ="' + ruleId + '" style="padding: 0.5em 0 4em 0;"></span>');
+					window.presetRules.insertAdjacentHTML('beforeend', '<div id ="' + ruleId + '" style="margin-left:1px; padding: 0.5em 0 4em 0;"></span>');
 					for (j = 0; j < idsLen; j++) {
 						type = ids[j];
 						if (type.condition && type.condition !== 'if') { continue; }
