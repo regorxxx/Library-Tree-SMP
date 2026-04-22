@@ -1574,9 +1574,20 @@ class Images {
 	}
 
 	memoryLimit() {
-		if (!window.JsMemoryStats) return;
-		const limit = ppt.memoryLimit ? Math.min(ppt.memoryLimit * 1048576, window.JsMemoryStats.TotalMemoryLimit * 0.8) : window.JsMemoryStats.TotalMemoryLimit * 0.5;
-		return window.JsMemoryStats.TotalMemoryUsage > limit;
+		if (!window.JsMemoryStats) { return void (0); }
+		// Check that current memory usage is not over the limit
+		const limit = ppt.memoryLimit
+			? Math.min(ppt.memoryLimit * 1048576, window.JsMemoryStats.TotalMemoryLimit * 0.8)
+			: window.JsMemoryStats.TotalMemoryLimit * 0.5;
+		if (window.JsMemoryStats.TotalMemoryUsage > limit) { return true; }
+		// Or make an estimation of memory usage for possible new images
+		let totalImgSize = 0, maxImgSize = 0, currImgSize;
+		Object.values(this.cache).forEach((cache) => {
+			currImgSize = cache.img instanceof GdiBitmap ? cache.img.Width * cache.img.Height * 4 : 0;
+			totalImgSize += currImgSize;
+			maxImgSize = Math.max(maxImgSize, currImgSize);
+		});
+		return totalImgSize > limit * 0.65 || window.JsMemoryStats.MemoryUsage + maxImgSize * this.cachesize.min > limit;
 	}
 
 	metrics() {
