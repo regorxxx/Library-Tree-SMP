@@ -105,7 +105,7 @@
 - HTML: syntax help now only shows the relevant functions according to the current tab (views|filters).
 - HTML: added multiple settings related to queue sources and Auto-Dj from latest updates.
 - HTML: minor improvements to Album Art help and updated Biography default settings (to match latest versions).
-- HTML: minor improvements and cleanup at HTML options panel regarding layout, resizing and general behavior.
+- HTML: minor improvements and cleanup at HTML options panel regarding layout, resizing, look and general behavior.
 - HTML: disable thumbnail size dropdown using flow mode instead of hiding it.
 - HTML: cleanup multiple UI elements and help sections, now using buttons (to improve accessibility using screen readers).
 - HTML: multiple minor text fixes.
