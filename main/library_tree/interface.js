@@ -1,5 +1,5 @@
 'use strict';
-//21/04/26
+//22/04/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -337,7 +337,7 @@ class UserInterface {
 					if (ppt.blurAutofill) image = image.Clone(imgx, imgy, imgw, imgh);
 					if (this.img.blurBlend) {
 						if (ppt.blurTemp) {
-							const iSmall = image.Resize(this.w * this.img.blurLevel / 100, this.h * this.img.blurLevel / 100, 2);
+							const iSmall = image.Resize(Math.ceil(this.w * this.img.blurLevel / 100), Math.ceil(this.h * this.img.blurLevel / 100), 2); // Regorxxx <- Fix crash on small sizes for blend mode ->
 							const iFull = iSmall.Resize(this.w, this.h, 2);
 							const offset = 90 - this.img.blurLevel;
 							g.DrawImage(iFull, 0 - offset, 0 - offset, this.w + offset * 2, this.h + offset * 2, 0, 0, iFull.Width, iFull.Height, 0, this.img.blendAlpha);
