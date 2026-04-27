@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/04/26
+//27/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1474,7 +1474,7 @@ class Panel {
 	}
 
 	setRootName() {
-		this.sourceName = ['Active Playlist', ppt.fixedPlaylist ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source ->
+		this.sourceName = [this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist', this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Playing playlist source ->
 		this.viewName = this.grp[ppt.viewBy].name;
 		switch (ppt.rootNode) {
 			case 1:
@@ -1514,8 +1514,8 @@ class Panel {
 		if (sortObj) {
 			li.OrderByFormat(sortObj.tf, sortObj.direction);
 		} else {
-			if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
-			if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
+			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+			if (this.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 			if (this.folderView) {
 				li.OrderByRelativePath();
 			} else {
@@ -1535,8 +1535,8 @@ class Panel {
 		// Regorxxx <- Apply relevant changes on properties update
 		let key;
 		let bRefreshLib = false;
-		const isQueueLike = ppt.libSource === 3 || ppt.libSource === 4;
-		const isPlsLike = ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist;
+		const isQueueLike = this.isQueueLikeSource();
+		const isPlsLike = this.isPlaylistSource();
 		Object.entries(prop).forEach(v => {
 			key = v[0].replace('_internal', '');
 			if (ppt[key] !== v[1][value]) {
@@ -1723,7 +1723,7 @@ class Panel {
 	// Regorxx ->
 	getDragDropTooltipText(method, mask, x, y, bInternal) {
 		let text = '';
-		if (y < this.search.h || (ppt.libSource !== 3 && ppt.libSource !== 4)) {
+		if (y < this.search.h || !this.isQueueLikeSource()) {
 			if (method === 0 && this.folderView) { // Auto: tags or path
 				return 'Add paths to search box';
 			} else { // Tags
@@ -1734,7 +1734,7 @@ class Panel {
 					: searchTags[0].to;
 				text = (operators.query || !this.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
 			}
-		} else if (ppt.libSource === 3) {
+		} else if (this.isQueueSource()) {
 			const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
 			text = ppt.queueSorting && pop.row.i >= 0
 				? idx < 0
@@ -1743,7 +1743,7 @@ class Panel {
 				: (mask & MK_CONTROL) === MK_CONTROL
 					? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 					: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
-		} else if (ppt.libSource === 4) {
+		} else if (this.isAutoDjSource()) {
 			text = (mask & MK_CONTROL) === MK_CONTROL
 				? 'Add items to Auto-DJ (top tracks)'
 				: 'Add items to Auto-DJ';
@@ -1767,7 +1767,7 @@ class Panel {
 		plman.AddItemToPlaybackQueue(handle);
 		this.autoDj.cache.push(handle);
 		if (!fb.IsPlaying) { fb.Play(); }
-		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+		if (this.isAutoDjSource()) { lib.treeState100(false, 2); }
 		this.autoDj.running = true;
 		return this.autoDj.running;
 	}
@@ -1846,7 +1846,7 @@ class Panel {
 		this.autoDj.cache.length = 0;
 		this.autoDj.last = null;
 		plman.FlushPlaybackQueue();
-		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+		if (this.isAutoDjSource()) { lib.treeState100(false, 2); }
 	}
 
 	startAutoDj(items) {
@@ -1866,7 +1866,7 @@ class Panel {
 			});
 		}
 		else { this.autoDj.source = [...items]; }
-		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+		if (this.isAutoDjSource()) { lib.treeState100(false, 2); }
 	}
 
 	removeFromAutoDjSource(items) {
@@ -1876,7 +1876,7 @@ class Panel {
 		this.autoDj.source = this.autoDj.source.filter((handle) => handleList.BSearch(handle) === -1);
 		// Update in case the next one is removed
 		if (this.autoDj.source.length > 1 && this.autoDj.last !== null && handleList.BSearch(this.autoDj.last) !== -1) { this.updateAutoDj(); }
-		if (ppt.libSource === 4) { lib.treeState100(false, 2); }
+		if (this.isAutoDjSource()) { lib.treeState100(false, 2); }
 	}
 
 	getAutoDjSource() {
@@ -2149,7 +2149,7 @@ class Panel {
 			source = then.sourceIdx;
 			switch (source) {
 				case -1: { // Playlist
-					const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+					const fixedPlaylistIndex = this.getFixedPlaylistSources();
 					ppt.fixedPlaylist = fixedPlaylistIndex.length !== 0;
 					ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
 					break;
@@ -2242,6 +2242,80 @@ class Panel {
 		this.l |= DT_CALCRECT;
 		this.lc |= DT_CALCRECT;
 		this.rc |= DT_CALCRECT;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Playing playlist source | Code cleanup
+	getFixedPlaylistSources() {
+		const fixedPlaylistIndex = [];
+		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
+			let idx = plman.FindPlaylist(name);
+			if (idx === -1) { idx = plman.FindByGUID(name); }
+			if (idx !== -1) { fixedPlaylistIndex.push(idx); }
+		});
+		return fixedPlaylistIndex;
+	}
+
+	getPlaylistSource() {
+		return ppt.libSource > 0
+			? ppt.fixedPlaylist
+				? this.getFixedPlaylistSources()
+				: -1
+			: ppt.playingPlaylist
+				? plman.PlayingPlaylist === -1
+					? ppt.playlistFallback
+						? plman.ActivePlaylist
+						: plman.PlayingPlaylist
+					: fb.IsPlaying
+						? plman.PlayingPlaylist
+						: ppt.playlistFallbackStop
+							? plman.ActivePlaylist
+							: plman.PlayingPlaylist
+				: plman.ActivePlaylist;
+	}
+
+	isActivePlaylistSource(fromProperty) {
+		return ppt.libSource === 0 && (fromProperty ? !ppt.playingPlaylist : this.getPlaylistSource() === plman.ActivePlaylist);
+	}
+
+	isPlayingPlaylistSource(fromProperty) {
+		return ppt.libSource === 0 && ppt.playingPlaylist && (fromProperty ? true : this.getPlaylistSource() === plman.PlayingPlaylist);
+	}
+
+	isNonFixedPlaylistSource() {
+		return ppt.libSource === 0 && !ppt.fixedPlaylist;
+	}
+
+	isFixedPlaylistSource() {
+		return ppt.libSource === 1 && ppt.fixedPlaylist;
+	}
+
+	isPlaylistSource() {
+		return ppt.libSource === 1 && ppt.fixedPlaylist || ppt.libSource === 0;
+	}
+
+	isLibrarySource() {
+		return ppt.libSource === 1 && !ppt.fixedPlaylist;
+	}
+
+	isPanelSource() {
+		return ppt.libSource === 2;
+	}
+
+	isQueueSource() {
+		return ppt.libSource === 3;
+	}
+
+	isAutoDjSource() {
+		return ppt.libSource === 4;
+	}
+
+	isStandardSource() {
+		return ppt.libSource > 0;
+	}
+
+	isQueueLikeSource() {
+		return ppt.libSource === 3 || ppt.libSource === 4;
 	}
 	// Regorxxx ->
 }

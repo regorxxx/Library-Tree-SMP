@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/26
+//27/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
@@ -208,6 +208,7 @@ let properties = [
 	['Image Item Overlay', 1, 'itemOverlayType'],
 	['Image Label', 1, 'albumArtLabelType'],
 	['Image Memory Limit MB (0 = default)', 0, 'memoryLimit'],
+	['Image Memory Limit Aggressiveness: 0 (off) - 2 (max)', 0, 'memLimitMode'], // Regorxxx <- More strict memory limits ->
 	['Image No Artist Images', JSON.stringify([]), 'noArtistImages'],
 	['Image No Cover Images', JSON.stringify([]), 'noCoverImages'],
 	['Image Preload Images In Disk Cache', false, 'albumArtPreLoad'],
@@ -319,6 +320,9 @@ let properties = [
 	['Library Source: Active Playlist Follow Focus', true, 'followPlaylistFocus'],
 	['Library Source: Fixed Playlist', false, 'fixedPlaylist'],
 	['Library Source: Fixed Playlist Name', '', 'fixedPlaylistName'],
+	['Library Source: Playing Playlist', false, 'playingPlaylist'], // Regorxxx <- Playing playlist source ->
+	['Library Source: Playing Playlist Fallback', false, 'playlistFallback'], // Regorxxx <- Playing playlist source ->
+	['Library Source: Playing Playlist Fallback Stopped', false, 'playlistFallbackStop'], // Regorxxx <- Playing playlist source ->
 	['Library Source: Playback Queue force sorting', true, 'queueSorting'], // Regorxxx <- Queue source ->
 	['Library Source: Playback Queue show now playing', true, 'queueNowPlaying'], // Regorxxx <- Queue source ->
 	['Library Source: Use cache (experimental)', true, 'libSourceCache'], // Regorxxx <- Internal cache of views ->

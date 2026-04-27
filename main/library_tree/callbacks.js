@@ -1,5 +1,5 @@
-﻿'use strict';
-//16/04/26
+'use strict';
+//27/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
@@ -62,10 +62,8 @@ addEventListener('on_get_album_art_done', (handle, art_id, image, image_path) =>
 addEventListener('on_item_focus_change', (playlistIndex) => {
 	lib.checkFilter('selection'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns ->
 	if (pop.setFocus) { pop.setFocus = false; }
-	else {
-		if (ppt.followPlaylistFocus && playlistIndex == $.pl_active && !ppt.libSource) {
-			setSelection(fb.GetFocusItem());
-		}
+	else if (ppt.followPlaylistFocus && playlistIndex === panel.getPlaylistSource()) { // Regorxxx <- Playing playlist source ->
+		setSelection(fb.GetFocusItem());
 	}
 	ui.focus_changed();
 });
@@ -87,21 +85,21 @@ addEventListener('on_key_up', (vkey) => {
 });
 
 addEventListener('on_library_items_added', (handleList) => {
-	if (ppt.libSource === 2 || ppt.libSource === 3 || ppt.libSource === 4) { return; } // Regorxxx <- Queue source | Auto-DJ source ->
+	if (panel.isPanelSource() || panel.isQueueLikeSource()) { return; } // Regorxxx <- Queue source | Auto-DJ source ->
 	if (lib.v2_init) {
 		lib.v2_init = false;
 		if (ui.w < 1 || !window.IsVisible) return;
 		lib.initialise(handleList, true); // Regorxxx <- Don't create cache playlists if possible
 		return;
 	}
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource) return;
+	if (!ppt.libAutoSync || panel.isPlaylistSource()) return;
 	lib.treeState(false, 2, handleList, 0);
 	lib.flushViewCache([1]); // Regorxxx <- Internal cache of views ->
 });
 
 addEventListener('on_library_items_removed', (handleList) => {
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3 || ppt.libSource === 4) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
-	if (ppt.libSource == 2) {
+	if (!ppt.libAutoSync || panel.isPlaylistSource() || panel.isQueueLikeSource()) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
+	if (panel.isPanelSource()) {
 		const libList = lib.list.Clone();
 		libList.Sort();
 		handleList.Sort();
@@ -112,8 +110,8 @@ addEventListener('on_library_items_removed', (handleList) => {
 });
 
 addEventListener('on_library_items_changed', (handleList) => {
-	if (!ppt.libAutoSync || ppt.fixedPlaylist || !ppt.libSource || ppt.libSource === 3 || ppt.libSource === 4) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
-	if (ppt.libSource == 2) {
+	if (!ppt.libAutoSync || panel.isPlaylistSource() || panel.isQueueLikeSource()) { return; } // Regorxxx <- Queue source | Auto-DJ source  ->
+	if (panel.isPanelSource()) {
 		const libList = lib.list.Clone();
 		libList.Sort();
 		handleList.Sort();
@@ -129,7 +127,7 @@ addEventListener('on_main_menu', (index) => {
 
 addEventListener('on_metadb_changed', (handleList, isDatabase) => {
 	if (isDatabase && !panel.statistics || lib.list.Count != lib.libNode.length) return;
-	if (ppt.fixedPlaylist || !ppt.libSource) {
+	if (panel.isPlaylistSource()) {
 		handleList.Convert().some(h => {
 			const i = lib.full_list.Find(h);
 			if (i != -1) {
@@ -218,7 +216,7 @@ addEventListener('on_mouse_wheel', (step) => {
 });
 
 addEventListener('on_notify_data', (name, info) => {
-	if (ppt.libSource == 2 && name != 'bio_imgChange') {
+	if (panel.isPanelSource() && name != 'bio_imgChange') {
 		const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split(/\s*\|\s*/);
 		// Regorxxx <- Merge multiple panel sources
 		if (ppt.libSourceChained && panelSelectionPlaylists.length > 1) {
@@ -477,12 +475,12 @@ addEventListener('on_notify_data', (name, info) => {
 			// Set all
 			if (idx === 2) {
 				if (plsIdx.length) { men.setFixedPlaylist(plsIdx, { bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); }
-				else if (ppt.libSource !== 0 || ppt.fixedPlaylist) { men.setActivePlaylist({ bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); }
+				else if (!panel.isActivePlaylistSource()) { men.setActivePlaylist({ bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); }
 			}
 			if (idx !== -1) {
 				// Don't update unless needed
-				const sameSourceType = idx === 0 && ppt.libSource === 1  || idx === 1 && ppt.libSource === 2 || idx === 3 && ppt.libSource === 3 || idx === 4 && ppt.libSource === 4;
-				const sameSourcePlaylist = idx === 2 && (plsIdx.length && ppt.libSource === 1 && ppt.fixedPlaylist || !plsIdx.length && ppt.libSource === 0 && !ppt.fixedPlaylist);
+				const sameSourceType = idx === 0 && ppt.libSource === 1 || idx === 1 && ppt.libSource === 2 || idx === 3 && ppt.libSource === 3 || idx === 4 && ppt.libSource === 4;
+				const sameSourcePlaylist = idx === 2 && (plsIdx.length && panel.isFixedPlaylistSource() || !plsIdx.length && panel.isNonFixedPlaylistSource());
 				if (sameSourceType || sameSourcePlaylist) { return; }
 				men.setSource(idx, { bOmitMsg: true, bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse });
 			}
@@ -516,7 +514,7 @@ addEventListener('on_paint', (gr) => {
 	if (!window.Width || !window.Height) { return; }
 	// Regorxxx <- Don't create cache playlists if possible
 	if (!lib.initialised) {
-		if (ppt.libSource === 2 && ppt.panelInternalCache) {
+		if (panel.isPanelSource() && ppt.panelInternalCache) {
 			const cache = folders.dataPackage + 'librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl';
 			if (utils.IsFile(cache)) {
 				lib.cacheId = fb.AddLocationsAsync([cache]);
@@ -549,36 +547,54 @@ addEventListener('on_paint', (gr) => {
 addEventListener('on_playback_new_track', (handle) => {
 	lib.checkFilter('playback'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns ->
 	pop.getNowplaying(handle);
-	if (!ppt.recItemImage || ppt.libSource != 2) ui.on_playback_new_track(handle);
-	if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
+	if (!ppt.recItemImage || !panel.isPanelSource()) ui.on_playback_new_track(handle);
+	if (panel.isQueueLikeSource() && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	if (panel.autoDj.running) { panel.updateAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
+
+// Regorxxx <- Playing playlist source
+addEventListener('on_playback_starting', () => {
+	if (panel.isPlayingPlaylistSource(true)) {
+		const idx = panel.getPlaylistSource();
+		if (lib.playingPlaylistNeedsUpdate(idx)) {
+			lib.playlist_update(idx);
+			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		}
+	}
+});
+// Regorxxx ->
 
 addEventListener('on_playback_stop', (reason) => {
 	if (reason == 2) return;
 	lib.checkFilter('playback'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns -	>
 	pop.getNowplaying('', true);
 	on_item_focus_change();
-	if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
+	if (panel.isQueueLikeSource() && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
+	if (panel.isPlayingPlaylistSource(true)) {
+		const idx = panel.getPlaylistSource();
+		if (lib.playingPlaylistNeedsUpdate(idx)) {
+			lib.playlist_update(idx);
+			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		}
+	}
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
 
 addEventListener('on_playback_queue_changed', () => {
-	if (ppt.libSource === 3 || ppt.libSource === 4) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
+	if (panel.isQueueLikeSource()) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed();
 });
 
 addEventListener('on_playlists_changed', () => {
 	men.playlists_changed();
-	if ($.pl_active != plman.ActivePlaylist) $.pl_active = plman.ActivePlaylist;
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	if (ppt.fixedPlaylist) {
-		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+	if (panel.isFixedPlaylistSource()) {
+		const fixedPlaylistIndex = panel.getFixedPlaylistSources();
 		if (fixedPlaylistIndex.length === 0) {
 			ppt.fixedPlaylist = false;
 			ppt.libSource = 0;
@@ -586,55 +602,61 @@ addEventListener('on_playlists_changed', () => {
 			lib.playlist_update();
 			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 		}
+	// Regorxxx ->
+	// Regorxxx <- Playing playlist source
+	} else if (panel.isPlayingPlaylistSource(true)) {
+		const idx = panel.getPlaylistSource();
+		if (lib.playingPlaylistNeedsUpdate(idx)) {
+			lib.playlist_update(idx);
+			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		}
 	}
 	// Regorxxx ->
 });
 
 addEventListener('on_playlist_items_added', (playlistIndex) => {
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	if (ppt.fixedPlaylist) {
-		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+	if (panel.isFixedPlaylistSource()) {
+		const fixedPlaylistIndex = panel.getFixedPlaylistSources();
 		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
 			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 			return;
 		}
-	}
-	// Regorxxx ->
-	if (!ppt.libSource && playlistIndex == $.pl_active) {
+		// Regorxxx ->
+	} else if (panel.getPlaylistSource() === playlistIndex) { // Regorxxx <- Playing playlist source ->
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
 addEventListener('on_playlist_items_removed', (playlistIndex) => {
-	if (ppt.fixedPlaylist) {
-		const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+	if (panel.isFixedPlaylistSource()) {
+		const fixedPlaylistIndex = panel.getFixedPlaylistSources();
 		if (fixedPlaylistIndex.includes(playlistIndex)) {
 			lib.playlist_update(playlistIndex);
 			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 			return;
 		}
-	}
-
-	if (!ppt.libSource && playlistIndex == $.pl_active) {
+		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
+	} else if (lib.activePlaylistNeedsUpdate(playlistIndex)) { // Regorxxx <- Playing playlist source ->
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
 addEventListener('on_playlist_items_reordered', (playlistIndex) => {
-	if (!ppt.libSource && playlistIndex == $.pl_active) {
+	if (lib.activePlaylistNeedsUpdate(playlistIndex)) { // Regorxxx <- Playing playlist source ->
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 
 addEventListener('on_playlist_switch', () => {
-	$.pl_active = plman.ActivePlaylist;
 	// Regorxxx <- Preset rules
 	if (ppt.presetRulesOnPlsUse) {
-		const rule = panel.getPresetRule({ bSetSourceId: !ppt.libSource });
+		const rule = panel.getPresetRule({ bSetSourceId: panel.isActivePlaylistSource() });
 		if (panel.applyPresetRule(rule)) {
 			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 			ui.focus_changed();
@@ -642,7 +664,7 @@ addEventListener('on_playlist_switch', () => {
 		};
 	}
 	// Regorxxx ->
-	if (!ppt.libSource) {
+	if (panel.isActivePlaylistSource()) { // Regorxxx <- Playing playlist source ->
 		lib.playlist_update();
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
@@ -726,7 +748,7 @@ function setSelection(handle) {
 addEventListener('on_locations_added', (taskId, handleList) => {
 	if (taskId === lib.cacheId) {
 		lib.cache = handleList.Clone();
-		if (ppt.libSource === 2) { lib.initialise(lib.cache); }
+		if (panel.isPanelSource()) { lib.initialise(lib.cache); }
 	}
 });
 // Regorxxx ->
@@ -734,13 +756,13 @@ addEventListener('on_locations_added', (taskId, handleList) => {
 // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source
 // Drag n drop to copy/move tracks to playlists (only files from foobar2000)
 const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unused-vars
-	if (ppt.libSource !== 3 && ppt.libSource !== 4) {
+	if (!panel.isQueueLikeSource()) {
 		if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
 	}
 	// Avoid things outside foobar2000
 	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { return false; }
 	// Avoid adding invalid things to Auto-DJ
-	if (ppt.libSource === 4) {
+	if (panel.isAutoDjSource()) {
 		if (action.IsInternal) {
 			if ((!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y))) { return false; }
 		} else if (panel.isInAutoDj(fb.GetSelections(1))) { return false; }
@@ -784,7 +806,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				input.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
 				search.on_char(vk.enter);
 			}
-		} else if (ppt.libSource === 3) {
+		} else if (panel.isQueueSource()) {
 			if (ppt.queueSorting && pop.row.i >= 0) {
 				const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
 				if (idx < 0) {
@@ -803,7 +825,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					else { panel.addToBackQueue(selItems); }
 				}
 			}
-		} else if (ppt.libSource === 4) {
+		} else if (panel.isAutoDjSource()) {
 			if ((mask & MK_CONTROL) === MK_CONTROL) {
 				if (!action.IsInternal) {
 					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(pop.getTopTracks(selItems), true); }

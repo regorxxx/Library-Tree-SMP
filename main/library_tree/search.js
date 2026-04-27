@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/26
+//27/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -871,7 +871,7 @@ class Find {
 
 	send(pos) {
 		if (pos === -1) {
-			if (ppt.libSource) {
+			if (panel.isStandardSource()) {
 				if (pop.autoFill.key) { pop.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false }); }
 				pop.track(pop.autoFill.key);
 			} else if (pos >= 0 && pos < pop.tree.length) { pop.setPlaylistSelection(pos, pop.tree[pos]); }

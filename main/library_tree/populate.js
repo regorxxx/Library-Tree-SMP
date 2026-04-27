@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/04/26
+//27/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1133,7 +1133,7 @@ class Populate {
 
 	draw(gr) {
 		if (lib.empty) return gr.GdiDrawText(lib.empty, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
-		if (!this.tree.length || !panel.draw) return gr.GdiDrawText(this.libItems && !panel.search.txt && !ppt.filterBy && ppt.libSource ? 'Loading...\n\n' : lib.none, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
+		if (!this.tree.length || !panel.draw) return gr.GdiDrawText(this.libItems && !panel.search.txt && !ppt.filterBy && panel.isStandardSource() ? 'Loading...\n\n' : lib.none, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
 		// Regorxxx <- Rectangle selection on art view
 		if (ppt.selRectArt && (this.selRect.down && this.selRect.x !== this.selRect.w && this.selRect.y !== this.selRect.h)) {
 			const [x, y, w, h] = [this.selRect.x, this.selRect.y, this.selRect.w - this.selRect.x, this.selRect.h - this.selRect.y];
@@ -1770,7 +1770,7 @@ class Populate {
 	}
 
 	lbtn_dblclk(x, y) {
-		if (this.autoPlay.click > 2 && ppt.libSource) return;
+		if (this.autoPlay.click > 2 && panel.isStandardSource()) return;
 		if (vk.k('alt')) {
 			this.mbtnDblClickOrAltDblClick(x, y, '', 'alt');
 			return;
@@ -1796,8 +1796,8 @@ class Populate {
 					return;
 				}
 				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-				if (!ppt.libSource) {
-					const plsIdxArr = ppt.fixedPlaylist ? lib.getFixedPlaylistSources() : [$.pl_active];
+				if (!panel.isStandardSource()) {
+					const plsIdxArr = panel.isFixedPlaylistSource() ? panel.getFixedPlaylistSources() : [panel.getPlaylistSource()]; // Regorxxx <- Playing playlist source ->
 					if (plsIdxArr.length !== 0) {
 						for (let plsIdx of plsIdxArr) {
 							const idx = panel.search.txt.length
@@ -1819,11 +1819,10 @@ class Populate {
 				if (this.dblClickAction != 2 || this.dblClickAction == 2 && item.track || this.dblClickAction == 2 && panel.imgView) {
 					if (!this.autoFill.mouse) this.send(item, x, y);
 					let pl_stnd_idx = plman.FindOrCreatePlaylist(ppt.libPlaylist.replace(/%view_name%/i, panel.viewName), false);
-					if (ppt.sendToCur) pl_stnd_idx = plman.ActivePlaylist;
-					else plman.ActivePlaylist = pl_stnd_idx;
-					plman.ActivePlaylist = pl_stnd_idx;
+					if (ppt.sendToCur) { pl_stnd_idx = plman.ActivePlaylist; }
+					else { plman.ActivePlaylist = pl_stnd_idx; }
 					// Regorxxx <- Queue source
-					if (ppt.libSource === 3) {
+					if (panel.isQueueSource()) {
 						const handleList = this.getHandleList(void (0), this.range(item.item)).Convert(); // Regorxxx <- Preserve tree sorting at selection ->
 						if (handleList.length) {
 							const queue = plman.GetPlaybackQueueContents();
@@ -1913,7 +1912,7 @@ class Populate {
 	}
 
 	lbtn_up(x, y) {
-		if (lib.empty && ppt.libSource == 1 && !ppt.fixedPlaylist && y > panel.search.h) { fb.RunMainMenuCommand('Library/Configure'); }
+		if (lib.empty && panel.isLibrarySource() && y > panel.search.h) { fb.RunMainMenuCommand('Library/Configure'); }
 		if (ppt.selRectArt && panel.imgView) {
 			if (this.selRect.down) {
 				const bSel = this.last_pressed_coord.x !== x || this.last_pressed_coord.y !== y;
@@ -1965,7 +1964,7 @@ class Populate {
 		if (ppt.touchControl && (this.autoFill.mouse || this.autoPlay.click) && ui.id.touch_dn != ix) { return; }
 		const item = this.tree[ix];
 		if (this.clicked_on != 'text') { return; }
-		if (!ppt.libSource) { return this.setPlaylistSelection(ix, item); }
+		if (!panel.isStandardSource()) { return this.setPlaylistSelection(ix, item); }
 		if (vk.k('alt')) {
 			this.mbtnUpOrAltClickUp(x, y, '', 'alt');
 			return;
@@ -2178,17 +2177,17 @@ class Populate {
 			}, 180);
 			// Regorxxx <- Top tracks
 		} else if ((type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
-			if (!ppt.libSource) return;
+			if (!panel.isStandardSource()) return;
 			this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
 			// Regorxxx ->
 		} else {
-			if (!ppt.libSource) return;
+			if (!panel.isStandardSource()) return;
 			this.add(x, y, !ppt[`${type}ClickAction`]);
 		}
 	}
 
 	merge(m, mergeBrCount) {
-		if (!ppt.libSource && !panel.multiProcess) return;
+		if (!panel.isStandardSource() && !panel.multiProcess) return;
 		const seen = {};
 		for (let i = 0; i < m.length; i++) {
 			const v = m[i].srt[0].toUpperCase();
@@ -2327,7 +2326,7 @@ class Populate {
 					if (!v.root) { v.sel = bSelected; }
 				});
 				this.getTreeSel();
-				if (ppt.libSource) {
+				if (panel.isStandardSource()) {
 					if (!this.sel_items.length) { return; }
 					this.setPlaylist();
 				} else if (this.autoFill.key) {
@@ -2341,7 +2340,7 @@ class Populate {
 					if (!v.root) { v.sel = !v.sel; }
 				});
 				this.getTreeSel();
-				if (ppt.libSource) {
+				if (panel.isStandardSource()) {
 					if (!this.sel_items.length) { return; }
 					this.setPlaylist();
 				} else if (this.autoFill.key) {
@@ -2368,7 +2367,7 @@ class Populate {
 	}
 
 	setPlaylist(ix, item) {
-		if (ppt.libSource) {
+		if (panel.isStandardSource()) {
 			if (this.autoFill.key) this.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 			this.track(true);
 		} else if (this.autoFill.key && typeof item !== 'undefined' && typeof ix !== 'undefined') { this.setPlaylistSelection(ix, item); } // Regorxxx <- Select All not working with playlist sources ->
@@ -2387,8 +2386,8 @@ class Populate {
 		if (panel.search.active) return;
 		if (vk.k('enter')) {
 			if (!this.sel_items.length) return;
-			if (!ppt.libSource) {
-				if (this.autoPlay.send) plman.ExecutePlaylistDefaultAction($.pl_active, this.sel_items[0]);
+			if (!panel.isStandardSource()) {
+				if (this.autoPlay.send) plman.ExecutePlaylistDefaultAction(plman.ActivePlaylist, this.sel_items[0]);
 				return;
 			}
 			switch (true) {
@@ -2571,8 +2570,8 @@ class Populate {
 			// Regorxxx <- Queue source | Auto-DJ source
 			case vk.del: {
 				if (this.sel_items.length) {
-					if (ppt.libSource === 3) { panel.removeFromQueue(this.getHandleList()); }
-					else if (ppt.libSource === 4) { panel.removeFromAutoDjSource(this.getHandleList()); }
+					if (panel.isQueueSource()) { panel.removeFromQueue(this.getHandleList()); }
+					else if (panel.isAutoDjSource()) { panel.removeFromAutoDjSource(this.getHandleList()); }
 				}
 			}
 			// Regorxxx ->
@@ -2641,8 +2640,8 @@ class Populate {
 
 	// Regorxxx <- Select All not working with playlist sources
 	setPlaylistSelectionAll() {
-		if ($.pl_active === -1) { return; }
-		plman.ClearPlaylistSelection($.pl_active);
+		if (plman.ActivePlaylist === -1) { return; }
+		plman.ClearPlaylistSelection(plman.ActivePlaylist);
 		let items = [];
 		if (panel.search.txt || ppt.filterBy || panel.multiProcess) {
 			const hl = this.getHandleList();
@@ -2653,32 +2652,32 @@ class Populate {
 		} else {
 			items = $.range(0, panel.list.Count - 1);
 		}
-		plman.SetPlaylistSelection($.pl_active, items, true);
+		plman.SetPlaylistSelection(plman.ActivePlaylist, items, true);
 		this.setFocus = true;
-		plman.SetPlaylistFocusItem($.pl_active, items[0]);
+		plman.SetPlaylistFocusItem(plman.ActivePlaylist, items[0]);
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
 	}
 
 	setPlaylistSelectionNone() {
-		if ($.pl_active === -1) { return; }
-		plman.ClearPlaylistSelection($.pl_active);
+		if (plman.ActivePlaylist === -1) { return; }
+		plman.ClearPlaylistSelection(plman.ActivePlaylist);
 	}
 
 	setPlaylistSelectionInvert() {
-		if ($.pl_active === -1) { return; }
+		if (plman.ActivePlaylist === -1) { return; }
 		const toSelect = [];
-		$.range(0, plman.PlaylistItemCount($.pl_active) - 1).forEach((idx) => { if (!plman.IsPlaylistItemSelected($.pl_active, idx)) { toSelect.push(idx); } });
-		plman.ClearPlaylistSelection($.pl_active);
-		plman.SetPlaylistSelection($.pl_active, toSelect, true);
+		$.range(0, plman.PlaylistItemCount(plman.ActivePlaylist) - 1).forEach((idx) => { if (!plman.IsPlaylistItemSelected(plman.ActivePlaylist, idx)) { toSelect.push(idx); } });
+		plman.ClearPlaylistSelection(plman.ActivePlaylist);
+		plman.SetPlaylistSelection(plman.ActivePlaylist, toSelect, true);
 	}
 
 	setPlaylistSelection(ix, item) {
-		if ($.pl_active === -1) { return; }
+		if (plman.ActivePlaylist === -1) { return; }
 		this.clearSelected();
 		if (!item.sel) { this.setTreeSel(ix, item.sel); }
 		panel.treePaint();
-		plman.ClearPlaylistSelection($.pl_active);
+		plman.ClearPlaylistSelection(plman.ActivePlaylist);
 		let items = [];
 		if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort) { // Regorxxx <- Support playlist sorting | Support SORT BY query sorting ->
 			const hl = this.getHandleList();
@@ -2695,9 +2694,9 @@ class Populate {
 		} else {
 			items = this.range(item.item);
 		}
-		plman.SetPlaylistSelection($.pl_active, items, true);
+		plman.SetPlaylistSelection(plman.ActivePlaylist, items, true);
 		this.setFocus = true;
-		plman.SetPlaylistFocusItem($.pl_active, items[0]);
+		plman.SetPlaylistFocusItem(plman.ActivePlaylist, items[0]);
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
 	}
@@ -2708,7 +2707,7 @@ class Populate {
 	}
 
 	setTreeSel(idx, state) {
-		const sel_type = idx == -1 ? 0 : vk.k('shift') && this.last_sel > -1 && ppt.libSource ? 1 : vk.k('ctrl') ? 2 : state ? 0 : 3;
+		const sel_type = idx == -1 ? 0 : vk.k('shift') && this.last_sel > -1 && panel.isStandardSource() ? 1 : vk.k('ctrl') ? 2 : state ? 0 : 3;
 		switch (sel_type) {
 			case 0:
 				this.clearSelected();
@@ -2836,9 +2835,9 @@ class Populate {
 
 
 	sort(data) {
-		if (!ppt.libSource && !panel.multiProcess) { return; }
-		if ((ppt.libSource === 3 || ppt.libSource === 4) && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
-		if ((ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist) && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
+		if (!panel.isStandardSource() && !panel.multiProcess) { return; }
+		if (panel.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
+		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		if (lib.searchSort || lib.filterSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views
@@ -2846,7 +2845,7 @@ class Populate {
 		//	Otherwise it uses custom sorting algorithms which may mimic windows sorting
 		//	For non-library sources, only the second is available, despite playlist or panel sources pointing to tracked items
 		if (panel.folderView) { // Handle sorting for View By Folder Structure
-			if (ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb) { // For tracked items
+			if (panel.isLibrarySource() && ppt.folderSortingFb) { // For tracked items
 				data.sort((a, b) => a.item[0].start - b.item[0].start);
 			} else {
 				this.sortView(data, ppt.folderSorting, 'folders');

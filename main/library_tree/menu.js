@@ -1,5 +1,5 @@
-﻿'use strict';
-//17/04/26
+'use strict';
+//27/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
@@ -202,7 +202,7 @@ class MenuItems {
 
 		if (this.validItem) {
 			// Regorxxx <- Queue source
-			if (ppt.libSource === 3) {
+			if (panel.isQueueSource()) {
 				menu.newItem({
 					str: 'Select all',
 					func: () => pop.on_char(vk.selAll)
@@ -266,7 +266,7 @@ class MenuItems {
 				}
 				// Regorxxx ->
 				// Regorxxx <- Auto-DJ feature
-				if (ppt.libSource === 4) {
+				if (panel.isAutoDjSource()) {
 					menu.newItem({
 						str: 'Remove from Auto-DJ',
 						func: () => panel.removeFromAutoDjSource(this.items),
@@ -441,7 +441,7 @@ class MenuItems {
 		// Regorxxx <- Auto-DJ feature
 		{
 			menu.newMenu({ menuName: 'Auto-DJ', appendTo: mainMenu(), separator: true, flags: panel.autoDj.running ? MF_CHECKED : MF_STRING });
-			if (ppt.libSource !== 4) {
+			if (!panel.isAutoDjSource()) {
 				menu.newItem({
 					menuName: 'Auto-DJ',
 					str: 'From panel selection',
@@ -484,7 +484,7 @@ class MenuItems {
 				flags: panel.autoDj.running ? MF_STRING : MF_GRAYED
 			});
 			menu.newItem({ menuName: 'Auto-DJ', separator: true });
-			if (ppt.libSource === 4) {
+			if (panel.isAutoDjSource()) {
 				menu.newItem({
 					menuName: 'Auto-DJ',
 					str: 'Show prev. source...',
@@ -847,8 +847,8 @@ class MenuItems {
 		// Regorxxx ->
 
 		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
-		const isQueueLike = ppt.libSource === 3 || ppt.libSource === 4;
-		const isPlsLike = ppt.libSource === 0 || ppt.libSource === 1 && ppt.fixedPlaylist;
+		const isQueueLike = panel.isQueueLikeSource();
+		const isPlsLike = panel.isPlaylistSource();
 		if (isQueueLike) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
@@ -938,21 +938,45 @@ class MenuItems {
 			menuName: appendTo ? 'Source' : void (0),
 			str: 'Select source panel(s)...',
 			func: () => this.setSourcePanel(),
-			flags: ppt.libSource == 2 ? MF_STRING : MF_GRAYED,
+			flags: panel.isPanelSource() ? MF_STRING : MF_GRAYED,
 			separator: true
 		});
 		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: appendTo ? 'Source' : void (0), flags: sourceIdx === 2 ? MF_STRING : MF_GRAYED }); // Regorxxx <- Don't allow playlist selection if source is not playlist ->
+		// Regorxxx <- Playing playlist source
 		menu.newItem({
 			menuName: 'Select playlist(s)',
 			str: 'Active playlist',
 			func: () => this.setActivePlaylist(),
-			checkRadio: ppt.libSource == 0,
-			separator: true
+			checkRadio: panel.isActivePlaylistSource(true)
 		});
+		menu.newItem({
+			menuName: 'Select playlist(s)',
+			str: 'Playing playlist',
+			func: () => this.setPlayingPlaylist(),
+			checkRadio: panel.isPlayingPlaylistSource(true)
+		});
+		menu.newItem({ menuName: 'Select playlist(s)', separator: true });
+		if (panel.isPlayingPlaylistSource(true)) {
+			menu.newItem({
+				menuName: 'Select playlist(s)',
+				str: 'Fallback to Active',
+				func: () => ppt.toggle('playlistFallback'),
+				checkItem: ppt.playlistFallback
+			});
+			menu.newItem({
+				menuName: 'Select playlist(s)',
+				str: 'Also while not playing',
+				func: () => ppt.toggle('playlistFallbackStop'),
+				flags: ppt.playlistFallback ? MF_STRING : MF_GRAYED,
+				checkItem: ppt.playlistFallback && ppt.playlistFallbackStop
+			});
+			menu.newItem({ menuName: 'Select playlist(s)', separator: true });
+		}
+		// Regorxxx ->
 
 		const pl_no = Math.ceil(this.pl.length / 30);
 		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-		const pl_ix = ppt.fixedPlaylist ? lib.getFixedPlaylistSources() : [-1];
+		const pl_ix = panel.isFixedPlaylistSource() ? panel.getFixedPlaylistSources() : [-1];
 		for (let j = 0; j < pl_no; j++) {
 			const n = '# ' + (j * 30 + 1 + ' - ' + Math.min(this.pl.length, 30 + j * 30) + (30 + j * 30 > pl_ix && ((j * 30) - 1) < pl_ix ? '  >>>' : ''));
 			menu.newMenu({ menuName: n, appendTo: 'Select playlist(s)' });
@@ -1178,7 +1202,7 @@ class MenuItems {
 		this.r_up = false;
 	}
 
-	// Regorxxx <- Preset rules
+	// Regorxxx <- Preset rules | Playing playlist source
 	setActivePlaylist({ bSkipPresets = false } = {}) {
 		ppt.libSource = 0;
 		ppt.fixedPlaylist = false;
@@ -1192,6 +1216,11 @@ class MenuItems {
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
+	}
+
+	setPlayingPlaylist({ bSkipPresets = false } = {}) {
+		ppt.playingPlaylist = true;
+		this.setActivePlaylist({ bSkipPresets });
 	}
 	// Regorxxx ->
 
@@ -1403,7 +1432,7 @@ class MenuItems {
 				break;
 			case 2: { // Playlist
 				// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-				const fixedPlaylistIndex = lib.getFixedPlaylistSources();
+				const fixedPlaylistIndex = panel.getFixedPlaylistSources();
 				ppt.fixedPlaylist = fixedPlaylistIndex.length !== 0;
 				// Regorxxx ->
 				ppt.libSource = ppt.fixedPlaylist ? 1 : 0;

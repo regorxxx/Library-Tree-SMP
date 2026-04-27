@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/26
+//27/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -48,6 +48,7 @@ class Library {
 		this.filterSort = null;
 		this.validFilter = true;
 		// Regorxxx ->
+		this.playlistSourceIdx = -1; // Regorxxx <-  Playing playlist source ->
 
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
@@ -68,6 +69,7 @@ class Library {
 			this.searchCache = {};
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
+			this.playlistSourceIdx = playlistIndex;
 			if (playlistIndex) on_item_focus_change(playlistIndex);
 		}, 100);
 
@@ -108,14 +110,14 @@ class Library {
 		let i, items;
 		this.full_list.InsertRange(this.full_list.Count, handleList);
 		this.full_list_need_sort = true;
-		if (handleList.Count < 100 && (!panel.folderView || ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb)) {  // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
+		if (handleList.Count < 100 && (!panel.folderView || panel.isLibrarySource() && ppt.folderSortingFb)) {  // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
 			let lis = this.hasFilterQueryNoSearch() // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
 				? $.query(handleList, this.filterQuery)
 				: handleList;
 			panel.sort(lis);
 			this.binaryInsert(panel.folderView, lis, this.list, this.libNode);
 			// Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
-			if (panel.folderView && ppt.libSource === 1 && !ppt.fixedPlaylist && ppt.folderSortingFb) {
+			if (panel.folderView && panel.isLibrarySource() && ppt.folderSortingFb) {
 				panel.sort(this.list);
 			}
 			// Regorxxx ->
@@ -394,7 +396,7 @@ class Library {
 					if (!ppt.rememberTree && !ppt.reset) this.logTree();
 					else if (ppt.rememberTree) this.logFilter();
 					if (panel.search.txt) lib.upd_search = true;
-					const items = bViewMatch && !bFilterChanged && !bSearchChanged && ppt.libSource != 2
+					const items = bViewMatch && !bFilterChanged && !bSearchChanged && !panel.isPanelSource()
 						? this.full_list
 						: void (0);
 					if (bViewMatch) { panel.getView(panel.grp[ppt.viewBy].type); }
@@ -463,7 +465,7 @@ class Library {
 		this.upd_search = !!panel.search.txt;
 		this.rootNodes(this.upd == 2 ? 2 : 1, ppt.process);
 		if (this.checkSelection) {
-			setSelection(ppt.followPlaylistFocus && !ppt.libSource ? fb.GetFocusItem() : panel.setSelection() ? fb.GetSelection() : null);
+			setSelection(ppt.followPlaylistFocus && panel.isNonFixedPlaylistSource() ? fb.GetFocusItem() : panel.setSelection() ? fb.GetSelection() : null);
 			this.checkSelection = false;
 		}
 		this.upd = 0;
@@ -601,39 +603,41 @@ class Library {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	getFixedPlaylistSources() {
-		const fixedPlaylistIndex = [];
-		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
-			let idx = plman.FindPlaylist(name);
-			if (idx === -1) { idx = plman.FindByGUID(name); }
-			if (idx !== -1) { fixedPlaylistIndex.push(idx); }
-		});
-		return fixedPlaylistIndex;
-	}
-	// Regorxxx ->
-
 	getLibrary(items) {
 		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
+		// Regorxxx <- More strict memory limits
+		if (!items && panel.imgView) {
+			if (ppt.memLimitMode === 1) { img.checkCache(); }
+			else if (ppt.memLimitMode === 2) { img.clearCache(); }
+		}
+		// Regorxxx ->
 		this.empty = '';
 		this.time.Reset();
 		this.none = '';
 		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 		const fixedPlaylistIndex = [];
-		if (ppt.fixedPlaylist) {
-			this.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
+		if (panel.isFixedPlaylistSource()) {
+			panel.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
 			if (fixedPlaylistIndex.length === 0) {
 				ppt.fixedPlaylist = false;
+				ppt.playingPlaylist = false;
 				ppt.libSource = 0;
 			}
 		}
 		// Regorxxx ->
 		if (!items) {
+			this.playlistSourceIdx = -1; // Regorxxx <-  Playing playlist source ->
 			// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 			switch (ppt.libSource) {
-				case 0: this.list = plman.GetPlaylistItems($.pl_active); break;
+				// Regorxxx <- Playing playlist source
+				case 0: {
+					this.playlistSourceIdx = panel.getPlaylistSource();
+					this.list = this.playlistSourceIdx === -1 ? new FbMetadbHandleList() : plman.GetPlaylistItems(this.playlistSourceIdx);
+					break;
+				}
+				// Regorxxx ->
 				case 1: {
-					if (ppt.fixedPlaylist) {
+					if (panel.isFixedPlaylistSource()) {
 						this.list = fixedPlaylistIndex.reduce((prev, idx) => {
 							prev.AddRange(plman.GetPlaylistItems(idx));
 							return prev;
@@ -668,17 +672,17 @@ class Library {
 				// Regorxxx ->
 			}
 			// Regorxxx ->
-			if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
-			if (ppt.libSource != 2) this.full_list = this.list.Clone();
+			if (ppt.recItemImage && panel.isPanelSource()) ui.expandHandle = this.list.Count ? this.list[0] : null;
+			if (!panel.isPanelSource()) this.full_list = this.list.Clone();
 		}
-		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
+		if (panel.isStandardSource() && (!this.list.Count || !fb.IsLibraryEnabled() && (panel.isFixedPlaylistSource() || panel.isLibrarySource()))) {
 			pop.clearTree();
 			sbar.setRows(0);
 			// Regorxxx <- Queue source | Auto-DJ source
-			this.empty = ppt.libSource === 1
-				? (ppt.fixedPlaylist ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
-				: ppt.libSource === 3 || ppt.libSource === 4
-					? 'Empty ' + (ppt.libSource === 4 ? 'Auto-DJ' : 'playback') + ' queue'
+			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
+				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
+				: panel.isQueueLikeSource()
+					? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
 					: 'Nothing received';
 			// Regorxxx ->
 			panel.treePaint();
@@ -713,7 +717,7 @@ class Library {
 			panel.treePaint();
 			return;
 		}
-		this.rootNames('', 0, ppt.libSource == 2 ? false : items);
+		this.rootNames('', 0, panel.isPanelSource() ? false : items);
 		if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
 	}
 
@@ -790,10 +794,16 @@ class Library {
 	}
 
 	load(handleList) {
+		// Regorxxx <- More strict memory limits
+		if (panel.imgView) {
+			if (ppt.memLimitMode === 1) { img.checkCache(); }
+			else if (ppt.memLimitMode === 2) { img.clearCache(); }
+		}
+		// Regorxxx ->
 		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 		const fixedPlaylistIndex = [];
-		if (ppt.fixedPlaylist) {
-			this.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
+		if (panel.isFixedPlaylistSource()) {
+			panel.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
 			if (fixedPlaylistIndex.length === 0) {
 				ppt.fixedPlaylist = false;
 				ppt.libSource = 0;
@@ -802,9 +812,15 @@ class Library {
 		// Regorxxx ->
 		// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible
 		switch (ppt.libSource) {
-			case 0: this.list = plman.GetPlaylistItems($.pl_active); break;
+			// Regorxxx <- Playing playlist source
+			case 0: {
+				const idx = panel.getPlaylistSource();
+				this.list = idx === -1 ? new FbMetadbHandleList() : plman.GetPlaylistItems(idx);
+				break;
+			}
+			// Regorxxx ->
 			case 1: {
-				if (ppt.fixedPlaylist) {
+				if (panel.isFixedPlaylistSource()) {
 					this.list = fixedPlaylistIndex.reduce((prev, idx) => {
 						prev.AddRange(plman.GetPlaylistItems(idx));
 						return prev;
@@ -840,16 +856,16 @@ class Library {
 			// Regorxxx ->
 		}
 		// Regorxxx ->
-		if (ppt.recItemImage && ppt.libSource == 2) ui.expandHandle = this.list.Count ? this.list[0] : null;
+		if (ppt.recItemImage && panel.isPanelSource()) ui.expandHandle = this.list.Count ? this.list[0] : null;
 		this.full_list = this.list.Clone();
 		if (this.list.Count) this.v2_init = false;
 
-		if (ppt.libSource && (!this.list.Count || !fb.IsLibraryEnabled() && ppt.libSource == 1)) {
+		if (panel.isStandardSource() && (!this.list.Count || !fb.IsLibraryEnabled() && (panel.isFixedPlaylistSource() || panel.isLibrarySource()))) {
 			// Regorxxx <- Queue source | Auto-DJ source
-			this.empty = ppt.libSource === 1
-				? (ppt.fixedPlaylist ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
-				: ppt.libSource === 3 || ppt.libSource === 4
-					? 'Empty ' + (ppt.libSource === 4 ? 'Auto-DJ' : 'playback') + ' queue'
+			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
+				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
+				: panel.isQueueLikeSource()
+					? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
 					: 'Nothing received';
 			// Regorxxx ->
 			panel.treePaint();
@@ -1043,11 +1059,11 @@ class Library {
 			}
 		} else panel.list = this.list;
 
-		if (ppt.libSource && !this.full_list.Count) {
+		if (panel.isStandardSource() && !this.full_list.Count) {
 			// Regorxxx <- Queue source
-			this.empty = ppt.libSource == 1
-				? (ppt.fixedPlaylist ? 'Nothing found\n\n' : 'Nothing to show\n\nClick here to configure the media library')
-				: ppt.libSource === 3
+			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
+				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : 'Nothing to show\n\nClick here to configure the media library')
+				: panel.isQueueSource()
 					? 'Empty playback queue'
 					: 'Nothing received';
 			// Regorxxx ->
@@ -1189,15 +1205,16 @@ class Library {
 		let start = 0;
 		let total = panel.list.Count;
 		pop.getNowplaying();
-		if (ppt.rootNode) this.root[0] = {
-			root: 'Root Node',
-			nm: panel.rootName,
-			sel: false,
-			child: [],
-			item: this.set(start, total - 1),
-			srt: this.sort(panel.rootName)
-		};
-		else {
+		if (ppt.rootNode) {
+			this.root[0] = {
+				root: 'Root Node',
+				nm: panel.rootName,
+				sel: false,
+				child: [],
+				item: this.set(start, total - 1),
+				srt: this.sort(panel.rootName)
+			};
+		} else {
 			this.node.forEach((v, l) => {
 				n = v[0];
 				nU = n.toUpperCase();
@@ -1527,7 +1544,7 @@ class Library {
 	// Regorxxx <- Internal cache of views
 	setViewCache(id) {
 		if (!this.viewCache) { this.viewCache = {}; }
-		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: ppt.fixedPlaylist ? -1 : ppt.libSource };
+		this.viewCache[id] = { lib: {}, pop: {}, panel: {}, ppt: {}, source: panel.isFixedPlaylistSource() ? -1 : ppt.libSource };
 		const filterKeys = new Set(['autoExpandLimit', 'lib_update', 'playlist_update', 'search', 'search500', 'treeState100']);
 		Object.keys(this).filter((k) => !filterKeys.has(k) && typeof k !== 'function')
 			.forEach((key) => this.viewCache[id].lib[key] = this[key]);
@@ -1598,6 +1615,16 @@ class Library {
 			}
 		}
 		return bDone;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Playing playlist source | Code cleanup
+	playingPlaylistNeedsUpdate(plsIdx) {
+		return this.playlistSourceIdx !== plsIdx;
+	}
+
+	activePlaylistNeedsUpdate(plsIdx) {
+		return panel.getPlaylistSource() === plsIdx;
 	}
 	// Regorxxx ->
 }

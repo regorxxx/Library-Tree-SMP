@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/26
+//27/04/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -24,7 +24,6 @@ const tooltip = window.Tooltip;
 
 class Helpers {
 	constructor() {
-		this.pl_active = plman.ActivePlaylist;
 		this.scale = this.getDpi();
 		this.symbolOrder = ['!', '#', '$', '%', '&', '(', ')', ',', '.', ';', '@', '[', ']', '^', '_', '`', '{', '}', '~', '+', '='];
 	}
