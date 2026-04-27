@@ -25,71 +25,97 @@ Callbacks:
 
 • 'Library-Tree-SMP: show now playing'
 	-> { window: string[] }
+	- Jumps to now playing track on panel (if possible)
 
 • 'Library-Tree-SMP: show handle'
 	-> { window: string[], handle: FbMetadbHandle }
+	- Jumps to provided track on panel (if possible)
 
 • 'Library-Tree-SMP: switch show art'
 	-> { window: string[] }
+	- Switches between tree/art modes
 
 • 'Library-Tree-SMP: show art'
 	-> { window: string[] }
+	- Switches to art mode
 
 • 'Library-Tree-SMP: show tree'
 	-> { window: string[] }
+	- Switches to tree mode
 
 • 'Library-Tree-SMP: switch show artists / albums'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches between show artists / albums art
 
 • 'Library-Tree-SMP: cycle show art type'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches between show art types (artist/album/tf)
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: show artists'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches to show artists art
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: show albums'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches to show albums art
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: show art (tf)'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches to show art (tf)
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: switch art type'
 	-> { window: string[], artName: string, artIdx: number, forceShowArt: boolean }
+	- Switches to specific art type
 	- artIdx = -1 or 0 for front art
 	- artName follows menu names
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: cycle art type'
 	-> { window: string[], forceShowArt: boolean }
+	- Switches between all art types
+	- forceShowArt = true to also force art mode
 
 • 'Library-Tree-SMP: collapse all'
 	-> { window: string[] }
+	- Collapses all tree nodes
 
 • 'Library-Tree-SMP: quicksearch'
 	-> { window: string[], search: string }
+	- Simulates quicksearch with given string
 
 • 'Library-Tree-SMP: search'
 	-> { window: string[], search: string }
+	- Performs search with given string
 
 • 'Library-Tree-SMP: search clear'
 	-> { window: string[] }
+	- Clears search input box
 
 • 'Library-Tree-SMP: search focus'
 	-> { window: string[] }
+	- Sets focus to search input box
 
 • 'Library-Tree-SMP: switch view'
 	-> { window: string[], viewName: string, viewIdx: number, skipPresets: boolean }
+	- Switches to specific panel view
 	- viewIdx = -1 for folder view
 	- viewName follows menu names
 	- skipPresets allow to bypass user-set preset rules
 
 • 'Library-Tree-SMP: switch filter'
 	-> { window: string[], filterName: string, filterIdx: number, skipPresets: boolean }
+	- Switches to specific panel filter
 	- filterIdx = -1 or 0 for no filter
 	- filterName follow menu names
 	- skipPresets allow to bypass user-set preset rules
 
 • 'Library-Tree-SMP: switch source'
 	-> { window: string[], sourceName: string, sourceIdx: number, sourcePlaylistName: string, sourcePlaylistIdx: number[]|number, sourcePanel: string, skipPresets: boolean }
+	- Switches to specific panel source
 	- sourceIdx = -1 or 0 for library
 	- sourcePlaylistIdx = -1 for active playlist
 	- sourceName follows menu names
@@ -102,6 +128,7 @@ Callbacks:
 
 • 'Library-Tree-SMP: switch statistics'
 	-> { window: string[], statisticsName: string, statisticsIdx: number }
+	- Switches to specific panel stats
 	- statisticsIdx = -1 or 0 for default stats (usually # tracks)
 	- statisticsName follows menu names
 	- statisticsName can be matched by entire label (all), user label
