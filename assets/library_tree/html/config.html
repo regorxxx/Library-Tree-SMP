@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 20/04/26 -->
+﻿<!DOCTYPE html> <!-- 24/04/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1776,6 +1776,7 @@
 		}
 		catch (e) { }
 
+		var rootStubLabels, noArtistStubLabels, noCoverStubLabels;
 		if (parsed_args) {
 			cur = JSON.parse(parsed_args[2]);
 			document.title = 'Library-Tree-SMP ' + cur.version + ': Panel Settings';
@@ -2120,7 +2121,7 @@
 				ppt['searchDragTrackOpCtrl_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragTrackOpCtrl.style.display = 'none';
 			}
-			function setDragTrackOpAlt(n) { // NOSONAR
+			function setDragTrackOpAlt(n) {
 				window.searchDragTrackOpAlt_dropdown.innerHTML = dragTrackOpAltLabels[n];
 				ppt['searchDragTrackOpAlt_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragTrackOpAlt.style.display = 'none';
@@ -2130,50 +2131,50 @@
 				ppt['searchDragQueryOp_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragQueryOpDefault.style.display = 'none';
 			}
-			function setDragQueryOpShift(n) { // NOSONAR
+			function setDragQueryOpShift(n) {
 				window.searchDragQueryOpShift_dropdown.innerHTML = dragQueryOpShiftLabels[n];
 				ppt['searchDragQueryOpShift_internal'].value = ['', 'OR', 'AND'][n];
 				window.searchDragQueryOpShift.style.display = 'none';
 			}
 			// Regorxxx ->
 
-			function setTheme(n) { // NOSONAR
+			function setTheme(n) {
 				window.theme_dropdown.innerHTML = themeLabels[n];
 				ppt['theme_internal'].value = n;
 				window.themeBg.style.display = 'none';
 			}
 
-			function setthumbSize(n) { // NOSONAR
+			function setThumbSize(n) {
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[n];
 				ppt['thumbNailSize_internal'].value = n;
 				window.thumbSize.style.display = 'none';
 			}
 
-			function setClickAction(n) { // NOSONAR
+			function setClickAction(n) {
 				window.click_dropdown.innerHTML = clickLabels[n];
 				ppt['clickAction_internal'].value = n;
 				window.click.style.display = 'none';
 			}
 
-			function setDblClickAction(n) { // NOSONAR
+			function setDblClickAction(n) {
 				window.dblClick_dropdown.innerHTML = dblClickLabels[n];
 				ppt['dblClickAction_internal'].value = n;
 				window.dblClick.style.display = 'none';
 			}
 
-			function setMbtnClickAction(n) { // NOSONAR
+			function setMbtnClickAction(n) {
 				window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[n];
 				ppt['mbtnClickAction_internal'].value = n;
 				window.mbtnClick.style.display = 'none';
 			}
 
-			function setAltClickAction(n) { // NOSONAR
+			function setAltClickAction(n) {
 				window.altClick_dropdown.innerHTML = altClickLabels[n];
 				ppt['altClickAction_internal'].value = n;
 				window.altClick.style.display = 'none';
 			}
 
-			function setKeyAction(n) { // NOSONAR
+			function setKeyAction(n) {
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[n];
 				ppt['keyAction_internal'].value = n;
 				window.keystroke.style.display = 'none';
@@ -2271,7 +2272,7 @@
 			}
 
 			var subMenus = {};
-			function toggleSubmenu(id) { // NOSONAR
+			function toggleSubmenu(id) {
 				if (window[id].style.display === 'none') {
 					window[id].style.display = 'inline-block';
 					subMenus[id] = true;
@@ -2282,7 +2283,7 @@
 				return false; // Regorxxx <- Disable opening new window while pressing shift ->
 			}
 
-			function setPresetRules() { // NOSONAR
+			function setPresetRules() {
 				var presetRules = JSON.parse(ppt['presetRules_internal'].default_value);
 				var rulesLen = presetRules.length;
 				var ids = getPresetColumns();
@@ -2306,7 +2307,7 @@
 				ppt['presetRules_internal'].value = ppt['presetRules_internal'].default_value;
 			}
 
-			function hidePresetRules(currId) { // NOSONAR
+			function hidePresetRules(currId) {
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				var rulesLen = presetRules.length;
 				var ids = getPresetColumns();
@@ -2348,21 +2349,21 @@
 				}
 			}
 
-			function addPresetRule() { // NOSONAR
+			function addPresetRule() {
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				presetRules.push({ 'if': {}, 'ifNot': {}, 'then': {} });
 				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
 				setPresets(true);
 			}
 
-			function deletePresetRule(idx) { // NOSONAR
+			function deletePresetRule(idx) {
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				presetRules.splice(idx, 1);
 				ppt['presetRules_internal'].value = JSON.stringify(presetRules);
 				setPresets(true);
 			}
 
-			function movePresetRule(idx, toIdx) { // NOSONAR
+			function movePresetRule(idx, toIdx) {
 				var presetRules = JSON.parse(ppt['presetRules_internal'].value);
 				var rule = presetRules.splice(idx, 1);
 				presetRules.splice(toIdx, 0, rule[0]);
@@ -2402,20 +2403,20 @@
 			// Regorxxx ->
 
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
-			function setFolderSorting(n) { // NOSONAR
+			function setFolderSorting(n) {
 				window.folderSorting_dropdown.innerHTML = viewSortingLabels[n];
 				ppt['folderSorting_internal'].value = n;
 				window.folderSorting.style.display = 'none';
 			}
 
-			function setViewSorting(n) { // NOSONAR
+			function setViewSorting(n) {
 				window.viewSorting_dropdown.innerHTML = viewSortingLabels[n];
 				ppt['viewSorting_internal'].value = n;
 				window.viewSorting.style.display = 'none';
 			}
 			// Regorxxx ->
 			// Regorxxx <- Auto-DJ feature
-			function setAutoDjTrackPicking(n) { // NOSONAR
+			function setAutoDjTrackPicking(n) {
 				window.autodjPick_dropdown.innerHTML = autodjLabels[n];
 				ppt['autoDjTrackPicking_internal'].value = getAutoDjTrackPickingValue(n - 1);
 				window.autodjPick.style.display = 'none';
@@ -2571,8 +2572,7 @@
 						for (j = 0; j < labels.length; j++) {
 							items[j] = [];
 							// Regorxxx <- Filter non-relevant functions at help
-							if (id === 'syntaxFilter' && !labels[j][3].split('|').includes('Filters')) { continue; }
-							else if (id === 'syntaxView' && !labels[j][3].split('|').includes('Views')) { continue; }
+							if (id === 'syntaxFilter' && !labels[j][3].split('|').includes('Filters') || id === 'syntaxView' && !labels[j][3].split('|').includes('Views')) { continue; }
 							for (i = 0; i < 3; i++) {
 								items[j].push('<div class=info5;">' + labels[j][i] + '</div>');
 								if (i == 2) {
@@ -3052,8 +3052,7 @@
 			}
 
 			function getStatisticsSlots(pptKey) {
-				var customLabel = function (l) { return l.startsWith('Custom-'); };
-				var slots = statisticsLabels.filter(customLabel).length;
+				var slots = statisticsLabels.filter(function (l) { return l.startsWith('Custom-'); }).length;
 				var missing = slots - ppt[pptKey + '_internal'].value.split('|').length;
 				return slots + ' slots' + (missing === 0 ? '' : ' (' + (missing > 0 ? 'missing' : 'extra') + ' ' + Math.abs(missing) + ')');
 			}
@@ -3067,13 +3066,13 @@
 			}
 			// Regorxxx ->
 
-			var rootStubLabels = JSON.parse(ppt['rootImages_internal'].value) || [];
+			rootStubLabels = JSON.parse(ppt['rootImages_internal'].value) || [];
 			var root_ix = ppt['curRootImg_internal'].value;
 
-			var noArtistStubLabels = JSON.parse(ppt['noArtistImages_internal'].value) || [];
+			noArtistStubLabels = JSON.parse(ppt['noArtistImages_internal'].value) || [];
 			var noart_ix = ppt['curNoArtistImg_internal'].value;
 
-			var noCoverStubLabels = JSON.parse(ppt['noCoverImages_internal'].value) || [];
+			noCoverStubLabels = JSON.parse(ppt['noCoverImages_internal'].value) || [];
 			var nocov_ix = ppt['curNoCoverImg_internal'].value;
 
 			function setAlbumArt() {
@@ -3104,7 +3103,7 @@
 				for (i = 0; i < 2; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
 
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[ppt['thumbNailSize_internal'].value];
-				for (i = 0; i < 8; i++) { window.thumbSize.insertAdjacentHTML('beforeend', '<a onclick="setthumbSize(' + i + ');">' + thumbnailSizeLabels[i] + '</a>'); }
+				for (i = 0; i < 8; i++) { window.thumbSize.insertAdjacentHTML('beforeend', '<a onclick="setThumbSize(' + i + ');">' + thumbnailSizeLabels[i] + '</a>'); }
 
 				i = 0; window.indexLetter.insertAdjacentHTML('beforeend', '<div><input id="indexLetter_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="indexLetter_checkbox' + i + '" class="checkbox_label">' + indexLetterLabels[i] + '</label></div>');
 				i = 1; window.indexLetter.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="indexLetter_container' + i + '" name="albumart_input" class="input7" /><label for="indexLetter_container' + i + '" class="inp_label2">' + indexLetterLabels[i] + '</label></div>');
@@ -3202,6 +3201,8 @@
 			document.getElementById("btn_down").disabled = true;
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
+
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3701,7 +3702,7 @@
 				ppt.curNoCoverImg_internal.value = ppt.curNoCoverImg_internal.default_value;
 				// Regorxxx ->
 				setOverlay(ppt['itemOverlayType_internal'].default_value);
-				setthumbSize(ppt['thumbNailSize_internal'].default_value);
+				setThumbSize(ppt['thumbNailSize_internal'].default_value);
 			}
 			if (cur.page == 'custom') setCustomColours('default_value');
 		}
