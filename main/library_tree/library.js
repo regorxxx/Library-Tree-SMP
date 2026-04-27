@@ -3,7 +3,7 @@
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
-/* global globQuery:readable, globTags:readable */
+/* global IDC_WAIT:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
@@ -604,6 +604,7 @@ class Library {
 	// Regorxxx ->
 
 	getLibrary(items) {
+		window.SetCursor(IDC_WAIT);
 		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
 		// Regorxxx <- More strict memory limits
 		if (!items && panel.imgView) {

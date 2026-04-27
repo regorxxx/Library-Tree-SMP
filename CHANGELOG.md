@@ -39,6 +39,7 @@
 - UI: added new setting for custom Art track count/year color overlay and text. Found at 'Custom' tab (HTML options panel) or 'Custom Colour Art Track Count [...]' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078585.html#msg1078585).
 - UI: added new setting to control whether selection remember must be forced or not, even when no current selection is present, by loading the previously saved one. Disabled by default. Found at 'Behaviour' tab (HTML options panel) or 'Remember.Selection (forced)' (properties panel).
 - UI: added new setting to allow clicking on any blank region within panel to reset the current selection. Enabled by default. Found at 'Behaviour' tab (HTML options panel) or 'Reset selection clicking on blank regions' (properties panel).
+- UI: added multiple mouse cursor effects.
 - Views: added new default view patterns.
 - Views: panel custom prefixes to strip/swap can now be retrieved using '$prefix', so they can be used with native functions (for ex. $swapprefix(%ARTIST%,$prefix)). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Statistics: added tooltip text to customizable statistics slots. Set at statistics tab (HTML options panel) or 'Statistics Titleformat Custom tooltip' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078914.html#msg1078914).

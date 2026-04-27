@@ -3,11 +3,10 @@
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global dropEffect:readable */
-/* global MK_CONTROL:readable, VK_SHIFT:readable, VK_CONTROL:readable */
+/* global MK_CONTROL:readable, VK_SHIFT:readable, VK_CONTROL:readable, IDC_WAIT:readable */
 
 addEventListener('on_colours_changed', (keepCache) => {
 	ui.getColours();
-
 	if (panel.colMarker) {
 		panel.getFields(ppt.viewBy, ppt.filterBy);
 		if (lib) {
@@ -42,7 +41,7 @@ addEventListener('on_font_changed', () => {
 addEventListener('on_char', (code) => {
 	pop.on_char(code);
 	find.on_char(code);
-	if (!ppt.searchShow) return;
+	if (!ppt.searchShow) { return; }
 	search.on_char(code);
 });
 
@@ -514,6 +513,7 @@ addEventListener('on_paint', (gr) => {
 	if (!window.Width || !window.Height) { return; }
 	// Regorxxx <- Don't create cache playlists if possible
 	if (!lib.initialised) {
+		window.SetCursor(IDC_WAIT);
 		if (panel.isPanelSource() && ppt.panelInternalCache) {
 			const cache = folders.dataPackage + 'librarytreeSel\\' + ppt.lastPanelSelectionPlaylist + '.fpl';
 			if (utils.IsFile(cache)) {
@@ -697,7 +697,7 @@ addEventListener('on_script_unload', () => {
 });
 
 addEventListener('on_selection_changed', () => {
-	if (!panel.setSelection()) return;
+	if (!panel.setSelection()) { return; }
 	setSelection(fb.GetSelection());
 });
 
