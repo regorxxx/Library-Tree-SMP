@@ -4,6 +4,7 @@
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
 /* global IDC_WAIT:readable */
+/* global globQuery:readable, globTags:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
