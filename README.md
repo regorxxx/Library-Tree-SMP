@@ -1,8 +1,6 @@
 # Library-Tree-SMP
 [![version][version_badge]][changelog]
-[![CodeFactor][codefactor_badge]](https://www.codefactor.io/repository/github/regorxxx/Library-Tree-SMP/overview/main)
-[![CodacyBadge][codacy_badge]](https://www.codacy.com/gh/regorxxx/Library-Tree-SMP/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=regorxxx/Library-Tree-SMP&amp;utm_campaign=Badge_Grade)
-![GitHub](https://img.shields.io/github/license/regorxxx/Library-Tree-SMP)  
+![GitHub](https://img.shields.io/badge/license-NON--AI_AGPL--3.0-blue)  
 Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.org) and [Spider Monkey Panel](https://theqwertiest.github.io/foo_spider_monkey_panel)/[JSplitter](https://foobar2000.ru/forum/viewtopic.php?t=6378). Improved version of the original Library Tree, which tons of new features, performance optimizations and fixes.
 
 > [!TIP]
