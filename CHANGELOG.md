@@ -2,10 +2,17 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [2.0.0](#200---2026-04-28)
 - [1.0.0](#100---2026-01-30)
 - [2.4.0.mod.34]
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [2.0.0] - 2026-01-30
 ### Added
 - Presets: added rule-based settings presets which can be applied on specific conditions based on Sources, Source IDs (active playlist), Views and filters. This feature can be used for ex. to automatically set 'Library' source on 'Library Viewer Selection' playlist and 'Playlist(s)' source on any other playlist, i.e. allows behavior automation. Preset rules can be edited at the new 'Presets' tab (HTML options panel) and 'Sources|Views|Filters presets' (properties panel). Extensive help has been added at HTML options panel and new help menu entry (for Unix users). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1079728.html#msg1079728).
 - Language: added support for transliteration from Chinese language (Pinyin) to Latin script. Works in quick-search, search (RegExp), sorting, etc.
@@ -294,6 +301,7 @@
 - Assets: fixed multiple inconsistencies, artifacts, size errors, etc. on no artist, no cover and root images used on original script. File sizes has also been greatly improved which could result on performance improvements in some cases. [from Library-Tree-v2.4.0.mod.34]
 - Statistics: some statistics were not being updated unless the entire view was updated on library item tag changes. For example %RATING% if current view TF did not include such tag, but rating statistics was used. Old value was being shown instead. <ins>[new]</ins>
 
-[Unreleased]: ../../compare/v1.0.0...HEAD
+[Unreleased]: ../../compare/v2.0.0...HEAD
+[2.0.0]: ../../compare/v1.0.0...v2.0.0
 [1.0.0]: ../../compare/ffc967f5...v1.0.0
 [2.4.0.mod.34]: ../../compare/f2d83e13...ffc967f5
