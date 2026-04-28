@@ -1,5 +1,5 @@
 'use strict';
-//28/04/26
+//29/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1326,17 +1326,23 @@ class MenuItems {
 				const id = bUseUUID
 					? this.pl[j].guid || this.pl[j].name
 					: this.pl[j].name;
-				ppt.fixedPlaylistName = ppt.fixedPlaylistName.length
-					? ppt.fixedPlaylistName + '|' + id
-					: id;
+				if (vk.k('shift') && ppt.fixedPlaylistName.length) {
+					const pls = new Set(ppt.fixedPlaylistName.split('|'));
+					if (pls.has(id)) { pls.delete(id); }
+					else { pls.add(id); }
+					ppt.fixedPlaylistName = [...pls].join('|');
+				} else { ppt.fixedPlaylistName = id; }
 			});
 		} else {
 			const id = bUseUUID
 				? this.pl[i].guid || this.pl[i].name
 				: this.pl[i].name;
-			ppt.fixedPlaylistName = vk.k('shift') && ppt.fixedPlaylistName.length
-				? ppt.fixedPlaylistName + '|' + id
-				: id;
+			if (vk.k('shift') && ppt.fixedPlaylistName.length) {
+				const pls = new Set(ppt.fixedPlaylistName.split('|'));
+				if (pls.has(id)) { pls.delete(id); }
+				else { pls.add(id); }
+				ppt.fixedPlaylistName = [...pls].join('|');
+			} else { ppt.fixedPlaylistName = id; }
 		}
 		ppt.fixedPlaylist = true;
 		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
