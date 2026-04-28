@@ -16,6 +16,8 @@ Feature rich library viewer and browser for [foobar2000](https://www.foobar2000.
 - Library and multi-playlists sources
 - Playback Queue management
 - Auto-DJ
+- Presets and automation rules
+- D2D support (requires JSplitter).
 - Top Tracks
 - Duplicates handling and filtering (& find library duplicates)
 - Mode presets
