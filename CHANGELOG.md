@@ -12,6 +12,7 @@
 - Sources: when selecting multiple playlist, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed.
 ### Removed
 ### Fixed
+- Sources: fix Active playlist source not working on some cases after setting Playing playlist source.
 - UI: fixed bug, on original script, related to incorrect playlist focus tracking on active playlist if it was the first one (0 idx).
 
 ## [2.0.0] - 2026-01-30

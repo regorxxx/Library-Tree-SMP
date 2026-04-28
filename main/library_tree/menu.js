@@ -1233,9 +1233,18 @@ class MenuItems {
 
 	// Regorxxx <- Preset rules | Playing playlist source
 	setActivePlaylist({ bSkipPresets = false } = {}) {
-		ppt.libSource = 0;
+		ppt.playingPlaylist = false;
+		this.setPlaylistSource({ bSkipPresets, fixedPlaylistName: 'ActivePlaylist' });
+	}
+
+	setPlayingPlaylist({ bSkipPresets = false } = {}) {
+		ppt.playingPlaylist = true;
+		this.setPlaylistSource({ bSkipPresets, fixedPlaylistName: 'PlayingPlaylist' });
+	}
+	
+	setPlaylistSource({ bSkipPresets = false, fixedPlaylistName = 'ActivePlaylist' } = {}) {
 		ppt.fixedPlaylist = false;
-		ppt.fixedPlaylistName = 'ActivePlaylist';
+		ppt.fixedPlaylistName = fixedPlaylistName;
 		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
@@ -1245,11 +1254,6 @@ class MenuItems {
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
-	}
-
-	setPlayingPlaylist({ bSkipPresets = false } = {}) {
-		ppt.playingPlaylist = true;
-		this.setActivePlaylist({ bSkipPresets });
 	}
 	// Regorxxx ->
 
