@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//29/04/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -70,8 +70,10 @@ class Library {
 			this.searchCache = {};
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
-			this.playlistSourceIdx = playlistIndex;
-			if (playlistIndex) on_item_focus_change(playlistIndex);
+			if (typeof playlistIndex !== 'undefined') {
+				this.playlistSourceIdx = playlistIndex;
+				if (playlistIndex !== -1) { on_item_focus_change(playlistIndex); }
+			}
 		}, 100);
 
 		this.search = $.debounce(() => {
@@ -1240,8 +1242,8 @@ class Library {
 		}
 		if (!lib_update) sbar.reset();
 		/* Draw tree -> */
-		if (!ppt.rootNode || panel.search.txt) pop.buildTree(this.root, 0);
-		if (ppt.rootNode) pop.branch(this.root[0], true);
+		if (!ppt.rootNode || panel.search.txt) { pop.buildTree(this.root, 0); }
+		if (ppt.rootNode) { pop.branch(this.root[0], true); }
 		if (panel.pn_h_auto && !panel.imgView && (panel.init || lib_update) && ppt.pn_h == ppt.pn_h_min && pop.tree[0]) pop.clearChild(pop.tree[0]);
 		panel.init = false; // $.trace('initialised in: ' + this.time.Time / 1000 + ' seconds');
 

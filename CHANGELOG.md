@@ -11,6 +11,7 @@
 ### Changed
 ### Removed
 ### Fixed
+- UI: fixed bug, on original script, related to incorrect playlist focus tracking on active playlist if it was the first one (0 idx).
 
 ## [2.0.0] - 2026-01-30
 ### Added
