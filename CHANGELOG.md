@@ -56,6 +56,7 @@
 	* 'Library-Tree-SMP: cycle show art type'		-> { window: string[], forceShowArt: boolean }
 	* 'Library-Tree-SMP: show art (tf)'				-> { window: string[], forceShowArt: boolean }
 	* 'Library-Tree-SMP: cycle art type'			-> { window: string[], forceShowArt: boolean }
+- Auto-update: added -optional- automatic checks for updates on script load; enabled by default. Compares version of current file against GitHub repository. Manual checking can also be found at the settings menu. Setting may also be globally switched at '[FOOBAR PROFILE FOLDER]\js_data\presets\global\globSettings.json', by changing 'bAutoUpdateCheck'. It will apply by default to any new installed script (previous scripts will still need to be manually configured to change them).
 ### Changed
 - Views: support for $selected{}, $nowplaying{} and $nowplayingorselected{} functions. Views are also updated on real time if such functions are used on playback or selection changes. Note support was only added for display purposes (like highlighting currently playing artist), don't try to use it for filtering purposes; use filters instead. Beware of possible performance impact using this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077567.html#msg1077567).
 - Views: updated default view TF patterns with above changes related to $prefix.

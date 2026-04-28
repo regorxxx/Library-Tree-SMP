@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/04/26
+//28/04/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '1.0.0', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -18,7 +18,7 @@ async function readFiles(files) {
 const files = [
 	// Regorxxx <- xxx-scripts helpers
 	'helpers\\helpers_xxx.js',
-	/* global globProfiler:readable */
+	/* global globProfiler:readable, globSettings:readable */
 	'helpers\\helpers_xxx_flags.js',
 	'helpers\\helpers_xxx_input.js',
 	'helpers\\helpers_xxx_language.js',
@@ -34,6 +34,7 @@ const files = [
 	// Regorxxx ->
 	'main\\library_tree\\helpers.js',
 	'main\\library_tree\\properties.js',
+	/* global ppt:readable */
 	'main\\library_tree\\interface.js',
 	'main\\library_tree\\images.js', // Regorxxx <- Code cleanup | External integration | Custom TF art ->
 	'main\\library_tree\\panel.js',
@@ -56,8 +57,19 @@ if (loadAsync) {
 		if (!window.ID) return; // fix pss issue
 		on_size();
 		if (window.IsVisible) { window.Repaint(); }
+		// Update check
+		if (ppt.bAutoUpdateCheck) {
+			include('helpers\\helpers_xxx_web_update.js');
+			/* global checkUpdate:readable */
+			setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
+		}
 	});
 } else {
 	files.forEach(v => include(v));
 	globProfiler.Print('helpers'); // Regorxxx <- Init profiler ->
+	// Update check
+	if (ppt.bAutoUpdateCheck) {
+		include('helpers\\helpers_xxx_web_update.js');
+		setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
+	}
 }

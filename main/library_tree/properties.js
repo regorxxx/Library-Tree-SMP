@@ -1,8 +1,8 @@
 ﻿'use strict';
-//27/04/26
+//28/04/26
 
 /* global $:readable */
-/* global globQuery:readable, globTags:readable */ // helpers\helpers_xxx_global.js
+/* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
 /* global _b:readable, _t:readable */ // helpers\helpers_xxx_prototypes.js
 /* global queryJoin:readable */ // helpers\helpers_xxx_tags.js
 
@@ -509,6 +509,7 @@ let properties = [
 	['Filter show duplicates ', false, 'showDupl'],
 	// Regorxxx ->
 	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'], // Regorxxx <- GDI/D2D draw mode ->
+	['Automatically check updates', globSettings.bAutoUpdateCheck, 'bAutoUpdateCheck'], // Regorxxx <- Update checks ->
 	['Image mouse rectangle selection on album art', true, 'selRectArt'], // Regorxxx <- Selection rectangle on art view ->
 	// Regorxxx <- Customizable quicksearch timer
 	['Quick-search jump initial char timer', 150, 'findTimerInit'],

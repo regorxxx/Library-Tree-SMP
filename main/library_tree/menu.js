@@ -1,8 +1,9 @@
 'use strict';
-//27/04/26
+//28/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
-/* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, folders:readable */
+/* global globSettings:readable, folders:readable */
+/* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable */
 /* global _explorer:readable */
 /* global Input:readable */
 
@@ -613,6 +614,34 @@ class MenuItems {
 				menuName: 'Refresh',
 				str: 'Reload panel',
 				func: () => this.setMode(4),
+			});
+		}
+		// Regorxxx ->
+		// Regorxxx <- Updates check
+		{
+			menu.newMenu({ menuName: 'Updates', appendTo: mainMenu(), separator: true });
+			menu.newItem({
+				menuName: 'Updates',
+				str: 'Automatically check for updates',
+				func: () => {
+					ppt.toggle('bAutoUpdateCheck');
+					if (ppt.bAutoUpdateCheck) {
+						include('..\\..\\helpers\\helpers_xxx_web_update.js');
+						/* global checkUpdate:readable */
+						setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
+					}
+				},
+				checkItem: ppt.bAutoUpdateCheck,
+			});
+			menu.newItem({ menuName: 'Updates', separator: true });
+			menu.newItem({
+				menuName: 'Updates',
+				str: 'Check for updates...',
+				func: () => {
+					if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web_update.js'); }
+					checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
+						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.FullPanelName + ': Update check'));
+				}
 			});
 		}
 		// Regorxxx ->
