@@ -3,7 +3,7 @@
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
-/* global IDC_WAIT:readable */
+/* global IDC_WAIT:readable, IDC_ARROW:readable */
 /* global globQuery:readable, globTags:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
@@ -54,6 +54,7 @@ class Library {
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
 		this.lib_update = $.debounce(() => {
+			if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 			this.time.Reset();
 			pop.cache = {
 				'standard': {},
@@ -64,9 +65,11 @@ class Library {
 			this.upd_search = !!panel.search.txt;
 			this.rootNodes(2, ppt.process);
 			pop.getTreeSel();
+			if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
 		}, 500);
 
 		this.playlist_update = $.debounce((playlistIndex) => {
+			if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 			this.searchCache = {};
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
@@ -74,6 +77,7 @@ class Library {
 				this.playlistSourceIdx = playlistIndex;
 				if (playlistIndex !== -1) { on_item_focus_change(playlistIndex); }
 			}
+			if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
 		}, 100);
 
 		this.search = $.debounce(() => {
@@ -607,7 +611,6 @@ class Library {
 	// Regorxxx ->
 
 	getLibrary(items) {
-		window.SetCursor(IDC_WAIT);
 		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
 		// Regorxxx <- More strict memory limits
 		if (!items && panel.imgView) {
@@ -739,6 +742,7 @@ class Library {
 	}
 
 	initialise(handleList, bNotify) { // Regorxxx <- Don't create cache playlists if possible
+		if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
 		lib.initialised = true;
 		this.load(handleList);
@@ -746,6 +750,7 @@ class Library {
 		this.rootNodes(ppt.rememberTree, ppt.process);
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
+		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
 	}
 
 	isMainChanged(handleList) {
