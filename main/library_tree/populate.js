@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 //29/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
@@ -268,6 +268,20 @@ class Populate {
 			}
 		});
 		this.condense(br.child);
+		// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+		if (!!this.rootNode && !ppt.plsFlatView && base && panel.isPlaylistSource()) {
+			let rootNode, plsRootNode;
+			for (let i = 0; i < br.child.length; i++) {
+				rootNode = br.child[i];
+				for (let j = i; j < lib.playlistSourceRoot.length; j++) {
+					plsRootNode = lib.playlistSourceRoot[j];
+					if (plsRootNode.name === rootNode.nm && plsRootNode.count === rootNode.item[0].count) {
+						plsRootNode.node = rootNode;
+					}
+				}
+			}
+		}
+		// Regorxxx ->
 		this.buildTree(lib.root, 0, node, true, block, clearArt);
 	}
 	// Regorxxx ->
@@ -3222,6 +3236,28 @@ class Populate {
 		if (bAsync) { this.debounce.setPlaylist(panel.pos, this.tree[panel.pos]); }
 		else { this.setPlaylist(panel.pos, this.tree[panel.pos]); }
 		lib.treeState(false, ppt.rememberTree);
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager
+	getParent(node) {
+		const l = Math.max(node.level - 1, 0);
+		return this.tree.slice(0, this.row.i).findLast((n) => n.level === l && n.child.includes(node)) || node;
+	}
+
+	getTopParent(node) {
+		const topLevel = this.rootNode === 0 ? 0 : 1;
+		let parent = node;
+		while (parent.level > topLevel) { parent = this.tree.slice(0, parent.ix).findLast((n) => n.level === parent.level - 1 && n.child.includes(parent)); }
+		return parent;
+	}
+
+	getPlaylistParent(node) {
+		if (!node) { return [-1]; }
+		const parent = this.getTopParent(node);
+		return parent.root
+			? panel.getPlaylistSource()
+			: [(lib.playlistSourceRoot.find((root) => root.node === parent) || { idx: -1 }).idx];
 	}
 	// Regorxxx ->
 }

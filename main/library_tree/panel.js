@@ -1726,7 +1726,28 @@ class Panel {
 		let text = '';
 		if (y < this.search.h || !this.isQueueLikeSource()) {
 			if (method === 0 && this.folderView) { // Auto: tags or path
-				return 'Add paths to search box';
+				text = 'Add paths to search box';
+			} else if (!this.isStandardSource() && (ppt.plsSource < 2 || !ppt.plsFlatView && pop.row.i !== -1)) {
+				if (ppt.plsSource < 2) {
+					text = (
+						(mask & MK_CONTROL) === MK_CONTROL
+							? 'Add tracks to '
+							: 'Move tracks to '
+					) + (ppt.plsSource === 0 ? 'Active playlist' : 'Playing playlist');
+				} else {
+					const node = pop.tree[pop.row.i];
+					if (node) {
+						const parent = pop.getTopParent(node);
+						const name = node.root
+							? '- All -'
+							: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
+						text = (
+							(mask & MK_CONTROL) === MK_CONTROL
+								? 'Add tracks to playlist '
+								: 'Move tracks to playlist '
+						) + name;
+					}
+				}
 			} else { // Tags
 				const searchTags = search.getDragDropTags(mask);
 				const operators = search.getDragDropOperators(mask);
@@ -2246,7 +2267,7 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup | Multiple-playlist flat view
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup | Multiple-playlist flat view | Basic playlist manager
 	getFixedPlaylistSources() {
 		const fixedPlaylistIndex = [];
 		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
@@ -2330,6 +2351,21 @@ class Panel {
 
 	isQueueLikeSource() {
 		return ppt.libSource === 3 || ppt.libSource === 4;
+	}
+
+	addToPlaylist(selItems, plsIdxArr, bScroll) {
+		if (isArrayEqual(plsIdxArr, [-1]) || !selItems.Count) { return false; }
+		plsIdxArr.forEach((plsIdx) => {
+			plman.ClearPlaylistSelection(plsIdx);
+			plman.InsertPlaylistItems(plsIdx, plman.PlaylistItemCount(plsIdx), selItems, true);
+		});
+		if (bScroll) {
+			plman.ActivePlaylist = plsIdxArr[0];
+			const focusIdx = plman.PlaylistItemCount(plman.ActivePlaylist) - selItems.Count;
+			plman.SetPlaylistFocusItem(plman.ActivePlaylist, focusIdx);
+			plman.EnsurePlaylistItemVisible(plman.ActivePlaylist, focusIdx);
+		}
+		return true;
 	}
 	// Regorxxx ->
 }

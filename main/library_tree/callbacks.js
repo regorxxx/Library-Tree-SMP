@@ -750,11 +750,13 @@ addEventListener('on_locations_added', (taskId, handleList) => {
 });
 // Regorxxx ->
 
-// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source
+// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager
 // Drag n drop to copy/move tracks to playlists (only files from foobar2000)
 const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unused-vars
 	if (!panel.isQueueLikeSource()) {
-		if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
+		if (!panel.isStandardSource()) {
+			if (ppt.plsSource === 2 && (ppt.plsFlatView || pop.checkRow(x, y) === -1 && (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)))) { return false; }
+		} else if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
 	}
 	// Avoid things outside foobar2000
 	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { return false; }
@@ -832,6 +834,25 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				if (!action.IsInternal) {
 					if (panel.autoDj.running && panel.autoDj.source) { panel.addToAutoDjSource(selItems, true); }
 					else { panel.startAutoDj(selItems); }
+				}
+			}
+		} else if (!panel.isStandardSource() && (ppt.plsSource < 2 || !ppt.plsFlatView)) {
+			const plsIdxArr = ppt.plsSource < 2
+				? panel.getPlaylistSource()
+				: pop.getPlaylistParent(pop.tree[pop.row.i]);
+			if ((mask & MK_CONTROL) === MK_CONTROL) {
+				panel.addToPlaylist(selItems, plsIdxArr, true);
+			} else {
+				if (action.IsInternal) {
+					if (fb.GetSelectionType() === 0) {
+						panel.getPlaylistSource().forEach((idx) => {
+							if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
+						});
+					}
+					panel.addToPlaylist(selItems, plsIdxArr, true);
+				} else {
+					if (fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
+					panel.addToPlaylist(selItems, plsIdxArr, true);
 				}
 			}
 		}
