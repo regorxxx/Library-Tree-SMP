@@ -8,11 +8,13 @@
 
 ## [Unreleased][]
 ### Added
+- Sources: new setting 'Multi-branch playlist view' at Views submenu to split tree by playlist's name for playlist(s) sources. i.e. if 2 playlists are used as source, tracks are separated into 2 branches by playlist instead of mixed in the tree.
 ### Changed
 - Sources: when selecting multiple playlist, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed.
 ### Removed
 ### Fixed
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.
+- Sources: setting 'Sort by Playlist idx' not working with multi-value branching.
 - UI: fixed bug, on original script, related to incorrect playlist focus tracking on active playlist if it was the first one (0 idx).
 
 ## [2.0.0] - 2026-01-30

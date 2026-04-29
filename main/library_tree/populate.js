@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//29/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -363,7 +363,7 @@ class Populate {
 		return b.length;
 	}
 
-	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection
+	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection | Support playlist sorting
 	buildTree(br, level, node, full, block, clearArt) {
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
@@ -384,7 +384,7 @@ class Populate {
 					let n_o = '#condense#';
 					let nU = '';
 					const splitter = panel.softSplitter;
-					if (lib.searchSort || lib.filterSort) {
+					if (lib.searchSort || lib.filterSort || panel.isPlaylistSource() && ppt.plsSorting) {
 						br.forEach((v, i) => {
 							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
 								multi = this.getAllCombinations(v.nm);
@@ -2316,7 +2316,7 @@ class Populate {
 				fb.CopyHandleListToClipboard(handleList);
 				break;
 			}
-			// Regorxxx <- Extra shortcuts | Select All acts as a toogle | Invert selection
+			// Regorxxx <- Extra shortcuts | Select All acts as a toggle | Invert selection
 			case vk.selNone:
 			case vk.selAll: {
 				const bSelected = code === vk.selAll
