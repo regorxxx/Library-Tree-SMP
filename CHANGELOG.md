@@ -12,6 +12,7 @@
 ### Changed
 - UI: improved mouse cursor effects in some cases.
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed.
+- Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node.
 ### Removed
 ### Fixed
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.

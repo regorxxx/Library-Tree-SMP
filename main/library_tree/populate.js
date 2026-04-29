@@ -2690,9 +2690,10 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Support playlist sorting | Support SORT BY query sorting | Select duplicates handles | Active/Playing/All playlist source
+	// Regorxxx <- Support playlist sorting | Support SORT BY query sorting | Select duplicates handles | Active/Playing/All playlist source | Allow multiple selection on playlist sources (shift, ctrl)
 	setPlaylistSelection(ix, item, plsIdxArr = panel.getPlaylistSource()) {
 		if (isArrayEqual(plsIdxArr, [-1])) { return; }
+		if (!vk.k('ctrl')) { this.clearSelected(); }
 		if (!item.sel) { this.setTreeSel(ix, item.sel); }
 		panel.treePaint();
 		let firstPls = -1;
@@ -2757,7 +2758,13 @@ class Populate {
 	}
 
 	setTreeSel(idx, state) {
-		const sel_type = idx == -1 ? 0 : vk.k('shift') && this.last_sel > -1 && panel.isStandardSource() ? 1 : vk.k('ctrl') ? 2 : state ? 0 : 3;
+		const sel_type = idx === -1
+			? 0
+			: vk.k('shift') && this.last_sel > -1 // Regorxxx <- Allow multiple selection on playlist sources (shift, ctrl) ->
+				? 1
+				: vk.k('ctrl')
+					? 2
+					: state ? 0 : 3;
 		switch (sel_type) {
 			case 0:
 				this.clearSelected();
