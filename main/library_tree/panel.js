@@ -1516,7 +1516,7 @@ class Panel {
 			li.OrderByFormat(sortObj.tf, sortObj.direction);
 		} else {
 			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
-			if (this.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
+			if (this.isPlaylistSource() && (ppt.plsSorting || !ppt.plsFlatView)) { return; } // Regorxxx <- Multiple-playlist flat view ->
 			if (this.folderView) {
 				li.OrderByRelativePath();
 			} else {
