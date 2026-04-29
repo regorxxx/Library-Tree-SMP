@@ -875,9 +875,21 @@ class MenuItems {
 		});
 		// Regorxxx ->
 
+		// Regorxxx <- Multiple-playlist flat view
+		if (panel.getPlaylistSource().length > 1) {
+			menu.newItem({
+				menuName: appendTo ? 'Views' : void (0),
+				str: 'Multi-branch playlist view',
+				func: () => { ppt.toggle('plsFlatView'); lib.treeState(false, 2); },
+				checkItem: !ppt.plsFlatView,
+				separator: true
+			});
+		}
+		// Regorxxx ->
+
 		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
-		const isQueueLike = panel.isQueueLikeSource();
 		const isPlsLike = panel.isPlaylistSource();
+		const isQueueLike = panel.isQueueLikeSource();
 		if (isQueueLike) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),

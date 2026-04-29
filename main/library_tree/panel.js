@@ -2246,7 +2246,7 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup | Multiple-playlist flat view
 	getFixedPlaylistSources() {
 		const fixedPlaylistIndex = [];
 		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {

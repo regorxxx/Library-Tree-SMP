@@ -1135,17 +1135,45 @@ class Library {
 		}
 
 		if (!treeArtToggle || !panel.samePattern) {
+			// Regorxxx <- Multiple-playlist flat view
+			this.playlistSourceRoot = !ppt.plsFlatView && (panel.isFixedPlaylistSource() || panel.isAllPlaylistSource(true))
+				? panel.getPlaylistSource().map((idx) => {
+					return { idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: plman.PlaylistItemCount(idx) };
+				})
+				: [];
+			const roots = this.playlistSourceRoot.filter((pls) => pls && pls.count);
 			switch (tree_type) {
 				case 0: {
 					let tfo = FbTitleFormat(panel.view);
 					const splitter = panel.splitter;
-					tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(splitter));
+					if (roots.length) {
+						let j = 0;
+						tfo.EvalWithMetadbs(li).forEach((v, i) => {
+							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
+							arr[i] = [roots[0].name, ...v.split(splitter)];
+							j++;
+						});
+						if (j >= roots[0].count) { roots.splice(0, 1); }
+					} else {
+						tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(splitter));
+					}
 					break;
 				}
-				case 1:
-					li.GetLibraryRelativePaths().forEach((v, i) => arr[i] = v.length ? v.split('\\') : ['File(s) Not In Library']);
+				case 1: {
+					if (roots.length) {
+						let j = 0;
+						li.GetLibraryRelativePaths().forEach((v, i) => {
+							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
+							arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
+							j++;
+						});
+					} else {
+						li.GetLibraryRelativePaths().forEach((v, i) => arr[i] = v.length ? v.split('\\') : ['File(s) Not In Library']);
+					}
 					break;
+				}
 			}
+			// Regorxxx ->
 			if (panel.imgView && panel.lines == 2) this.checkLines(arr);
 			if (panel.imgView && panel.lines == 2) this.expandArr(arr);
 		} else {
