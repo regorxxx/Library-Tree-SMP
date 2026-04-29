@@ -971,7 +971,7 @@ class MenuItems {
 			separator: true
 		});
 		menu.newMenu({ menuName: 'Select playlist(s)', appendTo: appendTo ? 'Source' : void (0), flags: sourceIdx === 2 ? MF_STRING : MF_GRAYED }); // Regorxxx <- Don't allow playlist selection if source is not playlist ->
-		// Regorxxx <- Playing playlist source
+		// Regorxxx <- Active/Playing/All playlist source
 		menu.newItem({
 			menuName: 'Select playlist(s)',
 			str: 'Active playlist',
@@ -983,6 +983,12 @@ class MenuItems {
 			str: 'Playing playlist',
 			func: () => this.setPlayingPlaylist(),
 			checkRadio: panel.isPlayingPlaylistSource(true)
+		});
+		menu.newItem({
+			menuName: 'Select playlist(s)',
+			str: 'All playlists',
+			func: () => this.setAllPlaylist(),
+			checkRadio: panel.isAllPlaylistSource(true)
 		});
 		menu.newItem({ menuName: 'Select playlist(s)', separator: true });
 		if (panel.isPlayingPlaylistSource(true)) {
@@ -1231,18 +1237,24 @@ class MenuItems {
 		this.r_up = false;
 	}
 
-	// Regorxxx <- Preset rules | Playing playlist source
+	// Regorxxx <- Preset rules | Active/Playing/All playlist source
 	setActivePlaylist({ bSkipPresets = false } = {}) {
-		ppt.playingPlaylist = false;
+		ppt.plsSource = 0;
 		this.setPlaylistSource({ bSkipPresets, fixedPlaylistName: 'ActivePlaylist' });
 	}
 
 	setPlayingPlaylist({ bSkipPresets = false } = {}) {
-		ppt.playingPlaylist = true;
+		ppt.plsSource = 1;
 		this.setPlaylistSource({ bSkipPresets, fixedPlaylistName: 'PlayingPlaylist' });
 	}
-	
+
+	setAllPlaylist({ bSkipPresets = false } = {}) {
+		ppt.plsSource = 2;
+		this.setPlaylistSource({ bSkipPresets, fixedPlaylistName: 'All' });
+	}
+
 	setPlaylistSource({ bSkipPresets = false, fixedPlaylistName = 'ActivePlaylist' } = {}) {
+		ppt.libSource = 0;
 		ppt.fixedPlaylist = false;
 		ppt.fixedPlaylistName = fixedPlaylistName;
 		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {

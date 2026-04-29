@@ -5,6 +5,7 @@
 
 /* global IDC_WAIT:readable, IDC_ARROW:readable */
 /* global globQuery:readable, globTags:readable */
+/* global isArrayEqual:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
 /* global shuffleByTags:readable */
@@ -49,7 +50,10 @@ class Library {
 		this.filterSort = null;
 		this.validFilter = true;
 		// Regorxxx ->
-		this.playlistSourceIdx = -1; // Regorxxx <-  Playing playlist source ->
+		// Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view
+		this.playlistSourceIdx = [-1];
+		this.playlistSourceRoot = [];
+		// Regorxxx ->
 
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
@@ -74,7 +78,7 @@ class Library {
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
 			if (typeof playlistIndex !== 'undefined') {
-				this.playlistSourceIdx = playlistIndex;
+				if (!panel.isAllPlaylistSource(true)) { this.playlistSourceIdx = [playlistIndex]; }
 				if (playlistIndex !== -1) { on_item_focus_change(playlistIndex); }
 			}
 			if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
@@ -627,19 +631,25 @@ class Library {
 			panel.getFixedPlaylistSources().forEach((idx) => fixedPlaylistIndex.push(idx));
 			if (fixedPlaylistIndex.length === 0) {
 				ppt.fixedPlaylist = false;
-				ppt.playingPlaylist = false;
+				ppt.plsSource = 0;
 				ppt.libSource = 0;
 			}
 		}
 		// Regorxxx ->
 		if (!items) {
-			this.playlistSourceIdx = -1; // Regorxxx <-  Playing playlist source ->
+			this.playlistSourceIdx = [-1]; // Regorxxx <-  Active/Playing/All playlist source ->
+			this.playlistSourceRoot = []; // Regorxxx <-  Active/Playing/All playlist source ->
 			// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 			switch (ppt.libSource) {
-				// Regorxxx <- Playing playlist source
+				// Regorxxx <- Active/Playing/All playlist source
 				case 0: {
 					this.playlistSourceIdx = panel.getPlaylistSource();
-					this.list = this.playlistSourceIdx === -1 ? new FbMetadbHandleList() : plman.GetPlaylistItems(this.playlistSourceIdx);
+					this.list = isArrayEqual(this.playlistSourceIdx, [-1])
+						? new FbMetadbHandleList()
+						: this.playlistSourceIdx.reduce((prev, idx) => {
+							prev.AddRange(plman.GetPlaylistItems(idx));
+							return prev;
+						}, new FbMetadbHandleList());
 					break;
 				}
 				// Regorxxx ->
@@ -821,10 +831,15 @@ class Library {
 		// Regorxxx ->
 		// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible
 		switch (ppt.libSource) {
-			// Regorxxx <- Playing playlist source
+			// Regorxxx <- Active/Playing/All playlist source
 			case 0: {
-				const idx = panel.getPlaylistSource();
-				this.list = idx === -1 ? new FbMetadbHandleList() : plman.GetPlaylistItems(idx);
+				this.playlistSourceIdx = panel.getPlaylistSource();
+				this.list = isArrayEqual(this.playlistSourceIdx, [-1])
+					? new FbMetadbHandleList()
+					: this.playlistSourceIdx.reduce((prev, idx) => {
+						prev.AddRange(plman.GetPlaylistItems(idx));
+						return prev;
+					}, new FbMetadbHandleList());
 				break;
 			}
 			// Regorxxx ->
@@ -1627,13 +1642,9 @@ class Library {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Playing playlist source | Code cleanup
+	// Regorxxx <- Active/Playing/All playlist source | Code cleanup
 	playingPlaylistNeedsUpdate(plsIdx) {
-		return this.playlistSourceIdx !== plsIdx;
-	}
-
-	activePlaylistNeedsUpdate(plsIdx) {
-		return panel.getPlaylistSource() === plsIdx;
+		return !isArrayEqual(this.playlistSourceIdx, [plsIdx]);
 	}
 	// Regorxxx ->
 }

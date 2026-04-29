@@ -8,6 +8,7 @@
 
 ## [Unreleased][]
 ### Added
+- Sources: new 'All playlists' type source available for playlist sources, similar to Active playlist or Playing playlist but tracking all available playlists (Current or new ones). i.e. it serves as a playlists content viewer.
 ### Changed
 - UI: improved mouse cursor effects in some cases.
 - Sources: when selecting multiple playlist, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed.

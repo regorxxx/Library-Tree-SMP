@@ -1,11 +1,11 @@
 ﻿'use strict';
-//27/04/26
+//29/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
-/* global _qCond:readable */
+/* global _qCond:readable, isArrayEqual:readable */
 /* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
 
 /* exported Panel */
@@ -206,8 +206,9 @@ class Panel {
 		if (typeof s === 'string') {
 			const sourceIdx = this.getSourceIdxFromSettings();
 			const sourceType = this.getSourceType(sourceIdx);
-			const sourceName = sourceIdx === 0 && plman.ActivePlaylist !== -1 ? plman.GetPlaylistName(plman.ActivePlaylist) : '';
-			const sourceId = sourceIdx === 0 && plman.ActivePlaylist !== -1 ? plman.GetGUID(plman.ActivePlaylist) : '';
+			const plsIdx = this.getPlaylistSource();
+			const sourceName = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetPlaylistName(idx)).join('\', \'');
+			const sourceId = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetGUID(idx)).join('\', \'');
 			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(','))
 				.replace(/\$nodename/gi, sanitizeTagTfo((node || {}).nm || '-N/A-'))
 				.replace(/\$sourcetype/gi, sanitizeTagTfo(sourceType || '-N/A-'))
@@ -1474,7 +1475,7 @@ class Panel {
 	}
 
 	setRootName() {
-		this.sourceName = [this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist', this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Playing playlist source ->
+		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
 		this.viewName = this.grp[ppt.viewBy].name;
 		switch (ppt.rootNode) {
 			case 1:
@@ -2245,7 +2246,7 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Playing playlist source | Code cleanup
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup
 	getFixedPlaylistSources() {
 		const fixedPlaylistIndex = [];
 		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
@@ -2257,29 +2258,42 @@ class Panel {
 	}
 
 	getPlaylistSource() {
-		return ppt.libSource > 0
-			? ppt.fixedPlaylist
+		if (plman.PlaylistCount === 0) { return [-1]; }
+		if (ppt.libSource > 0) {
+			return ppt.libSource === 1 && ppt.fixedPlaylist
 				? this.getFixedPlaylistSources()
-				: -1
-			: ppt.playingPlaylist
-				? plman.PlayingPlaylist === -1
-					? ppt.playlistFallback
-						? plman.ActivePlaylist
-						: plman.PlayingPlaylist
-					: fb.IsPlaying
-						? plman.PlayingPlaylist
-						: ppt.playlistFallbackStop
-							? plman.ActivePlaylist
-							: plman.PlayingPlaylist
-				: plman.ActivePlaylist;
+				: [-1];
+		} else {
+			switch (ppt.plsSource) {
+				case 2:
+					return $.range(0, plman.PlaylistCount - 1);
+				case 1:
+					return plman.PlayingPlaylist === -1
+						? ppt.playlistFallback
+							? [plman.ActivePlaylist]
+							: [-1]
+						: fb.IsPlaying
+							? [plman.PlayingPlaylist]
+							: ppt.playlistFallbackStop
+								? [plman.ActivePlaylist]
+								: [plman.PlayingPlaylist];
+				case 0:
+				default:
+					return [plman.ActivePlaylist];
+			}
+		}
 	}
 
 	isActivePlaylistSource(fromProperty) {
-		return ppt.libSource === 0 && (fromProperty ? !ppt.playingPlaylist : this.getPlaylistSource() === plman.ActivePlaylist);
+		return ppt.libSource === 0 && (fromProperty ? ppt.plsSource === 0 : isArrayEqual(this.getPlaylistSource(), [plman.ActivePlaylist]));
 	}
 
 	isPlayingPlaylistSource(fromProperty) {
-		return ppt.libSource === 0 && ppt.playingPlaylist && (fromProperty ? true : this.getPlaylistSource() === plman.PlayingPlaylist);
+		return ppt.libSource === 0 && ppt.plsSource === 1 && (fromProperty ? true : isArrayEqual(this.getPlaylistSource(), [plman.PlayingPlaylist]));
+	}
+
+	isAllPlaylistSource(fromProperty) {
+		return ppt.libSource === 0 && (fromProperty ? ppt.plsSource === 2 : isArrayEqual(this.getPlaylistSource(), $.range(0, plman.PlaylistCount - 1)));
 	}
 
 	isNonFixedPlaylistSource() {

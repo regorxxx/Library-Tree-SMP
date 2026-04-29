@@ -2,6 +2,7 @@
 //29/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
+/* global isArrayEqual:readable */
 /* global dropEffect:readable */
 /* global MK_CONTROL:readable, VK_SHIFT:readable, VK_CONTROL:readable */
 
@@ -61,7 +62,7 @@ addEventListener('on_get_album_art_done', (handle, art_id, image, image_path) =>
 addEventListener('on_item_focus_change', (playlistIndex) => {
 	lib.checkFilter('selection'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns ->
 	if (pop.setFocus) { pop.setFocus = false; }
-	else if (ppt.followPlaylistFocus && playlistIndex === panel.getPlaylistSource()) { // Regorxxx <- Playing playlist source ->
+	else if (ppt.followPlaylistFocus && isArrayEqual(panel.getPlaylistSource(), [playlistIndex])) { // Regorxxx <- Active/Playing/All playlist source ->
 		setSelection(fb.GetFocusItem());
 	}
 	ui.focus_changed();
@@ -553,7 +554,7 @@ addEventListener('on_playback_new_track', (handle) => {
 	on_queue_changed(); // Regorxxx <- Now playing index ->
 });
 
-// Regorxxx <- Playing playlist source
+// Regorxxx <- Active/Playing/All playlist source
 addEventListener('on_playback_starting', () => {
 	if (panel.isPlayingPlaylistSource(true)) {
 		const idx = panel.getPlaylistSource();
@@ -561,6 +562,9 @@ addEventListener('on_playback_starting', () => {
 			lib.playlist_update(idx);
 			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 		}
+	} else if (panel.isAllPlaylistSource(true)) {
+		lib.playlist_update();
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 });
 // Regorxxx ->
@@ -577,6 +581,9 @@ addEventListener('on_playback_stop', (reason) => {
 			lib.playlist_update(idx);
 			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 		}
+	} else if (panel.isAllPlaylistSource(true)) {
+		lib.playlist_update();
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
@@ -601,55 +608,46 @@ addEventListener('on_playlists_changed', () => {
 			lib.playlist_update();
 			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 		}
-	// Regorxxx ->
-	// Regorxxx <- Playing playlist source
+		// Regorxxx ->
+		// Regorxxx <- Active/Playing/All playlist source
 	} else if (panel.isPlayingPlaylistSource(true)) {
 		const idx = panel.getPlaylistSource();
 		if (lib.playingPlaylistNeedsUpdate(idx)) {
 			lib.playlist_update(idx);
 			lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 		}
+	} else if (panel.isAllPlaylistSource(true)) {
+		lib.playlist_update();
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}
 	// Regorxxx ->
 });
 
 addEventListener('on_playlist_items_added', (playlistIndex) => {
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	if (panel.isFixedPlaylistSource()) {
-		const fixedPlaylistIndex = panel.getFixedPlaylistSources();
-		if (fixedPlaylistIndex.includes(playlistIndex)) {
-			lib.playlist_update(playlistIndex);
-			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
-			return;
-		}
-		// Regorxxx ->
-	} else if (panel.getPlaylistSource() === playlistIndex) { // Regorxxx <- Playing playlist source ->
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		lib.playlist_update(playlistIndex);
-		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}
+	// Regorxxx ->
 });
 
 addEventListener('on_playlist_items_removed', (playlistIndex) => {
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	if (panel.isFixedPlaylistSource()) {
-		const fixedPlaylistIndex = panel.getFixedPlaylistSources();
-		if (fixedPlaylistIndex.includes(playlistIndex)) {
-			lib.playlist_update(playlistIndex);
-			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
-			return;
-		}
-		// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-	} else if (lib.activePlaylistNeedsUpdate(playlistIndex)) { // Regorxxx <- Playing playlist source ->
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		lib.playlist_update(playlistIndex);
-		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}
+	// Regorxxx ->
 });
 
 addEventListener('on_playlist_items_reordered', (playlistIndex) => {
-	if (lib.activePlaylistNeedsUpdate(playlistIndex)) { // Regorxxx <- Playing playlist source ->
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		lib.playlist_update(playlistIndex);
-		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}
+	// Regorxxx ->
 });
 
 addEventListener('on_playlist_switch', () => {
@@ -663,7 +661,7 @@ addEventListener('on_playlist_switch', () => {
 		};
 	}
 	// Regorxxx ->
-	if (panel.isActivePlaylistSource()) { // Regorxxx <- Playing playlist source ->
+	if (panel.isActivePlaylistSource()) { // Regorxxx <- Active/Playing/All playlist source ->
 		lib.playlist_update();
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/04/26
+//29/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -320,9 +320,9 @@ let properties = [
 	['Library Source: Active Playlist Follow Focus', true, 'followPlaylistFocus'],
 	['Library Source: Fixed Playlist', false, 'fixedPlaylist'],
 	['Library Source: Fixed Playlist Name', '', 'fixedPlaylistName'],
-	['Library Source: Playing Playlist', false, 'playingPlaylist'], // Regorxxx <- Playing playlist source ->
-	['Library Source: Playing Playlist Fallback', false, 'playlistFallback'], // Regorxxx <- Playing playlist source ->
-	['Library Source: Playing Playlist Fallback Stopped', false, 'playlistFallbackStop'], // Regorxxx <- Playing playlist source ->
+	['Library Source: Playlist 0-Active 1-Playing 2-All', 0, 'plsSource'], // Regorxxx <- Active/Playing/All playlist source ->
+	['Library Source: Playing Playlist Fallback', false, 'playlistFallback'], // Regorxxx <- Active/Playing/All playlist source ->
+	['Library Source: Playing Playlist Fallback Stopped', false, 'playlistFallbackStop'], // Regorxxx <- Active/Playing/All playlist source ->
 	['Library Source: Playback Queue force sorting', true, 'queueSorting'], // Regorxxx <- Queue source ->
 	['Library Source: Playback Queue show now playing', true, 'queueNowPlaying'], // Regorxxx <- Queue source ->
 	['Library Source: Use cache (experimental)', true, 'libSourceCache'], // Regorxxx <- Internal cache of views ->
