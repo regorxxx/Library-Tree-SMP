@@ -1812,7 +1812,7 @@ class Populate {
 					return;
 				}
 				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-				if (!panel.isStandardSource()) {
+				if (!panel.isStandardSource()) { // TODO Mouse actions on playlist sources
 					const plsIdxArr = panel.getPlaylistSource(); // Regorxxx <- Active/Playing/All playlist source ->
 					if (plsIdxArr.length !== 0) {
 						for (let plsIdx of plsIdxArr) {
@@ -1825,7 +1825,6 @@ class Populate {
 					return;
 				}
 				// Regorxxx ->
-
 				if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) return this.send(item, x, y);
 				if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
 					this.expandCollapse(x, y, item, ix);
@@ -1980,24 +1979,40 @@ class Populate {
 		if (ppt.touchControl && (this.autoFill.mouse || this.autoPlay.click) && ui.id.touch_dn != ix) { return; }
 		const item = this.tree[ix];
 		if (this.clicked_on != 'text') { return; }
-		if (!panel.isStandardSource()) { return this.setPlaylistSelection(ix, item); }
-		if (vk.k('alt')) {
-			this.mbtnUpOrAltClickUp(x, y, '', 'alt');
-			return;
-		}
-		if (vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
-		else {
-			this.clearSelected();
-			if (!item.sel) this.setTreeSel(ix, item.sel);
-		}
-		if (this.autoFill.mouse || this.autoPlay.click) {
-			window.Repaint(true);
-			this.send(item, x, y);
+		// Regorxxx <- Mouse actions on playlist sources
+		if (panel.isStandardSource()) {
+			if (vk.k('alt')) {
+				this.mbtnUpOrAltClickUp(x, y, '', 'alt');
+				return;
+			}
+			if (vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
+			else {
+				this.clearSelected();
+				if (!item.sel) this.setTreeSel(ix, item.sel);
+			}
+			if (this.autoFill.mouse || this.autoPlay.click) {
+				window.Repaint(true);
+				this.send(item, x, y);
+			} else {
+				panel.treePaint();
+			}
+			this.track(this.autoFill.mouse || this.autoPlay.click);
+			lib.treeState(false, ppt.rememberTree);
 		} else {
-			panel.treePaint();
+			if (ppt.plsActions) {
+				if (this.autoFill.mouse || this.autoPlay.click) {
+					this.setPlaylistSelection(ix, item);
+				}
+				if (this.autoPlay.click) {
+					const parent = this.getPlaylistParentIdx(item);
+					if (!isArrayEqual(parent, [-1])) {
+						plman.ExecutePlaylistDefaultAction(parent[0], plman.GetPlaylistFocusItemIndex(parent[0]));
+					}
+				}
+				this.track(this.autoFill.mouse || this.autoPlay.click);
+			} else { this.setPlaylistSelection(ix, item); }
 		}
-		this.track(this.autoFill.mouse || this.autoPlay.click);
-		lib.treeState(false, ppt.rememberTree);
+		// Regorxxx ->
 	}
 	// Regorxxx ->
 
@@ -2145,7 +2160,7 @@ class Populate {
 		this.mbtn_dbl_clicked = false;
 	}
 
-	mbtnDblClickOrAltDblClick(x, y, mask, type) {
+	mbtnDblClickOrAltDblClick(x, y, mask, type) { // TODO Mouse actions on playlist sources
 		this[`${type}_dbl_clicked`] = true;
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			const ix = this.get_ix(x, y, true, false);
@@ -2166,7 +2181,7 @@ class Populate {
 		}
 	}
 
-	mbtnUpOrAltClickUp(x, y, mask, type) {
+	mbtnUpOrAltClickUp(x, y, mask, type) { // TODO Mouse actions on playlist sources
 		if (this[`${type}_dbl_clicked`]) return;
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			setTimeout(() => { // timeout: wait & see if double click, but adds a little lag to single click: timeout can be commented out
