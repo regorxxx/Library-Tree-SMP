@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/04/26
+//30/04/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -479,10 +479,11 @@ let properties = [
 	['Zoom Tooltip [Button] (%)', 100, 'zoomTooltipBut'],
 
 
-	['Logging library profiler', true, 'logLibProfiler'], // Regorxxx <- Library profiling
-	['Statistics Rating/Popularity Decimals', 1, 'ratingDecimals'], // Regorxxx <- Rating decimals
-	['Playlist: Prefer internal cache (if supported)', true, 'panelInternalCache'], // Regorxxx <- Don't create cache playlists if possible
-	['Library Source: Chained source notifications', true, 'libSourceChained'], // Regorxxx <- Chained facets updates
+	['Logging library profiler', true, 'logLibProfiler'], // Regorxxx <- Library profiling ->
+	['Statistics Rating/Popularity Decimals', 1, 'ratingDecimals'], // Regorxxx <- Rating decimals ->
+	['Playlist: Prefer internal cache (if supported)', true, 'panelInternalCache'], // Regorxxx <- Don't create cache playlists if possible ->
+	['Playlist: Use Mouse actions on playlist sources', true, 'plsActions'], // Regorxxx <- Mouse actions on playlist sources ->
+	['Library Source: Chained source notifications', true, 'libSourceChained'], // Regorxxx <- Chained facets updates ->
 	// Regorxxx <- Drag n' drop to search box
 	['Search Drag n\' Drop Method (Auto=0, Tags=1, Disabled=-1)', 0, 'searchDragMethod'],
 	['Search Drag n\' Drop Tags (no modifier)', JSON.stringify([{from:[globTags.artistRaw,'ALBUMARTISTS','INVOLVEDPEOPLE'], to:[globTags.artistRaw]}]), 'searchDragTags'],
