@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/04/26
+//30/04/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1741,11 +1741,16 @@ class Panel {
 						const name = node.root
 							? '- All -'
 							: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
-						text = (
-							(mask & MK_CONTROL) === MK_CONTROL
-								? 'Add tracks to playlist '
-								: 'Move tracks to playlist '
-						) + name;
+						const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
+						if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls) {
+							text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
+						} else {
+							text = (
+								(mask & MK_CONTROL) === MK_CONTROL
+									? 'Add tracks to playlist '
+									: 'Move tracks to playlist '
+							) + name;
+						}
 					}
 				}
 			} else { // Tags

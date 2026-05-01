@@ -1,5 +1,5 @@
 'use strict';
-//29/04/26
+//30/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -275,8 +275,9 @@ class Populate {
 				rootNode = br.child[i];
 				for (let j = i; j < lib.playlistSourceRoot.length; j++) {
 					plsRootNode = lib.playlistSourceRoot[j];
-					if (plsRootNode.name === rootNode.nm && plsRootNode.count === rootNode.item[0].count) {
+					if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
 						plsRootNode.node = rootNode;
+						rootNode.plsRoot = true;
 					}
 				}
 			}
@@ -3253,11 +3254,23 @@ class Populate {
 	}
 
 	getPlaylistParent(node) {
+		if (!node) { return []; }
+		const parent = this.getTopParent(node);
+		return parent.root
+			? lib.playlistSourceRoot
+			: lib.playlistSourceRoot.filter((root) => root.node === parent);
+	}
+
+	isPlaylistParent(node) {
+		return node && node.plsRoot === true;
+	}
+
+	getPlaylistParentIdx(node) {
 		if (!node) { return [-1]; }
 		const parent = this.getTopParent(node);
 		return parent.root
 			? panel.getPlaylistSource()
-			: [(lib.playlistSourceRoot.find((root) => root.node === parent) || { idx: -1 }).idx];
+			: lib.playlistSourceRoot.filter((root) => root.node === parent).map((p) => p.idx);
 	}
 	// Regorxxx ->
 }

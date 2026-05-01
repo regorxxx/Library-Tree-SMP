@@ -1,5 +1,5 @@
 'use strict';
-//29/04/26
+//30/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -839,17 +839,25 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 		} else if (!panel.isStandardSource() && (ppt.plsSource < 2 || !ppt.plsFlatView)) {
 			const plsIdxArr = ppt.plsSource < 2
 				? panel.getPlaylistSource()
-				: pop.getPlaylistParent(pop.tree[pop.row.i]);
+				: pop.getPlaylistParentIdx(pop.tree[pop.row.i]);
 			if ((mask & MK_CONTROL) === MK_CONTROL) {
 				panel.addToPlaylist(selItems, plsIdxArr, true);
 			} else {
 				if (action.IsInternal) {
-					if (fb.GetSelectionType() === 0) {
-						panel.getPlaylistSource().forEach((idx) => {
-							if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
-						});
+					const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
+					if (isAllPls) {
+						const parent = pop.lastSelMul.flatMap((idx) => pop.getPlaylistParentIdx(pop.tree[idx]));
+						const toIdx = plsIdxArr[0];
+						parent.filter((idx) => idx > toIdx).forEach((idx) => plman.MovePlaylist(idx, toIdx));
+						parent.filter((idx) => idx < toIdx).reverse().forEach((idx) => plman.MovePlaylist(idx, toIdx));
+					} else {
+						if (fb.GetSelectionType() === 0) {
+							panel.getPlaylistSource().forEach((idx) => {
+								if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
+							});
+						}
+						panel.addToPlaylist(selItems, plsIdxArr, true);
 					}
-					panel.addToPlaylist(selItems, plsIdxArr, true);
 				} else {
 					if (fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
 					panel.addToPlaylist(selItems, plsIdxArr, true);
