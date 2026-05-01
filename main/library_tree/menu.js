@@ -1,10 +1,11 @@
 'use strict';
-//29/04/26
+//30/04/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
-/* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable */
+/* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
 /* global _explorer:readable */
+/* global isArrayEqual:readable */
 /* global Input:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
@@ -244,13 +245,21 @@ class MenuItems {
 				});
 				menu.newItem({ separator: true });
 			} else {
-				// Regorxxx <- Code cleanup
-				['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter', 'Send to new playlist' + '\tCtrl+enter'].forEach((v, i) => menu.newItem({
-					str: v,
-					func: () => this.setPlaylist(i),
-					flags: this.getPaylistFlag(i),
-					separator: i == 2
-				}));
+				// Regorxxx <- Code cleanup | Hide irrelevant entries for playlist sources
+				if (!panel.isActivePlaylistSource() && !isArrayEqual(pop.getPlaylistParentIdx(pop.tree[this.ix]), [plman.ActivePlaylist])) {
+					['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter']
+						.forEach((v, i) => menu.newItem({
+							str: v,
+							func: () => this.setPlaylist(i),
+							flags: this.getPaylistFlag(i)
+						}));
+				}
+				menu.newItem({
+					str: 'Send to new playlist' + '\tCtrl+enter',
+					func: () => this.setPlaylist(2),
+					flags: this.getPaylistFlag(2),
+					separator: true
+				});
 				// Regorxxx ->
 				// Regorxxx <- Top tracks
 				{
@@ -355,6 +364,128 @@ class MenuItems {
 				separator: i == 1 && this.show_context && (!ppt.settingsShow && !ppt.searchShow && !ppt.filterShow || this.shift)
 			}));
 		}
+
+		// Regorxxx <- Basic playlist manager
+		if (this.validItem && (panel.isAllPlaylistSource(true) || panel.isFixedPlaylistSource()) && !ppt.plsFlatView) {
+			const parent = pop.lastSelMul.flatMap((idx) => pop.getPlaylistParent(pop.tree[idx]));
+			const isValidPls = parent.length === 1 && parent[0].idx !== -1;
+			const isMultiplePls = parent.length > 1;
+			const locks = isValidPls ? plman.GetPlaylistLockedActions(parent[0].idx) : [];
+			const names = parent.map((p) => p.name);
+			const menuName = isMultiplePls ? 'Playlists' : 'Playlist';
+			menu.newItem({ separator: true });
+			menu.newMenu({ menuName, appendTo: 'baseMenu' });
+			if (isMultiplePls) {
+				menu.newItem({
+					menuName,
+					str: 'Duplicate',
+					func: () => parent.reverse().forEach((p) => plman.DuplicatePlaylist(p.idx, p.name + ' (copy)'))
+				});
+				if (new Set(names).size !== names.length) {
+					menu.newItem({ menuName, separator: true });
+					menu.newItem({
+						menuName,
+						str: 'Split with same name',
+						func: () => {
+							const dic = {};
+							names.forEach((name) => {
+								if (dic[name]) { dic[name].count++; }
+								else { dic[name] = { count: 1, curr: 0 }; }
+							});
+							parent.forEach((p) => {
+								if (dic[p.name].count > 1 && dic[p.name].curr !== dic[p.name].count) {
+									dic[p.name].curr++;
+									plman.RenamePlaylist(p.idx, p.name + ' (' + dic[p.name].curr + ')');
+								}
+							});
+						}
+					});
+				}
+			} else {
+				menu.newItem({
+					menuName,
+					str: 'Duplicate...',
+					func: () => {
+						const name = Input.string('string', parent[0].name + ' (copy)', 'Set new playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name + ' (copy)') || (Input.isLastEqual ? Input.lastInput : null);
+						if (name === null || name === parent[0].name) { return null; }
+						plman.DuplicatePlaylist(parent[0].idx, name);
+					},
+					flags: isValidPls
+				});
+				menu.newItem({
+					menuName,
+					str: 'Rename...',
+					func: () => {
+						const name = Input.string('string', parent[0].name, 'Set playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name);
+						if (name === null) { return null; }
+						plman.RenamePlaylist(parent[0].idx, name);
+					},
+					flags: isValidPls && !locks.includes('RenamePlaylist') ? MF_STRING : MF_GRAYED
+				});
+				menu.newItem({ menuName, separator: true });
+				menu.newItem({
+					menuName,
+					str: 'Save as...',
+					func: () => fb.SavePlaylist(),
+					flags: isValidPls ? MF_STRING : MF_GRAYED
+				});
+			}
+			menu.newItem({ menuName, separator: true });
+			{
+				const subMenuName = 'Sort';
+				menu.newMenu({ menuName: subMenuName, appendTo: menuName });
+				menu.newItem({
+					menuName: subMenuName,
+					str: 'Move up',
+					func: () => {
+						parent.forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx - 1, 0)));
+						pop.sel_items = []; // Force recreating selection
+					}
+				});
+				menu.newItem({
+					menuName: subMenuName,
+					str: 'Move down',
+					func: () => {
+						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx + 1, plman.PlaylistCount - 1)));
+						pop.sel_items = []; // Force recreating selection
+					}
+				});
+				menu.newItem({ menuName: subMenuName, separator: true });
+				menu.newItem({
+					menuName: subMenuName,
+					str: 'Move to top',
+					func: () => {
+						parent.forEach((p) => plman.MovePlaylist(p.idx, 0));
+						pop.sel_items = []; // Force recreating selection
+					}
+				});
+				menu.newItem({
+					menuName: subMenuName,
+					str: 'Move to bottom',
+					func: () => {
+						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, plman.PlaylistCount - 1));
+						pop.sel_items = []; // Force recreating selection
+					}
+				});
+				menu.newItem({ menuName: subMenuName, separator: true });
+				menu.newItem({
+					menuName: subMenuName,
+					str: 'Alphabetic sort (all)',
+					func: () => {
+						const bShift = utils.IsKeyPressed(VK_SHIFT);
+						plman.SortPlaylistsByName(bShift ? -1 : 1);
+					}
+				});
+			}
+			menu.newItem({ menuName, separator: true });
+			menu.newItem({
+				menuName,
+				str: 'Delete',
+				func: () => parent.reverse().forEach((p) => plman.RemovePlaylistSwitch(p.idx)),
+				flags: isValidPls && !locks.includes('RemovePlaylist') || isMultiplePls ? MF_STRING : MF_GRAYED
+			});
+		}
+		// Regorxxx ->
 
 		menu.newMenu({ menuName: 'Settings', hide: !this.show_context || ui.style.topBarShow && !this.shift });
 
