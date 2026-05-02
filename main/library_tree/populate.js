@@ -1812,20 +1812,23 @@ class Populate {
 					return;
 				}
 				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Mouse actions on playlist sources
-				if (!panel.isStandardSource()) {
-					const plsIdxArr = panel.getPlaylistSource(); // Regorxxx <- Active/Playing/All playlist source ->
-					if (plsIdxArr.length !== 0) {
-						for (let plsIdx of plsIdxArr) {
-							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
-								? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
-								: this.range(item.item)[0];
-							if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); break; }
-						}
-					}
-					return;
+				if (this.dblClickAction <= 1) {
+					if (!panel.isStandardSource()) {
+						if (ppt.plsActions && this.dblClickAction === 1) {
+							const plsIdxArr = panel.getPlaylistSource(); // Regorxxx <- Active/Playing/All playlist source ->
+							if (plsIdxArr.length !== 0) {
+								for (let plsIdx of plsIdxArr) {
+									const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
+										? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
+										: this.range(item.item)[0];
+									if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); break; }
+								}
+							}
+						} else if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) { return this.setPlaylistSelection(ix, item); }
+						return;
+					} else if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) { return this.send(item, x, y); }
 				}
 				// Regorxxx ->
-				if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) return this.send(item, x, y);
 				if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
 					this.expandCollapse(x, y, item, ix);
 					lib.treeState(false, ppt.rememberTree);
