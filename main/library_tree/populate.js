@@ -1815,13 +1815,17 @@ class Populate {
 				if (this.dblClickAction <= 1) {
 					if (!panel.isStandardSource()) {
 						if (ppt.plsActions && this.dblClickAction === 1) {
-							const plsIdxArr = panel.getPlaylistSource(); // Regorxxx <- Active/Playing/All playlist source ->
-							if (plsIdxArr.length !== 0) {
-								for (let plsIdx of plsIdxArr) {
-									const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
-										? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
-										: this.range(item.item)[0];
-									if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); break; }
+							const plsIdx = this.getPlaylistParentIdx(item); // Regorxxx <- Active/Playing/All playlist source ->
+							if (!isArrayEqual(plsIdx, [-1])) {
+								const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
+									? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
+									: this.range(item.item)[0];
+								if (idx !== -1) {
+									this.setFocus = true;
+									plman.SetPlaylistFocusItem(plsIdx, idx);
+									plman.ExecutePlaylistDefaultAction(plsIdx, idx);
+									plman.ActivePlaylist = plsIdx;
+									break;
 								}
 							}
 						} else if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) { return this.setPlaylistSelection(ix, item); }
