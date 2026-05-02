@@ -2000,6 +2000,10 @@ class Populate {
 			lib.treeState(false, ppt.rememberTree);
 		} else {
 			if (ppt.plsActions) {
+				if (vk.k('alt')) {
+					this.mbtnUpOrAltClickUp(x, y, '', 'alt');
+					return;
+				}
 				if (this.autoFill.mouse || this.autoPlay.click) {
 					this.setPlaylistSelection(ix, item);
 				}
@@ -2160,7 +2164,7 @@ class Populate {
 		this.mbtn_dbl_clicked = false;
 	}
 
-	mbtnDblClickOrAltDblClick(x, y, mask, type) { // TODO Mouse actions on playlist sources
+	mbtnDblClickOrAltDblClick(x, y, mask, type) {
 		this[`${type}_dbl_clicked`] = true;
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			const ix = this.get_ix(x, y, true, false);
@@ -2181,7 +2185,8 @@ class Populate {
 		}
 	}
 
-	mbtnUpOrAltClickUp(x, y, mask, type) { // TODO Mouse actions on playlist sources
+	// Regorxxx <- Top tracks | Mouse actions on playlist sources
+	mbtnUpOrAltClickUp(x, y, mask, type) {
 		if (this[`${type}_dbl_clicked`]) return;
 		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
 			setTimeout(() => { // timeout: wait & see if double click, but adds a little lag to single click: timeout can be commented out
@@ -2206,16 +2211,38 @@ class Populate {
 					});
 				}
 			}, 180);
-			// Regorxxx <- Top tracks
+
 		} else if ((type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
-			if (!panel.isStandardSource()) return;
-			this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
-			// Regorxxx ->
+			if (panel.isStandardSource()) {
+				this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
+			} else {
+				const ix = this.get_ix(x, y, true, false);
+				if (ix < this.tree.length && ix >= 0) {
+					const item = this.tree[ix];
+					if ([4, 6].includes(ppt[`${type}ClickAction`]) || panel.isDefaultPlaylistSource() || this.isPlaylistParentDefaultPlaylist(item)) {
+						this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
+					} else {
+						this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, true);
+					}
+				}
+			}
 		} else {
-			if (!panel.isStandardSource()) return;
-			this.add(x, y, !ppt[`${type}ClickAction`]);
+			if (panel.isStandardSource()) {
+				this.add(x, y, !ppt[`${type}ClickAction`]);
+			} else {
+				const ix = this.get_ix(x, y, true, false);
+				if (ix < this.tree.length && ix >= 0) {
+					const item = this.tree[ix];
+					if (ppt[`${type}ClickAction`] === 1 || panel.isDefaultPlaylistSource() || this.isPlaylistParentDefaultPlaylist(item)) {
+						this.setPlaylistSelection(ix, item);
+					} else {
+						this.add(x, y, !ppt[`${type}ClickAction`]);
+					}
+				}
+			}
 		}
 	}
+	// Regorxxx ->
 
 	merge(m, mergeBrCount) {
 		if (!panel.isStandardSource() && !panel.multiProcess) return;
@@ -2720,8 +2747,8 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Support playlist sorting | Support SORT BY query sorting | Select duplicates handles | Active/Playing/All playlist source | Allow multiple selection on playlist sources (shift, ctrl)
-	setPlaylistSelection(ix, item, plsIdxArr = panel.getPlaylistSource()) {
+	// Regorxxx <- Support playlist sorting | Support SORT BY query sorting | Select duplicates handles | Active/Playing/All playlist source | Allow multiple selection on playlist sources (shift, ctrl) | Mouse actions on playlist sources
+	setPlaylistSelection(ix, item, plsIdxArr = panel.getPlaylistSource(), selectionFilter = void (0)) {
 		if (isArrayEqual(plsIdxArr, [-1])) { return; }
 		if (!vk.k('ctrl')) { this.clearSelected(); }
 		if (!item.sel) { this.setTreeSel(ix, item.sel); }
@@ -2740,7 +2767,10 @@ class Populate {
 				plman.ClearPlaylistSelection(o.idx);
 				if (o.panelSelIdx.length) {
 					if (firstPls === -1) { firstPls = o.idx; }
-					const hl = this.getHandleList(void (0), o.panelSelIdx).Convert();
+					const hl = (selectionFilter
+						? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
+						: this.getHandleList(void (0), o.panelSelIdx)
+					).Convert();
 					const list = plman.GetPlaylistItems(o.idx).Convert();
 					hl.forEach((h) => { // Select duplicates handles
 						let i = 0;
@@ -2756,8 +2786,8 @@ class Populate {
 			});
 		} else {
 			let items = [];
-			if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort) {
-				const hl = this.getHandleList().Convert();
+			if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort || selectionFilter) {
+				const hl = (selectionFilter ? selectionFilter(this.getHandleList()) : this.getHandleList()).Convert();
 				const list = lib.full_list.Convert();
 				hl.forEach((h) => { // Select duplicates handles
 					let i = 0;
@@ -3278,6 +3308,10 @@ class Populate {
 
 	isPlaylistParent(node) {
 		return node && node.plsRoot === true;
+	}
+
+	isPlaylistParentDefaultPlaylist(node) {
+		return this.getPlaylistParent(node).every((parent) => parent.name === ppt.libPlaylist);
 	}
 
 	getPlaylistParentIdx(node) {

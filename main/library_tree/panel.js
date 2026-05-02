@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/04/26
+//02/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2350,12 +2350,20 @@ class Panel {
 		return ppt.libSource === 4;
 	}
 
+	isFileExplorerSource() {
+		return ppt.libSource === 5;
+	}
+
 	isStandardSource() {
 		return ppt.libSource > 0;
 	}
 
 	isQueueLikeSource() {
 		return ppt.libSource === 3 || ppt.libSource === 4;
+	}
+
+	isDefaultPlaylistSource() {
+		return this.isPlaylistSource() && isArrayEqual([plman.FindPlaylist(ppt.libPlaylist)], this.getPlaylistSource());
 	}
 
 	addToPlaylist(selItems, plsIdxArr, bScroll) {
