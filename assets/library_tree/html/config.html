@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 24/04/26 -->
+﻿<!DOCTYPE html> <!-- 02/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -892,7 +892,14 @@
 					<span class="dropdown" style="margin-top:0"><a id="keystroke_dropdown" class="dropbtn" href="#" onclick="return toggle('keystroke');"></a>
 						<span id="keystroke" class="dropdown-content"></span>
 					</span>
-					<div id="keystrokeDelay"><br></div>
+					<div id="plsActions"><br></div> <!-- Regorxxx Mouse actions on playlist sources -->
+					<div id="keystrokeDelay"></div> <!-- Regorxxx throttle selection playlist update | Performance improvements -->
+					<!-- Regorxxx Mouse actions on playlist sources -->
+					<div style="display:inline-block; padding-top:0.7em;"><button id="plsActions_help" onclick="showHelp('plsActions_text');return false;">Playlist sources actions help</button></div>
+					<div id="plsActions_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">While using playlist sources some mouse actions may have no purpose.<br><br>If actions are enabled on them, some will be forced to fallback to track selection (those related to 'send to playlist' or 'current playlist'), while those related to playback, queue and 'send to default playlist' will work as expected.<br><br>Disabling actions will fallback to track selection in all cases.</div>
+					</div>
+					<!-- Regorxxx -->
 					<div class="div_text6">Scroll</div>
 					<span class="info3">Bar:</span>
 					<span style="margin:0 0 0.31em;" class="dropdown"><a id="sbarShow_dropdown" class="dropbtn" href="#" onclick="return toggle('sbarShow');"></a>
@@ -1958,7 +1965,7 @@
 			// Regorxxx ->
 			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
-				behaviour: ['sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember ->
+				behaviour: ['plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2882,6 +2889,8 @@
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[ppt['keyAction_internal'].value];
 				for (i = 0; i < 2; i++) { window.keystroke.insertAdjacentHTML('beforeend', '<a onclick="setKeyAction(' + i + ');">' + keystrokeLabels[i] + '</a>'); }
 				// Regorxxx <- Throttle selection playlist update | Performance improvements
+				i = 0; window.plsActions.insertAdjacentHTML('beforeend', '<div><input id="plsActions_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsActions_checkbox' + i + '" class="checkbox_label">Use mouse actions for playlist sources</label></div>');
+				// Regorxxx ->				// Regorxxx <- Throttle selection playlist update | Performance improvements
 				i = 0; window.keystrokeDelay.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="keystroke_container' + i + '" name="behaviour_input" class="input35" /><label for="keystroke_container' + i + '" class="inp_label2">Send to playlist delay (ms)</label></div>');
 				// Regorxxx ->
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[ppt['sbarShow_internal'].value];
