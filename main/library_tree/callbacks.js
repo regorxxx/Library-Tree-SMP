@@ -781,33 +781,35 @@ addEventListener('on_drag_leave', () => {
 
 addEventListener('on_drag_over', (action, x, y, mask) => {
 	if (!ui.w || !ui.h) { return; }
+	// Regorxxx <- Scrolling during drag n' drop
+	if (!panel.isStandardSource() && !ppt.plsFlatView) {
+		let bScrolling;
+		if (panel.imgView) {
+			if (img.style.vertical) {
+				const row = pop.getArtRow(pop.row.i);
+				if (row === 0 && pop.row.i >= img.columns && y < img.row.h * 0.5 + panel.search.h) { sbar.but(1); bScrolling = true; }
+				else if (row >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && y > img.row.h * (panel.rows - 0.5) + panel.search.h) { sbar.but(-1); bScrolling = true; }
+			} else {
+				const column = pop.getArtColumn(pop.row.i);
+				if (column === 0 && pop.row.i >= img.columns && x < img.columnWidth * 0.4) { sbar.but(1); bScrolling = true; }
+				else if (column >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && x > img.columnWidth * (img.columns - 0.4)) { sbar.but(-1); bScrolling = true; }
+			}
+		} else {
+			const currRow = pop.getTreeRow(pop.row.i);
+			if (currRow === 0 && pop.row.i !== 0 && y < ui.row.h * 0.5 + panel.search.h) { sbar.but(1); bScrolling = true; }
+			else if (currRow >= pop.rows - 1 && pop.row.i !== pop.tree.length && y > ui.row.h * (pop.rows - 0.5) + panel.search.h) { sbar.but(-1); bScrolling = true; }
+		}
+		if (!bScrolling) {
+			clearTimeout(sbar.timer_but);
+			sbar.timer_but = false;
+			sbar.count = -1;
+		}
+	}
+	// Regorxxx ->
 	// Avoid invalid inputs
 	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 	// Move playlist index only while not pressing alt
 	on_mouse_move(x, y, mask);
-	// Regorxxx <- Scrolling during drag n' drop
-	let bScrolling;
-	if (panel.imgView) {
-		if (img.style.vertical) {
-			const row = pop.getArtRow(pop.row.i);
-			if (row === 0 && pop.row.i >= img.columns && y < img.row.h * 0.5 + panel.search.h) { sbar.but(1); bScrolling = true; }
-			else if (row >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && y > img.row.h * (panel.rows - 0.5) + panel.search.h) { sbar.but(-1); bScrolling = true; }
-		} else {
-			const column = pop.getArtColumn(pop.row.i);
-			if (column === 0 && pop.row.i >= img.columns && x < img.columnWidth * 0.4) { sbar.but(1); bScrolling = true; }
-			else if (column >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && x > img.columnWidth * (img.columns- 0.4)) { sbar.but(-1); bScrolling = true; }
-		}
-	} else {
-		const currRow = pop.getTreeRow(pop.row.i);
-		if (currRow === 0 && pop.row.i !== 0 && y < ui.row.h * 0.5 + panel.search.h) { sbar.but(1); bScrolling = true; }
-		else if (currRow >= pop.rows - 1 && pop.row.i !== pop.tree.length && y > ui.row.h * (pop.rows - 0.5) + panel.search.h) { sbar.but(-1); bScrolling = true; }
-	}
-	if (!bScrolling) {
-		clearTimeout(sbar.timer_but);
-		sbar.timer_but = false;
-		sbar.count = -1;
-	}
-	// Regorxxx ->
 	// Set effects
 	action.Effect = dropEffect.copy;
 	action.Text = panel.getDragDropTooltipText(ppt.searchDragMethod, mask, x, y, action.IsInternal);
