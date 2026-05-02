@@ -1811,12 +1811,12 @@ class Populate {
 					fb.Play();
 					return;
 				}
-				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
-				if (!panel.isStandardSource()) { // TODO Mouse actions on playlist sources
+				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Mouse actions on playlist sources
+				if (!panel.isStandardSource()) {
 					const plsIdxArr = panel.getPlaylistSource(); // Regorxxx <- Active/Playing/All playlist source ->
 					if (plsIdxArr.length !== 0) {
 						for (let plsIdx of plsIdxArr) {
-							const idx = panel.search.txt.length
+							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
 								? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
 								: this.range(item.item)[0];
 							if (idx !== -1) { plman.ExecutePlaylistDefaultAction(plsIdx, idx); break; }
@@ -2760,6 +2760,7 @@ class Populate {
 					? selectionFilter(this.getHandleList())
 					: this.getHandleList()
 				).Convert();
+				const firstTrack = panel.list[this.range(item.item)[0]];
 				plsIdxArr.forEach((idx) => {
 					const selItems = [];
 					plman.ClearPlaylistSelection(idx);
@@ -2768,11 +2769,11 @@ class Populate {
 						let i = 0;
 						for (const handle of list) {
 							if (handle.Compare(h)) { selItems.push(i); }
+							if (firstPls === -1 && handle.Compare(firstTrack)) { firstPls = idx; }
 							i++;
 						}
 					});
 					if (selItems.length) {
-						if (firstPls === -1) { firstPls = idx; }
 						plman.SetPlaylistSelection(idx, selItems, true);
 						this.setFocus = true;
 						plman.SetPlaylistFocusItem(idx, selItems[0]);
