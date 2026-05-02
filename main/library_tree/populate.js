@@ -1,5 +1,5 @@
 'use strict';
-//30/04/26
+//02/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1678,20 +1678,20 @@ class Populate {
 		else return -1;
 	}
 
-	// Regorxxx <- Update current item  under mouse while scrolling
+	// Regorxxx <- Update current item under mouse while scrolling
 	getTreeRow(pos) {
-		return (pos * ui.row.h - sbar.scroll) / ui.row.h;
+		return $.clamp(Math.round((pos * ui.row.h - sbar.scroll) / ui.row.h), 0, this.rows);
 	}
 
 	getArtColumn(pos) {
 		return img.style.vertical
-			? (pos % img.columns * img.columnWidth - sbar.scroll) / img.columnWidth
-			: (pos * img.columnWidth - sbar.scroll) / img.columnWidth;
+			? $.clamp(Math.round(pos % img.columns), 0, img.columns - 1)
+			: $.clamp(Math.round((pos * img.columnWidth - sbar.scroll) / img.columnWidth), 0, img.columns - 1);
 	}
 
 	getArtRow(pos) {
 		return img.style.vertical
-			? (Math.floor(pos / img.columns) * img.columnWidth - sbar.scroll) / img.columnWidth
+			? $.clamp((Math.floor(pos / img.columns) - Math.floor(sbar.scroll / img.row.h)), 0, panel.rows)
 			: 0;
 	}
 
