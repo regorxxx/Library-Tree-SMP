@@ -2755,35 +2755,60 @@ class Populate {
 		panel.treePaint();
 		let firstPls = -1;
 		if (plsIdxArr.length > 1) {
-			const items = [...this.sel_items];
-			let acc = 0;
-			const itemsPerPls = plsIdxArr.map((idx) => {
-				const count = plman.PlaylistItemCount(idx);
-				const panelSelIdx = items.filter((i) => i >= acc && i < acc + count);
-				acc += count;
-				return { idx, panelSelIdx, plsSelIdx: [] };
-			});
-			itemsPerPls.forEach((o) => {
-				plman.ClearPlaylistSelection(o.idx);
-				if (o.panelSelIdx.length) {
-					if (firstPls === -1) { firstPls = o.idx; }
-					const hl = (selectionFilter
-						? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
-						: this.getHandleList(void (0), o.panelSelIdx)
-					).Convert();
-					const list = plman.GetPlaylistItems(o.idx).Convert();
+			if (ppt.plsFlatView) {
+				const hl = (selectionFilter
+					? selectionFilter(this.getHandleList())
+					: this.getHandleList()
+				).Convert();
+				plsIdxArr.forEach((idx) => {
+					const selItems = [];
+					plman.ClearPlaylistSelection(idx);
+					const list = plman.GetPlaylistItems(idx).Convert();
 					hl.forEach((h) => { // Select duplicates handles
 						let i = 0;
 						for (const handle of list) {
-							if (handle.Compare(h)) { o.plsSelIdx.push(i); }
+							if (handle.Compare(h)) { selItems.push(i); }
 							i++;
 						}
 					});
-					plman.SetPlaylistSelection(o.idx, o.plsSelIdx, true);
-					this.setFocus = true;
-					plman.SetPlaylistFocusItem(o.idx, o.plsSelIdx[0]);
-				}
-			});
+					if (selItems.length) {
+						if (firstPls === -1) { firstPls = idx; }
+						plman.SetPlaylistSelection(idx, selItems, true);
+						this.setFocus = true;
+						plman.SetPlaylistFocusItem(idx, selItems[0]);
+					}
+				});
+			} else {
+				const items = [...this.sel_items];
+				let acc = 0;
+				const itemsPerPls = plsIdxArr.map((idx) => {
+					const count = plman.PlaylistItemCount(idx);
+					const panelSelIdx = items.filter((i) => i >= acc && i < acc + count);
+					acc += count;
+					return { idx, panelSelIdx, plsSelIdx: [] };
+				});
+				itemsPerPls.forEach((o) => {
+					plman.ClearPlaylistSelection(o.idx);
+					if (o.panelSelIdx.length) {
+						if (firstPls === -1) { firstPls = o.idx; }
+						const hl = (selectionFilter
+							? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
+							: this.getHandleList(void (0), o.panelSelIdx)
+						).Convert();
+						const list = plman.GetPlaylistItems(o.idx).Convert();
+						hl.forEach((h) => { // Select duplicates handles
+							let i = 0;
+							for (const handle of list) {
+								if (handle.Compare(h)) { o.plsSelIdx.push(i); }
+								i++;
+							}
+						});
+						plman.SetPlaylistSelection(o.idx, o.plsSelIdx, true);
+						this.setFocus = true;
+						plman.SetPlaylistFocusItem(o.idx, o.plsSelIdx[0]);
+					}
+				});
+			}
 		} else {
 			let items = [];
 			if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort || selectionFilter) {
