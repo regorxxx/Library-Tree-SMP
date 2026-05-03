@@ -39,7 +39,11 @@ class Populate {
 		this.selection_holder = fb.AcquireUiSelectionHolder();
 		this.selList = null;
 		this.setFocus = false;
-		this.specialChar = '[\\u0027\\u002D\\u00AD\\u058A\\u2010\\u2011\\u2012\\u2013\\u2014\\uFE58]';
+		// Regorxxx <- Fix sorting for quotes, apostrophes, dashes and hyphens | Fix quick-searck for quotes, apostrophes, dashes and hyphens
+		this.specialCharHyphen = '[\\u00AD\\u002D\\u058A\\u2010\\u2011\\u2012\\u2013\\u2014\\u2E5D\\u05BE\\u1806\\u2E17\\u30FB\\uFE63\\uFF0D\\uFF65\\uFE58]'; // https://en.wikipedia.org/wiki/Hyphen#Unicode
+		this.specialCharQuotes = '[\\u0022\\u0027\\u2018\\u2019\\u201A\\u201B\\u201C\\u201D\\u201E\\u201F]'; // https://en.wikipedia.org/wiki/Quotation_mark#Unicode_code_point_table
+		this.specialChar = '[' + this.specialCharHyphen.slice(1, -1) + this.specialCharQuotes.slice(1, -1) + ']';
+		// Regorxxx ->
 		this.sy_sz = 8;
 		this.tree = [];
 		this.tf = {}; // Regorxxx <- New statistics ->
@@ -3256,9 +3260,15 @@ class Populate {
 		return new RegExp('^' + this.specialChar).test(name);
 	}
 
+	// Regorxxx <- Fix sorting for quotes, apostrophes, dashes and hyphens | Fix quick-searck for quotes, apostrophes, dashes and hyphens
 	specialCharPad(name) {
 		return name.replace(new RegExp(this.specialChar + '+', 'g'), v => (v + '    ').slice(0, 5));
 	}
+
+	specialCharTransform(name) {
+		return name.replace(new RegExp(this.specialCharQuotes, 'g'), '').replace(new RegExp(this.specialCharHyphen, 'g'), ' ');
+	}
+	// Regorxxx ->
 
 	specialCharSort(data) {
 		const removed = [];
@@ -3278,12 +3288,14 @@ class Populate {
 		sorted.forEach(v => data.push(v));
 	}
 
+	// Regorxxx <- Fix sorting for quotes, apostrophes, dashes and hyphens | Fix quick-searck for quotes, apostrophes, dashes and hyphens
 	specialCharStrip(name) {
 		let [str1, ...str2] = name.split(' ');
 		str2 = str2.join(' ');
-		if (this.isDate(str1)) return `${str1} ${str2.replace(new RegExp(this.specialChar, 'g'), '')}`;
-		return name.replace(new RegExp(this.specialChar, 'g'), '');
+		if (this.isDate(str1)) { return str1 + ' ' +  this.specialCharTransform(str2); }
+		return this.specialCharTransform(name);
 	}
+	// Regorxxx ->
 
 	track(plLoaded) {
 		const list = this.getHandleList();

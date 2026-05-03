@@ -747,10 +747,13 @@ class Find {
 				this.initials = {};
 				pop.tree.forEach((v, i) => {
 					if (!v.root) {
-						// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
+						// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
 						init = ppt.findTrans
-							? $.asciify(Language.transliterate(v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase(), { languages: panel.sortingTransLangs }))
-							: $.asciify(v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase());
+							? $.asciify(pop.specialCharTransform(Language.transliterate(
+								v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase(),
+								{ languages: panel.sortingTransLangs }
+							)))
+							: $.asciify(pop.specialCharTransform(v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase()));
 						// Regorxxx ->
 						if (cur != init && !this.initials[init]) {
 							this.initials[init] = [i];
@@ -896,11 +899,11 @@ class Find {
 		let next = -1;
 		let first = -1;
 		pop.tree.some((v, i) => {
-			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
+			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
 			const name = v.name.replace(/@!#.*?@!#/g, '');
 			const nameNorm = ppt.findTrans
-				? $.asciify(Language.transliterate(name, { languages: panel.sortingTransLangs }))
-				: $.asciify(name);
+				? $.asciify(pop.specialCharTransform(Language.transliterate(name, { languages: panel.sortingTransLangs })))
+				: $.asciify(pop.specialCharTransform(name));
 			// Regorxxx ->
 			if (nameNorm != panel.rootName && (name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch) || nameNorm.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch))) {
 				if (i <= currPos) {
@@ -921,11 +924,11 @@ class Find {
 		const len = pop.tree.length - 1;
 		for (let i = len, v; i >= 0; i--) {
 			v = pop.tree[i];
-			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
+			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
 			const name = v.name.replace(/@!#.*?@!#/g, '');
 			const nameNorm = ppt.findTrans
-				? $.asciify(Language.transliterate(name, { languages: panel.sortingTransLangs }))
-				: $.asciify(name);
+				? $.asciify(pop.specialCharTransform(Language.transliterate(name, { languages: panel.sortingTransLangs })))
+				: $.asciify(pop.specialCharTransform(name));
 			// Regorxxx ->
 			if (name != panel.rootName && (name.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch) || nameNorm.toLowerCase()[this.bAnyPosition ? 'includes' : 'startsWith'](this.jSearch))) {
 				if (i >= currPos) {
