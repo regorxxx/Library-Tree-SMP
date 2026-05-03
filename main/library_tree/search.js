@@ -715,7 +715,7 @@ class Find {
 		else if (window.SetShortcutFilter) { window.SetShortcutFilter(true); } // Regorxxx <- Disable shortcuts for input boxes ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
-			const char = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase();
+			const char = pop.specialCharTransform(pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '')).trim().charAt(0).toLowerCase();
 			// Regorxxx <- Fixed quick-search on same letter | Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
 			const normChar = ppt.findTrans
 				? $.asciify(Language.transliterate(char, { languages: panel.sortingTransLangs }))
@@ -748,12 +748,13 @@ class Find {
 				pop.tree.forEach((v, i) => {
 					if (!v.root) {
 						// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
+						const char = pop.specialCharTransform(v.name.replace(/@!#.*?@!#/g, '')).trim().charAt(0).toLowerCase();
 						init = ppt.findTrans
-							? $.asciify(pop.specialCharTransform(Language.transliterate(
-								v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase(),
+							? $.asciify(Language.transliterate(
+								char.toLowerCase(),
 								{ languages: panel.sortingTransLangs }
-							)))
-							: $.asciify(pop.specialCharTransform(v.name.replace(/@!#.*?@!#/g, '').charAt(0).toLowerCase()));
+							))
+							: $.asciify(char.toLowerCase());
 						// Regorxxx ->
 						if (cur != init && !this.initials[init]) {
 							this.initials[init] = [i];
