@@ -823,14 +823,16 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 	action.Effect = dropEffect.none; // Forces not sending things to a playlist
 	const selItems = action.IsInternal
 		? pop.sortIfNeeded(pop.getHandleList('newItems'))
-		: fb.GetSelections(1);
+		: Object.hasOwn(action, 'Handles')
+			? action.Handles
+			: fb.GetSelections(1);
 	if (selItems && selItems.Count) {
 		if (search.trace(x, y)) {
 			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
 			search.clear();
 			if (input.length) {
 				input.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
-				search.on_char(vk.enter);
+				if (ppt.searchEnter && ppt.searchSend === 0) { search.on_char(vk.enter); }
 			}
 		} else if (panel.isQueueSource()) {
 			if (ppt.queueSorting && pop.row.i >= 0) {

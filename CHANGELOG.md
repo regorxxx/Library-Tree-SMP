@@ -15,6 +15,7 @@
 - Drag n' drop: playlist can be manually sorted by moving their nodes via drag n' drop while using 'Multi-branch playlist view'. Doing the same on tracks will move/copy them between playlists. To copy all tracks from a playlist to another, Ctrl may be pressed while drag n' dropping the playlist node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Drag n' drop: scrolling while using drag n' drop if mouse is near the first/last row/column on tree and art modes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 ### Changed
+- Drag n' drop: use handles provided from drag n' drop if JS-host allows it. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - UI: improved mouse cursor effects in some cases.
 - UI: contextual menu for playlist sources has been reworked and cleaned up to hide non-relevant menu entries like "Send to current playlist" while tracking the active playlist, etc. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Sources: new entries at contextual menu for playlist sources for basic playlist management: delete, rename, sort, ... See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
