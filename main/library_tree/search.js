@@ -715,12 +715,14 @@ class Find {
 		else if (window.SetShortcutFilter) { window.SetShortcutFilter(true); } // Regorxxx <- Disable shortcuts for input boxes ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
-			const char = pop.specialCharTransform(pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '')).trim().charAt(0).toLowerCase();
+			const name = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '');
+			const char = name.trim().charAt(0).toLowerCase();
+			const speChar = pop.specialCharTransform(name).trim().charAt(0).toLowerCase();
 			// Regorxxx <- Fixed quick-search on same letter | Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
 			const normChar = ppt.findTrans
-				? $.asciify(Language.transliterate(char, { languages: panel.sortingTransLangs }))
-				: $.asciify(char);
-			if (pop.tree[panel.pos].sel && (char === text || normChar === text) && this.prevChar == text) { advance = true; }
+				? $.asciify(Language.transliterate(speChar, { languages: panel.sortingTransLangs }))
+				: $.asciify(speChar);
+			if (pop.tree[panel.pos].sel && (char === text || speChar === text || normChar === text) && this.prevChar == text) { advance = true; }
 			this.prevChar = text;
 			timer.clear(timer.jsearch3);
 			timer.jsearch3.id = setTimeout(() => {
@@ -748,20 +750,34 @@ class Find {
 				pop.tree.forEach((v, i) => {
 					if (!v.root) {
 						// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
-						const char = pop.specialCharTransform(v.name.replace(/@!#.*?@!#/g, '')).trim().charAt(0).toLowerCase();
+						const name = v.name.replace(/@!#.*?@!#/g, '');
+						const char = name.trim().charAt(0).toLowerCase();
+						const speChar = pop.specialCharTransform(name).trim().charAt(0).toLowerCase();
 						init = ppt.findTrans
 							? $.asciify(Language.transliterate(
 								char.toLowerCase(),
 								{ languages: panel.sortingTransLangs }
 							))
 							: $.asciify(char.toLowerCase());
-						// Regorxxx ->
-						if (cur != init && !this.initials[init]) {
-							this.initials[init] = [i];
-							cur = init;
+						if (speChar === char) {
+							if (cur != init && !this.initials[init]) {
+								this.initials[init] = [i];
+								cur = init;
+							} else {
+								this.initials[init].push(i);
+							}
 						} else {
-							this.initials[init].push(i);
+							if (cur !== char && !this.initials[char]) {
+								this.initials[char] = [i];
+								if (this.initials[init]) { this.initials[init].push(i); }
+								else { this.initials[init] = [i]; }
+								cur = init;
+							} else {
+								this.initials[char].push(i);
+								this.initials[init].push(i);
+							}
 						}
+						// Regorxxx ->
 					}
 				});
 			}
