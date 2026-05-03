@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/05/26
+//03/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1516,7 +1516,7 @@ class Panel {
 			li.OrderByFormat(sortObj.tf, sortObj.direction);
 		} else {
 			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
-			if (this.isPlaylistSource() && (ppt.plsSorting || !ppt.plsFlatView)) { return; } // Regorxxx <- Multiple-playlist flat view ->
+			if (this.isPlaylistSource() && (ppt.plsSorting || this.isBranchedPlaylistSource())) { return; } // Regorxxx <- Multiple-playlist flat view ->
 			if (this.folderView) {
 				li.OrderByRelativePath();
 			} else {
@@ -1724,35 +1724,9 @@ class Panel {
 	// Regorxx ->
 	getDragDropTooltipText(method, mask, x, y, bInternal) {
 		let text = '';
-		if (y < this.search.h || !this.isQueueLikeSource()) {
+		if (ppt.searchShow && ppt.searchDragMethod !== -1 && search.trace(x, y)) {
 			if (method === 0 && this.folderView) { // Auto: tags or path
 				text = 'Add paths to search box';
-			} else if (!this.isStandardSource() && (ppt.plsSource < 2 || !ppt.plsFlatView && pop.row.i !== -1)) {
-				if (ppt.plsSource < 2) {
-					text = (
-						(mask & MK_CONTROL) === MK_CONTROL
-							? 'Add tracks to '
-							: 'Move tracks to '
-					) + (ppt.plsSource === 0 ? 'Active playlist' : 'Playing playlist');
-				} else {
-					const node = pop.tree[pop.row.i];
-					if (node) {
-						const parent = pop.getTopParent(node);
-						const name = node.root
-							? '- All -'
-							: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
-						const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
-						if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls) {
-							text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
-						} else {
-							text = (
-								(mask & MK_CONTROL) === MK_CONTROL
-									? 'Add tracks to playlist '
-									: 'Move tracks to playlist '
-							) + name;
-						}
-					}
-				}
 			} else { // Tags
 				const searchTags = search.getDragDropTags(mask);
 				const operators = search.getDragDropOperators(mask);
@@ -1761,19 +1735,49 @@ class Panel {
 					: searchTags[0].to;
 				text = (operators.query || !this.search.txt ? 'Add' : 'Replace') + ' query: ' + tagsDisplay;
 			}
-		} else if (this.isQueueSource()) {
-			const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
-			text = ppt.queueSorting && pop.row.i >= 0
-				? idx < 0
-					? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
-					: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
-				: (mask & MK_CONTROL) === MK_CONTROL
-					? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
-					: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
-		} else if (this.isAutoDjSource()) {
-			text = (mask & MK_CONTROL) === MK_CONTROL
-				? 'Add items to Auto-DJ (top tracks)'
-				: 'Add items to Auto-DJ';
+		} else {
+			if (this.isQueueSource()) {
+				const idx = pop.row.i - (ppt.queueNowPlaying && fb.IsPlaying ? 1 : 0) - (ppt.rootNode ? 1 : 0);
+				text = ppt.queueSorting && pop.row.i >= 0
+					? idx < 0
+						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
+						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
+					: (mask & MK_CONTROL) === MK_CONTROL
+						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
+						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
+			} else if (this.isAutoDjSource()) {
+				text = (mask & MK_CONTROL) === MK_CONTROL
+					? 'Add items to Auto-DJ (top tracks)'
+					: 'Add items to Auto-DJ';
+			} else {
+				if (this.isBranchedPlaylistSource() && pop.row.i !== -1 || this.isActivePlaylistSource(true) || this.isPlayingPlaylistSource(true)) {
+					if (ppt.plsSource < 2) {
+						text = (
+							(mask & MK_CONTROL) === MK_CONTROL
+								? 'Add tracks to '
+								: 'Move tracks to '
+						) + (ppt.plsSource === 0 ? 'Active playlist' : 'Playing playlist');
+					} else {
+						const node = pop.tree[pop.row.i];
+						if (node) {
+							const parent = pop.getTopParent(node);
+							const name = node.root
+								? '- All -'
+								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
+							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
+							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls) {
+								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
+							} else {
+								text = (
+									(mask & MK_CONTROL) === MK_CONTROL
+										? 'Add tracks to playlist '
+										: 'Move tracks to playlist '
+								) + name;
+							}
+						}
+					}
+				}
+			}
 		}
 		return text.cut(46);
 	}
@@ -2322,6 +2326,10 @@ class Panel {
 		return ppt.libSource === 0 && (fromProperty ? ppt.plsSource === 2 : isArrayEqual(this.getPlaylistSource(), $.range(0, plman.PlaylistCount - 1)));
 	}
 
+	isBranchedPlaylistSource() {
+		return !ppt.plsFlatView && this.isPlaylistSource() && !this.isActivePlaylistSource(true) && !this.isPlayingPlaylistSource(true);
+	}
+
 	isNonFixedPlaylistSource() {
 		return ppt.libSource === 0 && !ppt.fixedPlaylist;
 	}
@@ -2363,7 +2371,23 @@ class Panel {
 	}
 
 	isDefaultPlaylistSource() {
-		return this.isPlaylistSource() && isArrayEqual([plman.FindPlaylist(ppt.libPlaylist)], this.getPlaylistSource());
+		return this.isPlaylistSource() && isArrayEqual([plman.FindPlaylist(this.getLibPlaylistName())], this.getPlaylistSource());
+	}
+
+	getLibPlaylistName() {
+		return ppt.libPlaylist.replace(/%VIEW_NAME%/i, this.viewName);
+	}
+
+	getLibPlaylistPlayingName() {
+		return ppt.libPlaylist.replace(/%VIEW_NAME%/i, this.viewName) + ' (playing)';
+	}
+
+	createLibPlaylist() {
+		return plman.FindOrCreatePlaylist(this.getLibPlaylistName(), false);
+	}
+
+	createLibPlaylistPlaying() {
+		return plman.FindOrCreatePlaylist(this.getLibPlaylistPlayingName(), false);
 	}
 
 	addToPlaylist(selItems, plsIdxArr, bScroll) {

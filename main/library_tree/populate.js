@@ -1,5 +1,5 @@
 'use strict';
-//02/05/26
+//03/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -269,7 +269,7 @@ class Populate {
 		});
 		this.condense(br.child);
 		// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
-		if (!!this.rootNode && !ppt.plsFlatView && base && panel.isPlaylistSource()) {
+		if (!!this.rootNode && base && panel.isBranchedPlaylistSource()) {
 			let rootNode, plsRootNode;
 			for (let i = 0; i < br.child.length; i++) {
 				rootNode = br.child[i];
@@ -1840,7 +1840,7 @@ class Populate {
 				if (!this.dblClickAction || this.autoPlay.click == 2) return;
 				if (this.dblClickAction != 2 || this.dblClickAction == 2 && item.track || this.dblClickAction == 2 && panel.imgView) {
 					if (!this.autoFill.mouse) this.send(item, x, y);
-					let pl_stnd_idx = plman.FindOrCreatePlaylist(ppt.libPlaylist.replace(/%view_name%/i, panel.viewName), false);
+					let pl_stnd_idx = panel.createLibPlaylist();
 					if (ppt.sendToCur) { pl_stnd_idx = plman.ActivePlaylist; }
 					else { plman.ActivePlaylist = pl_stnd_idx; }
 					// Regorxxx <- Queue source
@@ -2060,7 +2060,7 @@ class Populate {
 	load({ handleList, bAddToPls = false, bAutoPlay = false, bUseDefaultPls = false, bInsertToPls = false, bApplySort = true } = {}) {
 		let np_item = -1;
 		let pid = -1;
-		const pl_stnd = ppt.libPlaylist.replace(/%view_name%/i, panel.viewName);
+		const pl_stnd = panel.getLibPlaylistName();
 		// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5
 		let pl_stnd_idx;
 		if (ppt.libPlaylistCreate) { pl_stnd_idx = plman.FindOrCreatePlaylist(pl_stnd, true); }
@@ -2088,8 +2088,8 @@ class Populate {
 		if (!bAddToPls && pllockRemoveOrAdd) return;
 		if (fb.IsPlaying && !bAddToPls) {
 			if (ppt.actionMode == 1) {
-				const pl_playing = `${ppt.libPlaylist} (playing)`;
-				const pl_playing_idx = plman.FindOrCreatePlaylist(pl_playing, false);
+				const pl_playing = panel.getLibPlaylistPlayingName();
+				const pl_playing_idx = panel.createLibPlaylistPlaying();
 				if (plman.PlayingPlaylist == pl_stnd_idx) {
 					plman.RenamePlaylist(pl_stnd_idx, pl_playing);
 					plman.RenamePlaylist(pl_playing_idx, pl_stnd);
@@ -2762,31 +2762,7 @@ class Populate {
 		panel.treePaint();
 		let firstPls = -1;
 		if (plsIdxArr.length > 1) {
-			if (ppt.plsFlatView) {
-				const hl = (selectionFilter
-					? selectionFilter(this.getHandleList())
-					: this.getHandleList()
-				).Convert();
-				const firstTrack = panel.list[this.range(item.item)[0]];
-				plsIdxArr.forEach((idx) => {
-					const selItems = [];
-					plman.ClearPlaylistSelection(idx);
-					const list = plman.GetPlaylistItems(idx).Convert();
-					hl.forEach((h) => { // Select duplicates handles
-						let i = 0;
-						for (const handle of list) {
-							if (handle.Compare(h)) { selItems.push(i); }
-							if (firstPls === -1 && handle.Compare(firstTrack)) { firstPls = idx; }
-							i++;
-						}
-					});
-					if (selItems.length) {
-						plman.SetPlaylistSelection(idx, selItems, true);
-						this.setFocus = true;
-						plman.SetPlaylistFocusItem(idx, selItems[0]);
-					}
-				});
-			} else {
+			if (panel.isBranchedPlaylistSource()) {
 				const items = [...this.sel_items];
 				let acc = 0;
 				const itemsPerPls = plsIdxArr.map((idx) => {
@@ -2814,6 +2790,30 @@ class Populate {
 						plman.SetPlaylistSelection(o.idx, o.plsSelIdx, true);
 						this.setFocus = true;
 						plman.SetPlaylistFocusItem(o.idx, o.plsSelIdx[0]);
+					}
+				});
+			} else {
+				const hl = (selectionFilter
+					? selectionFilter(this.getHandleList())
+					: this.getHandleList()
+				).Convert();
+				const firstTrack = panel.list[this.range(item.item)[0]];
+				plsIdxArr.forEach((idx) => {
+					const selItems = [];
+					plman.ClearPlaylistSelection(idx);
+					const list = plman.GetPlaylistItems(idx).Convert();
+					hl.forEach((h) => { // Select duplicates handles
+						let i = 0;
+						for (const handle of list) {
+							if (handle.Compare(h)) { selItems.push(i); }
+							if (firstPls === -1 && handle.Compare(firstTrack)) { firstPls = idx; }
+							i++;
+						}
+					});
+					if (selItems.length) {
+						plman.SetPlaylistSelection(idx, selItems, true);
+						this.setFocus = true;
+						plman.SetPlaylistFocusItem(idx, selItems[0]);
 					}
 				});
 			}
@@ -3344,7 +3344,8 @@ class Populate {
 	}
 
 	isPlaylistParentDefaultPlaylist(node) {
-		return this.getPlaylistParent(node).every((parent) => parent.name === ppt.libPlaylist);
+		const libPlaylist = panel.getLibPlaylistName();
+		return this.getPlaylistParent(node).every((parent) => parent.name === libPlaylist);
 	}
 
 	getPlaylistParentIdx(node) {

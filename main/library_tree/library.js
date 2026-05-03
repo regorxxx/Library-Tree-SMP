@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/04/26
+//03/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -94,7 +94,7 @@ class Library {
 			else if (!panel.search.txt.length) pop.notifySelection();
 			if (ppt.searchSend != 2) return;
 			if (panel.search.txt) pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
-			else plman.ClearPlaylist(plman.FindOrCreatePlaylist(ppt.libPlaylist.replace(/%VIEW_NAME%/i, panel.viewName), false));
+			else plman.ClearPlaylist(panel.createLibPlaylist());
 		}, 333);
 
 		this.search500 = $.debounce(() => {
@@ -1136,7 +1136,7 @@ class Library {
 
 		if (!treeArtToggle || !panel.samePattern) {
 			// Regorxxx <- Multiple-playlist flat view
-			this.playlistSourceRoot = !ppt.plsFlatView && (panel.isFixedPlaylistSource() || panel.isAllPlaylistSource(true))
+			this.playlistSourceRoot = panel.isBranchedPlaylistSource()
 				? panel.getPlaylistSource().map((idx) => {
 					return { idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: plman.PlaylistItemCount(idx) };
 				})

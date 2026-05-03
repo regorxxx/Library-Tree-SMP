@@ -1,5 +1,5 @@
 'use strict';
-//02/05/26
+//03/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -754,9 +754,11 @@ addEventListener('on_locations_added', (taskId, handleList) => {
 // Drag n drop to copy/move tracks to playlists (only files from foobar2000)
 const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unused-vars
 	if (!panel.isQueueLikeSource()) {
-		if (!panel.isStandardSource()) {
-			if (ppt.plsSource === 2 && (ppt.plsFlatView || pop.checkRow(x, y) === -1 && (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)))) { return false; }
-		} else if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
+		if (panel.isBranchedPlaylistSource()) {
+			if (pop.checkRow(x, y) === -1 && (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y))) { return false; }
+		} else if (panel.isStandardSource()) {
+			if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
+		}
 	}
 	// Avoid things outside foobar2000
 	if (action.Effect === dropEffect.none || (action.Effect & dropEffect.link) === dropEffect.link) { return false; }
@@ -782,7 +784,7 @@ addEventListener('on_drag_leave', () => {
 addEventListener('on_drag_over', (action, x, y, mask) => {
 	if (!ui.w || !ui.h) { return; }
 	// Regorxxx <- Scrolling during drag n' drop
-	if (!panel.isStandardSource() && !ppt.plsFlatView) {
+	if (panel.isBranchedPlaylistSource()) {
 		let bScrolling;
 		if (panel.imgView) {
 			if (img.style.vertical) {
@@ -861,8 +863,10 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					else { panel.startAutoDj(selItems); }
 				}
 			}
-		} else if (!panel.isStandardSource() && (ppt.plsSource < 2 || !ppt.plsFlatView)) {
-			const plsIdxArr = ppt.plsSource < 2
+		} else if (panel.isBranchedPlaylistSource() || panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)) {
+			const newPlaying = panel.isPlayingPlaylistSource(true) && plman.PlayingPlaylist === -1;
+			if (newPlaying) { plman.PlayingPlaylist = panel.createLibPlaylistPlaying(); }
+			const plsIdxArr = panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)
 				? panel.getPlaylistSource()
 				: pop.getPlaylistParentIdx(pop.tree[pop.row.i]);
 			if ((mask & MK_CONTROL) === MK_CONTROL) {
@@ -888,6 +892,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					panel.addToPlaylist(selItems, plsIdxArr, true);
 				}
 			}
+			if (panel.isPlayingPlaylistSource(true) && !fb.IsPlaying && pop.autoPlay.send) { plman.ExecutePlaylistDefaultAction(plman.PlayingPlaylist, 0); }
 		}
 	}
 });

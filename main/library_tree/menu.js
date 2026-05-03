@@ -1,5 +1,5 @@
 'use strict';
-//30/04/26
+//03/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1007,7 +1007,7 @@ class MenuItems {
 		// Regorxxx ->
 
 		// Regorxxx <- Multiple-playlist flat view
-		if (panel.getPlaylistSource().length > 1) {
+		if (panel.isAllPlaylistSource() || panel.isFixedPlaylistSource()) {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Multi-branch playlist view',
