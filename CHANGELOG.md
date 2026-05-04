@@ -24,6 +24,7 @@
 - Sources: new entries at contextual menu for playlist sources for basic playlist management: delete, rename, sort, ... See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159)
 - Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159).
+- HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 ### Removed
 ### Fixed
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.
