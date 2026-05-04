@@ -1,5 +1,5 @@
 'use strict';
-//03/05/26
+//04/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -773,6 +773,7 @@ const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unus
 
 addEventListener('on_drag_enter', (action, x, y, mask) => { // eslint-disable-line no-unused-vars
 	if (!ui.w || !ui.h) { return; }
+	pop.isDragDrop = true;
 	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 });
 
@@ -818,12 +819,13 @@ addEventListener('on_drag_over', (action, x, y, mask) => {
 });
 
 addEventListener('on_drag_drop', (action, x, y, mask) => {
+	pop.isDragDrop = false;
 	if (!ui.w || !ui.h) { return; }
 	if (!isValidDragDrop(action, x, y, mask)) { action.Effect = dropEffect.none; return; }
 	action.Effect = dropEffect.none; // Forces not sending things to a playlist
 	const selItems = action.IsInternal
 		? pop.sortIfNeeded(pop.getHandleList('newItems'))
-		: Object.hasOwn(action, 'Handles')
+		: Object.hasOwn(action, 'Handles') && action.Handles !== null
 			? action.Handles
 			: fb.GetSelections(1);
 	if (selItems && selItems.Count) {
@@ -871,28 +873,33 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 			const plsIdxArr = panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)
 				? panel.getPlaylistSource()
 				: pop.getPlaylistParentIdx(pop.tree[pop.row.i]);
-			if ((mask & MK_CONTROL) === MK_CONTROL) {
-				panel.addToPlaylist(selItems, plsIdxArr, true);
-			} else {
-				if (action.IsInternal) {
-					const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
-					if (isAllPls) {
-						const parent = pop.lastSelMul.flatMap((idx) => pop.getPlaylistParentIdx(pop.tree[idx]));
-						const toIdx = plsIdxArr[0];
-						parent.filter((idx) => idx > toIdx).forEach((idx) => plman.MovePlaylist(idx, toIdx));
-						parent.filter((idx) => idx < toIdx).reverse().forEach((idx) => plman.MovePlaylist(idx, toIdx));
-					} else {
-						if (fb.GetSelectionType() === 0) {
-							panel.getPlaylistSource().forEach((idx) => {
-								if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
-							});
-						}
-						panel.addToPlaylist(selItems, plsIdxArr, true);
-					}
+			if (action.IsInternal) {
+				const selNodes = pop.lastSelMul.map((idx) => pop.tree[idx]);
+				const isAllPls = selNodes.every((node) => pop.isPlaylistParent(node));
+				const selParents = selNodes.flatMap((node) => pop.getPlaylistParentIdx(node));
+				const isSamePls = new Set(selParents).isEqual(new Set(plsIdxArr));
+				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
+				const isTargetPls = pop.isPlaylistParent(pop.tree[pop.row.i]);
+				if (isAllPls && isTargetPls && (mask & MK_CONTROL) !== MK_CONTROL) {
+					const toIdx = plsIdxArr[0];
+					selParents.filter((idx) => idx > toIdx).forEach((idx) => plman.MovePlaylist(idx, toIdx));
+					selParents.filter((idx) => idx < toIdx).reverse().forEach((idx) => plman.MovePlaylist(idx, toIdx));
+				} else if (isSamePls) {
+					const toIdx = plsIdxArr[0];
+					if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) { plman.RemovePlaylistSelection(toIdx, false); }
+					panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 				} else {
-					if (fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
-					panel.addToPlaylist(selItems, plsIdxArr, true);
+					if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) {
+						panel.getPlaylistSource().forEach((idx) => {
+							if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
+						});
+					}
+					panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 				}
+			} else {
+				if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
+				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
+				panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 			}
 			if (panel.isPlayingPlaylistSource(true) && !fb.IsPlaying && pop.autoPlay.send) { plman.ExecutePlaylistDefaultAction(plman.PlayingPlaylist, 0); }
 		}

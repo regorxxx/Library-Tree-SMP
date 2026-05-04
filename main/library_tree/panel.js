@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/05/26
+//04/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1765,14 +1765,20 @@ class Panel {
 								? '- All -'
 								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
 							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
-							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls) {
+							const isPlsParent = pop.isPlaylistParent(node);
+							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls && isPlsParent) {
 								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
 							} else {
 								text = (
 									(mask & MK_CONTROL) === MK_CONTROL
 										? 'Add tracks to playlist '
 										: 'Move tracks to playlist '
-								) + name;
+								) + name +
+									(
+										isPlsParent || !ppt.plsSorting
+											? ' (at end)'
+											: ' (at pos)'
+									);
 							}
 						}
 					}
@@ -2390,7 +2396,22 @@ class Panel {
 		return plman.FindOrCreatePlaylist(this.getLibPlaylistPlayingName(), false);
 	}
 
-	addToPlaylist(selItems, plsIdxArr, bScroll) {
+	addToPlaylist(selItems, plsIdxArr, pos, bScroll) {
+		if (isArrayEqual(plsIdxArr, [-1]) || !selItems.Count) { return false; }
+		plsIdxArr.forEach((plsIdx) => {
+			plman.ClearPlaylistSelection(plsIdx);
+			plman.InsertPlaylistItems(plsIdx, Number.isFinite(pos) && pos !== -1 ? pos : plman.PlaylistItemCount(plsIdx), selItems, true);
+		});
+		if (bScroll) {
+			plman.ActivePlaylist = plsIdxArr[0];
+			const focusIdx = plman.PlaylistItemCount(plman.ActivePlaylist) - selItems.Count;
+			plman.SetPlaylistFocusItem(plman.ActivePlaylist, focusIdx);
+			plman.EnsurePlaylistItemVisible(plman.ActivePlaylist, focusIdx);
+		}
+		return true;
+	}
+
+	moveToPlaylist(selItems, plsIdxArr, pos, bScroll) {
 		if (isArrayEqual(plsIdxArr, [-1]) || !selItems.Count) { return false; }
 		plsIdxArr.forEach((plsIdx) => {
 			plman.ClearPlaylistSelection(plsIdx);

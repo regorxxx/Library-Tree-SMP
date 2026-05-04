@@ -1,9 +1,9 @@
 'use strict';
-//03/05/26
+//04/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
-/* global SmoothingMode:readable */
+/* global SmoothingMode:readable, dropEffect:readable */
 /* global debounce:readable */
 /* global isArrayEqual:readable */
 /* global globTags:readable */
@@ -47,6 +47,7 @@ class Populate {
 		this.sy_sz = 8;
 		this.tree = [];
 		this.tf = {}; // Regorxxx <- New statistics ->
+		this.isDragDrop = false; // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager ->
 		// Regorxxx <- Rectangle selection on art view
 		this.selRect = {
 			down: false,
@@ -210,7 +211,7 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Preserve tree sorting at selection
+	// Regorxxx <- Preserve tree sorting at selection | Code cleanup
 	addItems(arr, node, bNoSort) {
 		if (panel.playlistSort || bNoSort) { // Regorxxx <- Smart sorting based on view ->
 			node.item.forEach((item) => $.range(item.start, item.end, 1).forEach((idx) => arr.push(idx)));
@@ -228,6 +229,7 @@ class Populate {
 				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
 			}
 		}
+		return arr;
 	}
 	// Regorxxx ->
 
@@ -1132,24 +1134,29 @@ class Populate {
 		tooltip.Deactivate();
 	}
 
+	// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager
 	dragDrop(x, y) {
-		if (!this.lbtnDn) return;
-		const drag_diff = ppt.touchControl ? Math.abs(x - this.last_pressed_coord.x) : Math.sqrt((Math.pow(this.last_pressed_coord.x - x, 2) + Math.pow(this.last_pressed_coord.y - y, 2)));
+		if (!this.lbtnDn) { return; }
+		const drag_diff = ppt.touchControl
+			? Math.abs(x - this.last_pressed_coord.x)
+			: Math.sqrt((Math.pow(this.last_pressed_coord.x - x, 2) + Math.pow(this.last_pressed_coord.y - y, 2)));
 		if (drag_diff > 7) {
 			if (ppt.touchControl) {
 				const ix = this.get_ix(x, y, true, false);
 				const item = this.tree[ix];
-				if (ui.id.dragDrop != ix || ix >= this.tree.length || ix < 0) return;
-				if (!item.sel && !vk.k('ctrl')) this.setTreeSel(ix, item.sel);
+				if (ui.id.dragDrop != ix || ix >= this.tree.length || ix < 0) { return; }
+				if (!item.sel && !vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
 			}
+			this.isDragDrop = true;
+			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
+			if (panel.isPlaylistSource()) { this.setPlaylistSelection(ix, this.tree[ix]); }
 			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
-			// Regorxxx <- Expand TF support
-			const handleList = this.sortIfNeeded(this.getHandleList('newItems'));
-			// Regorxxx ->
-			fb.DoDragDrop(0, handleList, handleList.Count ? 1 | 4 : 0);
+			const handleList = this.sortIfNeeded(this.getHandleList('newItems')); // Regorxxx <- Expand TF support ->
+			fb.DoDragDrop(0, handleList, handleList.Count ? dropEffect.copy | dropEffect.link : dropEffect.none);
 			this.lbtnDn = false;
 		}
 	}
+	// Regorxxx ->
 
 	draw(gr) {
 		if (lib.empty) return gr.GdiDrawText(lib.empty, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
@@ -2844,7 +2851,7 @@ class Populate {
 				plman.SetPlaylistFocusItem(firstPls, items[0]);
 			}
 		}
-		if (firstPls !== -1) { plman.ActivePlaylist = firstPls; }
+		if (firstPls !== -1 && !this.isDragDrop) { plman.ActivePlaylist = firstPls; }
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
 	}
@@ -3292,7 +3299,7 @@ class Populate {
 	specialCharStrip(name) {
 		let [str1, ...str2] = name.split(' ');
 		str2 = str2.join(' ');
-		if (this.isDate(str1)) { return str1 + ' ' +  this.specialCharTransform(str2); }
+		if (this.isDate(str1)) { return str1 + ' ' + this.specialCharTransform(str2); }
 		return this.specialCharTransform(name);
 	}
 	// Regorxxx ->
@@ -3366,6 +3373,26 @@ class Populate {
 		return parent.root
 			? panel.getPlaylistSource()
 			: lib.playlistSourceRoot.filter((root) => root.node === parent).map((p) => p.idx);
+	}
+
+	getNodePosInSource(node, sourceIdx) {
+		if (sourceIdx === -1) { return -1; }
+		if (this.isPlaylistParent(node)) { return -1; }
+		if (panel.isPlaylistSource() && ppt.plsSorting) {
+			const sel = this.addItems([], node, sourceIdx, true);
+			const h = this.getHandleList(void (0), sel)[0];
+			const list = plman.GetPlaylistItems(sourceIdx).Convert();
+			let i = 0;
+			if (panel.multiProcess) {
+				for (const handle of list) {
+					if (handle.Compare(h)) { return i; }
+					i++;
+				}
+			} else {
+				const parent = this.getPlaylistParent(node);
+				return pop.tree.indexOf(node) - parent.idx;
+			}
+		} else { return -1; }
 	}
 	// Regorxxx ->
 }
