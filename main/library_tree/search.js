@@ -1,8 +1,9 @@
 ﻿'use strict';
-//03/05/26
+//04/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
+/* global _getClipboardData:readable, _setClipboardData:readable */
 /* global Language:readable */
 
 /* exported Search, Find */
@@ -412,10 +413,10 @@ class Search {
 				this.end = panel.search.txt.length;
 				break;
 			case vk.copy:
-				if (this.start != this.end) $.setClipboardData(panel.search.txt.substring(this.start, this.end));
+				if (this.start != this.end) { _setClipboardData(panel.search.txt.substring(this.start, this.end)); }
 				break;
 			case vk.cut:
-				if (this.start != this.end) $.setClipboardData(panel.search.txt.substring(this.start, this.end)); // fall through
+				if (this.start != this.end) { _setClipboardData(panel.search.txt.substring(this.start, this.end)); } // fall through
 			case vk.back:
 				this.record();
 				if (this.start == this.end) {
@@ -499,7 +500,7 @@ class Search {
 				this.end = this.start;
 				break;
 			case vk.paste:
-				text = $.getClipboardData() || '';
+				text = _getClipboardData();
 				text = text.replace(/(\r\n|\n|\r)/gm, ' '); // fall through
 			default:
 				this.record();
@@ -641,7 +642,7 @@ class Search {
 	}
 
 	rbtn_up(x, y) {
-		this.paste = !!$.getClipboardData();
+		this.paste = !!_getClipboardData();
 		searchMenu.load(x, y);
 	}
 
