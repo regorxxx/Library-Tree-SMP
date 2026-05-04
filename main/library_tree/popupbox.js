@@ -1,8 +1,8 @@
 ﻿'use strict';
-//09/04/26
+//04/05/26
 
-/* global ppt:readable, $:readable, WshShell:readable, doc:readable */
-/* global folders:readable */
+/* global ppt:readable, $:readable, WshShell:readable */
+/* global folders:readable, soFeat:readable */
 
 /* exported PopUpBox */
 
@@ -10,7 +10,6 @@ class PopUpBox {
 	constructor() {
 		this.getHtmlCode();
 		this.ok = true;
-		this.soFeat = { clipboard: true, gecko: true };
 	}
 
 	// Methods
@@ -70,36 +69,9 @@ class PopUpBox {
 	}
 
 	isHtmlDialogSupported() {
-		if (ppt.isHtmlDialogSupported != 2) return ppt.isHtmlDialogSupported;
+		if (ppt.isHtmlDialogSupported != 2) { return ppt.isHtmlDialogSupported; }
 
-		if (typeof doc === 'undefined' || !doc) {
-			this.soFeat.gecko = false;
-		}
-		if (this.soFeat.gecko) {
-			let cache = null;
-			let clText = 'test';
-			try {
-				cache = doc.parentWindow.clipboardData.getData('Text');
-			} catch (e) { /* empty */ } // eslint-disable-line no-unused-vars
-			try {
-				doc.parentWindow.clipboardData.setData('Text', clText);
-				clText = doc.parentWindow.clipboardData.getData('Text');
-			} catch (e) { // eslint-disable-line no-unused-vars
-				this.soFeat.clipboard = false;
-			}
-			if (cache) { // Just in case previous clipboard data is needed
-				try {
-					doc.parentWindow.clipboardData.setData('Text', cache);
-				} catch (e) { /* empty */ } // eslint-disable-line no-unused-vars
-			}
-			if (clText !== 'test') {
-				this.soFeat.clipboard = false;
-			}
-		} else {
-			this.soFeat.clipboard = false;
-		}
-
-		ppt.isHtmlDialogSupported = this.soFeat.gecko && this.soFeat.clipboard || this.isIEInstalled() ? 1 : 0;
+		ppt.isHtmlDialogSupported = soFeat.gecko && soFeat.clipboard || soFeat.ie ? 1 : 0;
 		if (!ppt.isHtmlDialogSupported) {
 			const caption = 'Show HTML Dialog';
 			const prompt = 'A feature check indicates that Spider Monkey Panel show html dialog isn\'t supported by the current operating system.\n\nThis is used to display options. The console will show alternatives on closing this dialog.\n\nOccassionally, the feature check may give the wrong answer.\n\nIf you\'re using windows and have Internet Explorer support it should work, so enter 1 and press OK.\n\nThe setting is saved in panel properties as the first item and can be changed there later.\n\nSupported-1; unsupported-0';
@@ -115,16 +87,6 @@ class PopUpBox {
 			}
 		}
 		return ppt.isHtmlDialogSupported;
-	}
-
-	isIEInstalled() {
-		const diskLetters = Array.from({ length: 26 }, (e, i) => `${String.fromCodePoint(i + 65)}:\\`);
-		const paths = ['Program Files\\Internet Explorer\\ieinstal.exe', 'Program Files (x86)\\Internet Explorer\\ieinstal.exe'];
-		return diskLetters.some(d => {
-			try { // Needed when permission error occurs and current SMP implementation is broken for some devices....
-				return utils.IsDirectory(d) ? paths.some(p => utils.IsFile(d + p)) : false;
-			} catch (e) { return false; } // eslint-disable-line no-unused-vars
-		});
 	}
 
 	message() {

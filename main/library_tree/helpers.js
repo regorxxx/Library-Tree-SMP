@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/04/26
+//04/05/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -19,7 +19,6 @@ function is_compatible(requiredVersionStr) {
 }
 if (!is_compatible(requiredVersionStr)) fb.ShowPopupMessage(`Library Tree requires v${requiredVersionStr}. Current component version is v${utils.Version}.`);
 
-const doc = new ActiveXObject('htmlfile');
 const tooltip = window.Tooltip;
 
 class Helpers {
@@ -91,18 +90,6 @@ class Helpers {
 
 	folder(fo) {
 		return typeof fo === 'string' && fso.FolderExists(fo);
-	}
-
-	getClipboardData() {
-		try {
-			return utils.GetClipboardText();
-		} catch (e) { // eslint-disable-line no-unused-vars
-			try {
-				return doc.parentWindow.clipboardData.getData('Text');
-			} catch (e) { // eslint-disable-line no-unused-vars
-				return null;
-			}
-		}
 	}
 
 	getDpi() {
@@ -233,18 +220,6 @@ class Helpers {
 			utils.WriteTextFile(fn, text, bom);
 		} catch (e) { // eslint-disable-line no-unused-vars
 			this.trace('error saving: ' + fn);
-		}
-	}
-
-	setClipboardData(n) {
-		try {
-			utils.SetClipboardText(n);
-		} catch (e) { // eslint-disable-line no-unused-vars
-			try {
-				doc.parentWindow.clipboardData.setData('Text', n);
-			} catch (e) { // eslint-disable-line no-unused-vars
-				this.trace('unable to set clipboard text');
-			}
 		}
 	}
 
