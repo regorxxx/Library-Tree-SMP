@@ -779,6 +779,7 @@ addEventListener('on_drag_enter', (action, x, y, mask) => { // eslint-disable-li
 
 addEventListener('on_drag_leave', () => {
 	if (!ui.w || !ui.h) { return; }
+	pop.isDragDrop = false;
 	on_mouse_leave();
 });
 
