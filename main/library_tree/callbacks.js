@@ -1,5 +1,5 @@
 'use strict';
-//04/05/26
+//06/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -736,6 +736,7 @@ function setSelection(handle) {
 		if (!v.root && pop.inRange(item, v.item)) idx = i;
 	});
 	if (idx != -1) {
+		panel.pos = -1; // Regorxxx <- Update current item under mouse while scrolling | Avoid repainting last hovered position ->
 		if (panel.imgView) { pop.showItem(idx, 'focus'); }
 		else { pop.focusShow(idx); }
 	}
