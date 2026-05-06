@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/04/26
+//06/05/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -104,7 +104,7 @@ class Scrollbar {
 		this.duration.bar = this.duration.full;
 		this.duration.barFast = this.duration.step;
 
-		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -Math.max(this.rows_drawn - 1, 1) * this.row.h) / this.row.h) * this.row.h, 'full', false), 100); // Regorxxx <- Update current item  under mouse while scrolling | Fix scrolling not working when a single row was drawn ->
+		this.pageThrottle = $.throttle(dir => this.checkScroll(Math.round((this.scroll + dir * -Math.max(this.rows_drawn - 1, 1) * this.row.h) / this.row.h) * this.row.h, 'full', false), 100); // Regorxxx <- Update current item under mouse while scrolling | Fix scrolling not working when a single row was drawn ->
 
 		this.scrollThrottle = $.throttle(() => {
 			this.delta = this.scroll;
@@ -172,7 +172,7 @@ class Scrollbar {
 				if (this.bar.isDragging && Math.abs(this.delta - this.scroll) > (panel.imgView ? this.scrollbar.height * 3 : this.scrollbar.height)) this.event = 'barFast';
 				this.clock = Date.now();
 				if (!this.draw_timer) {
-					// Regorxxx <- Update current item  under mouse while scrolling
+					// Regorxxx <- Update current item under mouse while scrolling
 					this.scrollTimer(type);
 					this.smoothScroll(type);
 					// Regorxxx ->
@@ -535,7 +535,7 @@ class Scrollbar {
 		this.updDebounce();
 	}
 
-	// Regorxxx <- Update current item  under mouse while scrolling
+	// Regorxxx <- Update current item under mouse while scrolling
 	scrollFinish(type) {
 		if (!this.draw_timer) return;
 		this.delta = this.scroll;
@@ -590,7 +590,7 @@ class Scrollbar {
 
 	scrollTimer(type) {
 		this.draw_timer = setInterval(() => {
-			this.smoothScroll(type); // Regorxxx <- Update current item  under mouse while scrolling ->
+			this.smoothScroll(type); // Regorxxx <- Update current item under mouse while scrolling ->
 		}, 16);
 	}
 
@@ -658,7 +658,7 @@ class Scrollbar {
 		}
 	}
 
-	// Regorxxx <- Update current item  under mouse while scrolling
+	// Regorxxx <- Update current item under mouse while scrolling
 	smoothScroll(type) {
 		this.delta = this.position(this.start, this.scroll, Date.now() - this.clock + this.elap, this.duration[this.event], this.event);
 		if (Math.abs(this.scroll - this.delta) > 0.5) { this.scrollTo(); }

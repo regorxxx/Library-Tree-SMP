@@ -1,5 +1,5 @@
 'use strict';
-//05/05/26
+//06/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2327,7 +2327,7 @@ class Populate {
 		}
 	}
 
-	move(x, y, scrolling) { // Regorxxx <- Update current item  under mouse while scrolling ->
+	move(x, y, scrolling) { // Regorxxx <- Update current item under mouse while scrolling ->
 		if (but.Dn) return;
 		// Regorxxx <- Rectangle selection on art view
 		if (ppt.selRectArt && panel.imgView && this.selRect.down) {
@@ -2354,7 +2354,7 @@ class Populate {
 			this.selRect.my = y;
 		}
 		// Regorxxx ->
-		const ix = this.get_ix(x, y, scrolling, false); // Regorxxx <- Update current item  under mouse while scrolling ->
+		const ix = this.get_ix(x, y, scrolling, false); // Regorxxx <- Update current item under mouse while scrolling ->
 		this.row.i = this.checkRow(x, y);
 		this.m.i = -1;
 		if (ix != -1) {
@@ -2371,7 +2371,7 @@ class Populate {
 		window.SetCursor(this.hand ? 32649 : !but.Dn && y < panel.search.h && ppt.searchShow && x > but.q.h + but.margin && x < panel.search.x + panel.search.w ? 32513 : 32512);
 		const same = this.m.i == this.cur_ix && this.m.br == this.m.cur_br && this.row.i == this.row.cur;
 		if (same && !sbar.touch.dn) return;
-		if (!scrolling && !sbar.draw_timer && !same) { panel.treePaint(); } // Regorxxx <- Update current item  under mouse while scrolling ->
+		if (!scrolling && !sbar.draw_timer && !same) { panel.treePaint(); } // Regorxxx <- Update current item under mouse while scrolling ->
 		this.cur_ix = this.m.i;
 		this.m.cur_br = this.m.br;
 		this.row.cur = this.row.i;
