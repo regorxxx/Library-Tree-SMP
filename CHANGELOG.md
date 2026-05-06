@@ -35,7 +35,7 @@
 - UI: fixed bug, on original script, related to incorrect playlist focus tracking on active playlist if it was the first one (0 idx).
 - UI: fixed bug, on original script, related to thumbnail padding overlaying other UI elements in some cases or not respecting margin settings (specially using flow mode). Now value is clamped.
 - UI: fixed last hovered item being redrawn when following selection from other panels (due to scrolling) related to bugfix for original script. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080902.html#msg1080902) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081391.html#msg1081391).
-- UI: fix left reflection effect in some situations with specific padding settings.
+- UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
 - Sorting: fixed bug, on original script, related to sorting not properly processing quotes, apostrophes, dashes and hyphens. In particular for items which also had numbers, so they were not properly sorted as result. Additionally, it now processes a bigger range of special chars. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081301.html#msg1081301) and [here](https://hydrogenaudio.org/index.php?action=profile;u=114348).
 - Quick-search: fixed bug, on original script, related to quick-search not skipping quotes, apostrophes, dashes and hyphens. In particular for items having them as first char. Now ''B'' Girls, "B" Girls,...  are also matched as B Girls. Jumping by char follows the same behavior. Note this improves DUI/CUI behavior, where such nodes are simply skipped. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081301.html#msg1081301).
 
