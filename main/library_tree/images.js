@@ -1216,6 +1216,7 @@ class Images {
 		if (!this.canShowReflection()) { return false; }
 		const alpha = 102; // Art alpha * 0.4
 		const offsetX = this.bor.pad / 2;
+		const fade = Math.min(offsetX, image.Width * 0.9);
 		switch (art.reflectionStyle) {
 			case 0: { // asymmetric right
 				const clone = image.Clone(0, 0, image.Width, image.Height);
@@ -1223,7 +1224,7 @@ class Images {
 				applyMask(
 					clone,
 					(mask, gr, w, h) => {
-						gr.FillGradRect(0, 0, offsetX, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
+						gr.FillGradRect(0, 0, fade, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
 					},
 					true
 				);
@@ -1232,18 +1233,22 @@ class Images {
 			}
 			case 1: // symmetric
 			default: {
-				const clone = image.Clone(0, 0, image.Width, image.Height);
-				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				const imgRotated = image.Clone(0, 0, image.Width, image.Height);
+				imgRotated.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				let refl = imgRotated.Clone(0, 0, image.Width, image.Height);
 				applyMask(
-					clone,
-					(mask, gr, w, h) => {
-						gr.FillGradRect(w - offsetX, 0, offsetX, h, 0.15, $.RGB(255, 255, 255), $.RGB(0, 0, 0));
-						gr.FillGradRect(0, 0, offsetX, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
-					},
+					refl,
+					(mask, gr, w, h) => gr.FillGradRect(0, 0, fade, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
 					true
 				);
-				gr.DrawImage(clone, Math.floor(coords.x - offsetX), coords.y, Math.ceil(offsetX), coords.h, Math.floor(image.Width - offsetX), 0, Math.ceil(offsetX), image.Height, 0, alpha);
-				gr.DrawImage(clone, coords.x + image.Width, coords.y, Math.ceil(offsetX), coords.h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				gr.DrawImage(refl, coords.x + image.Width, coords.y, Math.ceil(offsetX), coords.h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				refl = imgRotated.Clone(0, 0, image.Width, image.Height);
+				applyMask(
+					refl,
+					(mask, gr, w, h) => gr.FillGradRect(w - fade, 0, fade, h, 0.15, $.RGB(255, 255, 255), $.RGB(0, 0, 0)),
+					true
+				);
+				gr.DrawImage(refl, Math.floor(coords.x - offsetX), coords.y, Math.ceil(offsetX), coords.h, Math.floor(image.Width - offsetX), 0, Math.ceil(offsetX), image.Height, 0, alpha);
 				break;
 			}
 		}
