@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/04/26
+//06/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -889,6 +889,12 @@ class Images {
 				break;
 		}
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
+		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
+		if (!this.style.vertical) {
+			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y);
+			h = Math.min(window.Height - ppt.marginTopBottom - y, sbar.y - y - ppt.marginTopBottom, h);
+		}
+		// Regorxxx ->
 		if (typeof col !== 'undefined') { gr.FillSolidRect(x, y, w, h, col); } // Regorxxx <- Code cleanup don't call method if unused! ->
 	}
 
@@ -1692,7 +1698,7 @@ class Images {
 				// Regorxxx <- Code cleanup | Effect per art type
 				this.bor.pad = !this.labels.hide && !this.labels.overlay
 					? ppt.thumbNailGapStnd == 0
-						? Math.round(this.text.h * 1.05 * (art.reflection || art.reflectionRoot ? 2.5 : 1))
+						? Math.round(this.text.h * 1.05 * (art.reflection || art.reflectionRoot ? 2 : 1))
 						: ppt.thumbNailGapStnd - Math.round(2 * $.scale)
 					: ppt.thumbNailGapCompact;
 				// Regorxxx ->
