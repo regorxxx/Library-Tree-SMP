@@ -1,5 +1,5 @@
 'use strict';
-//04/05/26
+//05/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3353,7 +3353,7 @@ class Populate {
 	getPlaylistParent(node) {
 		if (!node) { return []; }
 		const parent = this.getTopParent(node);
-		return parent.root
+		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
 			? lib.playlistSourceRoot
 			: lib.playlistSourceRoot.filter((root) => root.node === parent);
 	}
@@ -3370,7 +3370,7 @@ class Populate {
 	getPlaylistParentIdx(node) {
 		if (!node) { return [-1]; }
 		const parent = this.getTopParent(node);
-		return parent.root
+		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
 			? panel.getPlaylistSource()
 			: lib.playlistSourceRoot.filter((root) => root.node === parent).map((p) => p.idx);
 	}
@@ -3379,7 +3379,7 @@ class Populate {
 		if (sourceIdx === -1) { return -1; }
 		if (this.isPlaylistParent(node)) { return -1; }
 		if (panel.isPlaylistSource() && ppt.plsSorting) {
-			const sel = this.addItems([], node, sourceIdx, true);
+			const sel = this.addItems([], node, true);
 			const h = this.getHandleList(void (0), sel)[0];
 			const list = plman.GetPlaylistItems(sourceIdx).Convert();
 			let i = 0;

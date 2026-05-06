@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/05/26
+//05/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1136,7 +1136,8 @@ class Library {
 
 		if (!treeArtToggle || !panel.samePattern) {
 			// Regorxxx <- Multiple-playlist flat view
-			this.playlistSourceRoot = panel.isBranchedPlaylistSource()
+			const branched = panel.isBranchedPlaylistSource();
+			this.playlistSourceRoot = panel.isBranchedPlaylistSource() || panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)
 				? panel.getPlaylistSource().map((idx) => {
 					return { idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: plman.PlaylistItemCount(idx) };
 				})
@@ -1146,7 +1147,7 @@ class Library {
 				case 0: {
 					let tfo = FbTitleFormat(panel.view);
 					const splitter = panel.splitter;
-					if (roots.length) {
+					if (branched && roots.length) {
 						let j = 0;
 						tfo.EvalWithMetadbs(li).forEach((v, i) => {
 							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
@@ -1160,7 +1161,7 @@ class Library {
 					break;
 				}
 				case 1: {
-					if (roots.length) {
+					if (branched && roots.length) {
 						let j = 0;
 						li.GetLibraryRelativePaths().forEach((v, i) => {
 							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
