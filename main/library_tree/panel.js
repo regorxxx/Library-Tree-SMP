@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/05/26
+//06/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -209,14 +209,15 @@ class Panel {
 			const plsIdx = this.getPlaylistSource();
 			const sourceName = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetPlaylistName(idx)).join('\', \'');
 			const sourceId = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetGUID(idx)).join('\', \'');
-			s = s.replace(/\$prefix/gi, ppt.prefix.split('|').join(','))
-				.replace(/\$nodename/gi, sanitizeTagTfo((node || {}).nm || '-N/A-'))
-				.replace(/\$sourcetype/gi, sanitizeTagTfo(sourceType || '-N/A-'))
-				.replace(/\$sourcename/gi, sanitizeTagTfo(sourceName || '-N/A-'))
-				.replace(/\$sourcenameortype/gi, sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
-				.replace(/\$sourceid/gi, sanitizeTagTfo(sourceId || '-N/A-'))
-				.replace(/\$viewname/gi, sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
-				.replace(/\$filtername/gi, sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
+			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
+			s = s.replace(/\$prefix/gi, () => ppt.prefix.split('|').join(','))
+				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-'))
+				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
+				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
+				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
+				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
+				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
+				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
 				if (!q) { s = s.replace(/\$randfloat({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
