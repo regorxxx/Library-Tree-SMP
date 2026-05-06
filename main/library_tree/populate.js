@@ -1,5 +1,5 @@
 'use strict';
-//06/05/26
+//07/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2748,7 +2748,7 @@ class Populate {
 	}
 
 	sendToNewPlaylist() {
-		const names = this.tree.filter(v => v.sel).map(v => v.name);
+		const names = this.tree.filter(v => v.sel).map(v => v.name.split('^@^').join(' - ')); // Regorxxx <- Fix new playlist for branches ->
 		plman.ActivePlaylist = plman.CreatePlaylist(plman.PlaylistCount, [...new Set(names)].join('; '));
 		this.load({ bAddToPls: false, bAutoPlay: this.autoPlay.send, bUseDefaultPls: false, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 	}

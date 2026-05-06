@@ -38,6 +38,7 @@
 - UI: fixed bug, on original script, related to thumbnail padding overlaying other UI elements in some cases or not respecting margin settings (specially using flow mode). Now value is clamped. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081415.html#msg1081415).
 - UI: fixed last hovered item being redrawn when following selection from other panels (due to scrolling) related to bugfix for original script. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080902.html#msg1080902) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081391.html#msg1081391).
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
+- Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 
 ## [2.0.0] - 2026-01-30
 ### Added
