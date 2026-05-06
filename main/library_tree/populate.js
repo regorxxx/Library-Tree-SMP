@@ -1149,9 +1149,34 @@ class Populate {
 			}
 			this.isDragDrop = true;
 			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
-			if (panel.isPlaylistSource()) { this.setPlaylistSelection(ix, this.tree[ix]); }
+			let handleList;
+			if (panel.isPlaylistSource()) {
+				if (vk.k('alt')) {
+					if (ppt.actionMode === 2) {
+						if (ppt.plsActions) {
+							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+							this.selection_holder.SetSelection(handleList);
+						} else {
+							this.setPlaylistSelection(ix, this.tree[ix], void (0), this.getTopTracks);
+							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+						}
+					} else if (!ppt.plsActions || [3, 4, 5, 6].includes(ppt.altClickAction)) {
+						this.setPlaylistSelection(ix, this.tree[ix], void (0), this.getTopTracks);
+						handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+					} else {
+						this.setPlaylistSelection(ix, this.tree[ix]);
+						handleList = this.getHandleList();
+					}
+				} else {
+					this.setPlaylistSelection(ix, this.tree[ix]);
+					handleList = this.getHandleList();
+				}
+			} else if (vk.k('alt') && [3, 4, 5, 6].includes(ppt.altClickAction)) {
+				handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+				this.selection_holder.SetSelection(handleList);
+			}
 			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
-			const handleList = this.sortIfNeeded(this.getHandleList('newItems')); // Regorxxx <- Expand TF support ->
+			if (!handleList) { handleList = this.sortIfNeeded(this.getHandleList('newItems')); } // Regorxxx <- Expand TF support ->
 			fb.DoDragDrop(0, handleList, handleList.Count ? dropEffect.copy | dropEffect.link : dropEffect.none);
 			this.lbtnDn = false;
 		}
@@ -1812,42 +1837,63 @@ class Populate {
 				this.expandCollapse(x, y, item, ix);
 				break;
 			case 'text':
-				if (!this.check_ix(item, x, y, false)) return;
-				if (this.dblClickAction == 3) {
-					const handleList = this.getHandleList(void (0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
-					if (handleList.Count) plman.FlushPlaybackQueue();
-					for (let i = 0; i < handleList.Count; i++) {
-						plman.AddItemToPlaybackQueue(handleList[i]);
+				if (!this.check_ix(item, x, y, false)) { return; }
+				// Regorxxx <- Mouse actions on playlist sources
+				if (panel.isStandardSource()) {
+					if (this.dblClickAction <= 1 && !this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) {
+						return this.send(item, x, y);
 					}
-					fb.Play();
-					return;
-				}
-				// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Mouse actions on playlist sources
-				if (this.dblClickAction <= 1) {
-					if (!panel.isStandardSource()) {
-						if (ppt.plsActions && this.dblClickAction === 1) {
-							const plsIdx = this.getPlaylistParentIdx(item); // Regorxxx <- Active/Playing/All playlist source ->
-							if (!isArrayEqual(plsIdx, [-1])) {
-								const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
-									? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
-									: this.range(item.item)[0];
-								if (idx !== -1) {
-									this.setFocus = true;
-									plman.SetPlaylistFocusItem(plsIdx, idx);
-									plman.ExecutePlaylistDefaultAction(plsIdx, idx);
-									plman.ActivePlaylist = plsIdx;
-									break;
-								}
-							}
-						} else if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) { return this.setPlaylistSelection(ix, item); }
+					if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
+						this.expandCollapse(x, y, item, ix);
+						lib.treeState(false, ppt.rememberTree);
+					}
+					if (this.dblClickAction == 3) {
+						const handleList = this.getHandleList(void (0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
+						if (handleList.Count) plman.FlushPlaybackQueue();
+						for (let i = 0; i < handleList.Count; i++) {
+							plman.AddItemToPlaybackQueue(handleList[i]);
+						}
+						fb.Play();
 						return;
-					} else if (!this.dblClickAction && !this.autoFill.mouse && !this.autoPlay.click) { return this.send(item, x, y); }
+					}
+				} else {
+					if (ppt.plsActions && this.dblClickAction !== 1) {
+						if (this.dblClickAction === 0 && !this.autoFill.mouse && !this.autoPlay.click) {
+							return this.setPlaylistSelection(ix, item);
+						}
+						if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
+							this.expandCollapse(x, y, item, ix);
+							lib.treeState(false, ppt.rememberTree);
+						}
+						if (this.dblClickAction == 3) {
+							const handleList = this.getHandleList(void (0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
+							if (handleList.Count) plman.FlushPlaybackQueue();
+							for (let i = 0; i < handleList.Count; i++) {
+								plman.AddItemToPlaybackQueue(handleList[i]);
+							}
+							fb.Play();
+							return;
+						}
+					} else {
+						// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+						const plsIdx = this.getPlaylistParentIdx(item);
+						if (!isArrayEqual(plsIdx, [-1])) {
+							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
+								? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
+								: this.range(item.item)[0];
+							if (idx !== -1) {
+								this.setFocus = true;
+								plman.SetPlaylistFocusItem(plsIdx, idx);
+								plman.ExecutePlaylistDefaultAction(plsIdx, idx);
+								plman.ActivePlaylist = plsIdx;
+								break;
+							}
+						}
+						return;
+						// Regorxxx ->
+					}
 				}
 				// Regorxxx ->
-				if (this.dblClickAction == 2 && !item.track && !panel.imgView) {
-					this.expandCollapse(x, y, item, ix);
-					lib.treeState(false, ppt.rememberTree);
-				}
 				if (!this.dblClickAction || this.autoPlay.click == 2) return;
 				if (this.dblClickAction != 2 || this.dblClickAction == 2 && item.track || this.dblClickAction == 2 && panel.imgView) {
 					if (!this.autoFill.mouse) this.send(item, x, y);
@@ -1999,10 +2045,7 @@ class Populate {
 		if (this.clicked_on != 'text') { return; }
 		// Regorxxx <- Mouse actions on playlist sources
 		if (panel.isStandardSource()) {
-			if (vk.k('alt')) {
-				this.mbtnUpOrAltClickUp(x, y, '', 'alt');
-				return;
-			}
+			if (vk.k('alt')) { return this.mbtnUpOrAltClickUp(x, y, '', 'alt'); }
 			if (vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
 			else {
 				this.clearSelected();
@@ -2019,8 +2062,11 @@ class Populate {
 		} else {
 			if (ppt.plsActions) {
 				if (vk.k('alt')) {
-					this.mbtnUpOrAltClickUp(x, y, '', 'alt');
-					return;
+					if (ppt.actionMode === 2) {
+						this.selection_holder.SetSelection(this.getTopTracks(void (0), !!ppt.topTracksSorting.length));
+					} else {
+						return this.mbtnUpOrAltClickUp(x, y, '', 'alt');
+					}
 				}
 				if (this.autoFill.mouse || this.autoPlay.click) {
 					this.setPlaylistSelection(ix, item);
@@ -2032,7 +2078,10 @@ class Populate {
 					}
 				}
 				this.track(this.autoFill.mouse || this.autoPlay.click);
-			} else { this.setPlaylistSelection(ix, item); }
+			} else {
+				if (vk.k('alt')) { return this.mbtnUpOrAltClickUp(x, y, '', 'alt'); }
+				this.setPlaylistSelection(ix, item);
+			}
 		}
 		// Regorxxx ->
 	}
@@ -2206,7 +2255,9 @@ class Populate {
 	// Regorxxx <- Top tracks | Mouse actions on playlist sources
 	mbtnUpOrAltClickUp(x, y, mask, type) {
 		if (this[`${type}_dbl_clicked`]) return;
-		if (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) {
+		const isForcedPlsMiddleAction = type == 'mbtn' && !panel.isStandardSource() && !ppt.plsActions;
+		const isForcedPlsAltAction = type == 'alt' && !panel.isStandardSource() && !ppt.plsActions;
+		if (isForcedPlsMiddleAction || (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) && !isForcedPlsAltAction) {
 			setTimeout(() => { // timeout: wait & see if double click, but adds a little lag to single click: timeout can be commented out
 				if (this[`${type}_dbl_clicked`]) return;
 				const ix = this.get_ix(x, y, true, false);
@@ -2230,14 +2281,14 @@ class Populate {
 				}
 			}, 180);
 
-		} else if ((type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
+		} else if (isForcedPlsAltAction || (type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
 			if (panel.isStandardSource()) {
 				this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
 			} else {
 				const ix = this.get_ix(x, y, true, false);
 				if (ix < this.tree.length && ix >= 0) {
 					const item = this.tree[ix];
-					if ([4, 6].includes(ppt[`${type}ClickAction`]) || panel.isDefaultPlaylistSource() || this.isPlaylistParentDefaultPlaylist(item)) {
+					if (isForcedPlsAltAction || [4, 6].includes(ppt[`${type}ClickAction`]) || panel.isDefaultPlaylistSource() || this.isPlaylistParentDefaultPlaylist(item)) {
 						this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
 					} else {
 						this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, true);

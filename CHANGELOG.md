@@ -14,6 +14,7 @@
 - Drag n' drop: new drag n' drop action for playlist sources to easily move/add tracks from/to playlists. While tracking active/playing playlists, tracks can be added to them from any other panel; for 'All playlists' source, tracks can also be moved within the panel from one playlist to another while using 'Multi-branch playlist view' setting to any position. When using views with branches (i.e. with splitters and/or %<TAG>%), target position will be relative to the first item of the group. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081160.html#msg1081160).
 - Drag n' drop: playlist can be manually sorted by moving their nodes via drag n' drop while using 'Multi-branch playlist view'. Doing the same on tracks will move/copy them between playlists (see above). To copy all tracks from a playlist to another, Ctrl may be pressed while drag n' dropping the playlist node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Drag n' drop: scrolling while using drag n' drop if mouse is near the first/last row/column on tree and art modes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
+- Drag n' drop: added support for Top Tracks mouse actions when pressing alt starting drag n' drop from panel.
 ### Changed
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: foobar2000 shortcuts are now skipped while quick-searching if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
@@ -24,6 +25,7 @@
 - Sources: new entries at contextual menu for playlist sources for basic playlist management: delete, rename, sort, ... See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159)
 - Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159).
+- HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 ### Removed
 ### Fixed

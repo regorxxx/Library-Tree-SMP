@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 02/05/26 -->
+﻿<!DOCTYPE html> <!-- 05/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -897,7 +897,7 @@
 					<!-- Regorxxx Mouse actions on playlist sources -->
 					<div style="display:inline-block; padding-top:0.7em;"><button id="plsActions_help" onclick="showHelp('plsActions_text');return false;">Playlist sources actions help</button></div>
 					<div id="plsActions_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4">While using playlist sources some mouse actions may have no purpose.<br><br>If actions are enabled on them, some will be forced to fallback to track selection (those related to 'send to playlist' or 'current playlist'), while those related to playback, queue and 'send to default playlist' will work as expected.<br><br>Disabling actions will fallback to track selection in all cases.</div>
+						<div class="info4">Some mouse actions have no purpose while using playlist sources. If actions are enabled, they will be changed to be compatible with playlist usage:<br><br>&#x2022; 'Send to playlist/current playlist' will track playlist selection.<br><br>&#x2022; 'Send to default playlist' will work as expected (note it will switch the active playlist).<br><br>&#x2022; Those related to playback, and queue will work as expected.<br><br>If actions are disabled default actions and selection tracking will be used.</div>
 					</div>
 					<!-- Regorxxx -->
 					<div class="div_text6">Scroll</div>
@@ -1776,7 +1776,7 @@
 		var sizes = [];
 		var input, cbox, box, radio;
 		var heightOffset, widthOffset;
-		var clickLabels, dblClickLabels, mbtnClickLabels;
+		var clickLabels, dblClickLabels, mbtnClickLabels, altClickLabels, keystrokeLabels; // Regorxxx <- Mouse actions on playlist sources | Top tracks ->
 
 		try {
 			parsed_args = window.external.dialogArguments.toArray();
@@ -1814,22 +1814,48 @@
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact'];
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
-			var altClickLabels = ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist']; // Regorxxx <- Top tracks ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
+			// Regorxxx <- Mouse actions on playlist sources | Top tracks
 			clickLabels = ppt['actionMode_internal'].value == 1
-				? ['Send to playlist']
+				? [ppt['libSource_internal'].value == 0 ? 'Select [tracks & panel]' : 'Send to playlist']
 				: ppt['actionMode_internal'].value == 2
-					? ['Select']
-					: ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
+					? [ppt['libSource_internal'].value == 0 && ppt['plsActions_internal'].value ? 'Select [panel]' : 'Select [tracks & panel]']
+					: ppt['libSource_internal'].value == 0
+						? ppt['plsActions_internal'].value
+							? ['Select [panel]', 'Select [tracks & panel]', 'Select [tracks & panel] & play', 'Select [tracks & panel] & play [add if playing]']
+							: ['Select [tracks & panel]']
+						: ['Select [panel]', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
+			dblClickLabels = ppt['actionMode_internal'].value == 1
+				? [ppt['libSource_internal'].value == 0 ? 'Select [tracks & panel] & play' : 'Send to playlist & play']
+				: ppt['actionMode_internal'].value == 2
+					? ['Send to playback queue and play']
+					: ppt['libSource_internal'].value == 0
+						? ppt['plsActions_internal'].value
+							? ['Select [tracks & panel]', 'Select [tracks & panel] & play', 'Expand / collapse (tree)', 'Send to playback queue and play']
+							: ['Select [tracks & panel] & play']
+						: ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
+			mbtnClickLabels = ppt['actionMode_internal'].value == 2
+				? ['Add to playback queue (middle dblclk removes)']
+				: ppt['libSource_internal'].value == 0
+					? ppt['plsActions_internal'].value
+						? ['Add to default playlist', 'Select [tracks & panel]', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Select Top tracks [tracks & panel]', 'Add Top tracks to default playlist', 'Select Top tracks [tracks & panel]']
+						: ['Add to playback queue (middle dblclk removes)']
+					: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
+			altClickLabels = ppt['actionMode_internal'].value == 2
+				? [ppt['libSource_internal'].value == 0 && ppt['plsActions_internal'].value ? 'Select Top tracks [panel]' : 'Select Top tracks [tracks & panel]']
+				: ppt['libSource_internal'].value == 0
+					? ppt['plsActions_internal'].value
+						? ['Add to default playlist', 'Select [tracks & panel]', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Select Top tracks [tracks & panel]', 'Add Top tracks to default playlist', 'Select Top tracks [tracks & panel]']
+						: ['Select Top tracks [tracks & panel]']
+					: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
+			keystrokeLabels = ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0
+				? ['Select [panel]', 'Select [tracks & panel]']
+				: ['Select', 'Send to playlist'];
+			// Regorxxx ->
 			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
 			var cusNodeLabels = ['Custom icon expand|collapse', 'Custom icon font name', 'Custom icon padding (+/-)', 'Square nodes: use windows'];
 			var cusScrollLabels = ['Step (0 = page)', 'Smooth duration max (ms)', 'Touch duration max (ms)', 'Touch sensitivity 0-10'];
-			dblClickLabels = ppt['actionMode_internal'].value == 1
-				? ['Send to playlist & play']
-				: ppt['actionMode_internal'].value == 2
-					? ['Send to playback queue and play']
-					: ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
 			var diskCacheLabels = ['Enable', 'Preload cached images']
 			var followCurrentLabels = ['Standard mode', 'Album art flow mode'];
 			// Regorxxx <- View by Folder structure sorting | Custom sorting for standard views | Sorting transliteration
@@ -1843,14 +1869,8 @@
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
 			var albumArtTfLabels = ['Custom views', 'Folder view']; // Regorxxx <- Custom TF art ->
-			var keystrokeLabels = ['Select', 'Send to playlist']
 			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			var metricsLabels = ['Margin', 'Tree indent', 'Line padding tree', 'Line padding album art', 'Margin overide top/bottom (no top bar)', 'Side marker width (0 = auto)'];
-			// Regorxxx <- Top tracks
-			mbtnClickLabels = ppt['actionMode_internal'].value == 2
-				? ['Add to playback queue (middle dblclk removes)']
-				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
-			// Regorxxx ->
 			var nodeLabels = ['Squares', 'Arrows', 'Arrows Light', 'Triangles', 'Triangles Light', 'Signs', 'Custom'];
 			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Preserve tree sorting at selection ->
 			var playlistSortLabels = ['Playlist sort order (empty = default)', 'Use smart sorting based on current view']; // Regorxxx <- Preserve tree sorting at selection ->
@@ -2856,34 +2876,39 @@
 
 			function setBehaviour() {
 				for (i = 0; i < 3; i++) { window.actionType.insertAdjacentHTML('beforeend', '<div><input id="actionMode' + i + '" name="actionMode" style="' + cbox + '" type="radio" /><label for="actionMode' + i + '" class="checkbox_label">' + actionTypeLabels[i] + '</label></div>'); }
-				if (ppt['actionMode_internal'].value) {
+				// Regorxxx <- Mouse actions on playlist sources | Top tracks
+				if (ppt['actionMode_internal'].value || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
 					window.click_dropdown.innerHTML = clickLabels[0];
-					window.click.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
+					window.click.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
 					window.click_dropdown.style.background = 'rgb(244, 67, 54)';
-					window.dblClick_dropdown.innerHTML = dblClickLabels[0];
-					window.dblClick.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
-					window.dblClick_dropdown.style.background = 'rgb(244, 67, 54)';
 				} else {
 					window.click_dropdown.innerHTML = clickLabels[ppt['clickAction_internal'].value];
 					for (i = 0; i < 4; i++) { window.click.insertAdjacentHTML('beforeend', '<a onclick="setClickAction(' + i + ');">' + clickLabels[i] + '</a>'); }
+				}
+				if (ppt['actionMode_internal'].value || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
+					window.dblClick_dropdown.innerHTML = dblClickLabels[0];
+					window.dblClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
+					window.dblClick_dropdown.style.background = 'rgb(244, 67, 54)';
+				} else {
 					window.dblClick_dropdown.innerHTML = dblClickLabels[ppt['dblClickAction_internal'].value];
 					for (i = 0; i < 4; i++) { window.dblClick.insertAdjacentHTML('beforeend', '<a onclick="setDblClickAction(' + i + ');">' + dblClickLabels[i] + '</a>'); }
 				}
-
-				if (ppt['actionMode_internal'].value == 2) {
+				if (ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
 					window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[0];
-					window.mbtnClick.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
+					window.mbtnClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
 					window.mbtnClick_dropdown.style.background = 'rgb(244, 67, 54)';
 				} else {
-					// Regorxxx <- Top tracks
 					window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[ppt['mbtnClickAction_internal'].value];
 					for (i = 0; i < 7; i++) { window.mbtnClick.insertAdjacentHTML('beforeend', '<a onclick="setMbtnClickAction(' + i + ');">' + mbtnClickLabels[i] + '</a>'); }
-					// Regorxxx ->
 				}
-
-				// Regorxxx <- Top tracks
-				window.altClick_dropdown.innerHTML = altClickLabels[ppt['altClickAction_internal'].value];
-				for (i = 0; i < 7; i++) { window.altClick.insertAdjacentHTML('beforeend', '<a onclick="setAltClickAction(' + i + ');">' + altClickLabels[i] + '</a>'); }
+				if (ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
+					window.altClick_dropdown.innerHTML = altClickLabels[0];
+					window.altClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
+					window.altClick_dropdown.style.background = 'rgb(244, 67, 54)';
+				} else {
+					window.altClick_dropdown.innerHTML = altClickLabels[ppt['altClickAction_internal'].value];
+					for (i = 0; i < 7; i++) { window.altClick.insertAdjacentHTML('beforeend', '<a onclick="setAltClickAction(' + i + ');">' + altClickLabels[i] + '</a>'); }
+				}
 				// Regorxxx ->
 
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[ppt['keyAction_internal'].value];
@@ -3284,12 +3309,42 @@
 			window.thumbSize_dropdown.disabled = window.flowMode_checkbox.checked; // Regorxxx <- Disable thumbnail size using flow mode instead of hiding it ->
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
 			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
-			clickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist'] : ppt['actionMode_internal'].value == 2 ? ['Select'] : ['Select', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
-			dblClickLabels = ppt['actionMode_internal'].value == 1 ? ['Send to playlist & play'] : ppt['actionMode_internal'].value == 2 ? ['Send to playback queue and play'] : ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
-			// Regorxxx <- Top tracks
+			// Regorxxx <- Mouse actions on playlist sources | Top tracks
+			clickLabels = ppt['actionMode_internal'].value == 1
+				? [ppt['libSource_internal'].value == 0 ? 'Select [tracks & panel]' : 'Send to playlist']
+				: ppt['actionMode_internal'].value == 2
+					? [ppt['libSource_internal'].value == 0 && ppt['plsActions_internal'].value ? 'Select [panel]' : 'Select [tracks & panel]']
+					: ppt['libSource_internal'].value == 0
+						? ppt['plsActions_internal'].value
+							? ['Select [panel]', 'Select [tracks & panel]', 'Select [tracks & panel] & play', 'Select [tracks & panel] & play [add if playing]']
+							: ['Select [tracks & panel]']
+						: ['Select [panel]', 'Send to playlist', 'Send to playlist & play', 'Send to playlist & play [add if playing]'];
+			dblClickLabels = ppt['actionMode_internal'].value == 1
+				? [ppt['libSource_internal'].value == 0 ? 'Select [tracks & panel] & play' : 'Send to playlist & play']
+				: ppt['actionMode_internal'].value == 2
+					? ['Send to playback queue and play']
+					: ppt['libSource_internal'].value == 0
+						? ppt['plsActions_internal'].value
+							? ['Select [tracks & panel]', 'Select [tracks & panel] & play', 'Expand / collapse (tree)', 'Send to playback queue and play']
+							: ['Select [tracks & panel] & play']
+						: ['Send to playlist', 'Send to playlist & play', 'Expand / collapse (tree)', 'Send to playback queue and play'];
 			mbtnClickLabels = ppt['actionMode_internal'].value == 2
 				? ['Add to playback queue (middle dblclk removes)']
-				: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
+				: ppt['libSource_internal'].value == 0
+					? ppt['plsActions_internal'].value
+						? ['Add to default playlist', 'Select [tracks & panel]', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Select Top tracks [tracks & panel]', 'Add Top tracks to default playlist', 'Select Top tracks [tracks & panel]']
+						: ['Add to playback queue (middle dblclk removes)']
+					: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (middle dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
+			altClickLabels = ppt['actionMode_internal'].value == 2
+				? [ppt['libSource_internal'].value == 0 && ppt['plsActions_internal'].value ? 'Select Top tracks [panel]' : 'Select Top tracks [tracks & panel]']
+				: ppt['libSource_internal'].value == 0
+					? ppt['plsActions_internal'].value
+						? ['Add to default playlist', 'Select [tracks & panel]', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Select Top tracks [tracks & panel]', 'Add Top tracks to default playlist', 'Select Top tracks [tracks & panel]']
+						: ['Select Top tracks [tracks & panel]']
+					: ['Add to default playlist', 'Add to current playlist', 'Add to playback queue (alt dblclk removes)', 'Send Top tracks to default playlist', 'Send Top tracks to current playlist', 'Add Top tracks to default playlist', 'Add Top tracks to current playlist'];
+			keystrokeLabels = ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0
+				? ['Select [panel]', 'Select [tracks & panel]']
+				: ['Select', 'Send to playlist'];
 			// Regorxxx ->
 			window.scroll_checkbox3.disabled = ppt['sbarType_internal'].value !== 2; // Regorxxx <- Scrollbar on windows style improvements ->
 			window.treeSortLimit_container0.parentNode.disabled = ppt['smartSort_internal'].value; // Regorxxx <- Preserve tree sorting at selection | Performance improvements -->
@@ -3314,39 +3369,53 @@
 			var list = document.querySelectorAll("[class='reflectionRow']");
 			for (j = 0; j < list.length; j++) { list[j].style.display = showRefl ? '' : 'none'; }
 			// Regorxxx ->
-
-			if (ppt['actionMode_internal'].value) {
+			// Regorxxx <- Mouse actions on playlist sources | Top tracks
+			if (ppt['actionMode_internal'].value || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
 				window.click_dropdown.innerHTML = clickLabels[0];
 				window.click.innerHTML = '';
-				window.click.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
+				window.click.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
 				window.click_dropdown.style.background = 'rgb(244, 67, 54)';
-				window.dblClick_dropdown.innerHTML = dblClickLabels[0];
-				window.dblClick.innerHTML = '';
-				window.dblClick.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
-				window.dblClick_dropdown.style.background = 'rgb(244, 67, 54)';
 			} else {
 				window.click_dropdown.innerHTML = clickLabels[ppt['clickAction_internal'].value];
 				window.click.innerHTML = '';
 				for (i = 0; i < 4; i++) { window.click.insertAdjacentHTML('beforeend', '<a onclick="setClickAction(' + i + ');">' + clickLabels[i] + '</a>'); }
 				window.click_dropdown.style.background = '#8994bc';
+			}
+			if (ppt['actionMode_internal'].value || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
+				window.dblClick_dropdown.innerHTML = dblClickLabels[0];
+				window.dblClick.innerHTML = '';
+				window.dblClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
+				window.dblClick_dropdown.style.background = 'rgb(244, 67, 54)';
+			} else {
 				window.dblClick_dropdown.innerHTML = dblClickLabels[ppt['dblClickAction_internal'].value];
 				window.dblClick.innerHTML = '';
 				for (i = 0; i < 4; i++) { window.dblClick.insertAdjacentHTML('beforeend', '<a onclick="setDblClickAction(' + i + ');">' + dblClickLabels[i] + '</a>'); }
 				window.dblClick_dropdown.style.background = '#8994bc';
 			}
-			if (ppt['actionMode_internal'].value == 2) {
+			if (ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
 				window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[0];
 				window.mbtnClick.innerHTML = '';
-				window.mbtnClick.insertAdjacentHTML('beforeend', '<a>PRESET</a>');
+				window.mbtnClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
 				window.mbtnClick_dropdown.style.background = 'rgb(244, 67, 54)';
 			} else {
 				window.mbtnClick_dropdown.innerHTML = mbtnClickLabels[ppt['mbtnClickAction_internal'].value];
 				window.mbtnClick.innerHTML = '';
-				// Regorxxx <- Top tracks
 				for (i = 0; i < 7; i++) { window.mbtnClick.insertAdjacentHTML('beforeend', '<a onclick="setMbtnClickAction(' + i + ');">' + mbtnClickLabels[i] + '</a>'); }
 				window.mbtnClick_dropdown.style.background = '#8994bc';
-				// Regorxxx ->
 			}
+			if (ppt['actionMode_internal'].value == 2 || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value) {
+				window.altClick_dropdown.innerHTML = altClickLabels[0];
+				window.altClick.innerHTML = '';
+				window.altClick.insertAdjacentHTML('beforeend', '<a>Forced by mode</a>');
+				window.altClick_dropdown.style.background = 'rgb(244, 67, 54)';
+			} else {
+				window.altClick_dropdown.innerHTML = altClickLabels[ppt['mbtnClickAction_internal'].value];
+				window.altClick.innerHTML = '';
+				window.altClick_dropdown.innerHTML = altClickLabels[ppt['altClickAction_internal'].value];
+				for (i = 0; i < 7; i++) { window.altClick.insertAdjacentHTML('beforeend', '<a onclick="setAltClickAction(' + i + ');">' + altClickLabels[i] + '</a>'); }
+				window.altClick_dropdown.style.background = '#8994bc';
+			}
+			// Regorxxx ->
 		}
 
 		setInterval(inputChanged, 500);
