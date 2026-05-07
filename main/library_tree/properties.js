@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/05/26
+//08/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -208,6 +208,7 @@ let properties = [
 	['Image Follow Selection Standard Mode', false, 'stndModeFollowSelection'],
 	['Image Item Overlay', 1, 'itemOverlayType'],
 	['Image Item Overlay Align', 1, 'itemOverlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
+	['Image Cut Resize px: Off (0) Clean (2) Zoom (>2) ', 2, 'albumArtCutResize'], // Regorxxx <- Cut img to avoid artifacts at borders ->
 	['Image Label', 1, 'albumArtLabelType'],
 	['Image Memory Limit MB (0 = default)', 0, 'memoryLimit'],
 	['Image Memory Limit Aggressiveness: 0 (off) - 2 (max)', 0, 'memLimitMode'], // Regorxxx <- More strict memory limits ->

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 07/05/26 -->
+﻿<!DOCTYPE html> <!-- 08/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1237,6 +1237,8 @@
 								<span id="thumbSize" class="dropdown-content"></span>
 							</span>
 							<div id="thumbNailVCenter"></div>
+							<div id="albumArtCutResize"></div>
+							<div><br></div>
 						</div>
 					</div>
 				</div>
@@ -1284,6 +1286,7 @@
 						<li>Image size: hold Ctrl+Alt+<i>Shift</i> & rotate the mouse wheel</li>
 						<li>Text and image size: hold Ctrl+Alt & rotate the mouse wheel</li>
 						<li>Flow mode operates in a single column or row (labels right & size options not available)
+						<li>Zoom after resizing setting may be used to cut resampling artifacts in some cases. A value of 2 px is recommended.
 						</li>
 					</ul>
 				</div>
@@ -1973,8 +1976,8 @@
 				// Regorxxx ->
 				// Regorxxx <- Custom TF art
 				albumArt: {
-					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo', 'albumArtTf1View', 'albumArtTf2View', 'albumArtTf1Folder', 'albumArtTf2Folder', 'albumArtTf1Name', 'albumArtTf2Name'],
-					type: ['int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtCutResize', 'albumArtLetterNo', 'albumArtTf1View', 'albumArtTf2View', 'albumArtTf1Folder', 'albumArtTf2Folder', 'albumArtTf1Name', 'albumArtTf2Name'],
+					type: ['int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Tooltip font | Custom album art overlay track count
@@ -3168,6 +3171,8 @@
 				for (i = 0; i < 8; i++) { window.thumbSize.insertAdjacentHTML('beforeend', '<a onclick="setThumbSize(' + i + ');">' + thumbnailSizeLabels[i] + '</a>'); }
 
 				i = 0; window.thumbNailVCenter.insertAdjacentHTML('beforeend', '<div><input id="thumbNail_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="thumbNail_checkbox' + i + '" class="checkbox_label">Thumbnail vertically centered</label></div>'); // Regorxxx <- Thumbnail Vertically centered ->
+
+				i = 0; window.albumArtCutResize.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="albumArtCutResize_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="albumArtCutResize_container' + i + '" class="inp_label2">Zoom after resizing (px)</label></div>'); // Regorxxx <- Cut img to avoid artifacts at borders ->
 
 				i = 0; window.indexLetter.insertAdjacentHTML('beforeend', '<div><input id="indexLetter_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="indexLetter_checkbox' + i + '" class="checkbox_label">' + indexLetterLabels[i] + '</label></div>');
 				i = 1; window.indexLetter.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="indexLetter_container' + i + '" name="albumart_input" class="input7" /><label for="indexLetter_container' + i + '" class="inp_label2">' + indexLetterLabels[i] + '</label></div>');

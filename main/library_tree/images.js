@@ -1,5 +1,5 @@
 'use strict';
-//07/05/26
+//08/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -425,11 +425,16 @@ class Images {
 		o = this.cache[key];
 		o.img = $.gr(this.cellWidth * n, this.cellWidth * n, true, g => this.createCollage(g, this.cellWidth, this.cellWidth, n, n, cells));
 		this.applyStyleMask(o.img, this.getStyle(this.style.image)); // Regorxxx <- Code cleanup |New img styles ->
-		// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+		// Regorxxx <- Cut img to avoid artifacts at borders | Use HQ Bicubic interpolation
 		const w = Math.round(this.im.w);
 		if (o.img.Width !== w || o.img.Height !== w) {
-			o.img = o.img.Resize(w + 2, w + 2, InterpolationMode.HighQualityBicubic);
-			o.img = o.img.Clone(2, 2, w, w);
+			const cut = $.clamp(Number(ppt.albumArtCutResize), 0, w - 1);
+			if (cut > 0) {
+				o.img = o.img.Resize(w + cut * 2, w + cut * 2, InterpolationMode.HighQualityBicubic);
+				o.img = o.img.Clone(cut, cut, w, w);
+			} else {
+				o.img = o.img.Resize(w, w, InterpolationMode.HighQualityBicubic);
+			}
 		}
 		// Regorxxx ->
 		if (this.labels.fade) this.fadeMask(o.img, o.img.Width, o.img.Height);
@@ -828,10 +833,10 @@ class Images {
 		if (item.root) return;
 		// Regorxxx <- Item overlay vertical alignment ->
 		switch (ppt.itemOverlayVAlign) {
-			case 0: coords = {...coords, y: this.im.y}; break;
+			case 0: coords = { ...coords, y: this.im.y }; break;
 			case 1: break; // At top of image
-			case 2: coords = {...coords, y: coords.y + coords.h - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8)}; break;
-			case 3: coords = {...coords, y: this.im.y + this.im.w - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8)}; break;
+			case 2: coords = { ...coords, y: coords.y + coords.h - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8) }; break;
+			case 3: coords = { ...coords, y: this.im.y + this.im.w - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8) }; break;
 		}
 		// Regorxxx ->
 		switch (ppt.itemOverlayType) {
@@ -1317,12 +1322,17 @@ class Images {
 					}
 					image = image.Clone(ix, iy, iw, ih);
 				}
-				// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+				// Regorxxx <- Cut img to avoid artifacts at borders | Use HQ Bicubic interpolation
 				w = Math.round(w);
 				h = Math.round(h);
 				if (w !== iw || h !== ih) {
-					image = image.Resize(w + 2, h + 2, InterpolationMode.HighQualityBicubic);
-					image = image.Clone(2, 2, w, h);
+					const cut = $.clamp(Number(ppt.albumArtCutResize), 0, Math.min(w, h) - 1);
+					if (cut) {
+						image = image.Resize(w + cut * 2, h + cut * 2, InterpolationMode.HighQualityBicubic);
+						image = image.Clone(cut, cut, w, h);
+					} else {
+						image = image.Resize(w, h, InterpolationMode.HighQualityBicubic);
+					}
 				}
 				// Regorxxx ->
 				break;
@@ -1331,10 +1341,15 @@ class Images {
 				const sc = caller == 'save' ? Math.max(h / ih, w / iw) : Math.min(h / ih, w / iw);
 				const im_w = Math.round(iw * sc);
 				const im_h = Math.round(ih * sc);
-				// Regorxxx <- Improve img to avoid artifacts at borders | Use HQ Bicubic interpolation
+				// Regorxxx <- Cut img to avoid artifacts at borders | Use HQ Bicubic interpolation
 				if (im_w !== iw || im_h !== ih) {
-					image = image.Resize(im_w + 2, im_h + 2, InterpolationMode.HighQualityBicubic);
-					image = image.Clone(2, 2, im_w, im_h);
+					const cut = $.clamp(Number(ppt.albumArtCutResize), 0, Math.min(im_w, im_h) - 1);
+					if (cut) {
+						image = image.Resize(im_w + cut * 2, im_h + cut * 2, InterpolationMode.HighQualityBicubic);
+						image = image.Clone(cut, cut, im_w, im_h);
+					} else {
+						image = image.Resize(im_w, im_h, InterpolationMode.HighQualityBicubic);
+					}
 				}
 				// Regorxxx ->
 				break;
