@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/04/26
+//07/05/26
 
 /* exported Language */
 
@@ -468,7 +468,7 @@ const Language = Object.freeze({
 						let begin = 0;
 						let end = unihans.length - 1;
 						while (begin <= end) {
-							offset = ~~((begin + end) / 2);
+							offset = Math.trunc((begin + end) / 2);
 							let unihan = unihans[offset];
 							cmp = this.internals.collator.compare(ch, unihan);
 
@@ -500,7 +500,7 @@ const Language = Object.freeze({
 				},
 				parse: function (str) {
 					if (typeof str !== 'string') {
-						throw new Error('argument should be string.');
+						throw new TypeError('argument should be string.');
 					}
 					if (!this.isSupported()) {
 						throw new Error('not support Intl or zh-CN language.');
@@ -573,10 +573,8 @@ const Language = Object.freeze({
 			this.data.lastInput = string;
 		}
 		config = typeof config === 'string'
-			? { ...this.helpers.japanese.romanizationConfigs.default, ...(this.helpers.japanese.romanizationConfigs[config] || {}) }
-			: !config
-				? { ...this.helpers.japanese.romanizationConfigs.default }
-				: config;
+			? { ...this.helpers.japanese.romanizationConfigs.default, ...this.helpers.japanese.romanizationConfigs[config] }
+			: config || { ...this.helpers.japanese.romanizationConfigs.default };
 		if (typeof config === 'undefined' || typeof config !== 'object') { throw new ReferenceError('Romanization method "' + config + '" is undefined or non valid'); }
 
 		const table = this.helpers.japanese.applyConfigs({ ...this.helpers.japanese.table }, config);
@@ -607,12 +605,12 @@ const Language = Object.freeze({
 			}
 
 			let tokenDest = table[token] || '';
-			let tokenDestFallBack = !tokenDest.length ? token : null;
+			let tokenDestFallBack = tokenDest.length ? null : token;
 
 			// small tsu
 			if (previousToken === 'っ') {
 				if (tokenDest.match(/^[^aiueo]/)) {
-					if (token[0] === 'ち') {
+					if (token.startsWith('ち')) {
 						if (config['っち'] === 'tchi') {
 							tokenDest = {
 								'ち': 'tchi',
@@ -653,7 +651,7 @@ const Language = Object.freeze({
 
 			// long vowel
 			if (token === 'ー') {
-				if (dest.match(/[aiueo]$/)) {
+				if (new RegExp(/[aiueo]$/).exec(dest)) {
 					if (config['あー'] === 'a') {
 						// nope
 					} else if (config['あー'] === 'ah') {
@@ -690,7 +688,7 @@ const Language = Object.freeze({
 				} else {
 					tokenDest = '-';
 				}
-			} else if (prevJapanese && dest.slice(-1) === 'e' && tokenDest[0] === 'i') {
+			} else if (prevJapanese && dest.endsWith('e') && tokenDest[0] === 'i') {
 				tokenDest = tokenDest.slice(1);
 
 				if (config['えい'] === 'ei') {
@@ -706,7 +704,7 @@ const Language = Object.freeze({
 				} else if (config['えい'] === 'e') {
 					// nope
 				}
-			} else if (prevJapanese && dest.slice(-1) === 'o' && tokenDest[0] === 'u') {
+			} else if (prevJapanese && dest.endsWith('o') && tokenDest[0] === 'u') {
 				tokenDest = tokenDest.slice(1);
 
 				if (config['おう'] === 'ou') {
@@ -722,7 +720,7 @@ const Language = Object.freeze({
 				} else if (config['おう'] === 'o') {
 					// nope
 				}
-			} else if (prevJapanese && dest.match(/[aiueo]$/) && dest.slice(-1) === tokenDest[0] && token !== 'を') {
+			} else if (prevJapanese && new RegExp(/[aiueo]$/).exec(dest) && dest.slice(-1) === tokenDest[0] && token !== 'を') {
 				tokenDest = tokenDest.slice(1);
 
 				dest = dest.slice(0, -1) + config[{
@@ -760,7 +758,7 @@ const Language = Object.freeze({
 
 			dest += (tokenDest || tokenDestFallBack || '');
 
-			prevJapanese = tokenDestFallBack ? false : true;
+			prevJapanese = !tokenDestFallBack;
 
 			previousToken = token;
 		}
@@ -818,17 +816,19 @@ const Language = Object.freeze({
 				const romanizeLangMap = this.helpers.romanizeLangMap;
 				string = romanizeLang.reduce((prev, curr) => this[romanizeLangMap[curr]](prev, Object.hasOwn(config, curr) ? config[curr] : void (0), false), string);
 			}
-			return this.data.lastOutput = string;
+			this.data.lastOutput = string;
+			return string;
 		} else {
-			return this.data.lastOutput = this.jpRomanize(
+			this.data.lastOutput = this.jpRomanize(
 				this.chRomanize(
-					string.replace(/./gui, a => this.helpers.greek.table[a] || this.helpers.russian.table[a] || a),
+					string.replace(/./gui, (a) => this.helpers.greek.table[a] || this.helpers.russian.table[a] || a),
 					Object.hasOwn(config, 'ch') ? config.chinese : void (0),
 					false
 				),
 				Object.hasOwn(config, 'jp') ? config.japanese : void (0),
 				false
 			);
+			return this.data.lastOutput;
 		}
 	}
 });
