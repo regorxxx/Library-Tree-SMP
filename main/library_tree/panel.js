@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/05/26
+//07/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -7,6 +7,7 @@
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
 /* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
+/* global _resolvePath:readable */
 
 /* exported Panel */
 
@@ -218,6 +219,7 @@ class Panel {
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
 				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
+			s = _resolvePath(s);
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
 				if (!q) { s = s.replace(/\$randfloat({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
@@ -270,7 +272,7 @@ class Panel {
 				cache = q[3];
 				s = s.replace(
 					q[0],
-					logicDic.includes(cache)
+					() => logicDic.includes(cache)
 						? queryJoin(Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
 						: Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
 							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
@@ -282,7 +284,7 @@ class Panel {
 				cache = (q[1] || '').toUpperCase();
 				s = s.replace(
 					q[0],
-					cache === 'ARTIST'
+					() => cache === 'ARTIST'
 						? '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)'
 						: cache === 'ALBUM ARTIST'
 							? '$if3(%<ALBUM ARTIST>%,%<ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)'
@@ -296,40 +298,40 @@ class Panel {
 			while (s.includes('$meta_branch(')) {
 				const q = s.match(/\$meta_branch\((.+?)?\)/);
 				if (!q) { s = s.replace(/\$meta_branch(\(?.*?\)|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
+				s = s.replace(q[0], () => '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
 			}
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
 				if (!q) { s = s.replace(/\$nowplaying({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
+				s = s.replace(q[0], () => this.eval(q[1], 'nowplaying') || '~#No Value For Item#~');
 			}
 			while (s.includes('$selected{')) {
 				const q = s.match(/\$selected{(.+?)}/);
 				if (!q) { s = s.replace(/\$selected({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], this.eval(q[1], 'selected') || '~#No Value For Item#~');
+				s = s.replace(q[0], () => this.eval(q[1], 'selected') || '~#No Value For Item#~');
 			}
 			while (s.includes('$nowplayingorselected{')) {
 				const q = s.match(/\$nowplayingorselected{(.+?)}/);
 				if (!q) { s = s.replace(/\$nowplayingorselected({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
+				s = s.replace(q[0], () => this.eval(q[1], 'nowplayingorselected') || '~#No Value For Item#~');
 			}
 			let i = 0;
 			while (s.includes('$harmonicsort{')) {
 				const q = s.match(/\$harmonicsort{.*?}/);
 				if (!q) { s = s.replace(/\$harmonicsort({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
+				s = s.replace(q[0], () => '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$harmonicmix{')) {
 				const q = s.match(/\$harmonicmix{.*?}/);
 				if (!q) { s = s.replace(/\$harmonicmix({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
+				s = s.replace(q[0], () => '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 			while (s.includes('$shufflebytags{')) {
 				const q = s.match(/\$shufflebytags{.*?}/);
 				if (!q) { s = s.replace(/\$shufflebytags({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
+				s = s.replace(q[0], () => '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
 		}
@@ -360,8 +362,8 @@ class Panel {
 								? '$if($strcmp(%ARTIST%,%ALBUM ARTIST%),$char(8203),[$meta(ARTIST,0)])'
 								: '[$meta(' + group + ',0)]';
 			})
-			.replace(/\$swapbranchprefix{(.*?)}/gi, '$stripprefix($1)')
-			.replace(/\$stripbranchprefix{(.*?)}/gi, '$swapprefix($1)');
+			.replace(/\$swapbranchprefix{(.*?)}/gi, '$$stripprefix($1)')
+			.replace(/\$stripbranchprefix{(.*?)}/gi, '$$swapprefix($1)');
 		return s;
 	}
 	// Regorxxx ->
@@ -437,12 +439,17 @@ class Panel {
 					const qMark = baseTag[i];
 					this.view = this.view.replace(new RegExp(v), '$if2(' + v + ',' + qMark + ')');
 				});
-				this.view = this.view.replace(/%<album artist>%/i, '$if3(%<#ALBUM ARTIST#>%,%<#ARTIST#>%,%<#COMPOSER#>%,%<#PERFORMER#>%)').replace(/%<album>%/i, '$if2(%<#ALBUM#>%,%<#VENUE#>%)').replace(/%<artist>%/i, '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)').replace(/<#/g, '<').replace(/#>/g, '>');
+				this.view = this.view
+					.replace(/%<album artist>%/i, () => '$if3(%<#ALBUM ARTIST#>%,%<#ARTIST#>%,%<#COMPOSER#>%,%<#PERFORMER#>%)')
+					.replace(/%<album>%/i, () => '$if2(%<#ALBUM#>%,%<#VENUE#>%)')
+					.replace(/%<artist>%/i, () => '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)')
+					.replace(/<#/g, '<')
+					.replace(/#>/g, '>');
 			}
-			if (this.multiProcess) this.view = this.view.replace(/%</g, '#!#$meta_sep(').replace(/>%/g, ',@@)#!#');
+			if (this.multiProcess) { this.view = this.view.replace(/%</g, '#!#$$meta_sep(').replace(/>%/g, ',@@)#!#'); }
 			this.sortBy = this.sortBy.replace(/\|/g, this.splitter);
 			this.view = this.view.replace(/\|/g, this.splitter);
-			if (this.view.includes('$nodisplay{')) this.noDisplay = true;
+			if (this.view.includes('$nodisplay{')) { this.noDisplay = true; }
 
 			while (this.view.includes('$nodisplay{')) {
 				ix1 = this.view.indexOf('$nodisplay{');
@@ -530,7 +537,7 @@ class Panel {
 		ppt.filterBy = Math.min(ppt.filterBy, this.filter.mode.length - 1);
 		ppt.viewBy = Math.min(ppt.viewBy, this.grp.length - 1);
 		this.folderView = ppt.viewBy == this.folder_view;
-		if (grpsOnly) return;
+		if (grpsOnly) { return; }
 		this.colMarker = this.grp[ppt.viewBy].type.includes('$colour{');
 		let valid = false;
 		if (ui.img.blurDark && ppt.text_hUse) {
@@ -1488,7 +1495,10 @@ class Panel {
 			case 3: {
 				const nm = this.viewName.replace(/view by|^by\b/i, '').trim();
 				const basenames = nm.split(' ').map(v => pluralize(v));
-				const basename = basenames.join(' ').replace(/(album|artist|top|track)s\s/gi, '$1 ').replace(/(similar artist)\s/gi, '$1s ').replace(/years - albums/gi, 'Year - Albums');
+				const basename = basenames.join(' ')
+					.replace(/(album|artist|top|track)s\s/gi, '$1 ')
+					.replace(/(similar artist)\s/gi, '$1s ')
+					.replace(/years - albums/gi, 'Year - Albums');
 				this.rootName = (this.imgView ? `All #^^^^# ${basename}` : `${ppt.showSource ? this.sourceName : 'All'} (#^^^^# ${basename})`);
 				this.rootName1 = (this.imgView ? `All 1 ${nm}` : `${ppt.showSource ? this.sourceName : 'All'} (1 ${nm})`);
 				break;
@@ -2382,11 +2392,11 @@ class Panel {
 	}
 
 	getLibPlaylistName() {
-		return ppt.libPlaylist.replace(/%VIEW_NAME%/i, this.viewName);
+		return ppt.libPlaylist.replace(/%VIEW_NAME%/gi, () => this.viewName);
 	}
 
 	getLibPlaylistPlayingName() {
-		return ppt.libPlaylist.replace(/%VIEW_NAME%/i, this.viewName) + ' (playing)';
+		return ppt.libPlaylist.replace(/%VIEW_NAME%/gi, () => this.viewName) + ' (playing)';
 	}
 
 	createLibPlaylist() {
