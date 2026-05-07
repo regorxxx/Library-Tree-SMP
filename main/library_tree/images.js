@@ -246,21 +246,31 @@ class Images {
 		return this.cachePath + this.getArt(idx, folderView).cacheName;
 	}
 
-	async get_album_art_async(handle, art_id, key, ix) {
-		let result = { path: '', img: null };
+	async get_album_art_async(handle, art, key, ix) {
+		let result = { path: '', img: null, ext: '' }; // Regorxxx <- Allow images with transparencies ->
 		if (art_id === 5) {
 			const tf = panel.processCustomTf(panel.folderView ? ppt.albumArtTfFolder : ppt.albumArtTfView, pop.tree[ix]);
 			const mask = new FbTitleFormat(tf).EvalWithMetadb(handle);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
-			if (files[0] && $.file(files[0])) { result = { path: files[0], image: await gdi.LoadImageAsyncV2(0, files[0]) }; }
+			if (files[0] && $.file(files[0])) { result = { path: files[0], image: await gdi.LoadImageAsyncV2(0, files[0]), ext: this.getCacheFileExt(files[0]) }; } // Regorxxx <- Allow images with transparencies ->
 		} else {
-			result = await utils.GetAlbumArtAsyncV2(0, handle, art_id, false);
+			result = await utils.GetAlbumArtAsyncV2(0, handle, art.idx, false);
 		}
 		const o = this.cache[key];
 		if (o && o.img == 'called') {
-			const saveName = md5.hashStr(result.path) + '.jpg';
+			const saveName = md5.hashStr(result.path) + result.ext; // Regorxxx <- Allow images with transparencies ->
 			this.cacheIt(result.image, key, ix, saveName);
 		}
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Allow images with transparencies
+	getCacheFileFormat(fileName) {
+		return ppt.albumArtDiskCacheAlpha && ['.png', '.gif'].includes(utils.SplitFilePath(fileName)[2]) ? 'image/png' : 'image/jpeg';
+	}
+
+	getCacheFileExt(fileName) {
+		return ppt.albumArtDiskCacheAlpha && ['.png', '.gif'].includes(utils.SplitFilePath(fileName)[2]) ? '.png' : '.jpg';
 	}
 	// Regorxxx ->
 
@@ -322,14 +332,15 @@ class Images {
 			if (!this.timer.save && this.toSave.length) this.timer.save = setInterval(() => {
 				const ln = this.toSave.length;
 				if (ln) {
-					if (this.toSave[ln - 1].setKeyOnly) {
-						this.database[this.toSave[ln - 1].key] = this.toSave[ln - 1].saveName;
-						$.save(this.toSave[ln - 1].folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
+					const item = this.toSave[ln - 1];
+					if (item.setKeyOnly) {
+						this.database[item.key] = item.saveName;
+						$.save(item.folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
 					} else {
-						const saved = this.toSave[ln - 1].image.SaveAs(this.toSave[ln - 1].folder + this.toSave[ln - 1].saveName, 'image/jpeg');
+						const saved = item.image.SaveAs(item.folder + item.saveName, this.getCacheFileFormat(item.saveName)); // Regorxxx <- Allow images with transparencies ->
 						if (saved) {
-							this.database[this.toSave[ln - 1].key] = this.toSave[ln - 1].saveName;
-							$.save(this.toSave[ln - 1].folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
+							this.database[item.key] = item.saveName;
+							$.save(item.folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
 						}
 					}
 					this.toSave.pop();
@@ -1401,6 +1412,7 @@ class Images {
 		if (this.albumArtDiskCache) allCached = this.items.every(v => v.key && this.database[v.key]);
 		if (allCached) interval = this.interval.cache;
 
+		const art = this.getArt(ppt.artId, panel.folderView);
 		clearInterval(this.timer.load);
 		this.timer.load = null;
 		let j = 0;
@@ -1420,7 +1432,7 @@ class Images {
 							img: 'called',
 							accessed: ++this.accessed
 						};
-						if (v.handle) this.get_album_art_async(v.handle, ppt.artId, key, v.ix);
+						if (v.handle) { this.get_album_art_async(v.handle, art, key, v.ix); }
 					}
 				}
 				j++;
@@ -1796,7 +1808,7 @@ class Images {
 
 	newDatabase() {
 		return {
-			'-----------group key------------': '-----------image key------------.jpg'
+			'-----------group key------------': '-----------image key------------.ext' // Regorxxx <- Allow images with transparencies ->
 		};
 	}
 
