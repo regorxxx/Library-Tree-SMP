@@ -537,7 +537,7 @@ class MenuItems {
 		// Regorxxx <- Code cleanup | Art cache folder
 		{
 			menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
-			img.getArtTypes().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration  ->
+			img.getArtNames().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration  ->
 				menuName: 'Album art',
 				str: v,
 				func: () => this.setAlbumartType(i),
@@ -1421,6 +1421,7 @@ class MenuItems {
 			case 3:
 			case 4:
 			case 5:
+			case 6:
 				ppt.artId = i;
 				break;
 		}

@@ -16,6 +16,7 @@
 - Drag n' drop: scrolling while using drag n' drop if mouse is near the first/last row/column on tree and art modes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Drag n' drop: added support for Top Tracks mouse actions when pressing alt starting drag n' drop from panel.
 ### Changed
+- Album art: expanded art type 'File (by TF)' to 2 different slots which allows to assign art to specific nodes by TF, independently of foobar2000 art preferences. It may be used to load art based on folders or node names, instead of being track-based. e.g. For a genre/style tree, to show custom art for every genre (instead of art from the first track for such node); or show a custom image for every folder while using folder view. Now label names are also customizable. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080070.html#msg1080070).
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: foobar2000 shortcuts are now skipped while quick-searching if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: quick-search is skipped if first char is space.

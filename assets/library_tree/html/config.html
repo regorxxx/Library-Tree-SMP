@@ -1258,6 +1258,8 @@
 					<!-- Regorxxx Custom TF art -->
 					<div class="div_text2">TF style</div>
 					<div id="albumArtTf"></div>
+					<div class="info5"><i>Custom TF slot names can be used per custom/folder view (| separator)</i></div>
+					<div id="albumArtTfName"></div>
 					<div class="info5"><i>In addition to <a class="tooltip" id="ltReference4" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference4')">custom TF syntax<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>, <b>$nodename</b> is available to retrieve node names as shown on the panel. Paths starting with '<b>.\profile\</b>' are relative to foobar profile folder.<br>'<b>%FB2K_PROFILE_PATH%</b>' or '<b>%PROFILE%</b>' may also be used.<br><br>This can be used to display custom art related to actual View TF pattern instead of track-based. e.g. To display a genre/style tree with custom images for every genre, add rock genre image at '[FB2K_PROFILE]\images\rock.jpg'</i></div>
 					<!-- Regorxxx -->
 					<!-- Regorxxx Rectangle selection on art view -->
@@ -1881,7 +1883,7 @@
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
-			var albumArtTfLabels = ['Custom views', 'Folder view']; // Regorxxx <- Custom TF art ->
+			var albumArtTfLabels = ['Custom views (1)', 'Custom views (2)', 'Folder view (1)', 'Folder view (2)', 'View labels (1)', 'View labels (2)']; // Regorxxx <- Custom TF art ->
 			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			var metricsLabels = ['Margin', 'Tree indent', 'Line padding tree', 'Line padding album art', 'Margin overide top/bottom (no top bar)', 'Side marker width (0 = auto)'];
 			var nodeLabels = ['Squares', 'Arrows', 'Arrows Light', 'Triangles', 'Triangles Light', 'Signs', 'Custom'];
@@ -1971,8 +1973,8 @@
 				// Regorxxx ->
 				// Regorxxx <- Custom TF art
 				albumArt: {
-					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo', 'albumArtTfView', 'albumArtTfFolder'],
-					type: ['int', 'int', 'int', 'text', 'text']
+					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtLetterNo', 'albumArtTf1View', 'albumArtTf2View', 'albumArtTf1Folder', 'albumArtTf2Folder', 'albumArtTf1Name', 'albumArtTf2Name'],
+					type: ['int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Tooltip font | Custom album art overlay track count
@@ -2018,7 +2020,7 @@
 				search: [], // Regorxxx <- Drag n' drop to search box ->
 				display: [],
 				statistics: ['itemShowStatistics'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF', 'imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'], // Regorxxx <- Custom TF art | Effect per art type ->
+				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTf1', 'imgStyleTf2', 'imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTf1ReflStyle', 'imgTf2ReflStyle'], // Regorxxx <- Custom TF art | Effect per art type ->
 				custom: [],
 				advanced: []
 			}
@@ -2475,20 +2477,20 @@
 			// Regorxxx ->
 
 			// Regorxxx <- Code cleanup | Custom TF art | New img styles | Effect per art type
-			var imgTableStylesId = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTF'];
+			var imgTableStylesId = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTf1', 'imgStyleTf2'];
 			var imgTableEffectsId = [
-				['imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl', 'Reflection'],
-				['imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot', 'Reflection Root'],
-				['imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTfBorder', 'Border'],
-				['imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTfShadow', 'Shadow'],
-				['imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTfMute', 'Mute'],
-				['imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTfEdgeGlow', 'Edge Glow'],
-				['imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTfBloom', 'Bloom'],
-				['imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTfBlur', 'Blur'],
-				['imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTfVignette', 'Vignette'],
-				ppt['drawMode_internal'].value === 1 ? ['imgFrontGrayScale', 'imgBackGrayScale', 'imgDiscGrayScale', 'imgIconGrayScale', 'imgArtistGrayScale', 'imgTfGrayScale', 'Gray Scale'] : null,
+				['imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'Reflection'],
+				['imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'Reflection Root'],
+				['imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2order', 'Border'],
+				['imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'Shadow'],
+				['imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'Mute'],
+				['imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'Edge Glow'],
+				['imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'Bloom'],
+				['imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'Blur'],
+				['imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', 'Vignette'],
+				ppt['drawMode_internal'].value === 1 ? ['imgFrontGrayScale', 'imgBackGrayScale', 'imgDiscGrayScale', 'imgIconGrayScale', 'imgArtistGrayScale', 'imgTf1GrayScale', 'imgTf2GrayScale', 'Gray Scale'] : null,
 			].filter(Boolean);
-			var imgTableReflectionId = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTfReflStyle'];
+			var imgTableReflectionId = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTf1ReflStyle', 'imgTf2ReflStyle'];
 			var imgTableStyles = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart'];
 			var imgTableEffects = ['Reflection', 'Reflection Root', 'Border', 'Shadow', 'Mute', 'Edge Glow', 'Bloom', 'Blur', 'Vignette', ppt['drawMode_internal'].value === 1 ? 'Gray Scale' : null].filter(Boolean);
 			var imgTableReflection = ['Asymmetric', 'Symmetric'];
@@ -2503,7 +2505,7 @@
 						var imgStylesLen = imgTableStyles.length;
 						var imgTableEffectsLen = imgTableEffects.length;
 						var imgTableReflectionLen = imgTableReflection.length;
-						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', 'TF', ''];
+						headers = ['Front', 'Back', 'Disc', 'Icon', 'Artist', '&nbsp;TF&nbsp;(1)&nbsp;', '&nbsp;TF&nbsp;(2)&nbsp;', ''];
 						cells.push(headers);
 						items = [];
 						var subItems = [];
@@ -3172,7 +3174,8 @@
 				i = 2; window.indexLetter.insertAdjacentHTML('beforeend', '<div><input id="indexLetter_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="indexLetter_checkbox' + i + '" class="checkbox_label">' + indexLetterLabels[i] + '</label></div>');
 
 				// Regorxxx <- Custom TF art
-				for (i = 0; i < 2; i++) { window.albumArtTf.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="albumArtTf_container' + i + '" name="albumart_input" class="input70" /><label for="albumArtTf_container' + i + '" class="inp_label2">' + albumArtTfLabels[i] + '</label></div>'); }
+				for (i = 0; i < 4; i++) { window.albumArtTf.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="albumArtTf_container' + i + '" name="albumart_input" class="input70" /><label for="albumArtTf_container' + i + '" class="inp_label2">' + albumArtTfLabels[i] + '</label></div>'); }
+				for (i = 4; i < 6; i++) { window.albumArtTfName.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="albumArtTfName_container' + i + '" name="albumart_input" class="input70" /><label for="albumArtTfName_container' + i + '" class="inp_label2">' + albumArtTfLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Rectangle selection on art view
 				window.selRectArt.insertAdjacentHTML('beforeend', '<div><input id="selRectArt_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="selRectArt_checkbox" class="checkbox_label">Allow mouse rectangle selection </label></div>');
@@ -3387,8 +3390,8 @@
 			// Regorxxx ->
 			// Regorxxx <- Custom TF art | Effect per art type ->
 			var labels = [
-				'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTfRefl',
-				'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTfReflRoot'
+				'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl',
+				'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot'
 			];
 			var showRefl = false;
 			for (i = 0; i < labels.length; i++) {

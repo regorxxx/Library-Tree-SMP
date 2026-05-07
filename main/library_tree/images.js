@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 //07/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
@@ -71,14 +71,15 @@ class Images {
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Image border setting
-		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
+		/** @type {{idx: number, type: string, name?: string | (folderView: boolean) => string, cacheName: string | (folderView: boolean) => string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, tf?: string | (folderView: boolean) => string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
 		this.art = [
 			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', trim: false, showMenu: 'Show albums', switchIdx: [4, 5] },
 			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
 			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
 			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur', vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
 			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale', trim: true, showMenu: 'Show artists', switchIdx: [0, 5] },
-			{ idx: 5, type: 'File (by TF)...', cacheName: (folderView) => folderView ? 'foldertf' : 'viewtf', lines: 1, style: 'imgStyleTF', reflection: 'imgTfRefl', reflectionStyle: 'imgTfReflStyle', reflectionRoot: 'imgTfReflRoot', border: 'imgTfBorder', shadow: 'imgTfShadow', mute: 'imgTfMute', edgeGlow: 'imgTfEdgeGlow', bloom: 'imgTfBloom', blur: 'imgTfBlur', vignette: 'imgTfVignette', grayScale: 'imgTfGrayScale', trim: true, showMenu: 'Show art (tf)', switchIdx: [0, 4] }
+			{ idx: 5, type: 'File (by Tf) [1]', name: (folderView) => ppt.albumArtTf1Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf1' : 'viewtf1', lines: 1, style: 'imgStyleTf1', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf1ReflStyle', reflectionRoot: 'imgTf1ReflRoot', border: 'imgTf1Border', shadow: 'imgTf1Shadow', mute: 'imgTf1Mute', edgeGlow: 'imgTf1EdgeGlow', bloom: 'imgTf1Bloom', blur: 'imgTf1Blur', vignette: 'imgTf1Vignette', grayScale: 'imgTf1GrayScale', tf: (folderView) => folderView ? 'albumArtTf1Folder' : 'albumArtTf1View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] },
+			{ idx: 6, type: 'File (by Tf) [2]', name: (folderView) => ppt.albumArtTf2Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf2' : 'viewtf2', lines: 1, style: 'imgStyleTf2', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf2ReflStyle', reflectionRoot: 'imgTf2ReflRoot', border: 'imgTf2Border', shadow: 'imgTf2Shadow', mute: 'imgTf2Mute', edgeGlow: 'imgTf2EdgeGlow', bloom: 'imgTf2Bloom', blur: 'imgTf2Blur', vignette: 'imgTf2Vignette', grayScale: 'imgTf2GrayScale', tf: (folderView) => folderView ? 'albumArtTf2Folder' : 'albumArtTf2View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] }
 		];
 
 		this.useD2D = window.DrawMode === 1 && typeof Effects !== 'undefined';
@@ -198,9 +199,12 @@ class Images {
 
 	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type
 	formatArt(a, folderView) {
-		/** @type {{idx: number, type: string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, trim: boolean, showMenu: string, switchIdx: number[]}} */
+		/** @type {{idx: number, type: string, name:string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, tf: string, trim: boolean, showMenu: string, switchIdx: number[]}} */
 		const copy = { ...a };
 		if (typeof copy.cacheName === 'function') { copy.cacheName = copy.cacheName(folderView); }
+		if (typeof copy.tf === 'function') { copy.tf = ppt[copy.tf(folderView)]; }
+		if (typeof copy.name === 'function') { copy.name = copy.name(folderView); }
+		if (!Object.hasOwn(copy, 'name') || !copy.name) { copy.name = copy.type; }
 		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
 		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale'].forEach((k) => copy[k] = ppt[copy[k]]);
 		return copy;
@@ -227,6 +231,10 @@ class Images {
 		return this.getArtSchema().map((a) => a.type);
 	}
 
+	getArtNames() {
+		return this.getArtSchema().map((a) => a.name);
+	}
+
 	getArtShowTypes() {
 		const art = this.getArtSchema();
 		return [...new Set(this.getArtSchema().map((a) => a.switchIdx).flat(Infinity))].sort((a, b) => a - b).map((id) => art[id]);
@@ -248,8 +256,8 @@ class Images {
 
 	async get_album_art_async(handle, art, key, ix) {
 		let result = { path: '', img: null, ext: '' }; // Regorxxx <- Allow images with transparencies ->
-		if (art_id === 5) {
-			const tf = panel.processCustomTf(panel.folderView ? ppt.albumArtTfFolder : ppt.albumArtTfView, pop.tree[ix]);
+		if (Object.hasOwn(art, 'tf')) {
+			const tf = panel.processCustomTf(art.tf, pop.tree[ix]);
 			const mask = new FbTitleFormat(tf).EvalWithMetadb(handle);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
 			if (files[0] && $.file(files[0])) { result = { path: files[0], image: await gdi.LoadImageAsyncV2(0, files[0]), ext: this.getCacheFileExt(files[0]) }; } // Regorxxx <- Allow images with transparencies ->
