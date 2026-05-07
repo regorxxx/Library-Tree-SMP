@@ -26,7 +26,7 @@
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159)
 - Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159).
 - Album Art: clearing image cache now only clears database for current art type, not all art.
-- Album Art: new setting to allow saving images with transparencies on cache, instead of flattening them with a black background as jpg. Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Disk Cache Use transparencies' (properties panel).
+- Album Art: new setting to allow saving images with transparencies on cache, instead of flattening them with a black background as jpg. Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Disk Cache Use transparencies' (properties panel).  See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 ### Removed
@@ -42,7 +42,7 @@
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
-- Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions.
+- Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 
