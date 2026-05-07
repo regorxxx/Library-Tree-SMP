@@ -42,6 +42,8 @@
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
+- Album Art: clear all images cache menu entry being disabled on some unwanted situations.
+- Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 
 ## [2.0.0] - 2026-01-30
 ### Added
