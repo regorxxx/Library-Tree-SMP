@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/04/26
+//07/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -227,6 +227,7 @@ let properties = [
 	['Image Thumbnail Gap Standard', 0, 'thumbNailGapStnd'],
 	['Image Thumbnail Gap Compact', 3, 'thumbNailGapCompact'],
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
+	['Image Thumbnail Vertical centered', true, 'thumbNailVCenter'], // Regorxxx <- Thumbnail Vertically centered ->
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
 	// Regorxxx <- Custom TF art

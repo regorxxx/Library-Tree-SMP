@@ -624,9 +624,10 @@ class Images {
 				let y2 = this.im.y + 2 + this.im.w - this.overlayHeight;
 				if (art.reflection && art.reflectionStyle === 0) { x2 = Math.floor(x2 - this.bor.pad / 4); }
 				if (cur_img) {
+					const offsetY = ppt.thumbNailVCenter ? (this.im.w - cur_img.Height) / 2 : 0; // Regorxxx <- Thumbnail Vertically centered ->
 					coords = {
 						x: box_x + Math.round((this.box.w - cur_img.Width) / 2),
-						y: this.im.y + 2 + this.im.w - cur_img.Height,
+						y: this.im.y + 2 + this.im.w - cur_img.Height - offsetY,
 						w: cur_img.Width,
 						h: cur_img.Height
 					};
