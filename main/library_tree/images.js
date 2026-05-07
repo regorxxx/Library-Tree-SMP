@@ -1154,8 +1154,13 @@ class Images {
 
 	drawStyleShadow(gr, style, coords) {
 		if (this.style.dropShadow && this.shadow) {
-			if (style.shadow === 'default') { gr.DrawImage(this.shadow, coords.x, coords.y, this.shadow.Width, this.shadow.Height, 0, 0, this.shadow.Width, this.shadow.Height); } // disabled for blend: not suitable
-			else { gr.DrawImage(this.shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, this.shadow.Width, this.shadow.Height); }
+			if (style.shadow === 'default') { // disabled for blend: not suitable
+				// Regorxxx <- Adjust shadows to non-filling images
+				const h = this.shadow.Height - (this.im.w - coords.h) * 1.15;
+				const w = this.shadow.Width - (this.im.w - coords.w) * 1.15;
+				gr.DrawImage(this.shadow, coords.x, coords.y, w, h, 0, 0, this.shadow.Width, this.shadow.Height);
+				// Regorxxx ->
+			} else { gr.DrawImage(this.shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, this.shadow.Width, this.shadow.Height); }
 		} else if (this.style.dropGrad) {
 			switch (style.shadow) {
 				case 'circular': {
