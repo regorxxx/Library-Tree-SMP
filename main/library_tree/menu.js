@@ -1,5 +1,5 @@
 'use strict';
-//03/05/26
+//07/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -722,7 +722,7 @@ class MenuItems {
 						menuName: 'Refresh',
 						str,
 						func: () => this.setMode(i),
-						flags: this.items.Count ? MF_STRING : MF_GRAYED
+						flags: this.items.Count || i ? MF_STRING : MF_GRAYED
 					});
 				});
 				menu.newItem({ menuName: 'Refresh', separator: true });
@@ -1780,7 +1780,7 @@ class MenuItems {
 				} else d.value = str[0];
 			}
 		} else if (d.sortType == 2 && i && sortByIX != -1) {
-			d.value = d.value.replace(/%ALBUM%/gi, d.sortAlbumByYear[sortByIX]); // Regorxxx <- Sorting identification should not be case-sensitive ->
+			d.value = d.value.replace(/%ALBUM%/gi, () => d.sortAlbumByYear[sortByIX]); // Regorxxx <- Sorting identification should not be case-sensitive ->
 		}
 		if (d.sortType == 1 || sortByIX != -1) {
 			const expanded = [];
