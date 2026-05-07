@@ -236,8 +236,8 @@ let properties = [
 	['Image Label [TF-2] view', '.\\profile\\yttm\\art_img\\$lower($cut($nodename)\\$cut($nodename,40)\\*', 'albumArtTf2View'],
 	['Image Label [TF-1] folders', '$replace($directory_path(%PATH%),$directory(%PATH%,1),)*', 'albumArtTf1Folder'],
 	['Image Label [TF-2] folders', '$replace($replace($directory_path(%PATH%),$directory(%PATH%,1),,$directory(%PATH%,2),,),\\\\,\\)*', 'albumArtTf2Folder'],
-	['Image Label [TF-1] name', 'Node (by TF)|Folder (by TF)', 'albumArtTf1Name'],
-	['Image Label [TF-2] name', 'Artist (by Tf)|Parent folder (by TF)', 'albumArtTf2Name'],
+	['Image Label [TF-1] name', 'Node (by Tf)|Folder (by Tf)', 'albumArtTf1Name'],
+	['Image Label [TF-2] name', 'Artist (by Tf)|Parent folder (by Tf)', 'albumArtTf2Name'],
 	['Image Style [TF-1] Regular-0 Auto-Fill-1 Circular-2', 2, 'imgStyleTf1'],
 	['Image Style [TF-2] Regular-0 Auto-Fill-1 Circular-2', 2, 'imgStyleTf2'],
 	// Regorxxx ->
