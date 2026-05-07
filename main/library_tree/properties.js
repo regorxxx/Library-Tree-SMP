@@ -228,7 +228,7 @@ let properties = [
 	['Image Thumbnail Gap Standard', 0, 'thumbNailGapStnd'],
 	['Image Thumbnail Gap Compact', 3, 'thumbNailGapCompact'],
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
-	['Image Thumbnail Vertical centered', true, 'thumbNailVCenter'], // Regorxxx <- Thumbnail Vertically centered ->
+	['Image Thumbnail Vertically centered', true, 'thumbNailVCenter'], // Regorxxx <- Thumbnail Vertically centered ->
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
 	// Regorxxx <- Custom TF art
