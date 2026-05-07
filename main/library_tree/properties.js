@@ -199,6 +199,7 @@ let properties = [
 	['Image Current No Artist', 2, 'curNoArtistImg'],
 	['Image Current No Cover', 6, 'curNoCoverImg'],
 	['Image Disk Cache Enabled', true, 'albumArtDiskCache'],
+	['Image Disk Cache Use transparencies', true, 'albumArtDiskCacheAlpha'], // Regorxxx <- Allow images with transparencies ->
 	['Image Group Level', 0, 'albumArtGrpLevel'],
 	['Image Group Names', JSON.stringify({}), 'albumArtGrpNames'],
 	['Image Flip Labels', false, 'albumArtFlipLabels'],
