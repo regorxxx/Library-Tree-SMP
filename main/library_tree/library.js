@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/05/26
+//07/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -542,7 +542,7 @@ class Library {
 	}
 
 	replaceFilterQuerySearch(searchText) {
-		return this.filterQuery.replace(/\$searchtext/g, searchText);
+		return this.filterQuery.replace(/\$searchtext/g, () => searchText);
 	}
 	// Regorxxx ->
 
@@ -555,7 +555,7 @@ class Library {
 			return handleList;
 		}
 		const tfClean = panel.processCustomTf(tf)
-			.replace(/%ISPLAYING%/gi, fb.IsPlaying ? '$not(0)' : '').replace(/%ISPAUSEd%/gi, fb.isPaused ? '$not(0)' : '');
+			.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '').replace(/%ISPAUSEd%/gi, fb.isPaused ? '$not(0)' : '');
 		const sortMatches = /~#sort\d+/g.exec(tfClean) || [];
 		let tfEval = tfClean;
 		sortMatches.forEach((match) => {
