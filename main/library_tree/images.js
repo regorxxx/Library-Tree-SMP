@@ -1,9 +1,9 @@
 ﻿'use strict';
-//06/05/26
+//07/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
-/* global getFiles:readable */
+/* global getFiles:readable, _deleteFolder:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable , BlendMode:readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
@@ -1888,13 +1888,10 @@ class Images {
 			if (!ppt.albumArtDiskCache) return;
 			const continue_confirmation = (status, confirmed) => {
 				if (confirmed) {
-					try {
-						this.clearCache();
-						const app = new ActiveXObject('Shell.Application');
-						app.NameSpace(10).MoveHere(this.cachePath); // remove all saved images & databases if albumArtDiskCache
-					} catch (e) { // eslint-disable-line no-unused-vars
-						$.trace('unable to empty image cache: can be emptied in windows explorer'); // Wine fix
-					}
+					// Regorxxx <- Bypass admin permissions to delete cache | Delete only current view cache
+					this.clearCache();
+					_deleteFolder(this.cacheFolder);
+					// Regorxxx ->
 				}
 			};
 			const caption = 'Reset All Images';
