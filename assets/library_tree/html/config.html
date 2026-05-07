@@ -1203,6 +1203,12 @@
 					<span class="dropdown"><a id="overlay_dropdown" class="dropbtn" href="#" onclick="return toggle('overlay');"></a>
 						<span id="overlay" class="dropdown-content"></span>
 					</span>
+					<div class="info5">Position:</i></div>
+					<!-- Regorxxx Item overlay vertical alignment -->
+					<span class="dropdown"><a id="overlayAlign_dropdown" class="dropbtn" href="#" onclick="return toggle('overlayAlign');"></a>
+						<span id="overlayAlign" class="dropdown-content"></span>
+					</span>
+					<!-- Regorxxx -->
 					<div class="div_text2">Disk cache</div>
 					<div id="useCache"></div>
 					<div class="div_text2">Flow mode</div>
@@ -1820,6 +1826,7 @@
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact'];
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
+			var albumArtOverlayAlignLabels = ['Top (box)', 'Top (image)', 'Bottom (image)', 'Bottom (box)']; // Regorxxx <- Item overlay vertical alignment ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
 			// Regorxxx <- Mouse actions on playlist sources | Top tracks
 			clickLabels = ppt['actionMode_internal'].value == 1
@@ -2106,6 +2113,14 @@
 				ppt['itemOverlayType_internal'].value = n;
 				window.overlay.style.display = 'none';
 			}
+
+			// Regorxxx <- Item overlay vertical alignment
+			function setOverlayAlign(n) {
+				window.overlayAlign_dropdown.innerHTML = albumArtOverlayAlignLabels[n];
+				ppt['itemOverlayVAlign_internal'].value = n;
+				window.overlayAlign.style.display = 'none';
+			}
+			// Regorxxx ->
 
 			// Regorxxx <- Drag n' drop to search box
 			function setSearchSend(n) {
@@ -3122,6 +3137,11 @@
 				window.overlay_dropdown.innerHTML = albumArtOverlayLabels[ppt['itemOverlayType_internal'].value];
 				for (i = 0; i < 3; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
 
+				// Regorxxx <- Item overlay vertical alignment
+				window.overlayAlign_dropdown.innerHTML = albumArtOverlayAlignLabels[ppt['itemOverlayVAlign_internal'].value];
+				for (i = 0; i < 4; i++) { window.overlayAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayAlign(' + i + ');">' + albumArtOverlayAlignLabels[i] + '</a>'); }
+				// Regorxxx ->
+
 				for (i = 0; i < 3; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox" class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); } // Regorxxx <- Allow images with transparencies ->
 
 				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
@@ -3244,7 +3264,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip && setOverlayAlign) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3923,6 +3943,7 @@
 			['noCoverStub_dropdown', 'noCoverStub'],
 			['node_dropdown', 'node'],
 			['overlay_dropdown', 'overlay'],
+			['overlayAlign_dropdown', 'overlayAlign'], // Regorxxx <- Item overlay vertical alignment ->
 			['root_dropdown', 'root'],
 			['rootStub_dropdown', 'rootStub'],
 			['sbarShow_dropdown', 'sbarShow'],

@@ -818,6 +818,14 @@ class Images {
 
 	drawItemOverlay(gr, art, style, item, coords) {
 		if (item.root) return;
+		// Regorxxx <- Item overlay vertical alignment ->
+		switch (ppt.itemOverlayVAlign) {
+			case 0: coords = {...coords, y: this.im.y}; break;
+			case 1: break; // At top of image
+			case 2: coords = {...coords, y: coords.y + coords.h - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8)}; break;
+			case 3: coords = {...coords, y: this.im.y + this.im.w - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8)}; break;
+		}
+		// Regorxxx ->
 		switch (ppt.itemOverlayType) {
 			case 1: {
 				if (!item.count) break;

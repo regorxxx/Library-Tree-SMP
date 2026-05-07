@@ -207,6 +207,7 @@ let properties = [
 	['Image Follow Selection Flow Mode', true, 'flowModeFollowSelection'],
 	['Image Follow Selection Standard Mode', false, 'stndModeFollowSelection'],
 	['Image Item Overlay', 1, 'itemOverlayType'],
+	['Image Item Overlay Align', 1, 'itemOverlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
 	['Image Label', 1, 'albumArtLabelType'],
 	['Image Memory Limit MB (0 = default)', 0, 'memoryLimit'],
 	['Image Memory Limit Aggressiveness: 0 (off) - 2 (max)', 0, 'memLimitMode'], // Regorxxx <- More strict memory limits ->
