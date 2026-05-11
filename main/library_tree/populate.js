@@ -3387,7 +3387,7 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager
+	// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager | Branch collage art
 	getParent(node) {
 		const l = Math.max(node.level - 1, 0);
 		return this.tree.slice(0, this.row.i).findLast((n) => n.level === l && n.child.includes(node)) || node;
@@ -3406,6 +3406,13 @@ class Populate {
 		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
 			? lib.playlistSourceRoot
 			: lib.playlistSourceRoot.filter((root) => root.node === parent);
+	}
+
+	getPlaylistParentUi(idx) {
+		if (idx === -1) { return []; }
+		return ppt.plsSource === 0 || ppt.plsSource === 1
+			? lib.playlistSourceRoot
+			: lib.playlistSourceRoot.filter((root) => root.idx === idx);
 	}
 
 	isPlaylistParent(node) {

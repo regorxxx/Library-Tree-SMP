@@ -1,5 +1,5 @@
 'use strict';
-//06/05/26
+//11/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -604,7 +604,7 @@ addEventListener('on_playlists_changed', () => {
 		if (fixedPlaylistIndex.length === 0) {
 			ppt.fixedPlaylist = false;
 			ppt.libSource = 0;
-			if (panel.imgView) img.clearCache();
+			if (panel.imgView) { img.clearCache(); }
 			lib.playlist_update();
 			lib.flushViewCache([-1]); // Regorxxx <- Internal cache of views ->
 		}
@@ -626,6 +626,9 @@ addEventListener('on_playlists_changed', () => {
 addEventListener('on_playlist_items_added', (playlistIndex) => {
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
+		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
+			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));
+		}
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}
@@ -635,6 +638,9 @@ addEventListener('on_playlist_items_added', (playlistIndex) => {
 addEventListener('on_playlist_items_removed', (playlistIndex) => {
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
+		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
+			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));
+		}
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}
@@ -644,6 +650,9 @@ addEventListener('on_playlist_items_removed', (playlistIndex) => {
 addEventListener('on_playlist_items_reordered', (playlistIndex) => {
 	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
+		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
+			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));
+		}
 		lib.playlist_update(playlistIndex);
 		lib.flushViewCache(panel.isFixedPlaylistSource() ? [-1] : [0]); // Regorxxx <- Internal cache of views ->
 	}

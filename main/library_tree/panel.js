@@ -1736,6 +1736,12 @@ class Panel {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Branch collage art
+	getBranchTf() {
+		return this.cleanViewTf(this.processCustomTf(this.curPattern)).replace(/%TITLE%/gi, '^@^');
+	}
+	// Regorxxx ->
+
 	// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager
 	getDragDropTooltipText(method, mask, x, y, bInternal) {
 		let text = '';

@@ -544,6 +544,18 @@ class MenuItems {
 				checkRadio: i == ppt.artId,
 			}));
 			menu.newItem({ menuName: 'Album art', separator: true });
+			// Regorxxx <- Branch collage art
+			menu.newItem({
+				menuName: 'Album art',
+				str: 'Branch collage art',
+				func: () => {
+					ppt.toggle('albumArtNodeCollage');
+					this.loadView(true, ppt.albumArtViewBy);
+				},
+				checkItem: ppt.albumArtNodeCollage
+			});
+			// Regorxxx ->
+			menu.newItem({ menuName: 'Album art', separator: true });
 			['Group: auto', 'Group: top level', 'Group: two levels', 'Change group name...'].forEach((v, i) => menu.newItem({
 				menuName: 'Album art',
 				str: v,

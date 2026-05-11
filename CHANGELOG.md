@@ -16,6 +16,7 @@
 - Drag n' drop: scrolling while using drag n' drop if mouse is near the first/last row/column on tree and art modes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Drag n' drop: added support for Top Tracks mouse actions when pressing alt starting drag n' drop from panel.
 - Album Art: added setting to control degree of zoom/cutting of images after resizing; main usage is hiding SMP images resizing artifacts, resulting on grey borders in some cases. This was previously done under the hood, but forced; now can be tweaked. Setting found at 'Album Art' (HTML options panel) and 'Image Cut Resize px: Off (0) Clean (2) Zoom (>2)' (properties panel).
+- Album art: new setting to apply collage art effect for branches, found at 'Settings\Album art' menu. It will display up to 4 child items (from different children). Preload disk cache setting doesn't work along this feature.
 ### Changed
 - Album art: expanded art type 'File (by TF)' to 2 different slots which allows to assign art to specific nodes by TF, independently of foobar2000 art preferences. It may be used to load art based on folders or node names, instead of being track-based. e.g. For a genre/style tree, to show custom art for every genre (instead of art from the first track for such node); or show a custom image for every folder while using folder view. Now label names are also customizable. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080070.html#msg1080070).
 - Album art: performance improvements on album art loading in some cases.

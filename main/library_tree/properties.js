@@ -221,6 +221,7 @@ let properties = [
 	['Image Show Index Number', 0, 'albumArtLetterNo'],
 	['Image Show Index Year Auto', true, 'albumArtYearAuto'],
 	['Image Show Options', true, 'albumArtOptionsShow'],
+	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
 	['Image Style [Front] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleFront'],
 	['Image Style [Back] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleBack'],
 	['Image Style [Disc] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleDisc'],

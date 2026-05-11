@@ -1,7 +1,7 @@
 'use strict';
 //11/05/26
 
-/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
+/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
 /* global getFiles:readable, _deleteFolder:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable , BlendMode:readable */
@@ -494,17 +494,19 @@ class Images {
 		this.items = [];
 	}
 
-	// Regorxxx <- Code cleanup | New img styles
-	createCollage(g, cellWidth, cellHeight, rows, columns, cells) {
+	// Regorxxx <- Code cleanup | New img styles | Branch collage art
+	createCollage(g, cellWidth, cellHeight, rows, columns, cells, imgs) {
 		let x = 0;
 		let y = 0;
 		const style = this.getStyle(this.style.image);
 		const condense = Math.max(style.collageCondense, 0.1);
 		for (let row = 0; row < rows; row++) {
 			for (let column = 0; column < columns; column++) {
-				const idx = column + row * columns + 1;
+				const idx = column + row * columns + (imgs ? 0 : 1);
 				if (idx <= cells) {
-					let img = pop.tree.length && pop.tree[idx] ? this.getImg(pop.tree[idx].key) : null;
+					let img = imgs
+						? imgs[idx]
+						: pop.tree.length && pop.tree[idx] ? this.getImg(pop.tree[idx].key) : null;
 					if (!img) { img = this.stub.noImg; }
 					if (img) {
 						let cx = 0;
@@ -556,6 +558,10 @@ class Images {
 
 		}
 		if (style.collageLine) { g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend); }
+	}
+
+	createCollageFromImgs(g, cellWidth, cellHeight, rows, imgs) {
+		this.createCollage(g, cellWidth, cellHeight, rows, rows, imgs.length, imgs);
 	}
 
 	getHeartPoints(w, h, x = 0, y = 0) {
@@ -1435,7 +1441,7 @@ class Images {
 		return nowp ? ui.col.nowp : hover ? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h) : item.sel ? this.labels.overlayDark ? ui.col.text : ui.col.textSel : this.labels.overlayDark ? $.RGB(240, 240, 240) : ui.col.text;
 	}
 
-	// Regorxxx <- Code cleanup | Improve image loading
+	// Regorxxx <- Code cleanup | Improve image loading | Branch collage art
 	getImages() {
 		if (!panel.imgView) { return; }
 		const extraRows = this.albumArtDiskCache ? panel.rows * 2 : panel.rows; // will load any extra including those after any preLoad
@@ -1449,7 +1455,9 @@ class Images {
 				this.items.push({
 					ix,
 					handle: item.handle,
-					key
+					key,
+					handleArr: item.handleArr,
+					keyArr: item.keyArr
 				});
 			}
 		};
@@ -1485,7 +1493,41 @@ class Images {
 							img: 'called',
 							accessed: ++this.accessed
 						};
-						if (this.albumArtDiskCache && $.file(this.cacheFolder + this.database[key])) {
+						const handlesCount = v.handleArr.length;
+						if (ppt.albumArtNodeCollage && handlesCount) {
+							const promises = [];
+							const keys = new Set();
+							const max = Math.min(handlesCount, 4);
+							for (let i = 0; i < handlesCount; i++) {
+								if (keys.size === max) { break; }
+								const handle = v.handleArr[i];
+								const subKey = v.keyArr[i];
+								if (!keys.has(subKey)) {
+									keys.add(subKey);
+									if (this.albumArtDiskCache && this.database[subKey] && $.file(this.cacheFolder + this.database[subKey])) {
+										promises.push(this.load_image_async(subKey, this.cacheFolder + this.database[subKey], v.ix));
+									} else {
+										promises.push(this.get_album_art_async(handle, art, subKey, v.ix));
+									}
+								}
+							}
+							Promise.all(promises).then((results) => {
+								if (this.albumArtDiskCache) {
+									results.forEach((r) => {
+										if (!this.database[r.key] || !$.file(this.cacheFolder + this.database[r.key])) {
+											const saveName = 'b_' + md5.hashStr(r.key) + r.ext;
+											this.cacheIt(r.image, r.key, r.ix, saveName);
+										}
+									});
+								}
+								if (results.length > 1) {
+									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
+									this.cacheIt(img, key, v.ix);
+								} else {
+									this.cacheIt(results[0].image, key, v.ix);
+								}
+							});
+						} else if (this.albumArtDiskCache && $.file(this.cacheFolder + this.database[key])) {
 							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
 						} else if (v.handle) {
 							this.get_album_art_async(v.handle, art, key, v.ix);
@@ -1549,7 +1591,7 @@ class Images {
 				}
 				break;
 		}
-		this.albumArtDiskCache ? (preLoad ? this.preLoad() : this.getImages()) : this.loadThrottle();
+		this.albumArtDiskCache ? (preLoad && !ppt.albumArtNodeCollage ? this.preLoad() : this.getImages()) : this.loadThrottle(); // Regorxxx <- Branch collage art ->
 	}
 
 	getLotCol(item, nowp, hover) {
@@ -1618,6 +1660,7 @@ class Images {
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
 		const tfDate = new FbTitleFormat('[$year(%date%)]');
+		const tfArtId = new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
 
 		pop.tree.forEach((v, i) => {
@@ -1640,6 +1683,26 @@ class Images {
 						plsRootNode.node = v;
 						v.plsRoot = true;
 					}
+				}
+			}
+			// Regorxxx ->
+			// Regorxxx <- Branch collage art
+			v.handleArr = [];
+			v.keyArr = [];
+			if (ppt.albumArtNodeCollage) {
+				const ids = new Set();
+				const handleArr = ppt.albumArtNodeCollage
+					? pop.range(v.item).map((idx) => panel.list[idx])
+					: [];
+				v.handleArr = [];
+				for (const handle of handleArr) {
+					let tag = tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim();
+					if (!ids.has(tag)) {
+						ids.add(tag);
+						v.handleArr.push(handle);
+						v.keyArr.push(md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
+					}
+					if (ids.size === 4) { break; }
 				}
 			}
 			// Regorxxx ->
