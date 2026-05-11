@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/05/26
+//11/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -52,6 +52,7 @@ class Library {
 		// Regorxxx ->
 		// Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view
 		this.playlistSourceIdx = [-1];
+		/** @type {{idx: number, guid: string, name: string, count: number, node: object }[]} */
 		this.playlistSourceRoot = [];
 		// Regorxxx ->
 
@@ -427,9 +428,10 @@ class Library {
 		// Regorxxx ->
 	}
 
+	// Regorxxx <- Improve view patterns. Fixed multiple bugs on automatic group handling for default view patterns and cases where a default group was not found.
 	checkLines(arr, arrExpanded) {
-		if (ppt.albumArtGrpLevel) return; // user set
-		// Regorxxx <- Improve view patterns. Fixed multiple bugs on automatic group handling for default view patterns and cases where a default group was not found.
+		if (ppt.albumArtGrpLevel) { return; } // user set
+		if (panel.isBranchedPlaylistSource()) { panel.lines = 1; return; }
 		const view = panel.grp[ppt.viewBy].type.trim();
 		const defaultView = panel.folderView
 			? panel.defaultViews.length - 1
@@ -439,11 +441,12 @@ class Library {
 			panel.lines = Array.isArray(lines) ? lines[ppt.artId] : lines;
 			return;
 		}
-		// Regorxxx ->
+
 		const lengths = arr.map(v => v.length);
 		const avg = $.average(lengths);
-		if (avg < (arrExpanded ? 2 : 3)) panel.lines = 1;
+		if (avg < (arrExpanded ? 2 : 3)) { panel.lines = 1; }
 	}
+	// Regorxxx ->
 
 	// Regorxxx <- Avoid unnecesary sorting while checking statistics which can take more than 1 second on big libraries
 	checkStatistics(handleList) {
