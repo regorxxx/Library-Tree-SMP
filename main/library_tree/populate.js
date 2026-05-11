@@ -1,5 +1,5 @@
 'use strict';
-//07/05/26
+//11/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -214,7 +214,7 @@ class Populate {
 	// Regorxxx <- Preserve tree sorting at selection | Code cleanup
 	addItems(arr, node, bNoSort) {
 		if (panel.playlistSort || bNoSort) { // Regorxxx <- Smart sorting based on view ->
-			node.item.forEach((item) => $.range(item.start, item.end, 1).forEach((idx) => arr.push(idx)));
+			this.range(node.item, arr);
 		} else {
 			if (node.root) { // When selecting all, omit
 				$.range(0, panel.list.Count - 1, 1).forEach((idx) => arr.push(idx));
@@ -223,10 +223,10 @@ class Populate {
 			} else if (node.item.length > 1 || node.item[0].count > 1) {
 				this.branch(node, !!node.root, true, true, false);
 				if (node.child.length) { node.child.forEach((subNode) => this.addItems(arr, subNode)); }
-				else { $.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx)); }
+				else { this.range(node.item, arr); }
 				this.clearChild(node, true, false);
 			} else {
-				$.range(node.item[0].start, node.item[0].end, 1).forEach((idx) => arr.push(idx));
+				this.range(node.item, arr);
 			}
 		}
 		return arr;
@@ -2726,10 +2726,9 @@ class Populate {
 		if (index == this.getMainMenuIndex.searchFocus && this.is_focused && ppt.searchShow) search.focus();
 	}
 
-	range(item) {
-		let items = [];
+	range(item, items = []) { // Regorxxx <- Code cleanup ->
 		item.forEach(v => {
-			for (let i = v.start; i <= v.end; i++) items.push(i);
+			for (let i = v.start; i <= v.end; i++) { items.push(i); }
 		});
 		return items;
 	}
@@ -2892,7 +2891,7 @@ class Populate {
 					}
 				});
 			} else {
-				items = this.range(item.item);
+				this.range(item.item, items);
 			}
 			firstPls = plsIdxArr[0];
 			plman.ClearPlaylistSelection(firstPls);
