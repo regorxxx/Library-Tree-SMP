@@ -1435,73 +1435,72 @@ class Images {
 		return nowp ? ui.col.nowp : hover ? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h) : item.sel ? this.labels.overlayDark ? ui.col.text : ui.col.textSel : this.labels.overlayDark ? $.RGB(240, 240, 240) : ui.col.text;
 	}
 
+	// Regorxxx <- Code cleanup | Improve image loading
 	getImages() {
+		if (!panel.imgView) { return; }
 		const extraRows = this.albumArtDiskCache ? panel.rows * 2 : panel.rows; // will load any extra including those after any preLoad
-
-		if (!panel.imgView) return;
 		this.items = [];
 		let begin = this.start == 0 ? ppt.rootNode ? 1 : 0 : this.start;
 		let end = this.end == 0 ? this.end : Math.min(this.end + this.columns * extraRows, pop.tree.length);
+		const fill = (item, ix) => {
+			if (!item) { return; }
+			let key = item.key;
+			if (key && !this.cache[key]) {
+				this.items.push({
+					ix,
+					handle: item.handle,
+					key
+				});
+			}
+		};
 		for (let i = begin; i < end; i++) {
-			if (!pop.tree[i]) continue;
-			let key = pop.tree[i].key;
-			if (key && !this.cache[key]) this.items.push({
-				ix: i,
-				handle: pop.tree[i].handle,
-				key: key
-			});
+			fill(pop.tree[i], i);
 		}
-
 		begin = Math.max(ppt.rootNode ? 1 : 0, begin - this.columns * extraRows);
-
 		let i = end;
 		while (i--) {
-			if (i < begin) break;
-			if (!pop.tree[i]) continue;
-			let key = pop.tree[i].key;
-			if (key && !this.cache[key]) this.items.push({
-				ix: i,
-				handle: pop.tree[i].handle,
-				key: key
-			});
+			if (i < begin) { break; }
+			fill(pop.tree[i], i);
 		}
-		if (!this.items.length) return;
+		if (!this.items.length) { return; }
 
-		let interval = !sbar.bar.isDragging && !sbar.touch.dn ? 5 : 50;
-		let allCached = false;
-		if (this.albumArtDiskCache) allCached = this.items.every(v => v.key && this.database[v.key]);
-		if (allCached) interval = this.interval.cache;
+		const allCached = this.albumArtDiskCache
+			? this.items.every(v => v.key && this.database[v.key])
+			: false;
+		const interval = allCached
+			? this.interval.cache
+			: !sbar.bar.isDragging && !sbar.touch.dn ? 5 : 50;
 
-		const art = this.getArt(ppt.artId, panel.folderView);
-		clearInterval(this.timer.load);
-		this.timer.load = null;
-		let j = 0;
-		this.timer.load = setInterval(() => {
-			if (j < this.items.length) {
-				const v = this.items[j];
-				const key = v.key;
-				if (!this.cache[key]) {
-					if (this.albumArtDiskCache && $.file(this.cacheFolder + this.database[key])) {
+		const addToCache = (() => {
+			const art = this.getArt(ppt.artId, panel.folderView);
+			let j = 0;
+			return () => {
+				if (j < this.items.length) {
+					const v = this.items[j];
+					const key = v.key;
+					j++;
+					if (this.cache[key]) { addToCache(); }
+					else {
 						this.cache[key] = {
 							img: 'called',
 							accessed: ++this.accessed
 						};
-						this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
-					} else {
-						this.cache[key] = {
-							img: 'called',
-							accessed: ++this.accessed
-						};
-						if (v.handle) { this.get_album_art_async(v.handle, art, key, v.ix); }
+						if (this.albumArtDiskCache && $.file(this.cacheFolder + this.database[key])) {
+							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
+						} else if (v.handle) {
+							this.get_album_art_async(v.handle, art, key, v.ix);
+						}
 					}
+				} else {
+					clearInterval(this.timer.load);
+					this.timer.load = null;
 				}
-				j++;
-			} else {
-				clearInterval(this.timer.load);
-				this.timer.load = null;
-			}
-		}, interval);
+			};
+		})();
+		clearInterval(this.timer.load);
+		this.timer.load = setInterval(addToCache, interval);
 	}
+	// Regorxxx ->
 
 	getImg(key) {
 		const o = this.cache[key];
