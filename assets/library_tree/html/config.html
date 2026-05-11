@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 08/05/26 -->
+﻿<!DOCTYPE html> <!-- 11/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -3147,7 +3147,7 @@
 				for (i = 0; i < 4; i++) { window.overlayAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayAlign(' + i + ');">' + albumArtOverlayAlignLabels[i] + '</a>'); }
 				// Regorxxx ->
 
-				for (i = 0; i < 3; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox" class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); } // Regorxxx <- Allow images with transparencies ->
+				for (i = 0; i < 3; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox' + i + '"  class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); } // Regorxxx <- Allow images with transparencies ->
 
 				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
 				window.sameAsTree.insertAdjacentHTML('beforeend', '<div><input id="sameAsTree_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="sameAsTree_checkbox" class="checkbox_label">Same As Tree</label></div>');
