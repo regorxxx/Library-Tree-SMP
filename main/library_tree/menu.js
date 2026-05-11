@@ -1,5 +1,5 @@
 'use strict';
-//07/05/26
+//11/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -568,6 +568,7 @@ class MenuItems {
 					else { $.buildPth(img.cachePath); }
 				}
 			});
+			menu.newItem({ menuName: mainMenu(), separator: true, hide: !panel.imgView  });
 		}
 		// Regorxxx ->
 		// Regorxxx <- Auto-DJ feature
