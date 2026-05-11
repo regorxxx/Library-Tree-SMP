@@ -1,5 +1,5 @@
 'use strict';
-//08/05/26
+//11/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable */
 /* global folders:readable */
@@ -255,41 +255,64 @@ class Images {
 	}
 
 	async get_album_art_async(handle, art, key, ix) {
-		let result = { path: '', img: null, ext: '' }; // Regorxxx <- Allow images with transparencies ->
+		const result = { path: '', image: null, ext: '', key, ix }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const tf = panel.processCustomTf(art.tf, pop.tree[ix]);
 			const mask = new FbTitleFormat(tf).EvalWithMetadb(handle);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
-			if (files[0] && $.file(files[0])) { result = { path: files[0], image: await gdi.LoadImageAsyncV2(0, files[0]), ext: this.getCacheFileExt(files[0]) }; } // Regorxxx <- Allow images with transparencies ->
+			if (files[0] && $.file(files[0])) {
+				result.path = files[0];
+				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
+				result.ext = this.getCacheFileExt(files[0]); // Regorxxx <- Allow images with transparencies ->
+			}
 		} else {
-			result = await utils.GetAlbumArtAsyncV2(0, handle, art.idx, false);
+			const artProm = await utils.GetAlbumArtAsyncV2(0, handle, art.idx, false);
+			result.path = artProm.path;
+			result.image = artProm.image;
+			result.ext = this.getCacheFileExt(result.path);
 		}
-		const o = this.cache[key];
+		this.cacheAlbumArt(result);
+		return result;
+	}
+
+	cacheAlbumArt(result) {
+		const o = this.cache[result.key];
 		if (o && o.img == 'called') {
 			const saveName = md5.hashStr(result.path) + result.ext; // Regorxxx <- Allow images with transparencies ->
-			this.cacheIt(result.image, key, ix, saveName);
+			this.cacheIt(result.image, result.key, result.ix, saveName);
 		}
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow images with transparencies
+	// Regorxxx <- Allow images with transparencies | Code cleanup
 	getCacheFileFormat(fileName) {
-		return ppt.albumArtDiskCacheAlpha && ['.png', '.gif'].includes(utils.SplitFilePath(fileName)[2]) ? 'image/png' : 'image/jpeg';
+		return ppt.albumArtDiskCacheAlpha && this.isTransparentExt(utils.SplitFilePath(fileName)[2]) ? 'image/png' : 'image/jpeg';
 	}
 
 	getCacheFileExt(fileName) {
-		return ppt.albumArtDiskCacheAlpha && ['.png', '.gif'].includes(utils.SplitFilePath(fileName)[2]) ? '.png' : '.jpg';
+		return ppt.albumArtDiskCacheAlpha && this.isTransparentExt(utils.SplitFilePath(fileName)[2]) ? '.png' : '.jpg';
 	}
-	// Regorxxx ->
+
+	isTransparentExt(ext) {
+		return ['.png', '.gif'].includes(ext);
+	}
 
 	async load_image_async(key, image_path, ix, rawCache) {
-		const image = Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path);
+		const result = {
+			path: image_path,
+			image: Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path),
+			ext: '',
+			key,
+			ix
+		};
 		const o = this.cache[key];
 		if (o && o.img == 'called') {
-			if (rawCache) { this.cacheItPreLoad(image, key, ix); }
-			else { this.cacheIt(image, key, ix); }
+			if (rawCache) { this.cacheItPreLoad(result.image, key, ix); }
+			else { this.cacheIt(result.image, key, ix); }
 		}
+		return result;
 	}
+	// Regorxxx ->
 
 	cacheIt(image, key, ix, saveName) {
 		try {
@@ -297,7 +320,7 @@ class Images {
 				if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
 				if (this.albumArtDiskCache && !this.database[key]) {
 					this.toSave.unshift({
-						key: key,
+						key,
 						image: null,
 						folder: this.cacheFolder,
 						saveName: 'noAlbumArt',
@@ -309,7 +332,7 @@ class Images {
 				if (this.albumArtDiskCache && saveName) {
 					if (!this.database[key] && $.file(this.cacheFolder + saveName)) {
 						this.toSave.unshift({
-							key: key,
+							key,
 							image: null,
 							folder: this.cacheFolder,
 							saveName: saveName,
@@ -319,7 +342,7 @@ class Images {
 					if (!this.database[key] || !$.file(this.cacheFolder + saveName)) {
 						image = this.format(image, { trim: true }, this.getStyleByType('default'), this.saveSize, this.saveSize, false, 'save');
 						this.toSave.unshift({
-							key: key,
+							key,
 							image: image.Clone(0, 0, image.Width, image.Height),
 							folder: this.cacheFolder,
 							saveName: saveName,
@@ -1496,7 +1519,7 @@ class Images {
 			if ($.file(this.cacheFolder + this.database[key])) { // cacheItPreload if file exists
 				return {
 					ix: i,
-					key: key
+					key
 				};
 			}
 		}
@@ -1605,8 +1628,22 @@ class Images {
 			v.grp = panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1];
 			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
 			v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
-			if (ppt.itemOverlayType == 2) v.year = tf_d.EvalWithMetadb(handle).replace('0000', '');
-			if (!this.groupField && !panel.folderView && i % mod === 0) this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);
+			if (ppt.itemOverlayType == 2) {
+				v.year = tf_d.EvalWithMetadb(handle).replace('0000', '');
+			}
+			if (!this.groupField && !panel.folderView && i % mod === 0) {
+				this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);
+			}
+			// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+			if (!!pop.rootNode && panel.isBranchedPlaylistSource()) {
+				for (const plsRootNode of lib.playlistSourceRoot) {
+					if (plsRootNode.name === v.nm) { // Duplicated playlist names will share the same node
+						plsRootNode.node = v;
+						v.plsRoot = true;
+					}
+				}
+			}
+			// Regorxxx ->
 		});
 
 		if (!this.groupField && !panel.folderView) {
@@ -1872,7 +1909,6 @@ class Images {
 		let end = this.end == 0 ? this.end : Math.min(this.end + this.columns, pop.tree.length);
 		for (let i = begin; i < end; i++) {
 			const v = this.getItem(i);
-
 			if (v) {
 				const key = v.key;
 				if (!this.cache[key]) {
