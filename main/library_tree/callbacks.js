@@ -624,7 +624,7 @@ addEventListener('on_playlists_changed', () => {
 });
 
 addEventListener('on_playlist_items_added', (playlistIndex) => {
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Branch collage art
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
 			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));
@@ -636,7 +636,7 @@ addEventListener('on_playlist_items_added', (playlistIndex) => {
 });
 
 addEventListener('on_playlist_items_removed', (playlistIndex) => {
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Branch collage art
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
 			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));
@@ -648,7 +648,7 @@ addEventListener('on_playlist_items_removed', (playlistIndex) => {
 });
 
 addEventListener('on_playlist_items_reordered', (playlistIndex) => {
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Branch collage art
 	if (panel.getPlaylistSource().includes(playlistIndex)) {
 		if (panel.imgView && ppt.albumArtNodeCollage && panel.isBranchedPlaylistSource()) {
 			pop.getPlaylistParentUi(playlistIndex).forEach((p) => p.node && img.trimCache(p.node.key));

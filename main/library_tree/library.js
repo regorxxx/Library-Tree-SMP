@@ -1392,6 +1392,7 @@ class Library {
 	}
 
 	setNodes() {
+		if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
 		if (panel.search.txt == '' && ppt.rememberPreSearch) {
 			ppt.set(this.rememberViewProp(), JSON.stringify({}));
 			this.checkView();

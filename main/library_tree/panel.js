@@ -2232,9 +2232,9 @@ class Panel {
 					ppt.libSource = 4;
 					break;
 			}
-			if (this.imgView) { img.clearCache(); }
 		}
 		if (source === null && viewBy === -1 && filterBy === -1) { return false; }
+		if (this.imgView && (source !== null || ppt.albumArtNodeCollage)) { img.clearCache(); } // Regorxxx <- Branch collage art ->
 		if (viewBy === -1) { viewBy = ppt.viewBy; }
 		if (filterBy === -1) { filterBy = ppt.filterBy; }
 		this.getFields(viewBy, filterBy);

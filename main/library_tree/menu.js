@@ -580,7 +580,7 @@ class MenuItems {
 					else { $.buildPth(img.cachePath); }
 				}
 			});
-			menu.newItem({ menuName: mainMenu(), separator: true, hide: !panel.imgView  });
+			menu.newItem({ menuName: mainMenu(), separator: true, hide: !panel.imgView });
 		}
 		// Regorxxx ->
 		// Regorxxx <- Auto-DJ feature
@@ -957,7 +957,10 @@ class MenuItems {
 			} else {
 				fMenu.newItem({
 					str: i === panel.filter.menu.length ? 'Auto-manage scroll' : (i ? panel.filter.menu[i] : 'No filter'),
-					func: () => panel.set('Filter', i),
+					func: () => {
+						if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
+						panel.set('Filter', i);
+					},
 					checkItem: i == panel.filter.menu.length && !ppt.reset,
 					checkRadio: i == ppt.filterBy && i < panel.filter.menu.length,
 					separator: !i || i == panel.filter.menu.length - 1 || i == panel.filter.menu.length
@@ -1306,7 +1309,7 @@ class MenuItems {
 		ui.getColours();
 		sbar.setCol();
 		but.createImages();
-		if (clearCache) img.clearCache();
+		if (clearCache) { img.clearCache(); }
 		if (typeof sel === 'undefined') { panel.set('view', view, true); }
 		else {
 			const handle = sel >= panel.list.Count ? null : panel.list[sel];
@@ -1417,7 +1420,7 @@ class MenuItems {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
 		}
-		if (panel.imgView) img.clearCache();
+		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
@@ -1438,7 +1441,7 @@ class MenuItems {
 				ppt.artId = i;
 				break;
 		}
-		this.loadView(false, ppt.albumArtViewBy);
+		this.loadView(panel.imgView && ppt.albumArtNodeCollage, ppt.albumArtViewBy); // Regorxxx <- Branch collage art ->
 	}
 
 	setAlbumartGroup(i) {
@@ -1474,7 +1477,7 @@ class MenuItems {
 				break;
 			}
 		}
-		this.loadView(false, ppt.albumArtViewBy);
+		this.loadView(panel.imgView && ppt.albumArtNodeCollage, ppt.albumArtViewBy); // Regorxxx <- Branch collage art ->
 	}
 	// Regorxxx ->
 
@@ -1573,12 +1576,12 @@ class MenuItems {
 				pop.clearTree();
 				ppt.toggle('albumArtShow');
 				panel.imgView = ppt.albumArtShow;
-				this.loadView(false, panel.imgView ? (ppt.artTreeSameView ? ppt.viewBy : ppt.albumArtViewBy) : (ppt.artTreeSameView ? ppt.viewBy : ppt.treeViewBy), pop.sel_items[0]);
+				this.loadView(panel.imgView && ppt.albumArtNodeCollage, panel.imgView ? (ppt.artTreeSameView ? ppt.viewBy : ppt.albumArtViewBy) : (ppt.artTreeSameView ? ppt.viewBy : ppt.treeViewBy), pop.sel_items[0]); // Regorxxx <- Branch collage art ->
 				break;
 			case 5:
 				lib.logTree();
 				pop.clearTree();
-				this.loadView(false, panel.imgView ? (ppt.artTreeSameView ? ppt.viewBy : ppt.albumArtViewBy) : (ppt.artTreeSameView ? ppt.viewBy : ppt.treeViewBy), pop.sel_items[0]);
+				this.loadView(panel.imgView && ppt.albumArtNodeCollage, panel.imgView ? (ppt.artTreeSameView ? ppt.viewBy : ppt.albumArtViewBy) : (ppt.artTreeSameView ? ppt.viewBy : ppt.treeViewBy), pop.sel_items[0]); // Regorxxx <- Branch collage art ->
 				break;
 			// Regorxxx <- Top tracks
 			case 6:
@@ -1664,7 +1667,7 @@ class MenuItems {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
 			if (panel.applyPresetRule(rule)) { return; };
 		}
-		if (panel.imgView) img.clearCache();
+		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button |  Expand TF support on view patterns->
 		// Regorxxx <- Internal cache of views
@@ -1756,6 +1759,7 @@ class MenuItems {
 	// Regorxxx <- Preset rules
 	setView(i, { bSkipPresets = false } = {}) {
 		if (i < panel.menu.length) {
+			if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
 			bSkipPresets = bSkipPresets && ppt.presetRulesOnViewUse;
 			if (bSkipPresets) { ppt.toggle('presetRulesOnViewUse'); }
 			if (ppt.artTreeSameView) {
