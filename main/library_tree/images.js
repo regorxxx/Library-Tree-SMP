@@ -301,7 +301,7 @@ class Images {
 		const result = {
 			path: image_path,
 			image: Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path),
-			ext: '',
+			ext: utils.SplitFilePath(image_path)[2],
 			key,
 			ix
 		};
@@ -505,7 +505,7 @@ class Images {
 				const idx = column + row * columns + 1;
 				if (idx <= cells) {
 					let img = pop.tree.length && pop.tree[idx] ? this.getImg(pop.tree[idx].key) : null;
-					if (!img) img = this.stub.noImg;
+					if (!img) { img = this.stub.noImg; }
 					if (img) {
 						let cx = 0;
 						let cy = 0;
@@ -547,15 +547,15 @@ class Images {
 		x = 0; y = 0; // NOSONAR
 		for (let column = 0; column < columns; column++) {
 			x += cellWidth;
-			if (style.collageLine) g.DrawLine(x, 0, x, cellWidth * columns, ui.l.w, ui.col.rootBlend);
+			if (style.collageLine) { g.DrawLine(x, 0, x, cellWidth * columns, ui.l.w, ui.col.rootBlend); }
 		}
 		x = 0; y = 0; // NOSONAR
 		for (let row = 0; row < rows; row++) {
 			y += cellHeight;
-			if (style.collageLine) g.DrawLine(x, y, cellWidth * columns, y, ui.l.w, ui.col.rootBlend);
+			if (style.collageLine) { g.DrawLine(x, y, cellWidth * columns, y, ui.l.w, ui.col.rootBlend); }
 
 		}
-		if (style.collageLine) g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend);
+		if (style.collageLine) { g.DrawRect(0, 0, cellWidth * columns - 1, cellWidth * columns - 1, 1, ui.col.rootBlend); }
 	}
 
 	getHeartPoints(w, h, x = 0, y = 0) {
@@ -1617,7 +1617,7 @@ class Images {
 		const albumArtGrpNames = $.jsonParse(ppt.albumArtGrpNames, {});
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
-		const tf_d = FbTitleFormat('[$year(%date%)]');
+		const tfDate = new FbTitleFormat('[$year(%date%)]');
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
 
 		pop.tree.forEach((v, i) => {
@@ -1628,7 +1628,7 @@ class Images {
 			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
 			v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 			if (ppt.itemOverlayType == 2) {
-				v.year = tf_d.EvalWithMetadb(handle).replace('0000', '');
+				v.year = tfDate.EvalWithMetadb(handle).replace('0000', '');
 			}
 			if (!this.groupField && !panel.folderView && i % mod === 0) {
 				this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);

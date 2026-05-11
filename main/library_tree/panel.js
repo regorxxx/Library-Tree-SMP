@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/05/26
+//11/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -504,7 +504,7 @@ class Panel {
 		this.multiPrefix = false;
 		this.multiProcess = false;
 		this.noDisplay = false;
-		this.playlistSort = null; // Regorxxx <- Preserve tree sorting at selection ->
+		this.playlistSort = ''; // Regorxxx <- Preserve tree sorting at selection ->
 		this.condViewFilter = false; // Regorxxx <- Expand TF support ->
 		this.view = '';
 		this.view_ppt.forEach((v, i) => {
@@ -1665,7 +1665,7 @@ class Panel {
 		find.on_size();
 		pop.createImages();
 		// Regorxxx <- Fix values on reset | Fix values on options change
-		this.playlistSort = ppt.smartSort ? this.cleanViewTf(this.processCustomTf(this.curPattern)) : ''; // Regorxxx <- Smart sorting based on view ->
+		this.playlistSort = ppt.smartSort ? this.getSmartSortTf() : ''; // Regorxxx <- Smart sorting based on view ->
 		img.setRoot();
 		img.setNoArtist();
 		img.setNoCover();
@@ -1730,9 +1730,13 @@ class Panel {
 		sbar.setScroll();
 	}
 
-	// Regorxxx <-
+	// Regorxxx <- Smart sorting based on view
+	getSmartSortTf() {
+		return this.cleanViewTf(this.processCustomTf(this.curPattern));
+	}
+	// Regorxxx ->
 
-	// Regorxx ->
+	// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager
 	getDragDropTooltipText(method, mask, x, y, bInternal) {
 		let text = '';
 		if (ppt.searchShow && ppt.searchDragMethod !== -1 && search.trace(x, y)) {
@@ -1798,6 +1802,7 @@ class Panel {
 		}
 		return text.cut(46);
 	}
+	// Regorxxx ->
 
 	// Regorxxx <- Auto-DJ feature
 	addToAutoDj(itemsArr) {

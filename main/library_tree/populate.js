@@ -2727,7 +2727,7 @@ class Populate {
 	}
 
 	range(item, items = []) { // Regorxxx <- Code cleanup ->
-		item.forEach(v => {
+		item.forEach((v) => {
 			for (let i = v.start; i <= v.end; i++) { items.push(i); }
 		});
 		return items;
@@ -3077,7 +3077,7 @@ class Populate {
 		} else if (ppt.customSort.length) {
 			items = lib.processCustomSort(items, this.customSort);
 		} else if (items.Count === panel.list.Count) {
-			const tf = new FbTitleFormat(panel.cleanViewTf(panel.processCustomTf(panel.curPattern)));
+			const tf = new FbTitleFormat(panel.playlistSort || panel.getSmartSortTf());
 			panel.sort(items, { tf, direction: 1 });
 		}
 		return items;
