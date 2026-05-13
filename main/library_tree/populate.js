@@ -1,5 +1,5 @@
 'use strict';
-//11/05/26
+//13/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3047,7 +3047,7 @@ class Populate {
 
 
 	sort(data) {
-		if (!panel.isStandardSource() && !panel.multiProcess) { return; }
+		if (!panel.isStandardSource() && !panel.multiProcess && !panel.isBranchedPlaylistSource()) { return; } // Regorxxx <- Support playlist sorting | Multiple-playlist flat view ->
 		if (panel.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		if (lib.searchSort || lib.filterSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
