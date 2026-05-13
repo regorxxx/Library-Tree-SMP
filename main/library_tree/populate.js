@@ -1815,7 +1815,7 @@ class Populate {
 	}
 
 	inRange(num, item) {
-		return item.some(v => {
+		return num !== -1 && item.some((v) => { // Code cleanup
 			const end = v.end;
 			const start = v.start;
 			return num >= Math.min(start, end) && num <= Math.max(start, end);
