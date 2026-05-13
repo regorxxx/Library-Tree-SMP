@@ -2355,7 +2355,7 @@ class Panel {
 	}
 
 	isBranchedPlaylistSource() {
-		return !ppt.plsFlatView && this.isPlaylistSource() && !this.isActivePlaylistSource(true) && !this.isPlayingPlaylistSource(true);
+		return !ppt.plsFlatView && this.isPlaylistSource() && !this.isActivePlaylistSource(true) && !this.isPlayingPlaylistSource(true) && this.getPlaylistSource().length > 1;
 	}
 
 	isNonFixedPlaylistSource() {
