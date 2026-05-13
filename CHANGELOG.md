@@ -26,7 +26,7 @@
 - Search: foobar2000 shortcuts are now skipped while search box is focused if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - UI: improved mouse cursor effects in some cases.
 - UI: contextual menu for playlist sources has been reworked and cleaned up to hide non-relevant menu entries like "Send to current playlist" while tracking the active playlist, etc. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
-- Sources: new entries at contextual menu for playlist sources for basic playlist management: delete, rename, sort, ... See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
+- Sources: new entries at contextual menu for playlist sources for basic playlist management: delete, rename, sort, lock/unlock, ... See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159)
 - Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159).
 - Album Art: clearing image cache now only clears database for current art type, not all art.
