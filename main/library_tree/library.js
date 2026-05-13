@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/05/26
+//13/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -757,7 +757,7 @@ class Library {
 	initialise(handleList, bNotify) { // Regorxxx <- Don't create cache playlists if possible
 		if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 		const profiler = ppt.logLibProfiler ? new FbProfiler(window.ScriptInfo.Name + ': Load library') : null; // Regorxxx <- Library profiling ->
-		lib.initialised = true;
+		this.initialised = true;
 		this.load(handleList);
 		this.getLibrary(true);
 		this.rootNodes(ppt.rememberTree, ppt.process);
