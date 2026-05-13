@@ -1688,7 +1688,7 @@ class Populate {
 		const max = panel.list.Count;
 		return new FbMetadbHandleList(
 			(selection || this.sel_items).reduce((prev, v) => {
-				if (v < max) { prev.push(panel.list[v]); }
+				if (v < max && v !== -1) { prev.push(panel.list[v]); }
 				return prev;
 			}, [])
 		);
