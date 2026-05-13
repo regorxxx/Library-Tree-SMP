@@ -1,5 +1,5 @@
 'use strict';
-//11/05/26
+//13/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -766,6 +766,7 @@ const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unus
 	if (!panel.isQueueLikeSource()) {
 		if (panel.isBranchedPlaylistSource()) {
 			if (pop.checkRow(x, y) === -1 && (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y))) { return false; }
+			if (action.IsInternal && pop.isDragDropEmpty && ((mask & MK_CONTROL) === MK_CONTROL || !ppt.plsSorting)) { return false; }
 		} else if (panel.isStandardSource()) {
 			if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
 		}
@@ -839,7 +840,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 		: Object.hasOwn(action, 'Handles') && action.Handles !== null
 			? action.Handles
 			: fb.GetSelections(1);
-	if (selItems && selItems.Count) {
+	if (selItems && selItems.Count || action.IsInternal && pop.isDragDropEmpty) {
 		if (search.trace(x, y)) {
 			const input = search.getDragDropExpression(selItems, ppt.searchDragMethod, mask);
 			search.clear();
@@ -895,17 +896,19 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					const toIdx = plsIdxArr[0];
 					selParents.filter((idx) => idx > toIdx).forEach((idx) => plman.MovePlaylist(idx, toIdx));
 					selParents.filter((idx) => idx < toIdx).reverse().forEach((idx) => plman.MovePlaylist(idx, toIdx));
-				} else if (isSamePls) {
-					const toIdx = plsIdxArr[0];
-					if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) { plman.RemovePlaylistSelection(toIdx, false); }
-					panel.addToPlaylist(selItems, plsIdxArr, pos, true);
-				} else {
-					if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) {
-						panel.getPlaylistSource().forEach((idx) => {
-							if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
-						});
+				} else if (!pop.isDragDropEmpty) {
+					if (isSamePls) {
+						const toIdx = plsIdxArr[0];
+						if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) { plman.RemovePlaylistSelection(toIdx, false); }
+						panel.addToPlaylist(selItems, plsIdxArr, pos, true);
+					} else {
+						if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 0) {
+							panel.getPlaylistSource().forEach((idx) => {
+								if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
+							});
+						}
+						panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 					}
-					panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 				}
 			} else {
 				if ((mask & MK_CONTROL) !== MK_CONTROL && fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
@@ -915,6 +918,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 			if (panel.isPlayingPlaylistSource(true) && !fb.IsPlaying && pop.autoPlay.send) { plman.ExecutePlaylistDefaultAction(plman.PlayingPlaylist, 0); }
 		}
 	}
+	pop.isDragDropEmpty = false;
 });
 // Regorxxx ->
 

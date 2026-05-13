@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 11/05/26 -->
+﻿<!DOCTYPE html> <!-- 13/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1925,7 +1925,7 @@
 			var thumbNailGapLabels = ['Thumbnail gap'];
 			var thumbnailSizeLabels = ['Mini', 'Small', 'Regular', 'Medium', 'Large', 'XL', 'XXL', 'Max'];
 			var treeLabels = ['Auto-collapse', 'Expand single items', 'Expand if # tracks less than:'];
-			var loadLabels = ['Auto-sync with library changes', 'Cache sources when switching from/to queue sources', 'Prefixes to strip or swap (| separator)'] // Regorxxx <- Internal cache of views ->
+			var loadLabels = ['Auto-sync with library changes', 'Cache sources when switching from/to queue sources', 'Show empty playlists on multi-branch playlist view', 'Prefixes to strip or swap (| separator)'] // Regorxxx <- Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			var modeLabels = ['Max height', 'Min height', 'Limit menu expand: 10-6000'];
 			// Regorxxx <- Drag n' drop to search box
 			var dragValOpDefaultLabels = ['Use only 1st value', 'Join with \'OR\'', 'Join with \'AND\''];
@@ -2007,7 +2007,7 @@
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
-				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views ->
+				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
 			// Regorxxx <- New search tab
 			box.all = box.presets.concat(box.behaviour, box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
@@ -3225,9 +3225,9 @@
 				i = 3; window.cusNode.insertAdjacentHTML('beforeend', '<div><input id="cusNode_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="cusNode_checkbox' + i + '" class="checkbox_label">' + cusNodeLabels[i] + '</label></div>');
 				i = 0; window.themeBlur.insertAdjacentHTML('beforeend', '<div><input id="themeBlur_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="themeBlur_checkbox' + i + '" class="checkbox_label">' + themeBlurLabels[i] + '</label></div>');
 				for (i = 1; i < 3; i++) { window.themeBlur.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="themeBlur_container' + i + '" name="advanced_input" class="input35" /><label for="themeBlur_container' + i + '" class="inp_label2">' + themeBlurLabels[i] + '</label></div>'); }
-				// Regorxxx <- Internal cache of views
-				for (i = 0; i < 2; i++) { window.load.insertAdjacentHTML('beforeend', '<div><input id="load_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="load_checkbox' + i + '" class="checkbox_label">' + loadLabels[i] + '</label></div>'); }
-				i = 2; window.prefixes.insertAdjacentHTML('beforeend', '<div class="input_cnt4"><label for="prefixes_container' + i + '" class="inp_label1">' + loadLabels[i] + '</label><input id="prefixes_container' + i + '" name="advanced_input" class="inputFull" /></div>');
+				// Regorxxx <- Internal cache of views | Multiple-playlist flat view | Basic playlist manager
+				for (i = 0; i < 3; i++) { window.load.insertAdjacentHTML('beforeend', '<div><input id="load_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="load_checkbox' + i + '" class="checkbox_label">' + loadLabels[i] + '</label></div>'); }
+				i = 3; window.prefixes.insertAdjacentHTML('beforeend', '<div class="input_cnt4"><label for="prefixes_container' + i + '" class="inp_label1">' + loadLabels[i] + '</label><input id="prefixes_container' + i + '" name="advanced_input" class="inputFull" /></div>');
 				// Regorxxx ->
 				i = 0; window.mode.insertAdjacentHTML('beforeend', '<div><input id="mode_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="mode_checkbox' + i + '" class="checkbox_label">Enabled</label></div>');
 				for (i = 0; i < 2; i++) { window.modeInput.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="modeInput_container' + i + '" name="advanced_input" class="input35" /><label for="modeInput_container' + i + '" class="inp_label2">' + modeLabels[i] + '</label></div>'); }

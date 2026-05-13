@@ -1296,7 +1296,7 @@ class MenuItems {
 		const plnIsValid = pln != -1 && pln < plman.PlaylistCount;
 		const plLockAdd = plnIsValid ? plman.GetPlaylistLockedActions(pln).includes('AddItems') : false;
 		const plLockRemoveOrAdd = plnIsValid ? plman.GetPlaylistLockedActions(pln).includes('RemoveItems') || plman.GetPlaylistLockedActions(pln).includes('ReplaceItems') || plLockAdd : false;
-		return !i && !plLockRemoveOrAdd || i == 1 && !plLockAdd || i == 2 || i == 3 && pop.nowp != -1 ? MF_STRING : MF_GRAYED;
+		return (!i && !plLockRemoveOrAdd || i == 1 && !plLockAdd || i == 2) && this.items.Count || i == 3 && pop.nowp != -1 ? MF_STRING : MF_GRAYED;
 	}
 
 	getSortData(d) {
@@ -1417,7 +1417,7 @@ class MenuItems {
 				item.sel = true;
 			}
 			if (!pop.sel_items.length) { pop.getTreeSel(); } // Regorxxx <- Performance improvement for contextual menu ->
-			this.expandable = !(pop.trackCount(pop.tree[this.ix].item) > this.treeExpandLimit || pop.tree[this.ix].track || panel.imgView);
+			this.expandable = !(pop.trackCount(pop.tree[this.ix].item) > this.treeExpandLimit || pop.trackCount(pop.tree[this.ix].item) === 0 || pop.tree[this.ix].track || panel.imgView);
 			if (this.expandable && pop.tree.length) {
 				let count = 0;
 				pop.tree.forEach((v, m, arr) => {

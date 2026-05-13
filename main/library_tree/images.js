@@ -1,5 +1,5 @@
 'use strict';
-//11/05/26
+//13/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
@@ -1669,13 +1669,46 @@ class Images {
 			const arr = pop.tree[i].name.split('^@^');
 			v.grp = panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1];
 			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
-			v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
-			if (ppt.itemOverlayType == 2) {
-				v.year = tfDate.EvalWithMetadb(handle).replace('0000', '');
+			// Regorxxx <- Multiple-playlist flat view
+			if (handle) {
+				v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+				if (ppt.itemOverlayType == 2) {
+					v.year = tfDate.EvalWithMetadb(handle).replace('0000', '');
+				}
+				if (!this.groupField && !panel.folderView && i % mod === 0) {
+					this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);
+				}
+				// Regorxxx <- Branch collage art
+				v.handleArr = [];
+				v.keyArr = [];
+				if (ppt.albumArtNodeCollage) {
+					const ids = new Set();
+					const handleArr = ppt.albumArtNodeCollage
+						? pop.range(v.item).map((idx) => panel.list[idx])
+						: [];
+					v.handleArr = [];
+					for (const handle of handleArr) {
+						let tag = tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim();
+						if (!ids.has(tag)) {
+							ids.add(tag);
+							v.handleArr.push(handle);
+							v.keyArr.push(md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
+						}
+						if (ids.size === 4) { break; }
+					}
+				}
+				// Regorxxx ->
+			} else if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty) {
+				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+				if (ppt.itemOverlayType == 2) {
+					v.year = '-';
+				}
+				// Regorxxx <- Branch collage art
+				v.handleArr = [];
+				v.keyArr = [];
+				// Regorxxx ->
 			}
-			if (!this.groupField && !panel.folderView && i % mod === 0) {
-				this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);
-			}
+			// Regorxxx ->
 			// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
 			if (!!pop.rootNode && panel.isBranchedPlaylistSource()) {
 				for (const plsRootNode of lib.playlistSourceRoot) {
@@ -1683,26 +1716,6 @@ class Images {
 						plsRootNode.node = v;
 						v.plsRoot = true;
 					}
-				}
-			}
-			// Regorxxx ->
-			// Regorxxx <- Branch collage art
-			v.handleArr = [];
-			v.keyArr = [];
-			if (ppt.albumArtNodeCollage) {
-				const ids = new Set();
-				const handleArr = ppt.albumArtNodeCollage
-					? pop.range(v.item).map((idx) => panel.list[idx])
-					: [];
-				v.handleArr = [];
-				for (const handle of handleArr) {
-					let tag = tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim();
-					if (!ids.has(tag)) {
-						ids.add(tag);
-						v.handleArr.push(handle);
-						v.keyArr.push(md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
-					}
-					if (ids.size === 4) { break; }
 				}
 			}
 			// Regorxxx ->

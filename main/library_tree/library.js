@@ -771,6 +771,10 @@ class Library {
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
+		// Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
+		if (fb.AddLocationsAsyncV2) { fb.AddLocationsAsyncV2(['dummy.mp3']).then((track) => panel.dummyTrack = track[0]); }
+		else { panel.dummyTrack = this.list[0]; }
+		// Regorxxx ->
 	}
 
 	isMainChanged(handleList) {
@@ -1301,7 +1305,7 @@ class Library {
 		}
 		if (!lib_update) sbar.reset();
 		/* Draw tree -> */
-		if (!ppt.rootNode || panel.search.txt) { pop.buildTree(this.root, 0); }
+		if (!ppt.rootNode || panel.search.txt) { pop.buildTree(this.root, 0, void (0), void (0), void (0), void (0), true); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 		if (ppt.rootNode) { pop.branch(this.root[0], true); }
 		if (panel.pn_h_auto && !panel.imgView && (panel.init || lib_update) && ppt.pn_h == ppt.pn_h_min && pop.tree[0]) pop.clearChild(pop.tree[0]);
 		panel.init = false; // $.trace('initialised in: ' + this.time.Time / 1000 + ' seconds');

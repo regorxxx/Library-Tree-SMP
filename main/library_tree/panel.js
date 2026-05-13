@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/05/26
+//13/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -63,6 +63,7 @@ class Panel {
 			? ppt.sortingTransLangs.split('|').filter(Boolean)
 			: null;
 		// Regorxxx ->
+		this.dummyTrack = null; // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
 
 		this.filter = {
 			menu: [],
@@ -1789,7 +1790,7 @@ class Panel {
 							const isPlsParent = pop.isPlaylistParent(node);
 							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls && isPlsParent && ppt.plsSorting) {
 								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
-							} else {
+							} else if (!pop.isDragDropEmpty) {
 								text = (
 									(mask & MK_CONTROL) === MK_CONTROL
 										? 'Add tracks to playlist '
@@ -2446,6 +2447,12 @@ class Panel {
 			plman.EnsurePlaylistItemVisible(plman.ActivePlaylist, focusIdx);
 		}
 		return true;
+	}
+
+	isDummyTrack(handleListOrHandle) {
+		return handleListOrHandle instanceof FbMetadbHandleList
+			? handleListOrHandle[0].Compare(this.dummyTrack)
+			: handleListOrHandle.Compare(this.dummyTrack);
 	}
 	// Regorxxx ->
 }

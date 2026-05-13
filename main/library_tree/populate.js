@@ -48,6 +48,7 @@ class Populate {
 		this.tree = [];
 		this.tf = {}; // Regorxxx <- New statistics ->
 		this.isDragDrop = false; // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager ->
+		this.isDragDropEmpty = false; // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager ->
 		// Regorxxx <- Rectangle selection on art view
 		this.selRect = {
 			down: false,
@@ -274,22 +275,7 @@ class Populate {
 			}
 		});
 		this.condense(br.child);
-		// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
-		if (!!this.rootNode && base && panel.isBranchedPlaylistSource()) {
-			let rootNode, plsRootNode;
-			for (let i = 0; i < br.child.length; i++) {
-				rootNode = br.child[i];
-				for (let j = i; j < lib.playlistSourceRoot.length; j++) {
-					plsRootNode = lib.playlistSourceRoot[j];
-					if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
-						plsRootNode.node = rootNode;
-						rootNode.plsRoot = true;
-					}
-				}
-			}
-		}
-		// Regorxxx ->
-		this.buildTree(lib.root, 0, node, true, block, clearArt);
+		this.buildTree(lib.root, 0, node, true, block, clearArt, ppt.rootNode); // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 	}
 	// Regorxxx ->
 
@@ -386,7 +372,8 @@ class Populate {
 	}
 
 	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection | Support playlist sorting
-	buildTree(br, level, node, full, block, clearArt) {
+	buildTree(br, level, node, full, block, clearArt, addExtraNodes) {
+		if (br === lib.root && addExtraNodes && panel.isBranchedPlaylistSource()) { this.insertPlsRootNodes(br); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
@@ -577,6 +564,57 @@ class Populate {
 		}
 	}
 	// Regorxxx ->
+
+	insertPlsRootNodes(br) {
+		lib.playlistSourceRoot.forEach((plsRootNode) => delete plsRootNode.node);
+		let rootNode, plsRootNode, prevPlsRootNode;
+		for (let i = 0; i < br.length; i++) {
+			rootNode = br[i];
+			for (let j = i; j < lib.playlistSourceRoot.length; j++) {
+				plsRootNode = lib.playlistSourceRoot[j];
+				if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
+					plsRootNode.node = rootNode;
+					rootNode.plsRoot = true;
+					// Insert empty nodes between non-empty ones
+					if (ppt.plsPopEmpty) {
+						for (let h = j - 1; h >= i; h--) {
+							prevPlsRootNode = lib.playlistSourceRoot[h];
+							if (!Object.hasOwn(prevPlsRootNode, 'node')) {
+								br.splice(i, 0, {
+									nm: prevPlsRootNode.name,
+									sel: false,
+									child: [],
+									track: false,
+									item: [{ start: -1, end: -1, count: 0 }],
+									srt: lib.sort(prevPlsRootNode.name),
+									plsRoot: true
+								});
+								prevPlsRootNode.node = br.at(i);
+							}
+						}
+					}
+				}
+			}
+		}
+		// Insert empty nodes at end
+		if (ppt.plsPopEmpty) {
+			lib.playlistSourceRoot.forEach((plsRootNode) => {
+				if (!Object.hasOwn(plsRootNode, 'node')) {
+					const node = {
+						nm: plsRootNode.name,
+						sel: false,
+						child: [],
+						track: false,
+						item: [{ start: -1, end: -1, count: 0 }],
+						srt: lib.sort(plsRootNode.name),
+						plsRoot: true
+					};
+					br.push(node);
+					plsRootNode.node = node;
+				}
+			});
+		}
+	}
 
 	butTooltipFont() {
 		return [globFonts.tooltip.name, Math.round(globFonts.tooltip.size * $.scale * 96 / 72 * ppt.zoomTooltipBut / 100), 0]; // Regorxxx <- Make tooltip text smaller and use global fonts setting ->
@@ -1148,6 +1186,7 @@ class Populate {
 				if (!item.sel && !vk.k('ctrl')) { this.setTreeSel(ix, item.sel); }
 			}
 			this.isDragDrop = true;
+			this.isDragDropEmpty = false;
 			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
 			const item = this.tree[ix];
 			let handleList;
@@ -1178,7 +1217,23 @@ class Populate {
 			}
 			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
 			if (!handleList) { handleList = this.sortIfNeeded(this.getHandleList('newItems')); } // Regorxxx <- Expand TF support ->
-			fb.DoDragDrop(0, handleList, handleList.Count ? dropEffect.copy | dropEffect.link : dropEffect.none);
+			if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty && item.plsRoot) {
+				const parent = this.getPlaylistParent(item);
+				if (panel.dummyTrack && parent.every((p) => p.count === 0)) {
+					handleList = new FbMetadbHandleList(panel.dummyTrack);
+					this.isDragDropEmpty = true;
+				}
+			}
+			fb.DoDragDrop(0, handleList, handleList.Count ? dropEffect.copy | dropEffect.link : dropEffect.none,
+				{
+					show_text: !panel.isDummyTrack(handleList),
+					use_album_art: true,
+					use_theming: true,
+					custom_image: window.Bugs.DoDragDrop
+						? panel.isDummyTrack(handleList) ? img.no_cover_img : null
+						: img.no_cover_img
+				}
+			);
 			this.lbtnDn = false;
 		}
 	}
@@ -2912,7 +2967,13 @@ class Populate {
 				plman.SetPlaylistFocusItem(firstPls, items[0]);
 			}
 		}
-		if (firstPls !== -1 && !this.isDragDrop) { plman.ActivePlaylist = firstPls; }
+		if (!this.isDragDrop) {
+			if (firstPls !== -1) { plman.ActivePlaylist = firstPls; }
+			else if (item.plsRoot && this.trackCount(item.item) === 0) {
+				const parent = this.getPlaylistParentIdx(item);
+				if (!isArrayEqual(parent, [-1])) { plman.ActivePlaylist = parent[0]; }
+			}
+		}
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
 	}

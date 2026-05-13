@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/05/26
+//13/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -349,6 +349,7 @@ let properties = [
 	['Library Source: Use cache (experimental)', true, 'libSourceCache'], // Regorxxx <- Internal cache of views ->
 	['Library Source: Playlist force sorting', false, 'plsSorting'], // Regorxxx <- Support playlist sorting ->
 	['Library Source: Playlist flat view', true, 'plsFlatView'], // Regorxxx <- Multiple-playlist flat view ->
+	['Library Source: Playlist empty nodes (non-flat view)', true, 'plsPopEmpty'], // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
 
 	['Limit Menu Expand: 10-6000', 500, 'treeExpandLimit'],
 	['Limit Tree Auto Expand: 10-1000', 350, 'autoExpandLimit'],
