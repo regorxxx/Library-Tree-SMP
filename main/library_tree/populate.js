@@ -1878,10 +1878,11 @@ class Populate {
 					} else {
 						// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
 						const plsIdx = this.getPlaylistParentIdx(item);
-						if (!isArrayEqual(plsIdx, [-1])) {
+						const handleIdx = this.getFirstFromRange(item.item);
+						if (!isArrayEqual(plsIdx, [-1]) && handleIdx !== -1) {
 							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
-								? plman.GetPlaylistItems(plsIdx).Find(panel.list[this.range(item.item)[0]])
-								: this.range(item.item)[0];
+								? plman.GetPlaylistItems(plsIdx).Find(panel.list[handleIdx])
+								: handleIdx;
 							if (idx !== -1) {
 								this.setFocus = true;
 								plman.SetPlaylistFocusItem(plsIdx, idx);
@@ -2727,12 +2728,20 @@ class Populate {
 		if (index == this.getMainMenuIndex.searchFocus && this.is_focused && ppt.searchShow) search.focus();
 	}
 
-	range(item, items = []) { // Regorxxx <- Code cleanup ->
+	// Regorxxx <- Code cleanup
+	range(item, items = []) {
 		item.forEach((v) => {
-			for (let i = v.start; i <= v.end; i++) { items.push(i); }
+			if (v.count !== 0) {
+				for (let i = v.start; i <= v.end; i++) { items.push(i); }
+			}
 		});
 		return items;
 	}
+
+	getFirstFromRange(item) {
+		return this.range(item)[0] || -1;
+	}
+	// Regorxxx ->
 
 	removeDuplicateArr(arr) {
 		const t = {};
@@ -2859,7 +2868,8 @@ class Populate {
 					? selectionFilter(this.getHandleList())
 					: this.getHandleList()
 				).Convert();
-				const firstTrack = panel.list[this.range(item.item)[0]];
+				const handleIdx = this.getFirstFromRange(item.item);
+				const firstTrack = handleIdx === -1 ? null : panel.list[handleIdx];
 				plsIdxArr.forEach((idx) => {
 					const selItems = [];
 					plman.ClearPlaylistSelection(idx);
@@ -2868,7 +2878,7 @@ class Populate {
 						let i = 0;
 						for (const handle of list) {
 							if (handle.Compare(h)) { selItems.push(i); }
-							if (firstPls === -1 && handle.Compare(firstTrack)) { firstPls = idx; }
+							if (firstPls === -1 && firstTrack && handle.Compare(firstTrack)) { firstPls = idx; }
 							i++;
 						}
 					});
