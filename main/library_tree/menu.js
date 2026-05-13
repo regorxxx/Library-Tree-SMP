@@ -583,7 +583,7 @@ class MenuItems {
 		// Regorxxx ->
 		// Regorxxx <- Code cleanup | Art cache folder
 		{
-			menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), hide: !panel.imgView });
+			menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), separator: true, hide: !panel.imgView });
 			img.getArtNames().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration  ->
 				menuName: 'Album art',
 				str: v,
@@ -627,7 +627,6 @@ class MenuItems {
 					else { $.buildPth(img.cachePath); }
 				}
 			});
-			menu.newItem({ menuName: mainMenu(), separator: true, hide: !panel.imgView });
 		}
 		// Regorxxx ->
 		// Regorxxx <- Auto-DJ feature

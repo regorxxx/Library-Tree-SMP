@@ -255,7 +255,7 @@ class Populate {
 		let n = '';
 		let n_o = '#get_branch#';
 		let nU = '';
-		this.range(br.item).forEach(v => {
+		this.range(br.item).forEach((v) => {
 			n = lib.node[v][l];
 			nU = n.toUpperCase();
 			if (n_o == nU) { br.child[i - 1].item.push(v); }
@@ -302,8 +302,8 @@ class Populate {
 	}
 
 	branchCount(br, base, node, block, key, type) {
-		if (!br || !lib.node.length) return;
-		if (this.cache[type][key]) return this.cache[type][key].value;
+		if (!br || !lib.node.length) { return; }
+		if (this.cache[type][key]) { return this.cache[type][key].value; }
 		const l = base ? 0 : this.rootNode ? br.level : br.level + 1;
 		const b = [];
 		let n = '';
@@ -311,7 +311,7 @@ class Populate {
 		let nU = '';
 		if (base) node = false;
 		const full = !!br.root;
-		this.range(br.item).forEach(v => {
+		this.range(br.item).forEach((v) => {
 			if (l < lib.node[v].length) {
 				n = lib.node[v][l];
 				nU = n.toUpperCase();
@@ -325,7 +325,7 @@ class Populate {
 				}
 			}
 		});
-		if (!panel.multiProcess && (!node || node && !full)) this.merge(b, true);
+		if (!panel.multiProcess && (!node || node && !full)) { this.merge(b, true); }
 		if (panel.multiProcess) {
 			const multi_cond = [];
 			const multi_obj = [];
@@ -1868,7 +1868,7 @@ class Populate {
 						}
 						if (this.dblClickAction == 3) {
 							const handleList = this.getHandleList(void (0), this.range(item.item)); // Regorxxx <- Preserve tree sorting at selection ->
-							if (handleList.Count) plman.FlushPlaybackQueue();
+							if (handleList.Count) { plman.FlushPlaybackQueue(); }
 							for (let i = 0; i < handleList.Count; i++) {
 								plman.AddItemToPlaybackQueue(handleList[i]);
 							}

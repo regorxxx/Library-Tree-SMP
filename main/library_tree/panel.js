@@ -1787,7 +1787,7 @@ class Panel {
 								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
 							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
 							const isPlsParent = pop.isPlaylistParent(node);
-							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls && isPlsParent) {
+							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls && isPlsParent && ppt.plsSorting) {
 								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
 							} else {
 								text = (

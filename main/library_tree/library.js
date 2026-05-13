@@ -78,6 +78,13 @@ class Library {
 			this.searchCache = {};
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
+			if (panel.isBranchedPlaylistSource()) {
+				pop.cache = {
+					'standard': {},
+					'search': {},
+					'filter': {}
+				};
+			}
 			if (typeof playlistIndex !== 'undefined') {
 				if (!panel.isAllPlaylistSource(true)) { this.playlistSourceIdx = [playlistIndex]; }
 				if (playlistIndex !== -1) { on_item_focus_change(playlistIndex); }
