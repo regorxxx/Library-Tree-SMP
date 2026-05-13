@@ -1,12 +1,13 @@
 'use strict';
-//11/05/26
+//13/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
 /* global _explorer:readable */
-/* global isArrayEqual:readable */
+/* global isArrayEqual:readable, _p:readable */
 /* global Input:readable */
+/* global setLocks:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -428,6 +429,48 @@ class MenuItems {
 					str: 'Save as...',
 					func: () => fb.SavePlaylist(),
 					flags: isValidPls ? MF_STRING : MF_GRAYED
+				});
+			}
+			menu.newItem({ menuName, separator: true });
+			{
+				const lockTypes = [
+					{ type: 'AddItems', entryText: 'Adding items' },
+					{ type: 'RemoveItems', entryText: 'Removing items' },
+					{ type: 'ReplaceItems', entryText: 'Replacing items' },
+					{ type: 'ReorderItems', entryText: 'Sorting items' },
+					{ type: 'RenamePlaylist', entryText: 'Renaming playlist' },
+					{ type: 'RemovePlaylist', entryText: 'Deleting playlist' },
+					...(window.Bugs.SetPlaylistLockedActions
+						? []
+						: [{ type: 'ExecuteDefaultAction', entryText: 'Default action' }])
+				].filter(Boolean);
+				const lockName = plman.GetPlaylistLockName(parent[0].idx);
+				const bSMPLock = lockName === window.Parent || !lockName;
+				const currentLocks = new Set(plman.GetPlaylistLockedActions(parent[0].idx) || []);
+				const flags = bSMPLock ? MF_STRING : MF_GRAYED;
+				const subMenuName = 'Lock';
+				menu.newMenu({ menuName: subMenuName, appendTo: menuName, flags: currentLocks.size ? MF_CHECKED : MF_STRING });
+				menu.newItem({ menuName: subMenuName, str: 'Lock by action:' + (bSMPLock ? '' : '\t' + _p(lockName)), flags: MF_GRAYED });
+				menu.newItem({ menuName: subMenuName, separator: true });
+				lockTypes.forEach((lock) => {
+					menu.newItem({
+						menuName: subMenuName, str: lock.entryText, func: () => {
+							setLocks(parent[0].idx, [lock.type], 'switch');
+						},
+						flags,
+						checkItem: currentLocks.has(lock.type)
+					});
+				});
+				menu.newItem({ menuName: subMenuName, separator: true });
+				menu.newItem({
+					menuName: subMenuName, str: 'All locks', func: () => {
+						setLocks(parent[0].idx, lockTypes.map((lock) => lock.type));
+					}, flags
+				});
+				menu.newItem({
+					menuName: subMenuName, str: 'None', func: () => {
+						setLocks(parent[0].idx, []);
+					}, flags
 				});
 			}
 			menu.newItem({ menuName, separator: true });
