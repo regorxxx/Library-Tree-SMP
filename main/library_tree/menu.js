@@ -446,7 +446,7 @@ class MenuItems {
 					menuName: subMenuName,
 					str: 'Move down',
 					func: () => {
-						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx + 1, plman.PlaylistCount - 1)));
+						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.min(p.idx + 1, plman.PlaylistCount - 1)));
 						pop.sel_items = []; // Force recreating selection
 					}
 				});
