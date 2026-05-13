@@ -1149,6 +1149,7 @@ class Populate {
 			}
 			this.isDragDrop = true;
 			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
+			const item = this.tree[ix];
 			let handleList;
 			if (panel.isPlaylistSource()) {
 				if (vk.k('alt')) {
@@ -1157,18 +1158,18 @@ class Populate {
 							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
 							this.selection_holder.SetSelection(handleList);
 						} else {
-							this.setPlaylistSelection(ix, this.tree[ix], void (0), this.getTopTracks);
+							this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
 							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
 						}
 					} else if (!ppt.plsActions || [3, 4, 5, 6].includes(ppt.altClickAction)) {
-						this.setPlaylistSelection(ix, this.tree[ix], void (0), this.getTopTracks);
+						this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
 						handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
 					} else {
-						this.setPlaylistSelection(ix, this.tree[ix]);
+						this.setPlaylistSelection(ix, item);
 						handleList = this.getHandleList();
 					}
 				} else {
-					this.setPlaylistSelection(ix, this.tree[ix]);
+					this.setPlaylistSelection(ix, item);
 					handleList = this.getHandleList();
 				}
 			} else if (vk.k('alt') && [3, 4, 5, 6].includes(ppt.altClickAction)) {
