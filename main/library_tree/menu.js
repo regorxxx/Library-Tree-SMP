@@ -247,59 +247,63 @@ class MenuItems {
 				menu.newItem({ separator: true });
 			} else {
 				// Regorxxx <- Code cleanup | Hide irrelevant entries for playlist sources
-				if (!panel.isActivePlaylistSource() && !isArrayEqual(pop.getPlaylistParentIdx(pop.tree[this.ix]), [plman.ActivePlaylist])) {
-					['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter']
-						.forEach((v, i) => menu.newItem({
-							str: v,
-							func: () => this.setPlaylist(i),
-							flags: this.getPaylistFlag(i)
-						}));
-				}
-				menu.newItem({
-					str: 'Send to new playlist' + '\tCtrl+enter',
-					func: () => this.setPlaylist(2),
-					flags: this.getPaylistFlag(2),
-					separator: true
-				});
-				// Regorxxx ->
-				// Regorxxx <- Top tracks
-				{
-					const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
+				if (this.items.Count) {
+					if (!panel.isActivePlaylistSource() && !isArrayEqual(pop.getPlaylistParentIdx(pop.tree[this.ix]), [plman.ActivePlaylist])) {
+						['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter']
+							.forEach((v, i) => menu.newItem({
+								str: v,
+								func: () => this.setPlaylist(i),
+								flags: this.getPaylistFlag(i)
+							}));
+					}
 					menu.newItem({
-						str: 'Send top track' + target,
-						func: () => this.setPlaylist(6),
-					});
-					menu.newItem({
-						str: 'Add top tracks' + target,
-						func: () => this.setPlaylist(7),
+						str: 'Send to new playlist' + '\tCtrl+enter',
+						func: () => this.setPlaylist(2),
+						flags: this.getPaylistFlag(2),
 						separator: true
 					});
+					// Regorxxx ->
+					// Regorxxx <- Top tracks
+					{
+						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
+						menu.newItem({
+							str: 'Send top track' + target,
+							func: () => this.setPlaylist(6),
+							flags: this.getPaylistFlag(2),
+						});
+						menu.newItem({
+							str: 'Add top tracks' + target,
+							func: () => this.setPlaylist(7),
+							flags: this.getPaylistFlag(2),
+							separator: true
+						});
+					}
+					// Regorxxx ->
+					// Regorxxx <- Auto-DJ feature
+					if (panel.isAutoDjSource()) {
+						menu.newItem({
+							str: 'Remove from Auto-DJ',
+							func: () => panel.removeFromAutoDjSource(this.items),
+							flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
+						});
+						menu.newItem({ separator: true });
+					} else {
+						menu.newItem({
+							str: 'Start Auto-DJ from panel selection',
+							func: () => panel.startAutoDj(this.items),
+							flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
+							hide: panel.autoDj.running
+						});
+						menu.newItem({
+							str: 'Append panel selection to Auto-DJ',
+							func: () => panel.addToAutoDjSource(this.items, true),
+							flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED,
+							hide: !panel.autoDj.running
+						});
+						menu.newItem({ separator: true });
+					}
+					// Regorxxx ->
 				}
-				// Regorxxx ->
-				// Regorxxx <- Auto-DJ feature
-				if (panel.isAutoDjSource()) {
-					menu.newItem({
-						str: 'Remove from Auto-DJ',
-						func: () => panel.removeFromAutoDjSource(this.items),
-						flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
-					});
-					menu.newItem({ separator: true });
-				} else {
-					menu.newItem({
-						str: 'Start Auto-DJ from panel selection',
-						func: () => panel.startAutoDj(this.items),
-						flags: this.items.Count > 1 ? MF_STRING : MF_GRAYED,
-						hide: panel.autoDj.running
-					});
-					menu.newItem({
-						str: 'Append panel selection to Auto-DJ',
-						func: () => panel.addToAutoDjSource(this.items, true),
-						flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED,
-						hide: !panel.autoDj.running
-					});
-					menu.newItem({ separator: true });
-				}
-				// Regorxxx ->
 				// Regorxxx <- Code cleanup
 				menu.newItem({
 					str: 'Show nowplaying',
