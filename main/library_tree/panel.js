@@ -1694,7 +1694,7 @@ class Panel {
 			img.metrics();
 			// Regorxxx <- New img styles
 			const art = img.getArt(ppt.artId);
-			if ((art.reflection || art.reflectionRoot) && !img.canShowReflection()) {
+			if ((art.reflection || art.reflectionRoot) && !img.canShowReflection(art)) {
 				fb.ShowPopupMessage('Art reflection effect is enabled but current pad settings don\'t allow such effect to be displayed.\n\nCheck your pad settings (normal and/or compact).', window.ScriptInfo.Name + ': Art reflection settings');
 			}
 			// Regorxxx ->

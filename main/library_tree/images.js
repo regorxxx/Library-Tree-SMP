@@ -1280,7 +1280,7 @@ class Images {
 	}
 
 	drawReflection(gr, art, image, coords) {
-		if (!this.canShowReflection()) { return false; }
+		if (!this.canShowReflection(art)) { return false; }
 		const alpha = 102; // Art alpha * 0.4
 		const offsetX = this.bor.pad / 2;
 		const fade = Math.min(offsetX, image.Width * 0.9);
@@ -1296,6 +1296,21 @@ class Images {
 					true
 				);
 				gr.DrawImage(clone, coords.x + image.Width - offsetX / 2, coords.y, Math.ceil(offsetX), coords.h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
+				break;
+			}
+			case 2: { // asymmetric bottom
+				const clone = image.Clone(0, 0, image.Width, image.Height);
+				clone.RotateFlip(RotateFlipType.RotateNoneFlipY);
+				const offsetY = this.bor.pad / 2;
+				const fade = Math.min(offsetY * 2.5, image.Height * 0.9);
+				applyMask(
+					clone,
+					(mask, gr, w) => {
+						gr.FillGradRect(0, 0, w, fade, 90, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
+					},
+					true
+				);
+				gr.DrawImage(clone, coords.x, coords.y  + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * 2.5), 0, 0, image.Width, Math.ceil(offsetY * 2.5), 0, alpha);
 				break;
 			}
 			case 1: // symmetric
@@ -1322,8 +1337,10 @@ class Images {
 		return true;
 	};
 
-	canShowReflection() {
-		return this.bor.pad / 2 > 5;
+	canShowReflection(art) {
+		return art.reflectionStyle === 2
+			? this.bor.pad / 2 * 2.5 > 10
+			: this.bor.pad / 2 > 5;
 	}
 
 	format(image, art, style, w, h, fade, caller) {
