@@ -20,6 +20,8 @@
 - Album art: new 'Bottom' (2), 'Bottom (skew)' (3), 'Full' (4), 'Full (skew)' (5) reflection effect styles. Skew effect requires JSplitter v4.1.2+ or v3.8.2+. Settings can be found at 'Album Art' tab (HTML options panel) or 'Image Reflection [...]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081782.html#msg1081782) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081715.html#msg1081715).
 ### Changed
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
+- Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).
+- Drag n' Drop: improved tooltip text when selecting top tracks.
 - Quick-search: foobar2000 shortcuts are now skipped while quick-searching if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: quick-search is skipped if first char is space.
 - Search: foobar2000 shortcuts are now skipped while search box is focused if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
