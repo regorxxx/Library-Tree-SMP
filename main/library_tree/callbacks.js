@@ -816,8 +816,8 @@ addEventListener('on_drag_over', (action, x, y, mask) => {
 		if (panel.imgView) {
 			if (img.style.vertical) {
 				const row = pop.getArtRow(pop.row.i);
-				if (row === 0 && pop.row.i >= img.columns && y < img.row.h * 0.5 + panel.search.h) { sbar.but(1); bScrolling = true; }
-				else if (row >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && y > img.row.h * (panel.rows - 0.5) + panel.search.h) { sbar.but(-1); bScrolling = true; }
+				if (row === 0 && pop.row.i >= img.columns && y < img.row.h * 0.3 + panel.search.h) { sbar.but(1); bScrolling = true; }
+				else if (row >= panel.rows - 1 && pop.row.i <= pop.tree.length - img.columns && y > Math.min(img.panel.h - img.row.h * 0.3, img.row.h * (panel.rows + 0.7)) + panel.search.h) { sbar.but(-1); bScrolling = true; }
 			} else {
 				const column = pop.getArtColumn(pop.row.i);
 				if (column === 0 && pop.row.i >= img.columns && x < img.columnWidth * 0.4) { sbar.but(1); bScrolling = true; }
