@@ -1,5 +1,5 @@
 'use strict';
-//13/05/26
+//14/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -7,6 +7,7 @@
 /* global debounce:readable */
 /* global isArrayEqual:readable */
 /* global globTags:readable */
+/* global findTracksAtPlaylist:readable */
 /* global Language:readable */
 
 /* exported Populate */
@@ -1187,6 +1188,7 @@ class Populate {
 			}
 			this.isDragDrop = true;
 			this.isDragDropEmpty = false;
+			this.isDragDropTopTracks = false;
 			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
 			const item = this.tree[ix];
 			let handleList;
@@ -1196,13 +1198,16 @@ class Populate {
 						if (ppt.plsActions) {
 							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
 							this.selection_holder.SetSelection(handleList);
+							this.isDragDropTopTracks = true;
 						} else {
 							this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
 							handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+							this.isDragDropTopTracks = true;
 						}
 					} else if (!ppt.plsActions || [3, 4, 5, 6].includes(ppt.altClickAction)) {
 						this.setPlaylistSelection(ix, item, void (0), this.getTopTracks);
 						handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
+						this.isDragDropTopTracks = true;
 					} else {
 						this.setPlaylistSelection(ix, item);
 						handleList = this.getHandleList();
@@ -1214,6 +1219,7 @@ class Populate {
 			} else if (vk.k('alt') && [3, 4, 5, 6].includes(ppt.altClickAction)) {
 				handleList = this.getTopTracks(void (0), !!ppt.topTracksSorting.length);
 				this.selection_holder.SetSelection(handleList);
+				this.isDragDropTopTracks = true;
 			}
 			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
 			if (!handleList) { handleList = this.sortIfNeeded(this.getHandleList('newItems')); } // Regorxxx <- Expand TF support ->
@@ -2905,17 +2911,7 @@ class Populate {
 							? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
 							: this.getHandleList(void (0), o.panelSelIdx)
 						).Convert();
-						const list = plman.GetPlaylistItems(o.idx).Convert();
-						hl.forEach((h) => { // Select duplicates handles
-							let i = 0;
-							for (const handle of list) {
-								if (handle.Compare(h)) { o.plsSelIdx.push(i); }
-								i++;
-							}
-						});
-						plman.SetPlaylistSelection(o.idx, o.plsSelIdx, true);
-						this.setFocus = true;
-						plman.SetPlaylistFocusItem(o.idx, o.plsSelIdx[0]);
+						this.selectAndFocus(findTracksAtPlaylist(o.idx, hl));
 					}
 				});
 			} else {
@@ -2923,25 +2919,9 @@ class Populate {
 					? selectionFilter(this.getHandleList())
 					: this.getHandleList()
 				).Convert();
-				const handleIdx = this.getFirstFromRange(item.item);
-				const firstTrack = handleIdx === -1 ? null : panel.list[handleIdx];
+				const firstTrack = hl[0];
 				plsIdxArr.forEach((idx) => {
-					const selItems = [];
-					plman.ClearPlaylistSelection(idx);
-					const list = plman.GetPlaylistItems(idx).Convert();
-					hl.forEach((h) => { // Select duplicates handles
-						let i = 0;
-						for (const handle of list) {
-							if (handle.Compare(h)) { selItems.push(i); }
-							if (firstPls === -1 && firstTrack && handle.Compare(firstTrack)) { firstPls = idx; }
-							i++;
-						}
-					});
-					if (selItems.length) {
-						plman.SetPlaylistSelection(idx, selItems, true);
-						this.setFocus = true;
-						plman.SetPlaylistFocusItem(idx, selItems[0]);
-					}
+					this.selectAndFocus(findTracksAtPlaylist(idx, hl, firstTrack));
 				});
 			}
 		} else {
@@ -2960,12 +2940,7 @@ class Populate {
 				this.range(item.item, items);
 			}
 			firstPls = plsIdxArr[0];
-			plman.ClearPlaylistSelection(firstPls);
-			if (items.length) {
-				plman.SetPlaylistSelection(firstPls, items, true);
-				this.setFocus = true;
-				plman.SetPlaylistFocusItem(firstPls, items[0]);
-			}
+			this.selectAndFocus({ selection: { idx: items, focus: items[0] }, plsIdx: firstPls });
 		}
 		if (!this.isDragDrop) {
 			if (firstPls !== -1) { plman.ActivePlaylist = firstPls; }
@@ -2976,6 +2951,15 @@ class Populate {
 		}
 		this.track(false);
 		lib.treeState(false, ppt.rememberTree);
+	}
+
+	selectAndFocus({ selection, plsIdx }) {
+		plman.ClearPlaylistSelection(plsIdx);
+		if (selection.count) {
+			plman.SetPlaylistSelection(plsIdx, selection.idx, true);
+			this.setFocus = true;
+			plman.SetPlaylistFocusItem(plsIdx, selection.focus);
+		}
 	}
 	// Regorxxx ->
 
