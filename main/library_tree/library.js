@@ -668,7 +668,9 @@ class Library {
 				case 1: {
 					if (panel.isFixedPlaylistSource()) {
 						this.list = fixedPlaylistIndex.reduce((prev, idx) => {
-							prev.AddRange(plman.GetPlaylistItems(idx));
+							const handleList = plman.GetPlaylistItems(idx);
+							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+							prev.AddRange(handleList);
 							return prev;
 						}, new FbMetadbHandleList());
 					} else { this.list = fb.GetLibraryItems(); }
@@ -876,7 +878,9 @@ class Library {
 			case 1: {
 				if (panel.isFixedPlaylistSource()) {
 					this.list = fixedPlaylistIndex.reduce((prev, idx) => {
-						prev.AddRange(plman.GetPlaylistItems(idx));
+						const handleList = plman.GetPlaylistItems(idx);
+						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+						prev.AddRange(handleList);
 						return prev;
 					}, new FbMetadbHandleList());
 				} else { this.list = fb.GetLibraryItems(); }
