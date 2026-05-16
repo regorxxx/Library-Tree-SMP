@@ -37,6 +37,7 @@
 - Album Art: new setting to tweak vertical overlay position, in special for non-filling images (top (box) is recommended). Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Item Overlay Align' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
+- HTML: improved options reload in some cases (with updated properties) when clicking 'Apply'.
 ### Removed
 ### Fixed
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.

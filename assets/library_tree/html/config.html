@@ -3571,9 +3571,9 @@
 			if (new_ppt == parsed_args[1]) new_ppt = '';
 			if (new_cur == parsed_args[2]) new_cur = '';
 			if (new_cfg || new_ppt || new_cur) {
-				callback && callback(new_cfg, new_ppt, '', new_cur);
+				callback && callback(new_cfg, new_ppt, 'ok', new_cur);
 			} else {
-				if (new_cur) callback && callback('', '', '', new_cur);
+				if (new_cur) callback && callback('', '', 'ok', new_cur);
 			}
 			close_window();
 		}
@@ -3588,7 +3588,7 @@
 			else parsed_args[1] = new_ppt;
 			// Regorxxx <- Fix errors on panel reload
 			if ((new_cfg || new_ppt) && callback) {
-				if (!callback(new_cfg, new_ppt)) { close_window(); }
+				if (!callback(new_cfg, new_ppt, 'apply')) { close_window(); }
 			}
 			// Regorxxx ->
 		}
@@ -3904,7 +3904,7 @@
 		window.btn_cancel.onclick = function () {
 			var new_cur = JSON.stringify(cur);
 			if (new_cur == parsed_args[2]) new_cur = '';
-			callback && callback('', '', '', new_cur);
+			callback && callback('', '', 'cancel', new_cur);
 			close_window();
 		}
 
@@ -4007,7 +4007,7 @@
 		window.onunload = function () {
 			if (!is_closed_manually) {
 				var new_cur = JSON.stringify(cur);
-				if (new_cur != parsed_args[2]) callback && callback('', '', '', new_cur);
+				if (new_cur != parsed_args[2]) callback && callback('', '', 'unload', new_cur);
 			}
 		}
 

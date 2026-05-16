@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/26
+//16/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -956,16 +956,23 @@ class Panel {
 				// Regorxxx ->
 			}
 			const filterDuplBy = ppt.filterDuplBy; // Regorxxx <- Global duplicates filter ->
+			// const refl = ppt.filterDuplBy; // Regorxxx <- Global duplicates filter ->
 			if (new_ppt) this.updateProp($.jsonParse(new_ppt, {}), 'value');
-
 			if (new_cfgWindow) ppt.set('Library Tree Dialog Box', new_cfgWindow);
 			ppt.set('Library Tree Dialog Box Reopen', false); // Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter ->
-
-			if (type == 'reset') {
-				this.updateProp(ppt, 'default_value');
-			}
+			if (type == 'reset') { this.updateProp(ppt, 'default_value'); }
 
 			if (ppt.filterDupl && filterDuplBy !== ppt.filterDuplBy) { return this.reOpen(); } // Regorxxx <- Global duplicates filter ->
+			// Regorxxx <- Branch collage art ->
+			if (this.imgView && ppt.albumArtNodeCollage && new_ppt && type === 'apply') {
+				if (img.timer.load) {
+					const id = setInterval(() => {
+						if (!img.timer.load) { clearInterval(id); this.open(); }
+					}, 60);
+				}
+				return false;
+			}
+			// Regorxxx ->
 			return true;
 		};
 
@@ -978,8 +985,9 @@ class Panel {
 		ppt.set('Library Tree Dialog Box', cfgWindow);
 		const pptStr = JSON.stringify(ppt)
 			.replace(/:\\"\.\//gi, ':\\"' + folders.xxx.replace(/\\/gi, '/')); // Adjust relative paths
-		if (popUpBox.isHtmlDialogSupported()) popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, ok_callback);
-		else {
+		if (popUpBox.isHtmlDialogSupported()) {
+			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, ok_callback);
+		} else {
 			popUpBox.ok = false;
 			$.trace('options dialog isn\'t available with current operating system. All settings in options are available in panel properties. Common settings are on the menu.');
 		}
