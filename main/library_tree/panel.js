@@ -1,8 +1,8 @@
 ﻿'use strict';
-//13/05/26
+//14/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
-/* global MK_CONTROL:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
+/* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
@@ -1764,18 +1764,18 @@ class Panel {
 					? idx < 0
 						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 						: (bInternal ? 'Move' : 'Add') + ' items to playback queue at ' + (idx + 1) + 'º pos'
-					: (mask & MK_CONTROL) === MK_CONTROL
+					: dropMask.has(mask, 'ctrl')
 						? (bInternal ? 'Move' : 'Add') + ' items to front of playback queue'
 						: (bInternal ? 'Move' : 'Add') + ' items to back of playback queue';
 			} else if (this.isAutoDjSource()) {
-				text = (mask & MK_CONTROL) === MK_CONTROL
+				text = dropMask.has(mask, 'ctrl')
 					? 'Add items to Auto-DJ (top tracks)'
 					: 'Add items to Auto-DJ';
 			} else {
 				if (this.isBranchedPlaylistSource() && pop.row.i !== -1 || this.isActivePlaylistSource(true) || this.isPlayingPlaylistSource(true)) {
 					if (ppt.plsSource < 2) {
 						text = (
-							(mask & MK_CONTROL) === MK_CONTROL
+							dropMask.has(mask, 'ctrl')
 								? 'Add tracks to '
 								: 'Move tracks to '
 						) + (ppt.plsSource === 0 ? 'Active playlist' : 'Playing playlist');
@@ -1788,14 +1788,19 @@ class Panel {
 								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
 							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
 							const isPlsParent = pop.isPlaylistParent(node);
-							if (bInternal && (mask & MK_CONTROL) !== MK_CONTROL && isAllPls && isPlsParent && ppt.plsSorting) {
+							if (bInternal && !dropMask.has(mask, 'ctrl') && isAllPls && isPlsParent) {
 								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
 							} else if (!pop.isDragDropEmpty) {
 								text = (
-									(mask & MK_CONTROL) === MK_CONTROL
-										? 'Add tracks to playlist '
-										: 'Move tracks to playlist '
-								) + name +
+									dropMask.has(mask, 'ctrl')
+										? 'Add '
+										: 'Move '
+								) +
+									(
+										pop.isDragDropTopTracks
+											? 'Top '
+											: ''
+									) + 'tracks to playlist ' + name +
 									(
 										isPlsParent || !ppt.plsSorting
 											? ' (at end)'
@@ -2450,9 +2455,13 @@ class Panel {
 	}
 
 	isDummyTrack(handleListOrHandle) {
-		return handleListOrHandle instanceof FbMetadbHandleList
-			? handleListOrHandle[0].Compare(this.dummyTrack)
-			: handleListOrHandle.Compare(this.dummyTrack);
+		return handleListOrHandle
+			? handleListOrHandle instanceof FbMetadbHandleList
+				? handleListOrHandle.Count === 1
+					? handleListOrHandle[0].Compare(this.dummyTrack)
+					: false
+				: handleListOrHandle.Compare(this.dummyTrack)
+			: false;
 	}
 	// Regorxxx ->
 }
