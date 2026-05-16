@@ -767,9 +767,22 @@ const isValidDragDrop = (action, x, y, mask) => { // eslint-disable-line no-unus
 	if (!panel.isQueueLikeSource()) {
 		if (panel.isBranchedPlaylistSource()) {
 			if (pop.checkRow(x, y) === -1 && (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y))) { return false; }
-			if (action.IsInternal && pop.isDragDropEmpty && dropMask.has(mask, 'ctrl') || !ppt.plsSorting)) { return false; }
+			if (action.IsInternal && pop.isDragDropEmpty && dropMask.has(mask, 'ctrl')) { return false; }
+			if (pop.row.i !== -1 && (!action.IsInternal || dropMask.has(mask, 'ctrl'))) {
+				const plsIdxArr = pop.getPlaylistParentIdx(pop.tree[pop.row.i]);
+				if (!isArrayEqual(plsIdxArr, [-1])) {
+					const lock = getLocks(plsIdxArr[0]);
+					if (lock.isLocked && lock.types.includes('AddItems')) { return false; }
+				}
+			}
 		} else if (panel.isStandardSource()) {
 			if (!ppt.searchShow || ppt.searchDragMethod === -1 || !search.trace(x, y)) { return false; }
+		} else if (panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)) {
+			const plsIdxArr = panel.getPlaylistSource();
+			if (!isArrayEqual(plsIdxArr, [-1])) {
+				const lock = getLocks(plsIdxArr[0]);
+				if (lock.isLocked && lock.types.includes('AddItems')) { return false; }
+			}
 		}
 	}
 	// Avoid things outside foobar2000
