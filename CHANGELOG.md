@@ -17,7 +17,7 @@
 - Drag n' drop: added support for Top Tracks mouse actions when pressing alt starting drag n' drop from panel.
 - Album Art: added setting to control degree of zoom/cutting of images after resizing; main usage is hiding SMP images resizing artifacts, resulting on grey borders in some cases. This was previously done under the hood, but forced; now can be tweaked. Setting found at 'Album Art' (HTML options panel) and 'Image Cut Resize px: Off (0) Clean (2) Zoom (>2)' (properties panel).
 - Album art: new setting to apply collage art effect for branches, found at 'Settings\Album art' menu. It will display up to 4 child items (from different children). Preload disk cache setting doesn't work along this feature. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081659.html#msg1081659).
-- Album art: new 'Bottom' (2), 'Bottom (skew)' (3), 'Full' (4), 'Full (skew)' (5) reflection effect styles. Settings can be found at 'Album Art' tab (HTML options panel) or 'Image Reflection [...]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081782.html#msg1081782).
+- Album art: new 'Bottom' (2), 'Bottom (skew)' (3), 'Full' (4), 'Full (skew)' (5) reflection effect styles. Settings can be found at 'Album Art' tab (HTML options panel) or 'Image Reflection [...]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081782.html#msg1081782) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081715.html#msg1081715).
 ### Changed
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: foobar2000 shortcuts are now skipped while quick-searching if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
@@ -37,7 +37,7 @@
 - Album Art: new setting to tweak vertical overlay position, in special for non-filling images (top (box) is recommended). Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Item Overlay Align' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
-- HTML: improved options reload in some cases (with updated properties) when clicking 'Apply'.
+- HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).
 ### Removed
 ### Fixed
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.
