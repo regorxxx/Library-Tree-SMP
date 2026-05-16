@@ -1,5 +1,5 @@
 'use strict';
-//14/05/26
+//16/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -374,7 +374,7 @@ class Populate {
 
 	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection | Support playlist sorting
 	buildTree(br, level, node, full, block, clearArt, addExtraNodes) {
-		if (br === lib.root && addExtraNodes && panel.isBranchedPlaylistSource()) { this.insertPlsRootNodes(br); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
+		if (br === lib.root && addExtraNodes && panel.isBranchedPlaylistSource()) { this.insertPlsRootNodes(ppt.rootNode ? br[0].child : br); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
