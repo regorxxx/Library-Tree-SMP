@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/05/26
+//16/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -52,7 +52,7 @@ class Library {
 		// Regorxxx ->
 		// Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view
 		this.playlistSourceIdx = [-1];
-		/** @type {{idx: number, guid: string, name: string, count: number, node: object }[]} */
+		/** @type {{idx: number, guid: string, name: string, handleList: FbMetadbHandleList, count: number, node: object }[]} */
 		this.playlistSourceRoot = [];
 		// Regorxxx ->
 
@@ -648,16 +648,18 @@ class Library {
 		// Regorxxx ->
 		if (!items) {
 			this.playlistSourceIdx = [-1]; // Regorxxx <-  Active/Playing/All playlist source ->
-			this.playlistSourceRoot = []; // Regorxxx <-  Active/Playing/All playlist source ->
+			this.playlistSourceRoot = []; // Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view ->
 			// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible | Allow multiple fixed playlists as source | Allow fixed playlist by GUID
 			switch (ppt.libSource) {
-				// Regorxxx <- Active/Playing/All playlist source
+				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
 				case 0: {
 					this.playlistSourceIdx = panel.getPlaylistSource();
 					this.list = isArrayEqual(this.playlistSourceIdx, [-1])
 						? new FbMetadbHandleList()
 						: this.playlistSourceIdx.reduce((prev, idx) => {
-							prev.AddRange(plman.GetPlaylistItems(idx));
+							const handleList = plman.GetPlaylistItems(idx);
+							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+							prev.AddRange(handleList);
 							return prev;
 						}, new FbMetadbHandleList());
 					break;
@@ -721,7 +723,17 @@ class Library {
 		if (ppt.filterBy) {
 			this.processFilterQuery(); // Regorxxx <- Code cleanup ->
 			this.filterQueryID = this.filterQuery;
-			if (this.hasFilterQueryNoSearch()) { this.list = $.query(this.list, this.filterQuery); } // Regorxxx <- Code cleanup | Support SORT BY query sorting ->
+			// Regorxxx <- Code cleanup | Support SORT BY query sorting
+			if (this.hasFilterQueryNoSearch()) {
+				this.list = $.query(this.list, this.filterQuery);
+				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+				this.playlistSourceRoot.forEach((root) => {
+					root.handleList = $.query(root.handleList, this.filterQuery);
+					root.count = root.handleList.Count;
+				});
+				// Regorxxx ->
+			}
+			// Regorxxx ->
 		} else {
 			this.filterQuery = '';
 			this.filterQueryID = 'N/A';
@@ -844,14 +856,18 @@ class Library {
 		}
 		// Regorxxx ->
 		// Regorxxx <- Optimize library loading. Previously all items were retrieved and then source chosen! Don't create cache playlists if possible
+		this.playlistSourceIdx = [-1]; // Regorxxx <-  Active/Playing/All playlist source ->
+		this.playlistSourceRoot = []; // Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view ->
 		switch (ppt.libSource) {
-			// Regorxxx <- Active/Playing/All playlist source
+			// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
 			case 0: {
 				this.playlistSourceIdx = panel.getPlaylistSource();
 				this.list = isArrayEqual(this.playlistSourceIdx, [-1])
 					? new FbMetadbHandleList()
 					: this.playlistSourceIdx.reduce((prev, idx) => {
-						prev.AddRange(plman.GetPlaylistItems(idx));
+						const handleList = plman.GetPlaylistItems(idx);
+						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+						prev.AddRange(handleList);
 						return prev;
 					}, new FbMetadbHandleList());
 				break;
@@ -1151,24 +1167,27 @@ class Library {
 		if (!treeArtToggle || !panel.samePattern) {
 			// Regorxxx <- Multiple-playlist flat view
 			const branched = panel.isBranchedPlaylistSource();
-			this.playlistSourceRoot = panel.isBranchedPlaylistSource() || panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)
-				? panel.getPlaylistSource().map((idx) => {
-					return { idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: plman.PlaylistItemCount(idx) };
-				})
-				: [];
 			const roots = this.playlistSourceRoot.filter((pls) => pls && pls.count);
 			switch (tree_type) {
 				case 0: {
 					let tfo = FbTitleFormat(panel.view);
 					const splitter = panel.splitter;
 					if (branched && roots.length) {
-						let j = 0;
-						tfo.EvalWithMetadbs(li).forEach((v, i) => {
-							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
-							arr[i] = [roots[0].name, ...v.split(splitter)];
-							j++;
-						});
-						if (j >= roots[0].count) { roots.splice(0, 1); }
+						if (panel.search.txt || ppt.filterBy) {
+							let j = 0;
+							tfo.EvalWithMetadbs(li).forEach((v, i) => {
+								if (j >= roots[0].count || roots[0].handleList.Find(li[i]) === -1) { roots.splice(0, 1); j = 0; }
+								arr[i] = [roots[0].name, ...v.split(splitter)];
+								j++;
+							});
+						} else {
+							let j = 0;
+							tfo.EvalWithMetadbs(li).forEach((v, i) => {
+								if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
+								arr[i] = [roots[0].name, ...v.split(splitter)];
+								j++;
+							});
+						}
 					} else {
 						tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(splitter));
 					}
@@ -1176,12 +1195,21 @@ class Library {
 				}
 				case 1: {
 					if (branched && roots.length) {
-						let j = 0;
-						li.GetLibraryRelativePaths().forEach((v, i) => {
-							if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
-							arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
-							j++;
-						});
+						if (panel.search.txt || ppt.filterBy) {
+							let j = 0;
+							li.GetLibraryRelativePaths().forEach((v, i) => {
+								if (j >= roots[0].count || roots[0].handleList.Find(li[i]) === -1) { roots.splice(0, 1); j = 0; }
+								arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
+								j++;
+							});
+						} else {
+							let j = 0;
+							li.GetLibraryRelativePaths().forEach((v, i) => {
+								if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
+								arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
+								j++;
+							});
+						}
 					} else {
 						li.GetLibraryRelativePaths().forEach((v, i) => arr[i] = v.length ? v.split('\\') : ['File(s) Not In Library']);
 					}
@@ -1241,11 +1269,30 @@ class Library {
 					);
 				this.searchCache[searchText] = panel.list;
 				// Regorxxx ->
+				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+				this.playlistSourceRoot.forEach((root) => {
+					root.handleList = isRegExp
+						? $.applyRegExp(searchText, root.handleList, tags)
+						: fb.GetQueryItems(
+							root.handleList,
+							this.hasNoSearchOnFilter()
+								? searchText
+								: this.replaceFilterQuerySearch(searchText)
+						);
+					root.count = root.handleList.Count;
+				});
+				// Regorxxx ->
 			} catch (e) { // eslint-disable-line no-unused-vars
 				this.list = this.list.Clone();
 				this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
 				panel.list.RemoveAll();
 				this.validSearch = false;
+				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+				this.playlistSourceRoot.forEach((root) => {
+					root.handleList = new FbMetadbHandleList();
+					root.count = root.handleList.Count;
+				});
+				// Regorxxx ->
 			}
 			if (this.searchSort || this.filterSort) { panel.sort(panel.list, this.searchSort || this.filterSort); } // Regorxxx <- Support SORT BY query sorting ->
 			if (!panel.list.Count) {

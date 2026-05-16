@@ -2898,7 +2898,7 @@ class Populate {
 				const items = [...this.sel_items];
 				let acc = 0;
 				const itemsPerPls = plsIdxArr.map((idx) => {
-					const count = plman.PlaylistItemCount(idx);
+					const count = this.getPlaylistParentUi(idx).reduce((acc, root) => acc + root.count, 0);
 					const panelSelIdx = items.filter((i) => i >= acc && i < acc + count);
 					acc += count;
 					return { idx, panelSelIdx, plsSelIdx: [] };
