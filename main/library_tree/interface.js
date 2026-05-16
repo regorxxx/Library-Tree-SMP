@@ -1,5 +1,5 @@
 'use strict';
-//22/04/26
+//16/05/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -288,12 +288,17 @@ class UserInterface {
 		gr.FillGradRect(l_x, l_h, this.l.w, l_h, 91, this.col.s_line, $.RGBA(0, 0, 0, 0));
 	}
 
-	drawTopBarUnderlay(gr) {
+	// Regorxxx <- Zoom hover effect
+	drawTopBarUnderlay(gr, art) {
+		const h = art.hoverZoom
+			? img.panel.y - Math.max(img.bor.pad / 4, Math.round(5 * $.scale))
+			: img.panel.y;
 		if ((this.img.isBlur || this.img.bg) && this.img.cur) {
-			gr.FillSolidRect(0, 0, this.w, img.panel.y, this.col.topBarUnderlay);
-			gr.DrawImage(this.img.cur, 0, 0, this.w, img.panel.y, 0, 0, this.img.cur.Width, panel.search.h);
-		} else gr.FillSolidRect(0, 0, this.w, img.panel.y, this.col.topBarUnderlay);
+			gr.FillSolidRect(0, 0, this.w, h, this.col.topBarUnderlay);
+			gr.DrawImage(this.img.cur, 0, 0, this.w, h, 0, 0, this.img.cur.Width, panel.search.h);
+		} else { gr.FillSolidRect(0, 0, this.w, h, this.col.topBarUnderlay); }
 	}
+	// Regorxxx ->
 
 	formatImg(image) {
 		if (!this.w || !this.h) return;

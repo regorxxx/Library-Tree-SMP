@@ -71,15 +71,15 @@ class Images {
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Image border setting
-		/** @type {{idx: number, type: string, name?: string | (folderView: boolean) => string, cacheName: string | (folderView: boolean) => string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, tf?: string | (folderView: boolean) => string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
+		/** @type {{idx: number, type: string, name?: string | (folderView: boolean) => string, cacheName: string | (folderView: boolean) => string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, hoverZoom: string, tf?: string | (folderView: boolean) => string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
 		this.art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', trim: false, showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur', vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale', trim: true, showMenu: 'Show artists', switchIdx: [0, 5] },
-			{ idx: 5, type: 'File (by Tf) [1]', name: (folderView) => ppt.albumArtTf1Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf1' : 'viewtf1', lines: 1, style: 'imgStyleTf1', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf1ReflStyle', reflectionRoot: 'imgTf1ReflRoot', border: 'imgTf1Border', shadow: 'imgTf1Shadow', mute: 'imgTf1Mute', edgeGlow: 'imgTf1EdgeGlow', bloom: 'imgTf1Bloom', blur: 'imgTf1Blur', vignette: 'imgTf1Vignette', grayScale: 'imgTf1GrayScale', tf: (folderView) => folderView ? 'albumArtTf1Folder' : 'albumArtTf1View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] },
-			{ idx: 6, type: 'File (by Tf) [2]', name: (folderView) => ppt.albumArtTf2Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf2' : 'viewtf2', lines: 1, style: 'imgStyleTf2', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf2ReflStyle', reflectionRoot: 'imgTf2ReflRoot', border: 'imgTf2Border', shadow: 'imgTf2Shadow', mute: 'imgTf2Mute', edgeGlow: 'imgTf2EdgeGlow', bloom: 'imgTf2Bloom', blur: 'imgTf2Blur', vignette: 'imgTf2Vignette', grayScale: 'imgTf2GrayScale', tf: (folderView) => folderView ? 'albumArtTf2Folder' : 'albumArtTf2View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', hoverZoom: 'imgFrontHoverZoom', trim: false, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', hoverZoom: 'imgBackHoverZoom', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', hoverZoom: 'imgDiscHoverZoom', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur', vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', hoverZoom: 'imgIconHoverZoom', trim: true, showMenu: 'Show albums', switchIdx: [4, 5] },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale', hoverZoom: 'imgArtistHoverZoom', trim: true, showMenu: 'Show artists', switchIdx: [0, 5] },
+			{ idx: 5, type: 'File (by Tf) [1]', name: (folderView) => ppt.albumArtTf1Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf1' : 'viewtf1', lines: 1, style: 'imgStyleTf1', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf1ReflStyle', reflectionRoot: 'imgTf1ReflRoot', border: 'imgTf1Border', shadow: 'imgTf1Shadow', mute: 'imgTf1Mute', edgeGlow: 'imgTf1EdgeGlow', bloom: 'imgTf1Bloom', blur: 'imgTf1Blur', vignette: 'imgTf1Vignette', grayScale: 'imgTf1GrayScale', hoverZoom: 'imgTf1HoverZoom', tf: (folderView) => folderView ? 'albumArtTf1Folder' : 'albumArtTf1View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] },
+			{ idx: 6, type: 'File (by Tf) [2]', name: (folderView) => ppt.albumArtTf2Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf2' : 'viewtf2', lines: 1, style: 'imgStyleTf2', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf2ReflStyle', reflectionRoot: 'imgTf2ReflRoot', border: 'imgTf2Border', shadow: 'imgTf2Shadow', mute: 'imgTf2Mute', edgeGlow: 'imgTf2EdgeGlow', bloom: 'imgTf2Bloom', blur: 'imgTf2Blur', vignette: 'imgTf2Vignette', grayScale: 'imgTf2GrayScale', hoverZoom: 'imgTf2HoverZoom', tf: (folderView) => folderView ? 'albumArtTf2Folder' : 'albumArtTf2View', trim: true, showMenu: 'Show art (Tf)', switchIdx: [0, 4] }
 		];
 
 		this.useD2D = window.DrawMode === 1 && typeof Effects !== 'undefined';
@@ -199,14 +199,14 @@ class Images {
 
 	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type
 	formatArt(a, folderView) {
-		/** @type {{idx: number, type: string, name:string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, tf: string, trim: boolean, showMenu: string, switchIdx: number[]}} */
+		/** @type {{idx: number, type: string, name:string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, hoverZoom: boolean, tf: string, trim: boolean, showMenu: string, switchIdx: number[]}} */
 		const copy = { ...a };
 		if (typeof copy.cacheName === 'function') { copy.cacheName = copy.cacheName(folderView); }
 		if (typeof copy.tf === 'function') { copy.tf = ppt[copy.tf(folderView)]; }
 		if (typeof copy.name === 'function') { copy.name = copy.name(folderView); }
 		if (!Object.hasOwn(copy, 'name') || !copy.name) { copy.name = copy.type; }
 		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
-		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale'].forEach((k) => copy[k] = ppt[copy[k]]);
+		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale', 'hoverZoom'].forEach((k) => copy[k] = ppt[copy[k]]);
 		return copy;
 	}
 
@@ -641,6 +641,7 @@ class Images {
 		const style = this.getStyle(this.style.image);
 		const art = this.getArt(ppt.artId);
 		for (let i = this.start; i < this.end; i++) {
+			const bHover = i == pop.m.i;
 			const row = this.style.vertical ? Math.floor(i / this.columns) : 0;
 			box_x = this.style.vertical ? Math.floor(this.panel.x + this.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + i * this.columnWidth + this.bor.side - sbar.delta);
 			box_y = this.style.vertical ? Math.floor(this.panel.y + row * this.row.h - sbar.delta) : this.style.y;
@@ -652,11 +653,10 @@ class Images {
 				const statistics = this.labels.statistics ? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + item._statistics : '';
 				const cur_img = this.zooming ? null : this.getImg(item.key);
 				const nowp = this.checkNowPlaying(item);
-				const grpCol = this.getGrpCol(item, nowp, pop.highlight.text && i == pop.m.i);
-				const lotCol = this.getLotCol(item, nowp, pop.highlight.text && i == pop.m.i);
-				this.drawSelBg(gr, art, cur_img, box_x, box_y, i, nowp || item.sel);
+				const grpCol = this.getGrpCol(item, nowp, pop.highlight.text && bHover);
+				const lotCol = this.getLotCol(item, nowp, pop.highlight.text && bHover);
+				this.drawSelBg(gr, art, cur_img, box_x, box_y, i, nowp || item.sel, (bHover || item.sel)); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
-
 				if (pop.rowStripes && this.labels.right) {
 					if (i % 2 == 0) gr.FillSolidRect(0, box_y + 1, panel.tree.stripe.w, this.row.h, ui.col.bg1);
 					else gr.FillSolidRect(0, box_y, panel.tree.stripe.w, this.row.h, ui.col.bg2);
@@ -674,7 +674,7 @@ class Images {
 						h: cur_img.Height
 					};
 					const bPaintBorder = art.border && (!item.sel || !this.labels.overlay || this.style.image != 2);
-					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection });
+					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (bHover || item.sel) }); // Regorxxx <- Zoom hover effect ->
 					if (this.labels.overlayDark) {
 						if (item.sel || nowp) gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, $.RGBA(150, 150, 150, 150));
 						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
@@ -687,9 +687,9 @@ class Images {
 						h: this.im.w
 					};
 					if (!item.root) {
-						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, coords, { shadow: true, reflection: art.reflection }); }
+						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, coords, { shadow: true, reflection: art.reflection, hover: art.hoverZoom && (bHover || item.sel) }); } // Regorxxx <- Zoom hover effect ->
 					} else if (!this.style.rootComposite && this.stub.root) {
-						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot });
+						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (bHover || item.sel) }); // Regorxxx <- Zoom hover effect ->
 					}
 					if (this.labels.overlay) {
 						gr.FillGradRect(coords.x, y2 - 1, coords.w / 2, ui.l.w, 1, $.RGBA(0, 0, 0, 0), ui.col.imgBor);
@@ -702,22 +702,22 @@ class Images {
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
 				this.drawItemOverlay(gr, art, style, item, coords);
-				if (i == pop.m.i) {
+				if (bHover) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
-						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg); }
-						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick'); }
+						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
+						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (item.sel) {
-					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick'); }
-					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel); }
+					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
+					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
 					const x = box_x + this.text.x;
 					let type = 0;
-					if (panel.colMarker) type = item.sel ? 2 : pop.highlight.text && i == pop.m.i ? 1 : 0;
+					if (panel.colMarker)  { type = item.sel ? 2 : pop.highlight.text && bHover ? 1 : 0; }
 					if (this.labels.overlay) {
 						y1 = this.im.y + this.text.y1;
 						y2 = y1 + this.text.h * (this.labels.statistics ? 0.93 : 0.9);
@@ -771,19 +771,27 @@ class Images {
 			if (this.column == this.columns - 1) this.column = 0;
 			else this.column++;
 		}
-		ui.drawTopBarUnderlay(gr);
+		ui.drawTopBarUnderlay(gr, art); // Regorxxx <- Zoom hover effect ->
 	}
 
 	drawArt(gr, art, style, image, coords, effects) {
 		const offsetX = art.reflection && art.reflectionStyle === 0 ? this.bor.pad / 4 : 0;
+		// Regorxxx <- Zoom hover effect
+		if (effects.hover) {
+			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
+		}
+		// Regorxxx ->
 		if (effects.shadow) { this.drawStyleShadow(gr, style, { ...coords, x: coords.x - offsetX }); }
 		if (effects.reflection) { this.drawReflection(gr, art, image, coords); }
-		gr.DrawImage(image, coords.x - offsetX, coords.y, coords.w, coords.h, 0, 0, coords.w, coords.h);
+		gr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
+		gr.DrawImage(image, coords.x - offsetX, coords.y, coords.w, coords.h, 0, 0, image.Width, image.Height);
+		gr.SetInterpolationMode();
 		if (effects.border) { this.drawStyleBorder(gr, style, { ...coords, x: coords.x - offsetX }); } // Regorxxx <- Image border setting | Effect per art type ->
 		return coords;
 	};
 
-	drawFrame(gr, art, box_x, box_y, col, weight) {
+	drawFrame(gr, art, box_x, box_y, col, weight, bHover) {
 		let x, y, w, h, l_w;
 		switch (weight) {
 			case 'stnd':
@@ -801,11 +809,23 @@ class Images {
 				l_w = 3;
 				break;
 		}
+		// Regorxxx <- Zoom hover effect
+		if (art.hoverZoom && bHover) {
+			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
+		}
+		// Regorxxx ->
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		gr.DrawRect(x, y, w, h, l_w, col);
 	}
 
-	drawImageFrame(gr, art, style, item, coords, col) {
+	drawImageFrame(gr, art, style, item, coords, col, bHover) {
+		// Regorxxx <- Zoom hover effect
+		if (art.hoverZoom && bHover) {
+			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
+		}
+		// Regorxxx ->
 		const l_w = 3;
 		if (item.root && !ppt.frameImageRoot) {
 			if (this.stub.rootFrame) {
@@ -914,7 +934,7 @@ class Images {
 		}
 	}
 
-	drawSelBg(gr, art, cur_img, box_x, box_y, i, nowpOrSel) {
+	drawSelBg(gr, art, cur_img, box_x, box_y, i, nowpOrSel, bHover) {
 		if (this.labels.hide && (this.style.image != 2 || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
@@ -950,6 +970,12 @@ class Images {
 				}
 				break;
 		}
+		// Regorxxx <- Zoom hover effect
+		if (art.hoverZoom && bHover) {
+			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
+		}
+		// Regorxxx ->
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
 		if (!this.style.vertical) {
@@ -1313,17 +1339,18 @@ class Images {
 				} else {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					const brush = gdi.Brush(BrushType.Bitmap, clone.ApplyAlpha(alpha), BrushWrapMode.Clamp);
-					brush.Scale(1, 0.6);
+					const prop = coords.w / clone.Width;
+					brush.Scale(prop, 0.6);
 					brush.Skew(-30, 0);
-					brush.Translate(coords.x, coords.y + image.Height);
+					brush.Translate(coords.x, coords.y + coords.h);
 					gr.FillPolygon(
 						brush,
 						0,
 						[
-							coords.x, coords.y + image.Height,
-							coords.x + coords.w, coords.y + image.Height,
-							coords.x + coords.w * 0.82, coords.y + image.Height + Math.ceil(offsetY * 2),
-							coords.x - coords.w * 0.18, coords.y + image.Height + Math.ceil(offsetY * 2),
+							coords.x, coords.y + image.Height * prop,
+							coords.x + coords.w, coords.y + image.Height * prop,
+							coords.x + coords.w * 0.82, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
+							coords.x - coords.w * 0.18, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
 						]
 					);
 					gr.SetSmoothingMode();
@@ -1343,7 +1370,7 @@ class Images {
 					(mask, gr, w) => gr.FillGradRect(0, 0, w, fade, 90.1, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
 					true
 				);
-				if (typeof BrushType === 'undefined'  || art.reflectionStyle === 4) {
+				if (typeof BrushType === 'undefined' || art.reflectionStyle === 4) {
 					gr.DrawImage(refl, coords.x, coords.y + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
 				} else {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);

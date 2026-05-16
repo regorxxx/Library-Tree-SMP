@@ -329,6 +329,13 @@ let properties = [
 	['Image Gray Scale [Artist] (D2D)', false, 'imgArtistGrayScale'],
 	['Image Gray Scale [TF-1] (D2D)', false, 'imgTf1GrayScale'],
 	['Image Gray Scale [TF-2] (D2D)', false, 'imgTf2GrayScale'],
+	['Image Hover Zoom [Front]', false, 'imgFrontHoverZoom'],
+	['Image Hover Zoom [Back]', false, 'imgBackHoverZoom'],
+	['Image Hover Zoom [Disc]', false, 'imgDiscHoverZoom'],
+	['Image Hover Zoom [Icon]', false, 'imgIconHoverZoom'],
+	['Image Hover Zoom [Artist]', false, 'imgArtistHoverZoom'],
+	['Image Hover Zoom [TF-1]', false, 'imgTf1HoverZoom'],
+	['Image Hover Zoom [TF-2]', false, 'imgTf2HoverZoom'],
 	// Regorxxx ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
