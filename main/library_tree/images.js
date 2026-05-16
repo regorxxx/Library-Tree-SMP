@@ -1,10 +1,10 @@
 'use strict';
-//13/05/26
+//16/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
 /* global getFiles:readable, _deleteFolder:readable */
-/* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable , BlendMode:readable */
+/* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
 
@@ -1290,15 +1290,14 @@ class Images {
 				clone.RotateFlip(RotateFlipType.RotateNoneFlipX);
 				applyMask(
 					clone,
-					(mask, gr, w, h) => {
-						gr.FillGradRect(0, 0, fade, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
-					},
+					(mask, gr, w, h) => gr.FillGradRect(0, 0, fade, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
 					true
 				);
 				gr.DrawImage(clone, coords.x + image.Width - offsetX / 2, coords.y, Math.ceil(offsetX), coords.h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha);
 				break;
 			}
-			case 2: { // asymmetric bottom
+			case 2: // asymmetric bottom
+			case 3: { // asymmetric bottom skew
 				const clone = image.Clone(0, 0, image.Width, image.Height);
 				clone.RotateFlip(RotateFlipType.RotateNoneFlipY);
 				const offsetY = this.bor.pad / 2;
@@ -1306,15 +1305,84 @@ class Images {
 				const fade = Math.min(offsetY * scale, image.Height * 0.9);
 				applyMask(
 					clone,
-					(mask, gr, w) => {
-						gr.FillGradRect(0, 0, w, fade, 90, $.RGB(0, 0, 0), $.RGB(255, 255, 255));
-					},
+					(mask, gr, w) => gr.FillGradRect(0, 0, w, fade, 90, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
 					true
 				);
-				gr.DrawImage(clone, coords.x, coords.y  + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
+				if (typeof BrushType === 'undefined' || art.reflectionStyle === 2) {
+					gr.DrawImage(clone, coords.x, coords.y + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
+				} else {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					const brush = gdi.Brush(BrushType.Bitmap, clone.ApplyAlpha(alpha), BrushWrapMode.Clamp);
+					brush.Scale(1, 0.6);
+					brush.Skew(-30, 0);
+					brush.Translate(coords.x, coords.y + image.Height);
+					gr.FillPolygon(
+						brush,
+						0,
+						[
+							coords.x, coords.y + image.Height,
+							coords.x + coords.w, coords.y + image.Height,
+							coords.x + coords.w * 0.82, coords.y + image.Height + Math.ceil(offsetY * 2),
+							coords.x - coords.w * 0.18, coords.y + image.Height + Math.ceil(offsetY * 2),
+						]
+					);
+					gr.SetSmoothingMode();
+				}
 				break;
 			}
-			case 1: // symmetric
+			case 4: // asymmetric bottom | symmetric left/right
+			case 5: { // asymmetric bottom skew | symmetric left/right
+				let imgRotated = image.Clone(0, 0, image.Width, image.Height);
+				imgRotated.RotateFlip(RotateFlipType.RotateNoneFlipY);
+				const offsetY = this.bor.pad / 2;
+				const scale = this.style.vertical ? 2 : 2.5;
+				let fade = Math.min(offsetY * scale, image.Height * 0.9);
+				let refl = imgRotated;
+				applyMask(
+					refl,
+					(mask, gr, w) => gr.FillGradRect(0, 0, w, fade, 90.1, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
+					true
+				);
+				if (typeof BrushType === 'undefined'  || art.reflectionStyle === 4) {
+					gr.DrawImage(refl, coords.x, coords.y + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
+				} else {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					const brush = gdi.Brush(BrushType.Bitmap, refl.ApplyAlpha(alpha), BrushWrapMode.Clamp);
+					brush.Scale(1, 0.6);
+					brush.Skew(-30, 0);
+					brush.Translate(coords.x, coords.y + image.Height);
+					gr.FillPolygon(
+						brush,
+						0,
+						[
+							coords.x, coords.y + image.Height,
+							coords.x + coords.w, coords.y + image.Height,
+							coords.x + coords.w * 0.82, coords.y + image.Height + Math.ceil(offsetY * 2),
+							coords.x - coords.w * 0.18, coords.y + image.Height + Math.ceil(offsetY * 2),
+						]
+					);
+					gr.SetSmoothingMode();
+				}
+				fade = Math.min(offsetX, image.Width * 0.9);
+				imgRotated = image.Clone(0, 0, image.Width, image.Height);
+				imgRotated.RotateFlip(RotateFlipType.RotateNoneFlipX);
+				refl = imgRotated.Clone(0, 0, image.Width, image.Height);
+				applyMask(
+					refl,
+					(mask, gr, w, h) => gr.FillGradRect(0, 0, fade, h, 0.15, $.RGB(0, 0, 0), $.RGB(255, 255, 255)),
+					true
+				);
+				gr.DrawImage(refl, coords.x + image.Width, coords.y, Math.ceil(offsetX), coords.h, 0, 0, Math.ceil(offsetX), image.Height, 0, alpha / 2);
+				refl = imgRotated.Clone(0, 0, image.Width, image.Height);
+				applyMask(
+					refl,
+					(mask, gr, w, h) => gr.FillGradRect(w - fade, 0, fade, h, 0.15, $.RGB(255, 255, 255), $.RGB(0, 0, 0)),
+					true
+				);
+				gr.DrawImage(refl, Math.floor(coords.x - offsetX), coords.y, Math.ceil(offsetX), coords.h, Math.floor(image.Width - offsetX), 0, Math.ceil(offsetX), image.Height, 0, alpha / 2);
+				break;
+			}
+			case 1: // symmetric left/right
 			default: {
 				const imgRotated = image.Clone(0, 0, image.Width, image.Height);
 				imgRotated.RotateFlip(RotateFlipType.RotateNoneFlipX);
