@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/05/26
+//16/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -222,11 +222,11 @@ let properties = [
 	['Image Show Index Year Auto', true, 'albumArtYearAuto'],
 	['Image Show Options', true, 'albumArtOptionsShow'],
 	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
-	['Image Style [Front] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleFront'],
-	['Image Style [Back] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleBack'],
-	['Image Style [Disc] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleDisc'],
-	['Image Style [Icon] Regular-0 Auto-Fill-1 Circular-2', 1, 'imgStyleIcon'],
-	['Image Style [Artist] Regular-0 Auto-Fill-1 Circular-2', 2, 'imgStyleArtist'],
+	['Image Style [Front]', 1, 'imgStyleFront'],
+	['Image Style [Back]', 1, 'imgStyleBack'],
+	['Image Style [Disc]', 2, 'imgStyleDisc'],
+	['Image Style [Icon]', 1, 'imgStyleIcon'],
+	['Image Style [Artist]', 2, 'imgStyleArtist'],
 	['Image Thumbnail Gap Standard', 0, 'thumbNailGapStnd'],
 	['Image Thumbnail Gap Compact', 3, 'thumbNailGapCompact'],
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
