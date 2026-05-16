@@ -1302,7 +1302,8 @@ class Images {
 				const clone = image.Clone(0, 0, image.Width, image.Height);
 				clone.RotateFlip(RotateFlipType.RotateNoneFlipY);
 				const offsetY = this.bor.pad / 2;
-				const fade = Math.min(offsetY * 2.5, image.Height * 0.9);
+				const scale = this.style.vertical ? 2 : 2.5;
+				const fade = Math.min(offsetY * scale, image.Height * 0.9);
 				applyMask(
 					clone,
 					(mask, gr, w) => {
@@ -1310,7 +1311,7 @@ class Images {
 					},
 					true
 				);
-				gr.DrawImage(clone, coords.x, coords.y  + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * 2.5), 0, 0, image.Width, Math.ceil(offsetY * 2.5), 0, alpha);
+				gr.DrawImage(clone, coords.x, coords.y  + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
 				break;
 			}
 			case 1: // symmetric
