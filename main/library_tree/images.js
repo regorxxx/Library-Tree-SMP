@@ -1,5 +1,5 @@
 'use strict';
-//16/05/26
+//17/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
@@ -640,25 +640,41 @@ class Images {
 		this.column = 0;
 		const style = this.getStyle(this.style.image);
 		const art = this.getArt(ppt.artId);
+		const stack = [[], [], []];
 		for (let i = this.start; i < this.end; i++) {
-			const bHover = i == pop.m.i;
-			const row = this.style.vertical ? Math.floor(i / this.columns) : 0;
-			box_x = this.style.vertical ? Math.floor(this.panel.x + this.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + i * this.columnWidth + this.bor.side - sbar.delta);
+			const bHover = i === pop.m.i;
+			const item = pop.tree[i];
+			const bSel = item.sel;
+			stack[bHover ? 2 : bSel ? 1 : 0].push({
+				i,
+				column: this.column,
+				item,
+				selIdx: bSel ? pop.lastSelMul.indexOf(i) : -1,
+				bHover,
+				bSel,
+				bNowPlaying: this.checkNowPlaying(item)
+			});
+			if (this.column == this.columns - 1) { this.column = 0; }
+			else { this.column++; }
+		}
+		stack[1].sort((a, b) => b.selIdx - a.selIdx);
+		stack.flat().forEach((cell) => {
+			const row = this.style.vertical ? Math.floor(cell.i / this.columns) : 0;
+			box_x = this.style.vertical ? Math.floor(this.panel.x + cell.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + cell.i * this.columnWidth + this.bor.side - sbar.delta);
 			box_y = this.style.vertical ? Math.floor(this.panel.y + row * this.row.h - sbar.delta) : this.style.y;
 			if (box_y >= 0 - this.row.h && box_y < this.panel.y + this.panel.h) {
-				const item = pop.tree[i];
+				const item = cell.item;
 				pop.getItemCount(item);
 				const grp = item.grp;
 				const lot = item.lot;
 				const statistics = this.labels.statistics ? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + item._statistics : '';
 				const cur_img = this.zooming ? null : this.getImg(item.key);
-				const nowp = this.checkNowPlaying(item);
-				const grpCol = this.getGrpCol(item, nowp, pop.highlight.text && bHover);
-				const lotCol = this.getLotCol(item, nowp, pop.highlight.text && bHover);
-				this.drawSelBg(gr, art, cur_img, box_x, box_y, i, nowp || item.sel, (bHover || item.sel)); // Regorxxx <- Zoom hover effect ->
+				const grpCol = this.getGrpCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
+				const lotCol = this.getLotCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
+				this.drawSelBg(gr, art, cur_img, box_x, box_y, cell.i, cell.bNowPlaying || cell.bSel, (cell.bHover || cell.bSel)); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
-					if (i % 2 == 0) gr.FillSolidRect(0, box_y + 1, panel.tree.stripe.w, this.row.h, ui.col.bg1);
+					if (cell.i % 2 == 0) gr.FillSolidRect(0, box_y + 1, panel.tree.stripe.w, this.row.h, ui.col.bg1);
 					else gr.FillSolidRect(0, box_y, panel.tree.stripe.w, this.row.h, ui.col.bg2);
 				}
 				let x2 = Math.round(box_x + (this.bor.cov) / 2);
@@ -673,12 +689,9 @@ class Images {
 						w: cur_img.Width,
 						h: cur_img.Height
 					};
-					const bPaintBorder = art.border && (!item.sel || !this.labels.overlay || this.style.image != 2);
-					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (bHover || item.sel) }); // Regorxxx <- Zoom hover effect ->
-					if (this.labels.overlayDark) {
-						if (item.sel || nowp) gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, $.RGBA(150, 150, 150, 150));
-						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
-					}
+					const bPaintBorder = art.border && (!cell.bSel || !this.labels.overlay || this.style.image != 2);
+					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel) }); // Regorxxx <- Zoom hover effect ->
+					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				} else {
 					coords = {
 						x: box_x + Math.round((this.box.w - this.im.w) / 2),
@@ -687,46 +700,50 @@ class Images {
 						h: this.im.w
 					};
 					if (!item.root) {
-						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, coords, { shadow: true, reflection: art.reflection, hover: art.hoverZoom && (bHover || item.sel) }); } // Regorxxx <- Zoom hover effect ->
+						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, coords, { shadow: true, reflection: art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel) }); } // Regorxxx <- Zoom hover effect ->
 					} else if (!this.style.rootComposite && this.stub.root) {
-						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (bHover || item.sel) }); // Regorxxx <- Zoom hover effect ->
+						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (cell.bHover || cell.bSel) }); // Regorxxx <- Zoom hover effect ->
 					}
 					if (this.labels.overlay) {
 						gr.FillGradRect(coords.x, y2 - 1, coords.w / 2, ui.l.w, 1, $.RGBA(0, 0, 0, 0), ui.col.imgBor);
 						gr.FillGradRect(coords.x + coords.w / 2, y2 - 1, coords.w / 2, ui.l.w, 1, ui.col.imgBor, $.RGBA(0, 0, 0, 0));
 					}
-					if (this.labels.overlayDark) {
-						if (item.sel || nowp) { gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, $.RGBA(150, 150, 150, 150)); }
-						gr.FillSolidRect(x2, y2, this.im.w, this.overlayHeight, this.getSelBgCol(item, nowp));
-					}
+					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
 				this.drawItemOverlay(gr, art, style, item, coords);
-				if (bHover) {
+				if (cell.bHover) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
-						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
-						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
+						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
+						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
-				if (item.sel) {
-					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
-					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, (bHover || item.sel)); } // Regorxxx <- Zoom hover effect ->
+				if (cell.bSel) {
+					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
+					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
 					const x = box_x + this.text.x;
 					let type = 0;
-					if (panel.colMarker)  { type = item.sel ? 2 : pop.highlight.text && bHover ? 1 : 0; }
+					if (panel.colMarker) { type = cell.bSel ? 2 : pop.highlight.text && cell.bHover ? 1 : 0; }
 					if (this.labels.overlay) {
 						y1 = this.im.y + this.text.y1;
 						y2 = y1 + this.text.h * (this.labels.statistics ? 0.93 : 0.9);
+						// Regorxxx <- Zoom hover effect
+						if (art.hoverZoom && (cell.bHover || cell.bSel)) {
+							const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+							y1 += zoomX / 2;
+							y2 += zoomX / 2;
+						}
+						// Regorxxx ->
 						const y3 = y2 + this.text.h * 0.95;
 						if (panel.lines == 2) {
 							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics });
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.groupEllipsisSpace, 'lott');
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, nowp, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott');
+								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
 							}
 							else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
@@ -736,7 +753,7 @@ class Images {
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statistics }, { font1: ui.font.group, font2: ui.font.statistics });
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.groupEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
@@ -749,8 +766,8 @@ class Images {
 						if (panel.lines == 2) {
 							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics });
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.groupEllipsisSpace, 'group');
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, nowp, ui.font.lot, ui.font.lotEllipsisSpace, 'lott');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
+								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott');
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
@@ -759,7 +776,7 @@ class Images {
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statistics }, { font1: ui.font.group, font2: ui.font.statistics });
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, nowp, ui.font.group, ui.font.mainEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group');
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
@@ -768,9 +785,7 @@ class Images {
 					}
 				}
 			}
-			if (this.column == this.columns - 1) this.column = 0;
-			else this.column++;
-		}
+		});
 		ui.drawTopBarUnderlay(gr, art); // Regorxxx <- Zoom hover effect ->
 	}
 
@@ -932,6 +947,17 @@ class Images {
 				break;
 			}
 		}
+	}
+
+	drawItemOverlayDark(gr, art, item, coords, cell) {
+		// Regorxxx <- Zoom hover effect
+		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
+			const zoomX = Math.floor(Math.max(this.bor.pad / 4, Math.round(5 * $.scale)));
+			coords = { ...coords, x: coords.x - Math.floor(zoomX / 2), y: coords.y + Math.floor(zoomX / 4), w: coords.w + zoomX, h: coords.h + Math.floor(zoomX / 4)};
+		}
+		// Regorxxx ->
+		if (cell.bSel || cell.bNowp) { gr.FillSolidRect(coords.x, coords.y, coords.w, coords.h, $.RGBA(150, 150, 150, 150)); }
+		gr.FillSolidRect(coords.x, coords.y, coords.w, coords.h, this.getSelBgCol(item, cell.bNowp));
 	}
 
 	drawSelBg(gr, art, cur_img, box_x, box_y, i, nowpOrSel, bHover) {
