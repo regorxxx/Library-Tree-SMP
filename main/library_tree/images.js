@@ -1957,6 +1957,7 @@ class Images {
 					this.bor.side = Math.round(2 * $.scale);
 					this.bor.bot = this.bor.side * 2;
 				}
+				this.bor.cov += ppt.thumbNailGapMod; // Regorxxx <- Extra gap settings ->
 				const margin = ppt.margin;
 				this.panel.x = (ppt.sbarShow == 2 ? margin : Math.max(margin, ui.sbar.w)) + ui.l.w;
 				this.panel.w = ui.w - ui.l.w * 2 - (ui.sbar.type == 0 || ppt.sbarShow != 2 ? Math.max(margin, ui.sbar.w) * 2 : (margin * 2 + ui.sbar.w));
@@ -2017,6 +2018,7 @@ class Images {
 					this.bor.side = Math.round(2 * $.scale);
 					this.bor.bot = this.bor.side * 2;
 				}
+				this.bor.cov += ppt.thumbNailGapMod; // Regorxxx <- Extra gap settings ->
 				this.panel.x = 0;
 				const spacer = this.letter.show ? (this.labels.bottom ? this.text.h * 0.5 - this.bor.pad / 4 : this.text.h * 0.75) : (this.labels.bottom ? 0 : Math.round(this.bor.pad / 2));
 				this.panel.y = panel.search.h + spacer;

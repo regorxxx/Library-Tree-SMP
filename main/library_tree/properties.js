@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/05/26
+//17/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -229,6 +229,7 @@ let properties = [
 	['Image Style [Artist]', 2, 'imgStyleArtist'],
 	['Image Thumbnail Gap Standard', 0, 'thumbNailGapStnd'],
 	['Image Thumbnail Gap Compact', 3, 'thumbNailGapCompact'],
+	['Image Thumbnail Gap Modifier', 0, 'thumbNailGapMod'], // Regorxxx <- Extra gap settings ->
 	['Image Thumbnail Size', 2, 'thumbNailSize'],
 	['Image Thumbnail Vertically centered', true, 'thumbNailVCenter'], // Regorxxx <- Thumbnail Vertically centered ->
 	['Image Type', 0, 'artId'],

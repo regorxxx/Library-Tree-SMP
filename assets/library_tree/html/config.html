@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 16/05/26 -->
+﻿<!DOCTYPE html> <!-- 17/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1826,7 +1826,7 @@
 
 			var presetRulesLabels = ['Apply on Source switching', 'Apply on Views switching', 'Apply on Filters switching', 'Apply on Playlists switching (used along Source Id condition to track active playlist)', 'Apply on Notify callback -external integration- (also depends on triggers above)']; // Regorxxx <- Presets tab | Preset rules ->
 			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
-			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact'];
+			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact', 'Modifier']; // Regorxxx <- Extra gap settings ->
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
 			var albumArtOverlayAlignLabels = ['Top (box)', 'Top (image)', 'Bottom (image)', 'Bottom (box)']; // Regorxxx <- Item overlay vertical alignment ->
@@ -1974,8 +1974,8 @@
 				// Regorxxx ->
 				// Regorxxx <- Custom TF art
 				albumArt: {
-					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'albumArtCutResize', 'albumArtLetterNo', 'albumArtTf1View', 'albumArtTf2View', 'albumArtTf1Folder', 'albumArtTf2Folder', 'albumArtTf1Name', 'albumArtTf2Name'],
-					type: ['int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['thumbNailGapStnd', 'thumbNailGapCompact', 'thumbNailGapMod', 'albumArtCutResize', 'albumArtLetterNo', 'albumArtTf1View', 'albumArtTf2View', 'albumArtTf1Folder', 'albumArtTf2Folder', 'albumArtTf1Name', 'albumArtTf2Name'],
+					type: ['int', 'int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Tooltip font | Custom album art overlay track count
@@ -3164,7 +3164,7 @@
 				window.noCoverStub_dropdown.innerHTML = '<b>No cover:</b> <img src="' + noCoverStubLabels[nocov_ix].path + '" alt="' + noCoverStubLabels[nocov_ix].name + '" width="' + em + '" height="' + em + '" class="stub"/> ' + noCoverStubLabels[nocov_ix].name + '<';
 				for (i = 0; i < noCoverStubLabels.length; i++) { window.noCoverStub.insertAdjacentHTML('beforeend', '<a onclick="setNoCoverImage(' + i + ');"> <img src="' + noCoverStubLabels[i].path + '" alt="' + noCoverStubLabels[i].name + '" width="' + em + '" height="' + em + '" style="vertical-align:middle;"/> ' + noCoverStubLabels[i].name + '</a>'); }
 				generateTable('imageFormat');
-				for (i = 0; i < 2; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
+				for (i = 0; i < 3; i++) { window.gap.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="gap_container' + i + '" name="albumart_input" style="padding:0; margin:0;" class="input15" /><label for="gap_container' + i + '" class="inp_label2">' + albumArtGapLabels[i] + '</label></div>'); }
 
 				window.thumbSize_dropdown.innerHTML = thumbnailSizeLabels[ppt['thumbNailSize_internal'].value];
 				for (i = 0; i < 8; i++) { window.thumbSize.insertAdjacentHTML('beforeend', '<a onclick="setThumbSize(' + i + ');">' + thumbnailSizeLabels[i] + '</a>'); }
