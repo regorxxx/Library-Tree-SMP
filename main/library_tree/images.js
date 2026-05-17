@@ -1004,7 +1004,11 @@ class Images {
 		// Regorxxx ->
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
-		if (!this.style.vertical) {
+		if (this.style.vertical) {
+			const offset = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y) - y;
+			y += offset;
+			h -= offset;
+		} else {
 			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y);
 			h = Math.min(window.Height - ppt.marginTopBottom - y, sbar.y - y - ppt.marginTopBottom, h);
 		}
