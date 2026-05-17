@@ -291,7 +291,7 @@ class UserInterface {
 	// Regorxxx <- Zoom hover effect
 	drawTopBarUnderlay(gr, art) {
 		const h = art.hoverZoom
-			? img.panel.y - Math.max(img.bor.pad / 4, Math.round(5 * $.scale))
+			? img.panel.y - img.getZoomEffectIntensity()
 			: img.panel.y;
 		if ((this.img.isBlur || this.img.bg) && this.img.cur) {
 			gr.FillSolidRect(0, 0, this.w, h, this.col.topBarUnderlay);
