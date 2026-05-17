@@ -953,7 +953,7 @@ class Images {
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = Math.floor(Math.max(this.bor.pad / 4, Math.round(5 * $.scale)));
-			coords = { ...coords, x: coords.x - Math.floor(zoomX / 2), y: coords.y + Math.floor(zoomX / 4), w: coords.w + zoomX, h: coords.h + Math.floor(zoomX / 4)};
+			coords = { ...coords, x: coords.x - Math.floor(zoomX / 2), y: coords.y + Math.floor(zoomX / 4), w: coords.w + zoomX, h: coords.h + Math.floor(zoomX / 4) };
 		}
 		// Regorxxx ->
 		if (cell.bSel || cell.bNowp) { gr.FillSolidRect(coords.x, coords.y, coords.w, coords.h, $.RGBA(150, 150, 150, 150)); }
@@ -1366,17 +1366,17 @@ class Images {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					const brush = gdi.Brush(BrushType.Bitmap, clone.ApplyAlpha(alpha), BrushWrapMode.Clamp);
 					const prop = coords.w / clone.Width;
+					brush.Skew(-10, 0);
 					brush.Scale(prop, 0.6);
-					brush.Skew(-30, 0);
 					brush.Translate(coords.x, coords.y + coords.h);
 					gr.FillPolygon(
 						brush,
 						0,
 						[
-							coords.x, coords.y + image.Height * prop,
-							coords.x + coords.w, coords.y + image.Height * prop,
-							coords.x + coords.w * 0.84, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
-							coords.x - coords.w * 0.16, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
+							coords.x, coords.y + Math.floor(image.Height * prop) - 1,
+							coords.x + coords.w, coords.y + Math.floor(image.Height * prop) - 1,
+							coords.x + coords.w, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
+							Math.max(coords.x - coords.w, coords.x - offsetY), coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
 						]
 					);
 					gr.SetSmoothingMode();
