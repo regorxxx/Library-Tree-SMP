@@ -1803,7 +1803,7 @@ class Images {
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
 		const tfDate = new FbTitleFormat('[$year(%date%)]');
-		const tfArtId = new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
+		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
 
 		pop.tree.forEach((v, i) => {
@@ -1831,8 +1831,10 @@ class Images {
 						: [];
 					v.handleArr = [];
 					for (const handle of handleArr) {
-						let tag = tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim();
-						if (!ids.has(tag)) {
+						const tag = tfArtId
+							? tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim() || ''
+							: handle.Path.split('\\').at(-2) || '';
+						if (tag && !ids.has(tag)) {
 							ids.add(tag);
 							v.handleArr.push(handle);
 							v.keyArr.push(md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
