@@ -733,7 +733,7 @@ class Images {
 						y2 = y1 + this.text.h * (this.labels.statistics ? 0.93 : 0.9);
 						// Regorxxx <- Zoom hover effect
 						if (art.hoverZoom && (cell.bHover || cell.bSel)) {
-							const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+							const zoomX = this.getZoomEffectIntensity();
 							y1 += zoomX / 2;
 							y2 += zoomX / 2;
 						}
@@ -793,7 +793,7 @@ class Images {
 		const offsetX = art.reflection && art.reflectionStyle === 0 ? this.bor.pad / 4 : 0;
 		// Regorxxx <- Zoom hover effect
 		if (effects.hover) {
-			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			const zoomX = this.getZoomEffectIntensity();
 			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
 		}
 		// Regorxxx ->
@@ -826,7 +826,7 @@ class Images {
 		}
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && bHover) {
-			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
 		}
 		// Regorxxx ->
@@ -837,7 +837,7 @@ class Images {
 	drawImageFrame(gr, art, style, item, coords, col, bHover) {
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && bHover) {
-			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			const zoomX = this.getZoomEffectIntensity();
 			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
 		}
 		// Regorxxx ->
@@ -998,7 +998,7 @@ class Images {
 		}
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && bHover) {
-			const zoomX = Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
+			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
 		}
 		// Regorxxx ->
@@ -1463,6 +1463,10 @@ class Images {
 		return art.reflectionStyle === 2
 			? this.bor.pad / 2 * 2.5 > 10
 			: this.bor.pad / 2 > 5;
+	}
+
+	getZoomEffectIntensity() {
+		return Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
 	}
 
 	format(image, art, style, w, h, fade, caller) {
