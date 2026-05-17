@@ -1375,8 +1375,8 @@ class Images {
 						[
 							coords.x, coords.y + image.Height * prop,
 							coords.x + coords.w, coords.y + image.Height * prop,
-							coords.x + coords.w * 0.82, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
-							coords.x - coords.w * 0.18, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
+							coords.x + coords.w * 0.84, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
+							coords.x - coords.w * 0.16, coords.y + image.Height * prop + Math.ceil(offsetY * 2) * prop,
 						]
 					);
 					gr.SetSmoothingMode();
