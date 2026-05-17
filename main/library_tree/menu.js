@@ -1,5 +1,5 @@
 'use strict';
-//13/05/26
+//17/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -598,6 +598,9 @@ class MenuItems {
 				func: () => {
 					ppt.toggle('albumArtNodeCollage');
 					this.loadView(true, ppt.albumArtViewBy);
+					if (!panel.multiProcess && !panel.folderView && ppt.albumArtNodeCollage) {
+						fb.ShowPopupMessage('Current view depth is only 1 level, no art can be retrieved from children nodes.\n\nCheck on library tree mode and adjust the view TF as desired to show additional nested levels.', window.FullPanelName + ': Branc collage art');
+					}
 				},
 				checkItem: ppt.albumArtNodeCollage
 			});
