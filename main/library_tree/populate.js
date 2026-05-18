@@ -1722,7 +1722,7 @@ class Populate {
 					v.count += v.count > 1 ? ' tracks' : ' track';
 				}
 				// Regorxxx ->
-				const getItemCount = !v.root && ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (pop.nodeCounts == 1 || pop.nodeCounts == 2);;
+				const getItemCount = !v.root && ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (this.nodeCounts == 1 || this.nodeCounts == 2);;
 				if (getItemCount) {
 					const count = v.count.replace(/\D/g, '');
 					if (panel.lines == 1 || ppt.albumArtFlipLabels) v.grp += ` (${count})`;
@@ -3506,7 +3506,7 @@ class Populate {
 				}
 			} else {
 				const parent = this.getPlaylistParent(node);
-				return pop.tree.indexOf(node) - parent.idx;
+				return this.tree.indexOf(node) - parent.idx;
 			}
 		} else { return -1; }
 	}
