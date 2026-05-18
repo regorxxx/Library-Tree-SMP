@@ -1,13 +1,15 @@
 'use strict';
-//17/05/26
+//18/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
 /* global _explorer:readable */
-/* global isArrayEqual:readable, _p:readable */
+/* global isArrayEqual:readable, _p:readable, _b:readable */
+/* global createAutoplaylistPresets:readable */
 /* global Input:readable */
-/* global setLocks:readable */
+/* global getLocks:readable, setLocks:readable */
+/* global countDeadItems:readable, playlistRevive:readable, selectDeadItems:readable */
 
 /* exported MenuItems, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -371,166 +373,275 @@ class MenuItems {
 		}
 
 		// Regorxxx <- Basic playlist manager
-		if (this.validItem && (panel.isAllPlaylistSource(true) || panel.isFixedPlaylistSource()) && !ppt.plsFlatView) {
-			const parent = pop.lastSelMul.flatMap((idx) => pop.getPlaylistParent(pop.tree[idx]));
+		if ((this.validItem || !this.settingsBtnDn && ppt.settingsShow) && (panel.isAllPlaylistSource(true) || panel.isFixedPlaylistSource()) && !ppt.plsFlatView) {
+			const parent = this.validItem ? pop.lastSelMul.flatMap((idx) => pop.getPlaylistParent(pop.tree[idx])) : [];
 			const isValidPls = parent.length === 1 && parent[0].idx !== -1;
 			const isMultiplePls = parent.length > 1;
-			const locks = isValidPls ? plman.GetPlaylistLockedActions(parent[0].idx) : [];
+			const locks = isMultiplePls ? parent.map((p) => getLocks(p.idx)) : [getLocks(isValidPls ? parent[0].idx : -1)];
 			const names = parent.map((p) => p.name);
-			const menuName = isMultiplePls ? 'Playlists' : 'Playlist';
-			menu.newItem({ separator: true });
+			const menuName = !this.validItem || isMultiplePls ? 'Playlists' : 'Playlist';
+			if (this.validItem) { menu.newItem({ separator: true }); }
 			menu.newMenu({ menuName, appendTo: 'baseMenu' });
-			if (isMultiplePls) {
-				menu.newItem({
-					menuName,
-					str: 'Duplicate',
-					func: () => parent.reverse().forEach((p) => plman.DuplicatePlaylist(p.idx, p.name + ' (copy)'))
-				});
-				if (new Set(names).size !== names.length) {
+			if (!this.validItem) { menu.newItem({ separator: true }); }
+			if (this.validItem) {
+				if (isMultiplePls) {
+					menu.newItem({
+						menuName,
+						str: 'Duplicate',
+						func: () => parent.reverse().forEach((p) => plman.DuplicatePlaylist(p.idx, p.name + ' (copy)'))
+					});
+					if (new Set(names).size !== names.length) {
+						menu.newItem({ menuName, separator: true });
+						menu.newItem({
+							menuName,
+							str: 'Split with same name',
+							func: () => {
+								const dic = {};
+								names.forEach((name) => {
+									if (dic[name]) { dic[name].count++; }
+									else { dic[name] = { count: 1, curr: 0 }; }
+								});
+								parent.forEach((p) => {
+									if (dic[p.name].count > 1 && dic[p.name].curr !== dic[p.name].count) {
+										dic[p.name].curr++;
+										plman.RenamePlaylist(p.idx, p.name + ' (' + dic[p.name].curr + ')');
+									}
+								});
+							}
+						});
+					}
+				} else {
+					menu.newItem({
+						menuName,
+						str: 'Duplicate...',
+						func: () => {
+							const name = Input.string('string', parent[0].name + ' (copy)', 'Set new playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name + ' (copy)') || (Input.isLastEqual ? Input.lastInput : null);
+							if (name === null || name === parent[0].name) { return null; }
+							plman.DuplicatePlaylist(parent[0].idx, name);
+						},
+						flags: isValidPls
+					});
+					menu.newItem({
+						menuName,
+						str: 'Rename...',
+						func: () => {
+							const name = Input.string('string', parent[0].name, 'Set playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name);
+							if (name === null) { return null; }
+							plman.RenamePlaylist(parent[0].idx, name);
+						},
+						flags: isValidPls && !locks[0].types.includes('RenamePlaylist') ? MF_STRING : MF_GRAYED
+					});
 					menu.newItem({ menuName, separator: true });
 					menu.newItem({
 						menuName,
-						str: 'Split with same name',
+						str: 'Save as...',
+						func: () => fb.SavePlaylist(),
+						flags: isValidPls ? MF_STRING : MF_GRAYED
+					});
+				}
+				menu.newItem({ menuName, separator: true });
+				{
+					const lockTypes = [
+						{ type: 'AddItems', entryText: 'Adding items' },
+						{ type: 'RemoveItems', entryText: 'Removing items' },
+						{ type: 'ReplaceItems', entryText: 'Replacing items' },
+						{ type: 'ReorderItems', entryText: 'Sorting items' },
+						{ type: 'RenamePlaylist', entryText: 'Renaming playlist' },
+						{ type: 'RemovePlaylist', entryText: 'Deleting playlist' },
+						...(window.Bugs.SetPlaylistLockedActions
+							? []
+							: [{ type: 'ExecuteDefaultAction', entryText: 'Default action' }])
+					].filter(Boolean);
+					const flags = locks[0].isSMPLock ? MF_STRING : MF_GRAYED;
+					const subMenuName = 'Lock';
+					menu.newMenu({ menuName: subMenuName, appendTo: menuName, flags: locks[0].types.length ? MF_CHECKED : MF_STRING });
+					menu.newItem({ menuName: subMenuName, str: 'Lock by action:' + (locks[0].isSMPLock ? '' : '\t' + _p(locks[0].name)), flags: MF_GRAYED });
+					menu.newItem({ menuName: subMenuName, separator: true });
+					lockTypes.forEach((lock) => {
+						menu.newItem({
+							menuName: subMenuName, str: lock.entryText, func: () => {
+								setLocks(parent[0].idx, [lock.type], 'switch');
+							},
+							flags,
+							checkItem: locks[0].types.includes(lock.type)
+						});
+					});
+					menu.newItem({ menuName: subMenuName, separator: true });
+					menu.newItem({
+						menuName: subMenuName, str: 'All locks', func: () => {
+							setLocks(parent[0].idx, lockTypes.map((lock) => lock.type));
+						}, flags
+					});
+					menu.newItem({
+						menuName: subMenuName, str: 'None', func: () => {
+							setLocks(parent[0].idx, []);
+						}, flags
+					});
+				}
+				menu.newItem({ menuName, separator: true });
+				{
+					const subMenuName = 'Sort';
+					menu.newMenu({ menuName: subMenuName, appendTo: menuName });
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Move up',
 						func: () => {
-							const dic = {};
-							names.forEach((name) => {
-								if (dic[name]) { dic[name].count++; }
-								else { dic[name] = { count: 1, curr: 0 }; }
-							});
-							parent.forEach((p) => {
-								if (dic[p.name].count > 1 && dic[p.name].curr !== dic[p.name].count) {
-									dic[p.name].curr++;
-									plman.RenamePlaylist(p.idx, p.name + ' (' + dic[p.name].curr + ')');
-								}
-							});
+							parent.forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx - 1, 0)));
+							pop.sel_items = []; // Force recreating selection
+						}
+					});
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Move down',
+						func: () => {
+							parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.min(p.idx + 1, plman.PlaylistCount - 1)));
+							pop.sel_items = []; // Force recreating selection
+						}
+					});
+					menu.newItem({ menuName: subMenuName, separator: true });
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Move to top',
+						func: () => {
+							parent.forEach((p) => plman.MovePlaylist(p.idx, 0));
+							pop.sel_items = []; // Force recreating selection
+						}
+					});
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Move to bottom',
+						func: () => {
+							parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, plman.PlaylistCount - 1));
+							pop.sel_items = []; // Force recreating selection
+						}
+					});
+					menu.newItem({ menuName: subMenuName, separator: true });
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Alphabetic sort (all)',
+						func: () => {
+							const bShift = utils.IsKeyPressed(VK_SHIFT);
+							plman.SortPlaylistsByName(bShift ? -1 : 1);
 						}
 					});
 				}
 			} else {
-				menu.newItem({
-					menuName,
-					str: 'Duplicate...',
-					func: () => {
-						const name = Input.string('string', parent[0].name + ' (copy)', 'Set new playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name + ' (copy)') || (Input.isLastEqual ? Input.lastInput : null);
-						if (name === null || name === parent[0].name) { return null; }
-						plman.DuplicatePlaylist(parent[0].idx, name);
-					},
-					flags: isValidPls
-				});
-				menu.newItem({
-					menuName,
-					str: 'Rename...',
-					func: () => {
-						const name = Input.string('string', parent[0].name, 'Set playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name);
-						if (name === null) { return null; }
-						plman.RenamePlaylist(parent[0].idx, name);
-					},
-					flags: isValidPls && !locks.includes('RenamePlaylist') ? MF_STRING : MF_GRAYED
-				});
-				menu.newItem({ menuName, separator: true });
-				menu.newItem({
-					menuName,
-					str: 'Save as...',
-					func: () => fb.SavePlaylist(),
-					flags: isValidPls ? MF_STRING : MF_GRAYED
-				});
-			}
-			menu.newItem({ menuName, separator: true });
-			{
-				const lockTypes = [
-					{ type: 'AddItems', entryText: 'Adding items' },
-					{ type: 'RemoveItems', entryText: 'Removing items' },
-					{ type: 'ReplaceItems', entryText: 'Replacing items' },
-					{ type: 'ReorderItems', entryText: 'Sorting items' },
-					{ type: 'RenamePlaylist', entryText: 'Renaming playlist' },
-					{ type: 'RemovePlaylist', entryText: 'Deleting playlist' },
-					...(window.Bugs.SetPlaylistLockedActions
-						? []
-						: [{ type: 'ExecuteDefaultAction', entryText: 'Default action' }])
-				].filter(Boolean);
-				const lockName = plman.GetPlaylistLockName(parent[0].idx);
-				const bSMPLock = lockName === window.Parent || !lockName;
-				const currentLocks = new Set(plman.GetPlaylistLockedActions(parent[0].idx) || []);
-				const flags = bSMPLock ? MF_STRING : MF_GRAYED;
-				const subMenuName = 'Lock';
-				menu.newMenu({ menuName: subMenuName, appendTo: menuName, flags: currentLocks.size ? MF_CHECKED : MF_STRING });
-				menu.newItem({ menuName: subMenuName, str: 'Lock by action:' + (bSMPLock ? '' : '\t' + _p(lockName)), flags: MF_GRAYED });
-				menu.newItem({ menuName: subMenuName, separator: true });
-				lockTypes.forEach((lock) => {
+				{
+					const subMenuName = 'Sort';
+					menu.newMenu({ menuName: subMenuName, appendTo: menuName });
 					menu.newItem({
-						menuName: subMenuName, str: lock.entryText, func: () => {
-							setLocks(parent[0].idx, [lock.type], 'switch');
-						},
-						flags,
-						checkItem: currentLocks.has(lock.type)
+						menuName: subMenuName,
+						str: 'Alphabetic sort (all)',
+						func: () => {
+							const bShift = utils.IsKeyPressed(VK_SHIFT);
+							plman.SortPlaylistsByName(bShift ? -1 : 1);
+						}
 					});
-				});
-				menu.newItem({ menuName: subMenuName, separator: true });
-				menu.newItem({
-					menuName: subMenuName, str: 'All locks', func: () => {
-						setLocks(parent[0].idx, lockTypes.map((lock) => lock.type));
-					}, flags
-				});
-				menu.newItem({
-					menuName: subMenuName, str: 'None', func: () => {
-						setLocks(parent[0].idx, []);
-					}, flags
-				});
+				}
 			}
 			menu.newItem({ menuName, separator: true });
 			{
-				const subMenuName = 'Sort';
+				const subMenuName = 'Add';
 				menu.newMenu({ menuName: subMenuName, appendTo: menuName });
 				menu.newItem({
 					menuName: subMenuName,
-					str: 'Move up',
-					func: () => {
-						parent.forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx - 1, 0)));
-						pop.sel_items = []; // Force recreating selection
-					}
+					str: 'New Playlist',
+					func: () => plman.ActivePlaylist = plman.CreatePlaylist(plman.ActivePlaylist, '')
 				});
 				menu.newItem({
 					menuName: subMenuName,
-					str: 'Move down',
-					func: () => {
-						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.min(p.idx + 1, plman.PlaylistCount - 1)));
-						pop.sel_items = []; // Force recreating selection
-					}
+					str: 'Load Playlist...',
+					func: () => fb.LoadPlaylist()
 				});
 				menu.newItem({ menuName: subMenuName, separator: true });
 				menu.newItem({
 					menuName: subMenuName,
-					str: 'Move to top',
+					str: 'New AutoPlaylist...',
 					func: () => {
-						parent.forEach((p) => plman.MovePlaylist(p.idx, 0));
-						pop.sel_items = []; // Force recreating selection
+						plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.ActivePlaylist, '', '');
+						plman.ShowAutoPlaylistUI(plman.ActivePlaylist);
 					}
 				});
-				menu.newItem({
-					menuName: subMenuName,
-					str: 'Move to bottom',
-					func: () => {
-						parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, plman.PlaylistCount - 1));
-						pop.sel_items = []; // Force recreating selection
-					}
-				});
-				menu.newItem({ menuName: subMenuName, separator: true });
-				menu.newItem({
-					menuName: subMenuName,
-					str: 'Alphabetic sort (all)',
-					func: () => {
-						const bShift = utils.IsKeyPressed(VK_SHIFT);
-						plman.SortPlaylistsByName(bShift ? -1 : 1);
-					}
+				{	// Preset AutoPlaylists
+					const subMenuNameTwo = 'AutoPlaylists presets';
+					menu.newMenu({ menuName: subMenuNameTwo, appendTo: subMenuName });
+					createAutoplaylistPresets().forEach((opt) => {
+						if (opt.menu && !menu.menuNames.includes(opt.menu)) { menu.newMenu({ menuName: opt.menu, appendTo: subMenuNameTwo }); }
+						const subMenuNameThree = opt.menu || subMenuNameTwo;
+						if (opt.name === 'sep') { menu.addSeparator({ menuName: subMenuNameThree }); return; }
+						menu.newItem({
+							menuName: subMenuNameThree,
+							str: opt.name,
+							func: () => {
+								let plsName = opt.plsName;
+								let i = 0;
+								while (plman.FindPlaylist(plsName)) {
+									plsName = plsName.replace(/ \((\n\))/, '') + ' ' + _p(++i);
+									if (i > 10) { fb.ShowPopupMessage('There are more than 10 playlists with same name: ' + opt.name, window.FullPanelName); return; }
+								}
+								plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.ActivePlaylist, plsName, opt.query);
+							},
+							flags: opt.flags
+						});
+					});
+				}
+			}
+			{
+				const subMenuName = 'Restore';
+				menu.newMenu({ menuName: subMenuName, appendTo: menuName, flags: plman.PlaylistRecycler.Count > 0 ? MF_STRING : MF_GRAYED });
+				const deletedItems = [];
+				for (let i = 0; i < plman.PlaylistRecycler.Count; i++) { deletedItems.push(plman.PlaylistRecycler.GetName(i)); }
+				deletedItems.slice(0, 8).forEach((str, i) => {
+					menu.newItem({
+						menuName: subMenuName,
+						str: str,
+						func: () => plman.PlaylistRecycler.Restore(i)
+					});
 				});
 			}
 			menu.newItem({ menuName, separator: true });
-			menu.newItem({
-				menuName,
-				str: 'Delete',
-				func: () => parent.reverse().forEach((p) => plman.RemovePlaylistSwitch(p.idx)),
-				flags: isValidPls && !locks.includes('RemovePlaylist') || isMultiplePls ? MF_STRING : MF_GRAYED
-			});
+			{
+				const subMenuName = 'Other tools';
+				menu.newMenu({ menuName: subMenuName, appendTo: menuName });
+				if (this.validItem) {
+					const deadItemsArr = [];
+					let bLocked = true;
+					parent.forEach((p, i) => {
+						deadItemsArr.push(
+							plman.PlaylistItemCount(p.idx) < 20000
+								? countDeadItems(p.idx)
+								: '?'
+						);
+						if (deadItemsArr.at(-1) !== 0) {
+							bLocked = bLocked && ['AddItems', 'RemoveItems'].some((l) => locks[i].types.includes(l));
+						}
+					});
+					const deadItems = deadItemsArr.reduce((prev, curr) => {
+						return prev === '?' || curr === '?' ? '?' : prev + curr;
+					}, 0);
+					menu.newItem({
+						menuName: subMenuName, str: 'Revive dead items\t' + (bLocked ? '[locked]' : _b(deadItems)), func: () => {
+							parent.forEach((p) => playlistRevive({ playlist: p.idx, simThreshold: 0.5, bFindAlternative: true, bNotifyPlsMan: false }));
+						}, flags: !bLocked && deadItems ? MF_STRING : MF_GRAYED
+					});
+					menu.newItem({
+						menuName: subMenuName, str: 'Select dead items\t' + _b(deadItems), func: () => {
+							parent.forEach((p) => selectDeadItems(p.idx));
+						}, flags: deadItems ? MF_STRING : MF_GRAYED
+					});
+				} else {
+					menu.newItem({ menuName: subMenuName, str: 'Revive dead items\t[-N/A-]', flags: MF_GRAYED });
+				}
+			}
+			if (this.validItem) {
+				menu.newItem({ menuName, separator: true });
+				menu.newItem({
+					menuName,
+					str: 'Delete',
+					func: () => parent.reverse().forEach((p) => plman.RemovePlaylistSwitch(p.idx)),
+					flags: isValidPls && !locks[0].types.includes('RemovePlaylist') || isMultiplePls ? MF_STRING : MF_GRAYED
+				});
+			}
 		}
 		// Regorxxx ->
 
@@ -1297,8 +1408,13 @@ class MenuItems {
 	getPaylistFlag(i) {
 		const pln = plman.ActivePlaylist;
 		const plnIsValid = pln != -1 && pln < plman.PlaylistCount;
-		const plLockAdd = plnIsValid ? plman.GetPlaylistLockedActions(pln).includes('AddItems') : false;
-		const plLockRemoveOrAdd = plnIsValid ? plman.GetPlaylistLockedActions(pln).includes('RemoveItems') || plman.GetPlaylistLockedActions(pln).includes('ReplaceItems') || plLockAdd : false;
+		const lock = getLocks(plnIsValid ? pln : -1);
+		const plLockAdd = plnIsValid
+			? lock.types.includes('AddItems')
+			: false;
+		const plLockRemoveOrAdd = plnIsValid
+			? lock.types.includes('RemoveItems') || lock.types.includes('ReplaceItems') || plLockAdd
+			: false;
 		return (!i && !plLockRemoveOrAdd || i == 1 && !plLockAdd || i == 2) && this.items.Count || i == 3 && pop.nowp != -1 ? MF_STRING : MF_GRAYED;
 	}
 
