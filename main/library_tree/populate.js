@@ -1,5 +1,5 @@
 'use strict';
-//16/05/26
+//18/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2955,10 +2955,13 @@ class Populate {
 
 	selectAndFocus({ selection, plsIdx }) {
 		plman.ClearPlaylistSelection(plsIdx);
-		if (selection.count) {
+		const count = Object.hasOwn(selection, 'count') ? selection.count : selection.idx.length;
+		if (count) {
 			plman.SetPlaylistSelection(plsIdx, selection.idx, true);
-			this.setFocus = true;
-			plman.SetPlaylistFocusItem(plsIdx, selection.focus);
+			if (Object.hasOwn(selection, 'focus')) {
+				this.setFocus = true;
+				plman.SetPlaylistFocusItem(plsIdx, selection.focus);
+			}
 		}
 	}
 	// Regorxxx ->
