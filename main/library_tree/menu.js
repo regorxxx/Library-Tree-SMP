@@ -575,7 +575,7 @@ class MenuItems {
 							func: () => {
 								let plsName = opt.plsName;
 								let i = 0;
-								while (plman.FindPlaylist(plsName)) {
+								while (plman.FindPlaylist(plsName) !== -1) {
 									plsName = plsName.replace(/ \((\n\))/, '') + ' ' + _p(++i);
 									if (i > 10) { fb.ShowPopupMessage('There are more than 10 playlists with same name: ' + opt.name, window.FullPanelName); return; }
 								}
