@@ -3510,5 +3510,17 @@ class Populate {
 			}
 		} else { return -1; }
 	}
+
+	setFocusOnPlaylistIdx(idx) {
+		const root = this.getPlaylistParentUi(idx);
+		if (!isArrayEqual(root, [-1])) {
+			const i = this.tree.indexOf(root[0].node);
+			if (i !== -1) {
+				this.showItem(i, 'focus');
+				return true;
+			}
+		}
+		return false;
+	}
 	// Regorxxx ->
 }

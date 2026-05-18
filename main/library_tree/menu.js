@@ -418,6 +418,7 @@ class MenuItems {
 							const name = Input.string('string', parent[0].name + ' (copy)', 'Set new playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name + ' (copy)') || (Input.isLastEqual ? Input.lastInput : null);
 							if (name === null || name === parent[0].name) { return null; }
 							plman.DuplicatePlaylist(parent[0].idx, name);
+							setTimeout(() => pop.setFocusOnPlaylistIdx(parent[0].idx), 500);
 						},
 						flags: isValidPls
 					});
@@ -428,6 +429,7 @@ class MenuItems {
 							const name = Input.string('string', parent[0].name, 'Set playlist name:\n', window.ScriptInfo.Name + ': Rename playlist', parent[0].name);
 							if (name === null) { return null; }
 							plman.RenamePlaylist(parent[0].idx, name);
+							setTimeout(() => pop.setFocusOnPlaylistIdx(parent[0].idx), 500);
 						},
 						flags: isValidPls && !locks[0].types.includes('RenamePlaylist') ? MF_STRING : MF_GRAYED
 					});
@@ -546,7 +548,10 @@ class MenuItems {
 				menu.newItem({
 					menuName: subMenuName,
 					str: 'New Playlist',
-					func: () => plman.ActivePlaylist = plman.CreatePlaylist(plman.ActivePlaylist, '')
+					func: () => {
+						plman.ActivePlaylist = plman.CreatePlaylist(plman.ActivePlaylist, '');
+						setTimeout(() => pop.setFocusOnPlaylistIdx(plman.ActivePlaylist), 500);
+					}
 				});
 				menu.newItem({
 					menuName: subMenuName,
@@ -560,6 +565,7 @@ class MenuItems {
 					func: () => {
 						plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.ActivePlaylist, '', '');
 						plman.ShowAutoPlaylistUI(plman.ActivePlaylist);
+						setTimeout(() => pop.setFocusOnPlaylistIdx(plman.ActivePlaylist), 500);
 					}
 				});
 				{	// Preset AutoPlaylists
@@ -580,6 +586,7 @@ class MenuItems {
 									if (i > 10) { fb.ShowPopupMessage('There are more than 10 playlists with same name: ' + opt.name, window.FullPanelName); return; }
 								}
 								plman.ActivePlaylist = plman.CreateAutoPlaylist(plman.ActivePlaylist, plsName, opt.query);
+								setTimeout(() => pop.setFocusOnPlaylistIdx(plman.ActivePlaylist), 500);
 							},
 							flags: opt.flags
 						});
