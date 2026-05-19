@@ -1162,6 +1162,10 @@
 					<div class="div_text2">Custom labels</div>
 					<div class="info5"><i>Custom-X slots names are shown at the menus. Separated by |</i></div>
 					<div id="statisticsNames"></div>
+					<div class="info5"><i>Custom-X slots labels are shown at album art. Separated by |</i></div>
+					<div id="statisticsDisplayArt"></div>
+					<div class="info5"><i>Custom-X slots labels are shown at tree. Separated by |</i></div>
+					<div id="statisticsDisplayTree"></div>
 					<div class="div_text2">Custom tooltip text</div>
 					<div class="info5"><i>Custom-X slots tooltips are shown at mouse over. Separated by |</i></div>
 					<div id="statisticsTooltip"></div>
@@ -1675,6 +1679,8 @@
 			var needCustomCol = /colour_container/.test(id);
 			if (needCustomCol) setCustomColours('value');
 			if (/statisticsNames_container/.test(id)) { setStatisticsLabels(); } // Regorxxx <- New statistics ->
+			if (/statisticsDisplayArt_container/.test(id)) { setStatisticsDisplayArt(); } // Regorxxx <- New statistics ->
+			if (/statisticsDisplayTree_container/.test(id)) { setStatisticsDisplayTree(); } // Regorxxx <- New statistics ->
 			if (/statisticsTooltip_container/.test(id)) { setStatisticsTooltip(); } // Regorxxx <- New statistics | Improve statistics tooltip ->
 			document.getElementById("btn_apply").disabled = !(JSON.stringify(cfg) != parsed_args[0] || JSON.stringify(ppt) != parsed_args[1]);
 		}
@@ -1975,8 +1981,8 @@
 					type: ['float', 'int', 'int', 'int', 'int', 'int', 'int']
 				},
 				statistics: {
-					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomTooltip', 'ratingDecimals'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'int']
+					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomDisplayArt', 'tfCustomDisplayTree', 'tfCustomTooltip', 'ratingDecimals'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'text', 'text', 'int']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Custom TF art
@@ -3116,6 +3122,8 @@
 				for (i = 0; i < 12; i++) { window.statisticsTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsTf_container' + i + '" name="statistics_input" class="input70" /><label for="statisticsTf_container' + i + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>'); }
 				i = 12; { window.statisticsPmean.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPmean_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsPmeanLabel" for="statisticsPmean_container' + i + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>'); }
 				i = 0; { window.statisticsNames.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsNames_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsNamesLabel" for="statisticsNames_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomLabels') + '</label></div>'); }
+				i = 0; { window.statisticsDisplayArt.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsDisplayArt_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsDisplayArtLabel" for="statisticsDisplayArt_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayArt') + '</label></div>'); }
+				i = 0; { window.statisticsDisplayTree.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsDisplayTree_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsDisplayTreeLabel" for="statisticsDisplayTree_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayTree') + '</label></div>'); }
 				i = 0; { window.statisticsTooltip.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsTooltip_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsTooltipLabel" for="statisticsTooltip_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomTooltip') + '</label></div>'); }
 
 				for (i = 13; i < 15; i++) { window.labelStatistics.insertAdjacentHTML('beforeend', '<div><input id="labelStatistics_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="labelStatistics_checkbox' + i + '" class="checkbox_label">' + statisticsLabels[i] + '</label></div>') };
@@ -3133,6 +3141,14 @@
 
 			function setStatisticsLabels() {
 				document.getElementById('statisticsNamesLabel').innerText = getStatisticsSlots('tfCustomLabels');
+			}
+
+			function setStatisticsDisplayArt() {
+				document.getElementById('statisticsDisplayArtLabel').innerText = getStatisticsSlots('tfCustomDisplayArt');
+			}
+
+			function setStatisticsDisplayTree() {
+				document.getElementById('statisticsDisplayTreeLabel').innerText = getStatisticsSlots('tfCustomDisplayTree');
 			}
 
 			function setStatisticsTooltip() {
@@ -3293,7 +3309,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {

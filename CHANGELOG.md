@@ -43,6 +43,7 @@
 - Album Art: clearing image cache now only clears database for current art type, not all art.
 - Album Art: year overlay now displays '-' if no date is found.
 - Album Art: heart shape style is now vertically centered (instead of starting at bottom of frame).
+- Statistics: custom statistics display labels split into 2 settings: album art overlay and tree. Additionally the album art tooltip will now use the full text of tree display labels. Settings can be found at 'Statistics' tab (HTML options panel) or 'Statistics Titleformat Custom display tree' and 'Statistics Titleformat Custom display art' (properties panel).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 - HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).

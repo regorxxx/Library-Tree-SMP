@@ -508,8 +508,8 @@ class Images {
 			if (tt.tt2) tt.tt2 = tt.tt2.replace(/@!#.*?@!#/g, '');
 		}
 		let text = tt.tt1 || '';
-		if (tt.tt2 && (panel.lines == 2 || panel.lines == 1 && this.labels.statistics)) text += '\n' + tt.tt2;
-		if (tt.tt3 && this.labels.statistics) text += '\n' + tt.tt3;
+		if (tt.tt2 && (panel.lines == 2 || panel.lines == 1 && this.labels.statistics)) { text += '\n' + tt.tt2; }
+		if (tt.tt3 && this.labels.statistics) { text += '\n' + tt.tt3; }
 		item.tt = {
 			text: text,
 			x: coords.x,
@@ -696,6 +696,7 @@ class Images {
 			else { this.column++; }
 		}
 		stack[1].sort((a, b) => b.selIdx - a.selIdx);
+		const stat =  this.labels.statistics ? pop.statistics[pop.statisticsShow] : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
 		stack.flat().forEach((cell) => {
 			const row = this.style.vertical ? Math.floor(cell.i / this.columns) : 0;
 			box_x = this.style.vertical ? Math.floor(this.panel.x + cell.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + cell.i * this.columnWidth + this.bor.side - sbar.delta);
@@ -705,7 +706,16 @@ class Images {
 				pop.getItemCount(item);
 				const grp = item.grp;
 				const lot = item.lot;
-				const statistics = this.labels.statistics ? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + item._statistics : '';
+				// Regorxxx <- Improve statistics tooltip
+				const statistics = this.labels.statistics
+					? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + item._statistics
+					: '';
+				const statisticsTt = this.labels.statistics
+					? stat.ttFunc
+						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': '  + (typeof item.stats.rawValue === 'undefined' ? '' : item.stats.rawValue.toString()))
+						: statistics
+					: '';
+				// Regorxxx ->
 				const cur_img = this.zooming ? null : this.getImg(item.key);
 				const grpCol = this.getGrpCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
 				const lotCol = this.getLotCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
@@ -778,7 +788,7 @@ class Images {
 						// Regorxxx ->
 						const y3 = y2 + this.text.h * 0.95;
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics });
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott');
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
@@ -789,7 +799,7 @@ class Images {
 							}
 							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, style.centerLabel && !item.tt[3] ? panel.cc : panel.lc); }
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statistics }, { font1: ui.font.group, font2: ui.font.statistics });
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
 							} else {
@@ -802,7 +812,7 @@ class Images {
 						y2 = this.im.y + this.text.y2;
 						const y3 = this.im.y + this.text.y3;
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics });
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott');
@@ -812,7 +822,7 @@ class Images {
 							}
 							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statistics }, { font1: ui.font.group, font2: ui.font.statistics });
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group');
 							} else {

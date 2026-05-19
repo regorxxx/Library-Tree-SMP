@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 //19/05/26
 
 /* global $:readable */
@@ -477,6 +477,8 @@ let properties = [
 	['Statistics Titleformat p-mean exponent', 3, 'expCustomMeX'],
 	['Statistics Titleformat Custom labels', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomLabels'],
 	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|| DR| BPMs| ', 'tfCustomTooltip'],
+	['Statistics Titleformat Custom display art', '🗒|🔝★|🎸|<DR>|<BPM>|<★>|<DR>|<BPM>|<★>', 'tfCustomDisplayArt'],
+	['Statistics Titleformat Custom display tree', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomDisplayTree'],
 	// Regorxxx ->
 	['Statistics Titleformat Popularity', '[$meta(Track Statistics Last.fm,5[score])]', 'tfPopularity'],
 	['Statistics Tooltips Show', true, 'tooltipStatistics'],

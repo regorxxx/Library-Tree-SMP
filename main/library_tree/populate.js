@@ -883,7 +883,7 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].name + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
+						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].nameTree + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
@@ -3068,19 +3068,27 @@ class Populate {
 			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks') }
 		];
 		{
-			const userCustomTypes = ppt.tfCustomLabels.split('|');
+			const userCustomTypesArt = ppt.tfCustomDisplayArt.split('|');
+			const userCustomTypesTree = ppt.tfCustomDisplayTree.split('|');
 			const userCustomTooltip = ppt.tfCustomTooltip.split('|');
 			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
 				.forEach((t, i) => {
 					this.statistics.push({
-						name: !userCustomTypes[i] || !userCustomTypes[i].length ? t : userCustomTypes[i],
+						nameArt: !userCustomTypesArt[i] || !userCustomTypesArt[i].length ? t : userCustomTypesArt[i],
+						nameTree: !userCustomTypesTree[i] || !userCustomTypesTree[i].length ? t : userCustomTypesTree[i],
 						showTrackCount: true, showTooltip: true,
 						ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || ''))
 					});
 				});
 		}
 		this.statisticsShow = ppt.itemShowStatistics;
-		this.label = ppt.labelStatistics ? this.statisticsShow ? this.statistics[this.statisticsShow].name : '' : '';
+		this.label = ppt.labelStatistics
+			? this.statisticsShow
+				? panel.imgView
+					? this.statistics[this.statisticsShow].nameArt
+					: this.statistics[this.statisticsShow].nameTree
+				: ''
+			: '';
 		// Regorxxx ->
 		this.tooltipStatistics = ppt.tooltipStatistics;
 		this.treeIndent = ppt.treeIndent;

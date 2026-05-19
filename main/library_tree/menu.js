@@ -1,5 +1,5 @@
 'use strict';
-//18/05/26
+//19/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1748,6 +1748,7 @@ class MenuItems {
 				pop.clearTree();
 				ppt.toggle('albumArtShow');
 				panel.imgView = ppt.albumArtShow;
+				pop.setValues(); // Regorxxx <- Improve statistics tooltip ->
 				this.loadView(panel.imgView && ppt.albumArtNodeCollage, panel.imgView ? (ppt.artTreeSameView ? ppt.viewBy : ppt.albumArtViewBy) : (ppt.artTreeSameView ? ppt.viewBy : ppt.treeViewBy), pop.sel_items[0]); // Regorxxx <- Branch collage art ->
 				break;
 			case 5:
