@@ -568,18 +568,19 @@ class Populate {
 
 	insertPlsRootNodes(br) {
 		lib.playlistSourceRoot.forEach((plsRootNode) => delete plsRootNode.node);
+		const toAdd = [...lib.playlistSourceRoot];
 		let rootNode, plsRootNode, prevPlsRootNode;
 		for (let i = 0; i < br.length; i++) {
 			rootNode = br[i];
-			for (let j = i; j < lib.playlistSourceRoot.length; j++) {
-				plsRootNode = lib.playlistSourceRoot[j];
+			for (let j = 0; j < toAdd.length; j++) {
+				plsRootNode = toAdd[j];
 				if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
 					plsRootNode.node = rootNode;
 					rootNode.plsRoot = true;
 					// Insert empty nodes between non-empty ones
-					if (ppt.plsPopEmpty) {
-						for (let h = j - 1; h >= i; h--) {
-							prevPlsRootNode = lib.playlistSourceRoot[h];
+					if (ppt.plsSorting && ppt.plsPopEmpty) {
+						for (let h = j - 1; h >= 0; h--) {
+							prevPlsRootNode = toAdd[h];
 							if (!Object.hasOwn(prevPlsRootNode, 'node')) {
 								br.splice(i, 0, {
 									nm: prevPlsRootNode.name,
@@ -594,12 +595,14 @@ class Populate {
 							}
 						}
 					}
+					toAdd.splice(j, 1);
+					break;
 				}
 			}
 		}
 		// Insert empty nodes at end
 		if (ppt.plsPopEmpty) {
-			lib.playlistSourceRoot.forEach((plsRootNode) => {
+			toAdd.forEach((plsRootNode) => {
 				if (!Object.hasOwn(plsRootNode, 'node')) {
 					const node = {
 						nm: plsRootNode.name,
@@ -2915,12 +2918,10 @@ class Populate {
 		if (plsIdxArr.length > 1) {
 			if (panel.isBranchedPlaylistSource()) {
 				const items = [...this.sel_items];
-				let acc = 0;
 				const itemsPerPls = plsIdxArr.map((idx) => {
-					const count = this.getPlaylistParentUi(idx).reduce((acc, root) => acc + root.count, 0);
-					const panelSelIdx = items.filter((i) => i >= acc && i < acc + count);
-					acc += count;
-					return { idx, panelSelIdx, plsSelIdx: [], count };
+					const roots = this.getPlaylistParentUi(idx).filter((root) => root.node);
+					const panelSelIdx = items.filter((i) => roots.some((root) => this.inRange(i, root.node.item)));
+					return { idx, panelSelIdx, plsSelIdx: [], count: panelSelIdx.length };
 				});
 				itemsPerPls.forEach((o) => {
 					plman.ClearPlaylistSelection(o.idx);
