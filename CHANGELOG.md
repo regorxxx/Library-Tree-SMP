@@ -39,6 +39,7 @@
 - Album Art: new setting to allow saving images with transparencies on cache, instead of flattening them with a black background as jpg. Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Disk Cache Use transparencies' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: new setting to allow vertically centering thumbnails for non-filling images. Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Thumbnail Vertically centered' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: new setting to tweak vertical overlay position, in special for non-filling images (top (box) is recommended). Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Item Overlay Align' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
+- Album Art: year overlay now displays '-' if no date is found.
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 - HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).
@@ -59,7 +60,7 @@
 - Album Art: fixed bug, on original script, related to track count overlay not being shown for album art if statistics item counts was not enabled (despite such setting being only used on library tree mode).
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
-	- Album Art: multiple minor layout fixes and adjustments.
+- Album Art: multiple minor layout fixes and adjustments.
 
 ## [2.0.0] - 2026-01-30
 ### Added

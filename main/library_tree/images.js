@@ -1807,7 +1807,7 @@ class Images {
 		const albumArtGrpNames = $.jsonParse(ppt.albumArtGrpNames, {});
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
-		const tfDate = new FbTitleFormat('[$year(%date%)]');
+		const tfDate = new FbTitleFormat('$if2([$year(%date%)],   -   )'); // Regorxxx <- Date fallback ->
 		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
 
@@ -1850,9 +1850,11 @@ class Images {
 				// Regorxxx ->
 			} else if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty) {
 				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+				/ Regorxxx <- Date fallback
 				if (ppt.itemOverlayType == 2) {
-					v.year = '-';
+					v.year = '   -   ';
 				}
+				// Regorxxx ->
 				// Regorxxx <- Branch collage art
 				v.handleArr = [];
 				v.keyArr = [];
