@@ -40,6 +40,7 @@
 - Album Art: new setting to allow vertically centering thumbnails for non-filling images. Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Thumbnail Vertically centered' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: new setting to tweak vertical overlay position, in special for non-filling images (top (box) is recommended). Setting can be found at 'Behaviour' tab (HTML options panel) or 'Image Item Overlay Align' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: year overlay now displays '-' if no date is found.
+- Album Art: heart shape style is now vertically centered (instead of starting at bottom of frame).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 - HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).

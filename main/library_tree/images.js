@@ -604,7 +604,7 @@ class Images {
 		this.mask.heart = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
-			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh));
+			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh, 0, -wh / 20));
 			g.SetSmoothingMode();
 		});
 		this.mask.flareEffect = $.gr(wh, wh, true, g => {
@@ -869,7 +869,7 @@ class Images {
 				}
 				case 'heart': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.DrawPolygon(col, l_w, this.getHeartPoints(coords.w, coords.h, coords.x - l_w / 4, coords.y));
+					gr.DrawPolygon(col, l_w, this.getHeartPoints(coords.w, coords.h, coords.x - l_w / 4, coords.y - coords.h / 20));
 					break;
 				}
 				default: {
@@ -1249,7 +1249,7 @@ class Images {
 			}
 			case 'heart': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
-				gr.DrawPolygon(ui.col.imgBor, 2, this.getHeartPoints(coords.w - 2, coords.h, coords.x + 1, coords.y));
+				gr.DrawPolygon(ui.col.imgBor, 2, this.getHeartPoints(coords.w - 2, coords.h, coords.x + 1, coords.y - coords.h / 20));
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -1288,7 +1288,7 @@ class Images {
 					coords.w += 6;
 					coords.y -= 3;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(coords.w, coords.h, coords.x - 3, coords.y));
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(coords.w, coords.h, coords.x - 3, coords.y - coords.h / 20));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -1323,7 +1323,7 @@ class Images {
 					w += 6;
 					y -= 3;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y));
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y - h / 20));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -1771,7 +1771,7 @@ class Images {
 				this.shadow.StackBlur(4);
 				break;
 			case 'heart':
-				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh)));
+				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
 				this.shadow.StackBlur(4);
 				break;
 			default:
