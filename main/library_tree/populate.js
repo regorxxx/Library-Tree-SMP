@@ -1,7 +1,7 @@
 'use strict';
-//18/05/26
+//19/05/26
 
-/* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
+/* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
 /* global SmoothingMode:readable, dropEffect:readable */
 /* global debounce:readable */
@@ -3024,7 +3024,7 @@ class Populate {
 			text: ppt.highLightText
 		};
 		this.iconVerticalPad = ppt.iconVerticalPad;
-		this.nodeCounts = ppt.nodeCounts;
+		this.nodeCounts = panel.imgView && ppt.itemOverlayType === 1 ? 1 : ppt.nodeCounts; // Regorxxx <- Fix track overlay on imgs | New overlay styles ->
 		this.nodeStyle = ppt.nodeStyle;
 		this.rootNode = ppt.rootNode;
 		this.rowStripes = ppt.rowStripes;

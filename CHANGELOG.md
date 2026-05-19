@@ -56,6 +56,7 @@
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
 - Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
+- Album Art: fixed bug, on original script, related to track count overlay not being shown for album art if statistics item counts was not enabled (despite such setting being only used on library tree mode).
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 
