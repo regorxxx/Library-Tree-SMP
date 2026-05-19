@@ -818,7 +818,7 @@ class Populate {
 						? values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0)
 						: values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
 					rawValue = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
-						? value
+						? values
 						: values / ln;
 					if (ppt.itemShowStatistics > 20) { rawValue = rawValue ** (1 / exp); }
 					value = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
