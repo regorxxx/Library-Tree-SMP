@@ -59,6 +59,7 @@
 - Album Art: fixed bug, on original script, related to track count overlay not being shown for album art if statistics item counts was not enabled (despite such setting being only used on library tree mode).
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
+	- Album Art: multiple minor layout fixes and adjustments.
 
 ## [2.0.0] - 2026-01-30
 ### Added

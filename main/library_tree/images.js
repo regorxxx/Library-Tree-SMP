@@ -1,5 +1,5 @@
 'use strict';
-//17/05/26
+//19/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
@@ -189,7 +189,7 @@ class Images {
 	}
 
 	getStyleByType(type) {
-		return this.styles.find((s) => s.type.toLowerCase() === type.toLowerCase()) || this.getStyle(0);
+		return { ...(this.styles.find((s) => s.type.toLowerCase() === type.toLowerCase()) || this.getStyle(0)) };
 	}
 
 	getStyleType(idx, bStub) {
@@ -573,7 +573,7 @@ class Images {
 		this.mask.circular = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
-			g.FillEllipse(3, 3, wh - 4, wh - 4, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			g.FillEllipse(0.5, 0.5, wh - 1.75, wh - 1.75, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.SetSmoothingMode();
 		});
 		this.mask.fade = $.gr(wh, wh, true, g => {
@@ -939,7 +939,7 @@ class Images {
 				let year_x = coords.x + (this.style.image == 2 ? (coords.w - year_w - 2) / 2 : 0);
 				const year_y = coords.y + (this.style.image == 2 ? year_h / 1.67 : 0);
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
-				// Regorxxx <- Custom album art overlay track count/year
+				// Regorxxx <- Custom album art overlay color track count/year
 				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, ui.col.bgTrackCount);
 				gr.GdiDrawText(item.year, ui.font.tracks, ui.col.textTrackCount, year_x + 1, year_y, year_w, year_h, panel.cc);
 				// Regorxxx ->
@@ -995,6 +995,7 @@ class Images {
 					h = this.box.h + ((this.labels.overlay || this.labels.hide) ? 2 : 0);
 				}
 				break;
+			default: return;
 		}
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && bHover) {
@@ -1005,7 +1006,7 @@ class Images {
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
 		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
 		if (this.style.vertical) {
-			const offset = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y) - y;
+			const offset = Math.max(panel.search.h, y) - y;
 			y += offset;
 			h -= offset;
 		} else {
