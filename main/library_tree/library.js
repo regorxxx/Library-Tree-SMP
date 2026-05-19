@@ -751,9 +751,9 @@ class Library {
 		if (profiler) { profiler.Print('Search filter'); } // Regorxxx <- Library profiling ->
 		// Regorxxx <- Global duplicates filter
 		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
-		if (ppt.filterDupl) {
+		if (ppt.filterDupl && !panel.isBranchedPlaylistSource()) {
 			this.list = this.removeDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
-		} else if (ppt.showDupl) {
+		} else if (ppt.showDupl && !panel.isBranchedPlaylistSource()) {
 			this.list = this.removeNonDuplicates(this.list, $.jsonParse(ppt.filterDuplBy, globTags.remDupl));
 		}
 		if (profiler) { profiler.Print('Duplicates filter'); profiler.Reset(); }	 // Regorxxx <- Library profiling ->

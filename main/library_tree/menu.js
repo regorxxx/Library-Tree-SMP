@@ -1143,7 +1143,8 @@ class MenuItems {
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('showDupl'); }
 				panel.set('Filter', ppt.filterBy);
 			},
-			checkItem: ppt.filterDupl
+			checkItem: panel.isBranchedPlaylistSource() ? false: ppt.filterDupl,
+			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING
 		});
 		fMenu.newItem({
 			str: 'Show Duplicates filter',
@@ -1152,7 +1153,8 @@ class MenuItems {
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('filterDupl'); }
 				panel.set('Filter', ppt.filterBy);
 			},
-			checkItem: ppt.showDupl,
+			checkItem: panel.isBranchedPlaylistSource() ? false: ppt.showDupl,
+			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING,
 			separator: true
 		});
 		// Regorxxx ->
