@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/05/26
+//19/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -52,7 +52,7 @@ class Library {
 		// Regorxxx ->
 		// Regorxxx <-  Active/Playing/All playlist source | Multiple-playlist flat view
 		this.playlistSourceIdx = [-1];
-		/** @type {{idx: number, guid: string, name: string, handleList: FbMetadbHandleList, count: number, node: object }[]} */
+		/** @type {{idx: number, guid: string, name: string, handleList: FbMetadbHandleList, handleListFull: FbMetadbHandleList, count: number, node: object }[]} */
 		this.playlistSourceRoot = [];
 		// Regorxxx ->
 
@@ -658,7 +658,7 @@ class Library {
 						? new FbMetadbHandleList()
 						: this.playlistSourceIdx.reduce((prev, idx) => {
 							const handleList = plman.GetPlaylistItems(idx);
-							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList, handleListFull: handleList.Clone() });
 							prev.AddRange(handleList);
 							return prev;
 						}, new FbMetadbHandleList());
@@ -669,7 +669,7 @@ class Library {
 					if (panel.isFixedPlaylistSource()) {
 						this.list = fixedPlaylistIndex.reduce((prev, idx) => {
 							const handleList = plman.GetPlaylistItems(idx);
-							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+							this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList, handleListFull: handleList.Clone() });
 							prev.AddRange(handleList);
 							return prev;
 						}, new FbMetadbHandleList());
@@ -722,18 +722,25 @@ class Library {
 		pop.libItems = true;
 		panel.forcePaint();
 		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
+		let sort = true;;
 		if (ppt.filterBy) {
 			this.processFilterQuery(); // Regorxxx <- Code cleanup ->
 			this.filterQueryID = this.filterQuery;
-			// Regorxxx <- Code cleanup | Support SORT BY query sorting
+			// Regorxxx <- Code cleanup | Support SORT BY query sorting | Active/Playing/All playlist source | Multiple-playlist flat view
 			if (this.hasFilterQueryNoSearch()) {
-				this.list = $.query(this.list, this.filterQuery);
-				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
-				this.playlistSourceRoot.forEach((root) => {
-					root.handleList = $.query(root.handleList, this.filterQuery);
-					root.count = root.handleList.Count;
-				});
-				// Regorxxx ->
+				if (panel.isBranchedPlaylistSource()) {
+					this.playlistSourceRoot.forEach((root) => {
+						root.handleList = $.query(root.handleList, this.filterQuery);
+						root.count = root.handleList.Count;
+						if (this.filterSort) { panel.sort(root.handleList, this.filterSort); sort = false; }
+					});
+					this.list = this.playlistSourceRoot.reduce((prev, root) => {
+						prev.AddRange(root.handleList);
+						return prev;
+					}, new FbMetadbHandleList());
+				} else {
+					this.list = $.query(this.list, this.filterQuery);
+				}
 			}
 			// Regorxxx ->
 		} else {
@@ -758,7 +765,7 @@ class Library {
 			panel.treePaint();
 			return;
 		}
-		this.rootNames('', 0, panel.isPanelSource() ? false : items);
+		this.rootNames('', 0, panel.isPanelSource() ? false : items, sort);
 		if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
 	}
 
@@ -868,7 +875,7 @@ class Library {
 					? new FbMetadbHandleList()
 					: this.playlistSourceIdx.reduce((prev, idx) => {
 						const handleList = plman.GetPlaylistItems(idx);
-						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList, handleListFull: handleList.Clone() });
 						prev.AddRange(handleList);
 						return prev;
 					}, new FbMetadbHandleList());
@@ -879,7 +886,7 @@ class Library {
 				if (panel.isFixedPlaylistSource()) {
 					this.list = fixedPlaylistIndex.reduce((prev, idx) => {
 						const handleList = plman.GetPlaylistItems(idx);
-						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList });
+						this.playlistSourceRoot.push({ idx, guid: plman.GetGUID(idx), name: plman.GetPlaylistName(idx), count: handleList.Count, handleList, handleListFull: handleList.Clone() });
 						prev.AddRange(handleList);
 						return prev;
 					}, new FbMetadbHandleList());
@@ -1150,13 +1157,13 @@ class Library {
 		}
 	}
 
-	rootNames(li, search, treeArtToggle) {
+	rootNames(li, search, treeArtToggle, sort) {
 		const tree_type = panel.folderView ? 1 : 0;
 		let arr = [];
 		if (!treeArtToggle || !panel.samePattern) {
 			switch (search) {
 				case 0:
-					panel.sort(this.list, this.filterSort); // Regorxxx <- Support playlist sorting | Support SORT BY query sorting ->
+					if (sort) { panel.sort(this.list, this.filterSort); } // Regorxxx <- Support playlist sorting | Support SORT BY query sorting ->
 					li = panel.list = this.list;
 					this.libNode = [];
 					arr = this.libNode;
@@ -1169,7 +1176,7 @@ class Library {
 		}
 
 		if (!treeArtToggle || !panel.samePattern) {
-			// Regorxxx <- Multiple-playlist flat view
+			// Regorxxx <- Multiple-playlist flat view | Support SORT BY query sorting | Active/Playing/All playlist source | Multiple-playlist flat view
 			const branched = panel.isBranchedPlaylistSource();
 			const roots = this.playlistSourceRoot.filter((pls) => pls && pls.count);
 			switch (tree_type) {
@@ -1178,11 +1185,12 @@ class Library {
 					const splitter = panel.splitter;
 					if (branched && roots.length) {
 						if (panel.search.txt || ppt.filterBy) {
-							let j = 0;
-							tfo.EvalWithMetadbs(li).forEach((v, i) => {
-								if (j >= roots[0].count || roots[0].handleList.Find(li[i]) === -1) { roots.splice(0, 1); j = 0; }
-								arr[i] = [roots[0].name, ...v.split(splitter)];
-								j++;
+							let i = 0;
+							roots.forEach((root) => {
+								tfo.EvalWithMetadbs(root.handleList).forEach((v) => {
+									arr[i] = [root.name, ...v.split(splitter)];
+									i++;
+								});
 							});
 						} else {
 							let j = 0;
@@ -1200,11 +1208,12 @@ class Library {
 				case 1: {
 					if (branched && roots.length) {
 						if (panel.search.txt || ppt.filterBy) {
-							let j = 0;
-							li.GetLibraryRelativePaths().forEach((v, i) => {
-								if (j >= roots[0].count || roots[0].handleList.Find(li[i]) === -1) { roots.splice(0, 1); j = 0; }
-								arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
-								j++;
+							let i = 0;
+							roots.forEach((root) => {
+								root.handleList.GetLibraryRelativePaths().forEach((v) => {
+									arr[i] = [roots[0].name, ...(v.length ? v.split('\\') : ['File(s) Not In Library'])];
+									i++;
+								});
 							});
 						} else {
 							let j = 0;
@@ -1263,28 +1272,35 @@ class Library {
 				this.searchQueryID = !isRegExp && this.hasNoSearchOnFilter()
 					? searchText
 					: 'N/A';
-				panel.list = isRegExp
-					? $.applyRegExp(searchText, this.list, tags)
-					: fb.GetQueryItems(
-						this.getSearchList(searchText) || this.list,
-						this.hasNoSearchOnFilter()
-							? searchText
-							: this.replaceFilterQuerySearch(searchText)
-					);
-				this.searchCache[searchText] = panel.list;
-				// Regorxxx ->
 				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
-				this.playlistSourceRoot.forEach((root) => {
-					root.handleList = isRegExp
-						? $.applyRegExp(searchText, root.handleList, tags)
+				if (panel.isBranchedPlaylistSource()) {
+					this.playlistSourceRoot.forEach((root) => {
+						root.handleList = isRegExp
+							? $.applyRegExp(searchText, root.handleList, tags)
+							: fb.GetQueryItems(
+								root.handleList,
+								this.hasNoSearchOnFilter()
+									? searchText
+									: this.replaceFilterQuerySearch(searchText)
+							);
+						root.count = root.handleList.Count;
+					});
+					panel.list = this.playlistSourceRoot.reduce((prev, root) => {
+						prev.AddRange(root.handleList);
+						return prev;
+					}, new FbMetadbHandleList());
+				} else {
+					panel.list = isRegExp
+						? $.applyRegExp(searchText, this.list, tags)
 						: fb.GetQueryItems(
-							root.handleList,
+							this.getSearchList(searchText) || this.list,
 							this.hasNoSearchOnFilter()
 								? searchText
 								: this.replaceFilterQuerySearch(searchText)
 						);
-					root.count = root.handleList.Count;
-				});
+				}
+				// Regorxxx ->
+				this.searchCache[searchText] = panel.list;
 				// Regorxxx ->
 			} catch (e) { // eslint-disable-line no-unused-vars
 				this.list = this.list.Clone();
@@ -1298,7 +1314,19 @@ class Library {
 				});
 				// Regorxxx ->
 			}
-			if (this.searchSort || this.filterSort) { panel.sort(panel.list, this.searchSort || this.filterSort); } // Regorxxx <- Support SORT BY query sorting ->
+			// Regorxxx <- Support SORT BY query sorting | Active/Playing/All playlist source | Multiple-playlist flat view
+			if (this.searchSort || this.filterSort) {
+				if (panel.isBranchedPlaylistSource()) {
+					this.playlistSourceRoot.forEach((root) => panel.sort(root.handleList, this.searchSort || this.filterSort));
+					panel.list = this.playlistSourceRoot.reduce((prev, root) => {
+						prev.AddRange(root.handleList);
+						return prev;
+					}, new FbMetadbHandleList());
+				} else {
+					panel.sort(panel.list, this.searchSort || this.filterSort);
+				}
+			}
+			// Regorxxx ->
 			if (!panel.list.Count) {
 				pop.clearTree();
 				sbar.setRows(0);
@@ -1316,6 +1344,12 @@ class Library {
 			this.node = this.libNode;
 			this.searchNode = [];
 			this.searchCache = {};
+			// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
+			this.playlistSourceRoot.forEach((root) => {
+				root.handleList = root.handleListFull.Clone();
+				root.count = root.handleList.Count;
+			});
+			// Regorxxx ->
 		}
 		let end = 0;
 		let n_o = '#get_node#';
