@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 17/05/26 -->
+﻿<!DOCTYPE html> <!-- 19/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1204,9 +1204,12 @@
 						<span id="overlay" class="dropdown-content"></span>
 					</span>
 					<div class="info5">Position:</i></div>
-					<!-- Regorxxx Item overlay vertical alignment -->
-					<span class="dropdown"><a id="overlayAlign_dropdown" class="dropbtn" href="#" onclick="return toggle('overlayAlign');"></a>
-						<span id="overlayAlign" class="dropdown-content"></span>
+					<!-- Regorxxx Item overlay vertical alignment | Item overlay horizontal alignment -->
+					<span class="dropdown"><a id="overlayVAlign_dropdown" class="dropbtn" href="#" onclick="return toggle('overlayVAlign');"></a>
+						<span id="overlayVAlign" class="dropdown-content"></span>
+					</span>
+					<span class="dropdown"><a id="overlayHAlign_dropdown" class="dropbtn" href="#" onclick="return toggle('overlayHAlign');"></a>
+						<span id="overlayHAlign" class="dropdown-content"></span>
 					</span>
 					<!-- Regorxxx -->
 					<div class="div_text2">Disk cache</div>
@@ -1829,7 +1832,8 @@
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact', 'Modifier']; // Regorxxx <- Extra gap settings ->
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
-			var albumArtOverlayAlignLabels = ['Top (box)', 'Top (image)', 'Bottom (image)', 'Bottom (box)']; // Regorxxx <- Item overlay vertical alignment ->
+			var albumArtOverlayVAlignLabels = ['Default', 'Top (box)', 'Top (image)', 'Bottom (box)', 'Bottom (image)', 'Center']; // Regorxxx <- Item overlay vertical alignment ->
+			var albumArtOverlayHAlignLabels = ['Default', 'Right (box)', 'Right (image)', 'Left (box)', 'Left (image)', 'Center']; // Regorxxx <- Item overlay horizontal alignment ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
 			// Regorxxx <- Mouse actions on playlist sources | Top tracks
 			clickLabels = ppt['actionMode_internal'].value == 1
@@ -2118,10 +2122,18 @@
 			}
 
 			// Regorxxx <- Item overlay vertical alignment
-			function setOverlayAlign(n) {
-				window.overlayAlign_dropdown.innerHTML = albumArtOverlayAlignLabels[n];
+			function setOverlayVAlign(n) {
+				window.overlayVAlign_dropdown.innerHTML = albumArtOverlayVAlignLabels[n];
 				ppt['itemOverlayVAlign_internal'].value = n;
-				window.overlayAlign.style.display = 'none';
+				window.overlayVAlign.style.display = 'none';
+			}
+			// Regorxxx ->
+
+			// Regorxxx <- Item overlay horizontal alignment
+			function setOverlayHAlign(n) {
+				window.overlayHAlign_dropdown.innerHTML = albumArtOverlayHAlignLabels[n];
+				ppt['itemOverlayHAlign_internal'].value = n;
+				window.overlayHAlign.style.display = 'none';
 			}
 			// Regorxxx ->
 
@@ -3141,9 +3153,12 @@
 				window.overlay_dropdown.innerHTML = albumArtOverlayLabels[ppt['itemOverlayType_internal'].value];
 				for (i = 0; i < 3; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
 
-				// Regorxxx <- Item overlay vertical alignment
-				window.overlayAlign_dropdown.innerHTML = albumArtOverlayAlignLabels[ppt['itemOverlayVAlign_internal'].value];
-				for (i = 0; i < 4; i++) { window.overlayAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayAlign(' + i + ');">' + albumArtOverlayAlignLabels[i] + '</a>'); }
+				// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment
+				window.overlayVAlign_dropdown.innerHTML = albumArtOverlayVAlignLabels[ppt['itemOverlayVAlign_internal'].value];
+				for (i = 0; i < albumArtOverlayVAlignLabels.length; i++) { window.overlayVAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayVAlign(' + i + ');">' + albumArtOverlayVAlignLabels[i] + '</a>'); }
+
+				window.overlayHAlign_dropdown.innerHTML = albumArtOverlayHAlignLabels[ppt['itemOverlayHAlign_internal'].value];
+				for (i = 0; i < albumArtOverlayHAlignLabels.length; i++) { window.overlayHAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayHAlign(' + i + ');">' + albumArtOverlayHAlignLabels[i] + '</a>'); }
 				// Regorxxx ->
 
 				for (i = 0; i < 3; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox' + i + '"  class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); } // Regorxxx <- Allow images with transparencies ->
@@ -3271,7 +3286,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip && setOverlayAlign) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3950,7 +3965,8 @@
 			['noCoverStub_dropdown', 'noCoverStub'],
 			['node_dropdown', 'node'],
 			['overlay_dropdown', 'overlay'],
-			['overlayAlign_dropdown', 'overlayAlign'], // Regorxxx <- Item overlay vertical alignment ->
+			['overlayVAlign_dropdown', 'overlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
+			['overlayHAlign_dropdown', 'overlayHAlign'], // Regorxxx <- Item overlay horizontal alignment ->
 			['root_dropdown', 'root'],
 			['rootStub_dropdown', 'rootStub'],
 			['sbarShow_dropdown', 'sbarShow'],

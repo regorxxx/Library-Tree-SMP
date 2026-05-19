@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/05/26
+//19/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -207,7 +207,8 @@ let properties = [
 	['Image Follow Selection Flow Mode', true, 'flowModeFollowSelection'],
 	['Image Follow Selection Standard Mode', false, 'stndModeFollowSelection'],
 	['Image Item Overlay', 1, 'itemOverlayType'],
-	['Image Item Overlay Align', 1, 'itemOverlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
+	['Image Item Overlay V-Align', 0, 'itemOverlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
+	['Image Item Overlay H-Align', 0, 'itemOverlayHAlign'], // Regorxxx <- Item overlay horizontal alignment ->
 	['Image Cut Resize px: Off (0) Clean (2) Zoom (>2) ', 2, 'albumArtCutResize'], // Regorxxx <- Cut img to avoid artifacts at borders ->
 	['Image Label', 1, 'albumArtLabelType'],
 	['Image Memory Limit MB (0 = default)', 0, 'memoryLimit'],

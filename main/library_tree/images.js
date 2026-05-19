@@ -712,7 +712,7 @@ class Images {
 					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
-				this.drawItemOverlay(gr, art, style, item, coords);
+				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x }); // Regorxxx <- Item overlay horizontal alignment ->
 				if (cell.bHover) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
@@ -894,51 +894,76 @@ class Images {
 		gr.SetSmoothingMode();
 	}
 
+	// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment
 	drawItemOverlay(gr, art, style, item, coords) {
-		if (item.root) return;
-		// Regorxxx <- Item overlay vertical alignment ->
-		switch (ppt.itemOverlayVAlign) {
-			case 0: coords = { ...coords, y: this.im.y }; break;
-			case 1: break; // At top of image
-			case 2: coords = { ...coords, y: coords.y + coords.h - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8) }; break;
-			case 3: coords = { ...coords, y: this.im.y + this.im.w - Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8) }; break;
-		}
-		// Regorxxx ->
+		if (item.root) { return; }
 		switch (ppt.itemOverlayType) {
 			case 1: {
-				if (!item.count) break;
-				let count_w = Math.max(gr.CalcTextWidth(item.count + ' ', ui.font.tracks), 8);
-				let count_h = Math.max(gr.CalcTextHeight(item.count, ui.font.tracks), 8);
-				let count_x = coords.x + (style.centerTrackCount ? (coords.w - count_w - 2) / 2 : coords.w - count_w - 3);
-				const count_y = coords.y + (style.centerTrackCount ? count_h / 1.67 : 0);
 				let count = item.count;
-				let count_h2 = count_h;
-				// Regorxxx <- Custom album art overlay track count/year
+				if (!count) { return; }
+				const count_h = Math.max(gr.CalcTextHeight(count, ui.font.tracks), 8);
+				let count_w = Math.max(gr.CalcTextWidth(count + ' ', ui.font.tracks), 8);
+				let count_h2;
 				if (count_w > this.im.w) {
-					count = item.count.split(' ');
+					count = count.split(' ');
 					count_h2 = count_h * 2;
 					count_w = Math.max(gr.CalcTextWidth(count[0], ui.font.tracks), gr.CalcTextWidth(count[1], ui.font.tracks));
-					count_x = coords.x + (this.style.image == 2 ? (coords.w - count_w - 2) / 2 : coords.w - count_w - 3);
-					gr.SetSmoothingMode(SmoothingMode.HighQuality);
-					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
+				} else {
+					count_h2 = count_h;
+				}
+				let count_x;
+				switch (ppt.itemOverlayHAlign) {
+					case 0: count_x = coords.x + (style.centerTrackCount ? (coords.w - count_w - 2) / 2 : coords.w - count_w - 3); break; // Default
+					case 1: count_x = coords.x + this.im.w - count_w - 3; break; // Right box
+					case 2: count_x = coords.x + coords.w - count_w - 3 - (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Right img
+					case 3: count_x = coords.box_x + 2; break; // Left box
+					case 4: count_x = coords.x + (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Left img
+					case 5: count_x = coords.x + (coords.w - count_w - 2) / 2; break; // Center
+				}
+				let count_y;
+				switch (ppt.itemOverlayVAlign) {
+					case 0: count_y = coords.y + (style.centerTrackCount ? count_h / 1.67 : 0); break; // Default
+					case 1: count_y = this.im.y + 1.5; break; // Top box
+					case 2: count_y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
+					case 3: count_y = coords.y + this.im.w - count_h; break; // Bottom box
+					case 4: count_y = coords.y + coords.h - count_h - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
+					case 5: count_y = coords.y + (coords.h - count_h - 2) / 2; break; // Center
+				}
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
+				// Regorxxx <- Custom album art overlay color track count/year
+				gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
+				if (count_w > this.im.w) {
 					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
 					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
-					gr.SetSmoothingMode();
 				} else {
-					gr.SetSmoothingMode(SmoothingMode.HighQuality);
-					gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
 					gr.GdiDrawText(count, ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, panel.cc);
-					gr.SetSmoothingMode();
 				}
 				// Regorxxx ->
+				gr.SetSmoothingMode();
 				break;
 			}
 			case 2: {
-				if (!item.year) break;
-				let year_w = Math.max(gr.CalcTextWidth(item.year + ' ', ui.font.tracks), 8);
-				let year_h = Math.max(gr.CalcTextHeight(item.year, ui.font.tracks), 8);
-				let year_x = coords.x + (this.style.image == 2 ? (coords.w - year_w - 2) / 2 : 0);
-				const year_y = coords.y + (this.style.image == 2 ? year_h / 1.67 : 0);
+				if (!item.year) { break; }
+				const year_w = Math.max(gr.CalcTextWidth(item.year + ' ', ui.font.tracks), 8);
+				const year_h = Math.max(gr.CalcTextHeight(item.year, ui.font.tracks), 8);
+				let year_x;
+				switch (ppt.itemOverlayHAlign) {
+					case 0: year_x = coords.x + (style.centerTrackCount ? (coords.w - year_w - 2) / 2 : 0); break; // Default
+					case 1: year_x = coords.x + this.im.w - year_w - 3; break; // Right box
+					case 2: year_x = coords.x + coords.w - year_w - 3 - (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Right img
+					case 3: year_x = coords.box_x + 2; break; // Left box
+					case 4: year_x = coords.x + (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Left img
+					case 5: year_x = coords.x + (coords.w - year_w - 2) / 2; break; // Center
+				}
+				let year_y;
+				switch (ppt.itemOverlayVAlign) {
+					case 0: year_y = coords.y + (style.centerTrackCount ? year_h / 1.67 : 0); break; // Default
+					case 1: year_y = this.im.y + 1.5; break; // Top box
+					case 2: year_y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
+					case 3: year_y = coords.y + this.im.w - year_h; break; // Bottom box
+					case 4: year_y = coords.y + coords.h - year_h - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
+					case 5: year_y = coords.y + (coords.h - year_h - 2) / 2; break; // Center
+				}
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				// Regorxxx <- Custom album art overlay color track count/year
 				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, ui.col.bgTrackCount);
@@ -949,6 +974,7 @@ class Images {
 			}
 		}
 	}
+	// Regorxxx ->
 
 	drawItemOverlayDark(gr, art, item, coords, cell) {
 		// Regorxxx <- Zoom hover effect
