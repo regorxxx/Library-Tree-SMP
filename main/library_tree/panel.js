@@ -589,8 +589,8 @@ class Panel {
 				_qCond(globTags.playCountRateSinceAdded) + ' GREATER 0'
 			])
 			],
-			['Filter XX: Name // Query', 'Recently Added // ' + globQuery.added + ' SORT BY ' + globTags.added],
-			['Filter XX: Name // Query', 'Recently Played // ' + globQuery.recent + ' SORT BY ' + globTags.lastPlayed],
+			['Filter XX: Name // Query', 'Recently Added // ' + globQuery.added + ' SORT DESCENDING BY ' + globTags.added],
+			['Filter XX: Name // Query', 'Recently Played // ' + globQuery.recent + ' SORT DESCENDING BY ' + globTags.lastPlayed],
 			['Filter XX: Name // Query', 'separator // .'],
 			['Filter XX: Name // Query', 'Top Rated // ' + queryJoin([globQuery.fav, '%2003_RATING% EQUAL 10'], 'OR')],
 			['Filter XX: Name // Query', 'Not Rated // ' + queryJoin([globQuery.noRating, '%2003_RATING% MISSING'], 'AND')],
