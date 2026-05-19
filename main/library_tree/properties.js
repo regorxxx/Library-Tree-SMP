@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 //19/05/26
 
 /* global $:readable */
@@ -207,6 +207,7 @@ let properties = [
 	['Image Follow Selection Flow Mode', true, 'flowModeFollowSelection'],
 	['Image Follow Selection Standard Mode', false, 'stndModeFollowSelection'],
 	['Image Item Overlay', 1, 'itemOverlayType'],
+	['Image Item Overlay Count Forced', true, 'itemOverlayCountForce'], // Regorxxx <- Don't bind track count to other stats ->
 	['Image Item Overlay V-Align', 0, 'itemOverlayVAlign'], // Regorxxx <- Item overlay vertical alignment ->
 	['Image Item Overlay H-Align', 0, 'itemOverlayHAlign'], // Regorxxx <- Item overlay horizontal alignment ->
 	['Image Cut Resize px: Off (0) Clean (2) Zoom (>2) ', 2, 'albumArtCutResize'], // Regorxxx <- Cut img to avoid artifacts at borders ->

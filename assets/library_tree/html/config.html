@@ -1212,6 +1212,9 @@
 						<span id="overlayHAlign" class="dropdown-content"></span>
 					</span>
 					<!-- Regorxxx -->
+					<!-- Regorxxx Don't bind track count to other stats -->
+					<div style="padding:1.01em 0 0.31em 0;" id="itemOverlayCountForce"></div>
+					<!-- Regorxxx -->
 					<div class="div_text2">Disk cache</div>
 					<div id="useCache"></div>
 					<div class="div_text2">Flow mode</div>
@@ -1831,7 +1834,7 @@
 			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact', 'Modifier']; // Regorxxx <- Extra gap settings ->
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
-			var albumArtOverlayLabels = ['None', 'Track Count', 'Track Count (#)', 'item Count', 'item Count (#)', 'Year']; // Regorxxx <- New overlay styles ->
+			var albumArtOverlayLabels = ['None', 'Track Count', 'Track Count (#)', 'Item Count', 'Item Count (#)', 'Year']; // Regorxxx <- New overlay styles ->
 			var albumArtOverlayVAlignLabels = ['Default', 'Top (box)', 'Top (image)', 'Bottom (box)', 'Bottom (image)', 'Center']; // Regorxxx <- Item overlay vertical alignment ->
 			var albumArtOverlayHAlignLabels = ['Default', 'Right (box)', 'Right (image)', 'Left (box)', 'Left (image)', 'Center']; // Regorxxx <- Item overlay horizontal alignment ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
@@ -2009,7 +2012,7 @@
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
-				albumArt: ['albumArtFlipLabels', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered ->
+				albumArt: ['albumArtFlipLabels', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
@@ -3163,6 +3166,8 @@
 				for (i = 0; i < albumArtOverlayHAlignLabels.length; i++) { window.overlayHAlign.insertAdjacentHTML('beforeend', '<a onclick="setOverlayHAlign(' + i + ');">' + albumArtOverlayHAlignLabels[i] + '</a>'); }
 				// Regorxxx ->
 
+				i = 0; window.itemOverlayCountForce.insertAdjacentHTML('beforeend', '<div><input id="itemOverlayCountForce_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="itemOverlayCountForce_checkbox' + i + '"  class="checkbox_label">Show track/item count (for all statistics)</label></div>'); // Regorxxx <- Don't bind track count to other stats ->
+
 				for (i = 0; i < 3; i++) { window.useCache.insertAdjacentHTML('beforeend', '<div><input id="cache_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="cache_checkbox' + i + '"  class="checkbox_label">' + diskCacheLabels[i] + '</label></div>'); } // Regorxxx <- Allow images with transparencies ->
 
 				window.flowMode.insertAdjacentHTML('beforeend', '<div><input id="flowMode_checkbox" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flowMode_checkbox" class="checkbox_label">Enable</label></div>');
@@ -3338,6 +3343,7 @@
 				window.playlistSort_checkbox0.disabled = false;
 			}
 			// Regorxxx ->
+			window.itemOverlayCountForce.style.display = ppt['itemOverlayType_internal'].value >= 1  && ppt['itemOverlayType_internal'].value <= 4 ? 'block' : 'none'; // Regorxxx <- Don't bind track count to other stats ->
 		}
 
 		function textChange(e) {
@@ -3468,6 +3474,7 @@
 				window.altClick_dropdown.style.background = '#8994bc';
 			}
 			// Regorxxx ->
+			window.itemOverlayCountForce.style.display = ppt['itemOverlayType_internal'].value >= 1  && ppt['itemOverlayType_internal'].value <= 4 ? 'block' : 'none'; // Regorxxx <- Don't bind track count to other stats ->
 		}
 
 		setInterval(inputChanged, 500);

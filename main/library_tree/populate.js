@@ -1716,12 +1716,12 @@ class Populate {
 		}
 		if (v.count === '' && this.nodeCounts) {
 			if (panel.imgView) {
-				// Regorxxx <- New overlay styles
+				// Regorxxx <- New overlay styles | Don't bind track count to other stats
 				const overlay = img.getOverlay(ppt.itemOverlayType);
 				switch (overlay.type) {
 					case 'items':
 					case 'items (#)': {
-						if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
+						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
 							const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
 							const key = this.getKey(v);
 							v.count = this.branchCount(v, !!v.root, true, false, key, type);
@@ -1732,7 +1732,7 @@ class Populate {
 					case 'tracks':
 					case 'tracks (#)': {
 						// Regorxxx <- New statistics | Code cleanup
-						if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
+						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
 							v.count = this.trackCount(v.item);
 							v.count += v.count > 1 ? ' tracks' : ' track';
 						}
