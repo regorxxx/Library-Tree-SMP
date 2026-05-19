@@ -1143,7 +1143,7 @@ class MenuItems {
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('showDupl'); }
 				panel.set('Filter', ppt.filterBy);
 			},
-			checkItem: panel.isBranchedPlaylistSource() ? false: ppt.filterDupl,
+			checkItem: panel.isBranchedPlaylistSource() ? false : ppt.filterDupl,
 			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING
 		});
 		fMenu.newItem({
@@ -1153,7 +1153,7 @@ class MenuItems {
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('filterDupl'); }
 				panel.set('Filter', ppt.filterBy);
 			},
-			checkItem: panel.isBranchedPlaylistSource() ? false: ppt.showDupl,
+			checkItem: panel.isBranchedPlaylistSource() ? false : ppt.showDupl,
 			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING,
 			separator: true
 		});
@@ -1892,7 +1892,7 @@ class MenuItems {
 
 	setStatistics(i) {
 		if (i < pop.statistics.length) { // Regorxxx <- New statistics
-			const curStatisticsShown = ppt.itemShowStatistics > 0;
+			const curStatisticsShown = ppt.itemShowStatistics;
 			ppt.itemShowStatistics = i;
 			ppt.itemShowStatisticsLast = ppt.itemShowStatistics;
 			pop.tree.forEach(v => {
@@ -1907,8 +1907,16 @@ class MenuItems {
 				'filter': {}
 			};
 			pop.statisticsShow = ppt.itemShowStatistics;
-			pop.label = !ppt.labelStatistics || !pop.statisticsShow ? '' : pop.statistics[pop.statisticsShow].name; // Regorxxx <- New statistics | Code cleanup ->
-			const statisticsShown = ppt.itemShowStatistics > 0;
+			// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
+			pop.label = ppt.labelStatistics
+				? pop.statisticsShow
+					? panel.imgView
+						? pop.statistics[pop.statisticsShow].nameArt
+						: pop.statistics[pop.statisticsShow].nameTree
+					: ''
+				: '';
+			// Regorxxx ->
+			const statisticsShown = ppt.itemShowStatistics;
 			if (panel.imgView && curStatisticsShown != statisticsShown) {
 				img.labels = { statistics: ppt.itemShowStatistics ? 1 : 0 };
 				img.clearCache();
