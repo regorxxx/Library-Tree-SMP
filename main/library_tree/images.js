@@ -58,6 +58,18 @@ class Images {
 			rootFrame: null // Regorxxx <- Fix img frame for root images (hover effect) ->
 		};
 
+		// Regorxxx <- New overlay styles
+		/** @type {{idx: number, type: string, isCount: boolean}[]} */
+		this.overlays = [
+			{ idx: 0, type: 'none', isCount: false },
+			{ idx: 1, type: 'tracks', isCount: true },
+			{ idx: 2, type: 'tracks (#)', isCount: true },
+			{ idx: 3, type: 'items', isCount: true },
+			{ idx: 4, type: 'items (#)', isCount: true },
+			{ idx: 5, type: 'year', isCount: false }
+		];
+		// Regorxxx ->
+
 		// Regorxxx <- Code cleanup | New img styles
 		/** @type {{idx: number, type: string, mask: string | void, border: string, shadow: string, collageLine: boolean, centerLabel: boolean, centerTrackCount: boolean, overlayOffsetV: number, overlayOffsetH: number, fillBg: boolean, collageCondense: number}[]} */
 		this.styles = [
@@ -176,6 +188,31 @@ class Images {
 	}
 
 	// Methods
+
+
+	// Regorxxx <- New overlay styles
+	getOverlaySchema() {
+		return this.overlays.map((s) => {
+			return { ...s };
+		});
+	}
+
+	getOverlay(idx) {
+		return { ...this.overlays[idx] };
+	}
+
+	getOverlayByType(type) {
+		return { ...(this.overlays.find((s) => s.type.toLowerCase() === type.toLowerCase()) || this.getOverlay(0)) };
+	}
+
+	getOverlayIdxByType(type) {
+		return this.overlays.findIndex((s) => s.type.toLowerCase() === type.toLowerCase()) || 0;
+	}
+
+	getOverlayType(idx) {
+		return this.getOverlay(idx).type;
+	}
+	// Regorxxx ->
 
 	// Regorxxx <- Code cleanup | New img styles | Effect per art type | Image border setting
 	getStyleSchema() {
@@ -894,12 +931,17 @@ class Images {
 		gr.SetSmoothingMode();
 	}
 
-	// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment
+	// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment | New overlay styles
 	drawItemOverlay(gr, art, style, item, coords) {
 		if (item.root) { return; }
-		switch (ppt.itemOverlayType) {
-			case 1: {
+		const overlay = this.getOverlay(ppt.itemOverlayType);
+		switch (overlay.type) {
+			case 'items':
+			case 'items (#)':
+			case 'tracks':
+			case 'tracks (#)': {
 				let count = item.count;
+				if (overlay.type.includes('#')) { count = '# ' + count.replace(/ (track|item)s?$/i, ''); }
 				if (!count) { return; }
 				const count_h = Math.max(gr.CalcTextHeight(count, ui.font.tracks), 8);
 				let count_w = Math.max(gr.CalcTextWidth(count + ' ', ui.font.tracks), 8);
@@ -942,7 +984,7 @@ class Images {
 				gr.SetSmoothingMode();
 				break;
 			}
-			case 2: {
+			case 'year': {
 				if (!item.year) { break; }
 				const year_w = Math.max(gr.CalcTextWidth(item.year + ' ', ui.font.tracks), 8);
 				const year_h = Math.max(gr.CalcTextHeight(item.year, ui.font.tracks), 8);
@@ -1837,6 +1879,7 @@ class Images {
 		const tfDate = new FbTitleFormat('$if2([$year(%date%)],   -   )'); // Regorxxx <- Date fallback ->
 		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
+		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 
 		pop.tree.forEach((v, i) => {
 			const handle = panel.list[v.item[0].start];
@@ -1847,9 +1890,11 @@ class Images {
 			// Regorxxx <- Multiple-playlist flat view
 			if (handle) {
 				v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
-				if (ppt.itemOverlayType == 2) {
-					v.year = tfDate.EvalWithMetadb(handle).replace('0000', '');
+				// Regorxxx <- New overlay styles
+				switch (overlay.type) {
+					case 'year': v.year = tfDate.EvalWithMetadb(handle).replace('0000', ''); break;
 				}
+				// Regorxxx ->
 				if (!this.groupField && !panel.folderView && i % mod === 0) {
 					this.getField(handle, panel.lines == 1 || ppt.albumArtFlipLabels ? v.grp : v.lot, fields);
 				}
@@ -1877,9 +1922,9 @@ class Images {
 				// Regorxxx ->
 			} else if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty) {
 				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
-				/ Regorxxx <- Date fallback
-				if (ppt.itemOverlayType == 2) {
-					v.year = '   -   ';
+				// Regorxxx <- New overlay styles | Date fallback
+				switch (overlay.type) {
+					case 'year': v.year = '   -   '; break;
 				}
 				// Regorxxx ->
 				// Regorxxx <- Branch collage art
@@ -2093,7 +2138,7 @@ class Images {
 		}
 
 		this.cellWidth = Math.max(200, this.im.w / 2);
-		this.labels.counts = ppt.itemOverlayType != 1 && ppt.nodeCounts;
+		this.labels.counts = !this.getOverlay(ppt.itemOverlayType).isCount && ppt.nodeCounts;
 		this.style.y = this.style.vertical ? Math.floor(this.panel.y + (!this.labels.hide && !this.labels.overlay ? ppt.thumbNailGapStnd / 2 : ppt.thumbNailGapCompact / 2)) : this.panel.y;
 		if (this.style.dropShadow) { this.getShadow(this.getStyle(this.style.image)); }
 

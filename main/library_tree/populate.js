@@ -1716,13 +1716,32 @@ class Populate {
 		}
 		if (v.count === '' && this.nodeCounts) {
 			if (panel.imgView) {
-				// Regorxxx <- New statistics | Code cleanup
-				if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
-					v.count = this.trackCount(v.item);
-					v.count += v.count > 1 ? ' tracks' : ' track';
+				// Regorxxx <- New overlay styles
+				const overlay = img.getOverlay(ppt.itemOverlayType);
+				switch (overlay.type) {
+					case 'items':
+					case 'items (#)': {
+						if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
+							const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+							const key = this.getKey(v);
+							v.count = this.branchCount(v, !!v.root, true, false, key, type);
+							v.count += v.count > 1 ? ' items' : ' item';
+						}
+						break;
+					}
+					case 'tracks':
+					case 'tracks (#)': {
+						// Regorxxx <- New statistics | Code cleanup
+						if (this.statistics[ppt.itemShowStatistics].showTrackCount) {
+							v.count = this.trackCount(v.item);
+							v.count += v.count > 1 ? ' tracks' : ' track';
+						}
+						// Regorxxx ->
+						break;
+					}
 				}
 				// Regorxxx ->
-				const getItemCount = !v.root && ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (this.nodeCounts == 1 || this.nodeCounts == 2);;
+				const getItemCount = !v.root && !overlay.isCount && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (this.nodeCounts == 1 || this.nodeCounts == 2); // Regorxxx <- New overlay styles ->
 				if (getItemCount) {
 					const count = v.count.replace(/\D/g, '');
 					if (panel.lines == 1 || ppt.albumArtFlipLabels) v.grp += ` (${count})`;
@@ -3024,7 +3043,7 @@ class Populate {
 			text: ppt.highLightText
 		};
 		this.iconVerticalPad = ppt.iconVerticalPad;
-		this.nodeCounts = panel.imgView && ppt.itemOverlayType === 1 ? 1 : ppt.nodeCounts; // Regorxxx <- Fix track overlay on imgs | New overlay styles ->
+		this.nodeCounts = panel.imgView && img.getOverlay(ppt.itemOverlayType).isCount ? 1 : ppt.nodeCounts; // Regorxxx <- Fix track overlay on imgs | New overlay styles ->
 		this.nodeStyle = ppt.nodeStyle;
 		this.rootNode = ppt.rootNode;
 		this.rowStripes = ppt.rowStripes;
@@ -3065,7 +3084,7 @@ class Populate {
 		// Regorxxx ->
 		this.tooltipStatistics = ppt.tooltipStatistics;
 		this.treeIndent = ppt.treeIndent;
-		this.imgGetItemCount = ppt.itemOverlayType != 1 && ppt.albumArtLabelType == 2 && !this.statisticsShow && (this.nodeCounts == 1 || this.nodeCounts == 2);
+		this.imgGetItemCount = !img.getOverlay(ppt.itemOverlayType).isCount && ppt.albumArtLabelType == 2 && !this.statisticsShow && (this.nodeCounts == 1 || this.nodeCounts == 2); // Regorxxx <- New overlay styles ->
 	}
 
 	showItem(i, type, bSelect = true) { // Regorxxx <- Scrolling helpers ->

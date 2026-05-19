@@ -1831,7 +1831,7 @@
 			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact', 'Modifier']; // Regorxxx <- Extra gap settings ->
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
-			var albumArtOverlayLabels = ['None', 'Track Count', 'Year'];
+			var albumArtOverlayLabels = ['None', 'Track Count', 'Track Count (#)', 'item Count', 'item Count (#)', 'Year']; // Regorxxx <- New overlay styles ->
 			var albumArtOverlayVAlignLabels = ['Default', 'Top (box)', 'Top (image)', 'Bottom (box)', 'Bottom (image)', 'Center']; // Regorxxx <- Item overlay vertical alignment ->
 			var albumArtOverlayHAlignLabels = ['Default', 'Right (box)', 'Right (image)', 'Left (box)', 'Left (image)', 'Center']; // Regorxxx <- Item overlay horizontal alignment ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
@@ -3150,8 +3150,10 @@
 				for (i = 0; i < 5; i++) { window.labels.insertAdjacentHTML('beforeend', '<div><input id="albumArtLabelType' + i + '" name="albumArtLabelType" style="' + cbox + '" type="radio" /><label for="albumArtLabelType' + i + '" class="checkbox_label">' + albumArtLabels[i] + '</label></div>'); }
 				i = 5; window.flip.insertAdjacentHTML('beforeend', '<div><input id="flip_checkbox' + i + '" name="albumart_checkbox" style="' + cbox + '" type="checkbox" /><label for="flip_checkbox' + i + '" class="checkbox_label">' + albumArtLabels[i] + '</label></div>');
 
+				// Regorxxx <- New overlay styles
 				window.overlay_dropdown.innerHTML = albumArtOverlayLabels[ppt['itemOverlayType_internal'].value];
-				for (i = 0; i < 3; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
+				for (i = 0; i < albumArtOverlayLabels.length; i++) { window.overlay.insertAdjacentHTML('beforeend', '<a onclick="setOverlay(' + i + ');">' + albumArtOverlayLabels[i] + '</a>'); }
+				// Regorxxx ->
 
 				// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment
 				window.overlayVAlign_dropdown.innerHTML = albumArtOverlayVAlignLabels[ppt['itemOverlayVAlign_internal'].value];

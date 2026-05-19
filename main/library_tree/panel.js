@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/05/26
+//19/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1091,7 +1091,7 @@ class Panel {
 								ppt.albumArtLabelType = 1;
 								ppt.albumArtFlipLabels = true;
 								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = 1;
+								ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
@@ -1186,7 +1186,7 @@ class Panel {
 								ppt.albumArtFlipLabels = true;
 								ppt.itemShowStatistics = 1;
 								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = 2;
+								ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
@@ -1218,7 +1218,7 @@ class Panel {
 								ppt.albumArtFlipLabels = true;
 								ppt.itemShowStatistics = 0;
 								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = 1;
+								ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
@@ -1250,7 +1250,7 @@ class Panel {
 								ppt.albumArtFlipLabels = true;
 								ppt.itemShowStatistics = 0;
 								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = 0;
+								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 3;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
@@ -1281,7 +1281,7 @@ class Panel {
 								ppt.albumArtLabelType = 2;
 								ppt.itemShowStatistics = 0;
 								ppt.imgStyleArtist = 2;
-								ppt.itemOverlayType = 0;
+								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 1;
 								ppt.artId = 4;
 								ppt.albumArtGrpLevel = 0;
@@ -1309,7 +1309,7 @@ class Panel {
 								ppt.albumArtLabelType = 1;
 								ppt.itemShowStatistics = 0;
 								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = 0;
+								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 2;
 								if (!ppt.presetLoadCurView) ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
@@ -1372,7 +1372,7 @@ class Panel {
 								ppt.sbarShow = 1;
 								ppt.rootNode = 0;
 								ppt.albumArtLabelType = 3;
-								ppt.itemOverlayType = 2;
+								ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
 								this.imgView = ppt.albumArtShow = true;
 								ppt.albumArtFlowMode = true;
 								ppt.imgStyleFront = 1;
