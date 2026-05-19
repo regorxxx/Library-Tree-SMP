@@ -2920,17 +2920,21 @@ class Populate {
 					const count = this.getPlaylistParentUi(idx).reduce((acc, root) => acc + root.count, 0);
 					const panelSelIdx = items.filter((i) => i >= acc && i < acc + count);
 					acc += count;
-					return { idx, panelSelIdx, plsSelIdx: [] };
+					return { idx, panelSelIdx, plsSelIdx: [], count };
 				});
 				itemsPerPls.forEach((o) => {
 					plman.ClearPlaylistSelection(o.idx);
 					if (o.panelSelIdx.length) {
 						if (firstPls === -1) { firstPls = o.idx; }
-						const hl = (selectionFilter
-							? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
-							: this.getHandleList(void (0), o.panelSelIdx)
-						).Convert();
-						this.selectAndFocus(findTracksAtPlaylist(o.idx, hl));
+						if (o.count === plman.PlaylistItemCount(o.idx)) {
+							this.selectAndFocus({ selection: { idx: $.range(0, o.count - 1, 1), count: o.count, focus: 0 }, plsIdx: o.idx });
+						} else {
+							const hl = (selectionFilter
+								? selectionFilter(this.getHandleList(void (0), o.panelSelIdx))
+								: this.getHandleList(void (0), o.panelSelIdx)
+							).Convert();
+							this.selectAndFocus(findTracksAtPlaylist(o.idx, hl));
+						}
 					}
 				});
 			} else {
