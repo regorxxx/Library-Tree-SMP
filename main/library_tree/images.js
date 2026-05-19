@@ -59,14 +59,15 @@ class Images {
 		};
 
 		// Regorxxx <- Code cleanup | New img styles
+		/** @type {{idx: number, type: string, mask: string | void, border: string, shadow: string, collageLine: boolean, centerLabel: boolean, centerTrackCount: boolean, overlayOffsetV: number, overlayOffsetH: number, fillBg: boolean, collageCondense: number}[]} */
 		this.styles = [
-			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default', collageLine: true, centerLabel: true, centerTrackCount: false, collageCondense: 1 },
-			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, collageCondense: 1 },
-			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 },
-			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.9 },
-			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 },
-			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 1 },
-			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, collageCondense: 0.8 }
+			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default', collageLine: true, centerLabel: true, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
+			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
+			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.065, overlayOffsetH: 0, fillBg: true, collageCondense: 0.9 },
+			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 0.8 },
+			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 1 },
+			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 }
 		];
 		// Regorxxx ->
 
@@ -671,7 +672,7 @@ class Images {
 				const cur_img = this.zooming ? null : this.getImg(item.key);
 				const grpCol = this.getGrpCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
 				const lotCol = this.getLotCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
-				this.drawSelBg(gr, art, cur_img, box_x, box_y, cell.i, cell.bNowPlaying || cell.bSel, (cell.bHover || cell.bSel)); // Regorxxx <- Zoom hover effect ->
+				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell.i, cell.bNowPlaying || cell.bSel, (cell.bHover || cell.bSel)); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
 					if (cell.i % 2 == 0) gr.FillSolidRect(0, box_y + 1, panel.tree.stripe.w, this.row.h, ui.col.bg1);
@@ -689,7 +690,7 @@ class Images {
 						w: cur_img.Width,
 						h: cur_img.Height
 					};
-					const bPaintBorder = art.border && (!cell.bSel || !this.labels.overlay || this.style.image != 2);
+					const bPaintBorder = art.border && (!cell.bSel || !this.labels.overlay || !style.fillBg);
 					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel) }); // Regorxxx <- Zoom hover effect ->
 					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				} else {
@@ -713,14 +714,14 @@ class Images {
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
 				this.drawItemOverlay(gr, art, style, item, coords);
 				if (cell.bHover) {
-					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && this.style.image != 2))) {
+					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (cell.bSel) {
-					if (this.labels.overlay && this.style.image != 2) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
+					if (this.labels.overlay && !style.fillBg) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
@@ -960,8 +961,8 @@ class Images {
 		gr.FillSolidRect(coords.x, coords.y, coords.w, coords.h, this.getSelBgCol(item, cell.bNowp));
 	}
 
-	drawSelBg(gr, art, cur_img, box_x, box_y, i, nowpOrSel, bHover) {
-		if (this.labels.hide && (this.style.image != 2 || pop.highlight.row == 3 && ppt.frameImage)) return;
+	drawSelBg(gr, art, style, cur_img, box_x, box_y, i, nowpOrSel, bHover) {
+		if (this.labels.hide && (!style.fillBg || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
 			case nowpOrSel && !(ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i)): // Regorxxx <- Rectangle selection on art view ->
@@ -983,7 +984,7 @@ class Images {
 				break;
 			case pop.highlight.row == 2 && i == pop.m.i || ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.bg_h;
-				if ((this.labels.overlay || this.labels.hide) && this.style.image == 2) {
+				if ((this.labels.overlay || this.labels.hide) && style.fillBg) {
 					x = box_x + Math.round((this.box.w - (cur_img ? cur_img.Width : this.im.w)) / 2);
 					y = box_y + (cur_img ? 2 + this.im.w - cur_img.Height : 2);
 					w = cur_img ? cur_img.Width : this.im.w;
