@@ -46,7 +46,6 @@ const files = [
 	'main\\library_tree\\buttons.js',
 	'main\\library_tree\\popupbox.js',
 	'main\\library_tree\\timers.js',
-	'main\\library_tree\\file.js',
 	'main\\library_tree\\menu.js',
 	'main\\library_tree\\initialise.js',
 	'main\\library_tree\\callbacks.js'
