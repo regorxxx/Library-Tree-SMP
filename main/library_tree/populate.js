@@ -633,9 +633,9 @@ class Populate {
 		this.addItems(items, v, true); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
 		const handleList = this.getHandleList(void (0), items);
-		let ln, n, tf, value, rawValue, values;
+		let ln, n, tf, value, rawValue, valueFormat, values;
 		switch (ppt.itemShowStatistics) {
-			case 1: {// bitrate
+			case 1: { // bitrate
 				values = this.tf.bitrate.EvalWithMetadbs(handleList);
 				if (values.length == 1) {
 					value = Number(values[0]) || '';
@@ -650,13 +650,13 @@ class Populate {
 				}
 				if (typeof value !== 'undefined') {
 					rawValue = value;
-					value += (panel.imgView ? ' kbps' : '');
+					valueFormat = value = value + (panel.imgView ? ' kbps' : '');
 				}
 				break;
 			}
 			case 2: { // duration
-				const duration = handleList.CalcTotalDuration();
-				value = utils.FormatDuration(duration);
+				rawValue = handleList.CalcTotalDuration();
+				valueFormat = value = utils.FormatDuration(rawValue);
 				break;
 			}
 			case 3: { // total size
@@ -669,7 +669,7 @@ class Populate {
 				if (size.length) {
 					size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
 					rawValue = size;
-					value = this.formatBytes(size);
+					valueFormat = value = this.formatBytes(size);
 				}
 				break;
 			}
@@ -683,7 +683,7 @@ class Populate {
 				if (ln) {
 					values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
 					rawValue = values / ln;
-					value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
+					valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 4 ? 'Rating ' : 'Popularity ') + value; }
 				}
 				break;
@@ -711,10 +711,10 @@ class Populate {
 					}
 				}
 				if (date) {
-					rawValue = date;
+					valueFormat = rawValue = date;
 					value = panel.imgView && this.label
-						? ['', '', '', '', '', '', (v.root ? 'First release ' : ''), '', '', 'First played ', 'Last played ', 'Added '][ppt.itemShowStatistics] + date
-						: date;
+						? ['', '', '', '', '', '', (v.root ? 'First release ' : ''), '', '', 'First played ', 'Last played ', 'Added '][ppt.itemShowStatistics] + valueFormat
+						: valueFormat;
 				}
 				break;
 			}
@@ -743,15 +743,15 @@ class Populate {
 				}
 				if (index === '0') {
 					rawValue = 0;
+					valueFormat = String.fromCodePoint(9654); /* ▶ */
 					value = panel.imgView && this.label
 						? 'Now playing'
-						: String.fromCodePoint(9654) /* ▶ */;
+						: valueFormat;
 				} else if (index && index.length > 0) {
 					const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
 					rawValue = index;
-					value = panel.imgView && this.label
-						? 'Queue ' + (bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index)
-						: bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+					valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+					if (panel.imgView && this.label) { value = 'Queue ' + value; }
 				}
 				break;
 			}
@@ -766,7 +766,7 @@ class Populate {
 				playcount = this.getNumbers(n);
 				if (playcount.length) {
 					playcount = n.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
-					rawValue = playcount;
+					valueFormat = rawValue = playcount;
 					value = panel.imgView
 						? (this.label ? 'Played ' : '') + playcount + 'x'
 						: playcount;
@@ -788,7 +788,7 @@ class Populate {
 				ln = values.length;
 				if (ln) {
 					value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
-					rawValue = value;
+					valueFormat = rawValue = value;
 					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 14 ? 'Feedback ' : (ppt.itemShowStatistics == 13 ? 'Hated ' : 'Loved ')) + value; }
 				}
 				break;
@@ -824,7 +824,7 @@ class Populate {
 						? values
 						: values / ln;
 					if (ppt.itemShowStatistics > 20) { rawValue = rawValue ** (1 / exp); }
-					value = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
+					valueFormat = value = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
 						? values
 						: $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals; // Regorxxx <- Rating decimals;
 					if (panel.imgView && this.label) { value = this.label + ' ' + value; }
@@ -834,8 +834,8 @@ class Populate {
 			// Regorxxx ->
 		}
 		return typeof value === 'undefined'
-			? { value: '', rawValue: void (0), items }
-			: (this.cache[type][key] = { value, rawValue, items }); // NOSONAR
+			? { value: '', rawValue: void (0), valueFormat: void(0), items }
+			: (this.cache[type][key] = { value, rawValue, valueFormat, items }); // NOSONAR
 	}
 	// Regorxxx ->
 
@@ -1714,7 +1714,7 @@ class Populate {
 			else {
 				const stats = this.calcStatistics(v);
 				v[prop] = stats.value;
-				v.stats = { value: stats.value, rawValue: stats.rawValue };
+				v.stats = { value: stats.value, rawValue: stats.rawValue, valueFormat: stats.valueFormat };
 			}
 		}
 		if (v.count === '' && this.nodeCounts) {
@@ -3072,6 +3072,7 @@ class Populate {
 			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : 'tracks') },
 			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks') }
 		];
+		this.statistics.forEach((s) => s.nameArt = s.nameTree = s.name);
 		{
 			const userCustomTypesArt = ppt.tfCustomDisplayArt.split('|');
 			const userCustomTypesTree = ppt.tfCustomDisplayTree.split('|');

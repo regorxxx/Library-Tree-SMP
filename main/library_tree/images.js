@@ -712,7 +712,7 @@ class Images {
 					: '';
 				const statisticsTt = this.labels.statistics
 					? stat.ttFunc
-						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': '  + (typeof item.stats.rawValue === 'undefined' ? '' : item.stats.rawValue.toString()))
+						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': '  + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
 						: statistics
 					: '';
 				// Regorxxx ->
