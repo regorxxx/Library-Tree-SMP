@@ -2,7 +2,7 @@
 //20/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
-/* global folders:readable */
+/* global folders:readable, globTags:readable */
 /* global getFiles:readable, _deleteFolder:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
@@ -59,14 +59,20 @@ class Images {
 		};
 
 		// Regorxxx <- New overlay styles
-		/** @type {{idx: number, type: string, isCount: boolean}[]} */
+		/** @type {{idx: number, type: string, itemKey: '', isCount: boolean, tf: FbTitleFormat}[]} */
 		this.overlays = [
-			{ idx: 0, type: 'none', isCount: false },
-			{ idx: 1, type: 'tracks', isCount: true },
-			{ idx: 2, type: 'tracks (#)', isCount: true },
-			{ idx: 3, type: 'items', isCount: true },
-			{ idx: 4, type: 'items (#)', isCount: true },
-			{ idx: 5, type: 'year', isCount: false }
+			{ idx: 0, type: 'none', itemKey: '', isCount: false, tf: null },
+			{ idx: 1, type: 'tracks', itemKey: 'count', isCount: true, tf: null },
+			{ idx: 2, type: 'tracks (#)', itemKey: 'count', isCount: true, tf: null },
+			{ idx: 3, type: 'items', itemKey: 'count', isCount: true, tf: null },
+			{ idx: 4, type: 'items (#)', itemKey: 'count', isCount: true, tf: null },
+			{ idx: 5, type: 'decade', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$div($year(%DATE%),10)0s],   -   )') },
+			{ idx: 6, type: 'year', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if3([' + globTags.date + '],[$year(%DATE%)],   -   )') }, // Regorxxx <- Date fallback ->
+			{ idx: 7, type: 'month', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$month(%DATE%)],   -   )') },
+			{ idx: 8, type: 'last played (full)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([' + globTags.lastPlayed + '],   -   )') },
+			{ idx: 9, type: 'last played (date)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$date(' + globTags.lastPlayed + ')],   -   )') },
+			{ idx: 10, type: 'last played (hour)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$time(' + globTags.lastPlayed + ')],   -   )') },
+			{ idx: 10, type: 'playing', itemKey: 'year', isCount: false, tf: null }
 		];
 		// Regorxxx ->
 
@@ -679,9 +685,11 @@ class Images {
 		const style = this.getStyle(this.style.image);
 		const art = this.getArt(ppt.artId);
 		const stack = [[], [], []];
+		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 		for (let i = this.start; i < this.end; i++) {
 			const bHover = i === pop.m.i;
 			const item = pop.tree[i];
+			if (overlay.type === 'playing') { item[overlay.itemKey] = pop.inRange(pop.nowp, item.item) ? String.fromCodePoint(9654) : ''; } // Regorxxx <- New overlay styles ->
 			const bSel = item.sel;
 			stack[bHover ? 2 : bSel ? 1 : 0].push({
 				i,
@@ -1892,7 +1900,6 @@ class Images {
 		const albumArtGrpNames = $.jsonParse(ppt.albumArtGrpNames, {});
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
-		const tfDate = new FbTitleFormat('$if2([$year(%date%)],   -   )'); // Regorxxx <- Date fallback ->
 		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
@@ -1908,7 +1915,12 @@ class Images {
 				v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles
 				switch (overlay.type) {
-					case 'year': v.year = tfDate.EvalWithMetadb(handle).replace('0000', ''); break;
+					case 'none': break;
+					case 'year': v[overlay.itemKey] = overlay.tf.EvalWithMetadb(handle).replace('0000', ''); break;
+					default: {
+						if (overlay.tf && !overlay.isCount) { v[overlay.itemKey] = overlay.tf.EvalWithMetadb(handle); }
+						break;
+					}
 				}
 				// Regorxxx ->
 				if (!this.groupField && !panel.folderView && i % mod === 0) {
@@ -1940,7 +1952,11 @@ class Images {
 				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles | Date fallback
 				switch (overlay.type) {
-					case 'year': v.year = '   -   '; break;
+					case 'none': break;
+					default: {
+						if (overlay.tf && !overlay.isCount) { v[overlay.itemKey] = '   -   '; }
+						break;
+					}
 				}
 				// Regorxxx ->
 				// Regorxxx <- Branch collage art
