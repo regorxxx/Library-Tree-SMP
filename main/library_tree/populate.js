@@ -2097,6 +2097,41 @@ class Populate {
 					this.lbtnDn = false;
 					this.selRect.x = this.selRect.w = this.selRect.y = this.selRect.h = this.selRect.mx = this.selRect.my = void (0);
 					this.selRect.over.clear();
+					// Regorxxx <- Mouse actions on playlist sources
+					if (panel.isStandardSource()) {
+						if (vk.k('alt')) { return this.mbtnUpOrAltClickUpCurrSel('', 'alt'); }
+						if (this.autoFill.mouse || this.autoPlay.click) {
+							window.Repaint(true);
+							this.sendCurrSel();
+						} else {
+							panel.treePaint();
+						}
+						this.track(this.autoFill.mouse || this.autoPlay.click);
+					} else {
+						if (ppt.plsActions) {
+							if (vk.k('alt')) {
+								if (ppt.actionMode === 2) {
+									this.selection_holder.SetSelection(this.getTopTracks(void (0), !!ppt.topTracksSorting.length));
+								} else {
+									return this.mbtnUpOrAltClickUpCurrSel('', 'alt');
+								}
+							}
+							if (this.autoFill.mouse || this.autoPlay.click) {
+								this.setPlaylistSelection();
+							}
+							if (this.autoPlay.click) {
+								const parent = this.getPlaylistParentIdx(item);
+								if (!isArrayEqual(parent, [-1])) {
+									plman.ExecutePlaylistDefaultAction(parent[0], plman.GetPlaylistFocusItemIndex(parent[0]));
+								}
+							}
+							this.track(this.autoFill.mouse || this.autoPlay.click);
+						} else {
+							if (vk.k('alt')) { return this.mbtnUpOrAltClickUpCurrSel('', 'alt'); }
+							this.setPlaylistSelection();
+						}
+					}
+					// Regorxxx ->
 					lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 					return;
 				} else {
@@ -2399,6 +2434,56 @@ class Populate {
 					} else {
 						this.add(x, y, !ppt[`${type}ClickAction`]);
 					}
+				}
+			}
+		}
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Top tracks | Mouse actions on playlist sources | Rectangle selection on art view
+	mbtnUpOrAltClickUpCurrSel(mask, type) {
+		if (this[`${type}_dbl_clicked`]) return;
+		const isForcedPlsMiddleAction = type == 'mbtn' && !panel.isStandardSource() && !ppt.plsActions;
+		const isForcedPlsAltAction = type == 'alt' && !panel.isStandardSource() && !ppt.plsActions;
+		const isDefaultPls = () => this.sel_items.every((ix) => this.isPlaylistParentDefaultPlaylist(this.tree[ix]));
+		if (isForcedPlsMiddleAction || (type == 'mbtn' && (ppt.actionMode == 2 || ppt.mbtnClickAction == 2) || type == 'alt' && ppt.altClickAction == 2) && !isForcedPlsAltAction) {
+			setTimeout(() => { // timeout: wait & see if double click, but adds a little lag to single click: timeout can be commented out
+				if (this[`${type}_dbl_clicked`]) return;
+				const handleList = this.getHandleList().Convert(); // Regorxxx <- Preserve tree sorting at selection ->
+				let add = new FbMetadbHandleList();
+				handleList.forEach(h => {
+					let found = false;
+					plman.GetPlaybackQueueHandles().Convert().forEach(q => {
+						if (h.Compare(q)) found = true;
+					});
+					if (!found) add.Add(h);
+				});
+				const ap = plman.ActivePlaylist;
+				const plItems = plman.GetPlaylistItems(ap);
+				add.Convert().forEach(v => {
+					const ix = plItems.Find(v);
+					if (ix == -1) { plman.AddItemToPlaybackQueue(v); }
+					else { plman.AddPlaylistItemToPlaybackQueue(ap, ix); }
+				});
+			}, 180);
+		} else if (isForcedPlsAltAction || (type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
+			if (panel.isStandardSource()) {
+				this.loadTopTracks(ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
+			} else {
+				if (isForcedPlsAltAction || [4, 6].includes(ppt[`${type}ClickAction`]) || panel.isDefaultPlaylistSource() || isDefaultPls()) {
+					this.setPlaylistSelection(void (0), void (0), void (0), this.getTopTracks);
+				} else {
+					this.loadTopTracks(ppt[`${type}ClickAction`] >= 5, true);
+				}
+			}
+		} else {
+			if (panel.isStandardSource()) {
+				this.load({ bAddToPls: true, bAutoPlay: false, bUseDefaultPls: !ppt[`${type}ClickAction`], bInsertToPls: false });
+			} else {
+				if (ppt[`${type}ClickAction`] === 1 || panel.isDefaultPlaylistSource() || isDefaultPls()) {
+					this.setPlaylistSelection();
+				} else {
+					this.load({ bAddToPls: true, bAutoPlay: false, bUseDefaultPls: !ppt[`${type}ClickAction`], bInsertToPls: false });
 				}
 			}
 		}
@@ -2846,6 +2931,13 @@ class Populate {
 		// Regorxxx ->
 	}
 
+	// Regorxxx <- Rectangle selection on art view
+	sendCurrSel() {
+		if (vk.k('ctrl') || vk.k('shift')) this.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
+		else this.load({ bAddToPls: false, bAutoPlay: this.autoPlay.click, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
+	}
+	// Regorxxx ->
+
 	sendToNewPlaylist() {
 		const names = this.tree.filter(v => v.sel).map(v => v.name.split('^@^').join(' - ')); // Regorxxx <- Fix new playlist for branches ->
 		plman.ActivePlaylist = plman.CreatePlaylist(plman.PlaylistCount, [...new Set(names)].join('; '));
@@ -2919,7 +3011,7 @@ class Populate {
 	setPlaylistSelection(ix, item, plsIdxArr = panel.getPlaylistSource(), selectionFilter = void (0)) {
 		if (isArrayEqual(plsIdxArr, [-1])) { return; }
 		if (!vk.k('ctrl')) { this.clearSelected(); }
-		if (!item.sel) { this.setTreeSel(ix, item.sel); }
+		if (item && !item.sel) { this.setTreeSel(ix, item.sel); }
 		panel.treePaint();
 		let firstPls = -1;
 		if (plsIdxArr.length > 1) {
