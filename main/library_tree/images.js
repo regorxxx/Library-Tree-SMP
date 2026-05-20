@@ -1,5 +1,5 @@
 'use strict';
-//19/05/26
+//20/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable */
@@ -696,7 +696,7 @@ class Images {
 			else { this.column++; }
 		}
 		stack[1].sort((a, b) => b.selIdx - a.selIdx);
-		const stat =  this.labels.statistics ? pop.statistics[pop.statisticsShow] : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
+		const stat = this.labels.statistics ? pop.statistics[pop.statisticsShow] : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
 		stack.flat().forEach((cell) => {
 			const row = this.style.vertical ? Math.floor(cell.i / this.columns) : 0;
 			box_x = this.style.vertical ? Math.floor(this.panel.x + cell.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + cell.i * this.columnWidth + this.bor.side - sbar.delta);
@@ -712,7 +712,7 @@ class Images {
 					: '';
 				const statisticsTt = this.labels.statistics
 					? stat.ttFunc
-						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': '  + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
+						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': ' + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
 						: statistics
 					: '';
 				// Regorxxx ->
@@ -759,7 +759,7 @@ class Images {
 					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
-				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x }); // Regorxxx <- Item overlay horizontal alignment ->
+				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x, box_y }); // Regorxxx <- Item overlay horizontal alignment ->
 				if (cell.bHover) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg))) {
 						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
@@ -950,81 +950,87 @@ class Images {
 			case 'items (#)':
 			case 'tracks':
 			case 'tracks (#)': {
-				let count = item.count;
-				if (overlay.type.includes('#')) { count = '# ' + count.replace(/ (track|item)s?$/i, ''); }
-				if (!count) { return; }
-				const count_h = Math.max(gr.CalcTextHeight(count, ui.font.tracks), 8);
-				let count_w = Math.max(gr.CalcTextWidth(count + ' ', ui.font.tracks), 8);
-				let count_h2;
-				if (count_w > this.im.w) {
-					count = count.split(' ');
-					count_h2 = count_h * 2;
-					count_w = Math.max(gr.CalcTextWidth(count[0], ui.font.tracks), gr.CalcTextWidth(count[1], ui.font.tracks));
+				let val = item[overlay.itemKey];
+				if (overlay.type.includes('#')) { val = '# ' + val.replace(/ (track|item)s?$/i, ''); }
+				if (!val) { return; }
+				const h = Math.max(gr.CalcTextHeight(val, ui.font.tracks), 8);
+				let w = Math.max(gr.CalcTextWidth(val + ' ', ui.font.tracks), 8);
+				let h2;
+				if (w > this.im.w) {
+					val = val.split(' ');
+					h2 = h * 2;
+					w = Math.max(gr.CalcTextWidth(val[0], ui.font.tracks), gr.CalcTextWidth(val[1], ui.font.tracks));
 				} else {
-					count_h2 = count_h;
+					h2 = h;
 				}
-				let count_x;
-				switch (ppt.itemOverlayHAlign) {
-					case 0: count_x = coords.x + (style.centerTrackCount ? (coords.w - count_w - 2) / 2 : coords.w - count_w - 3); break; // Default
-					case 1: count_x = coords.x + this.im.w - count_w - 3; break; // Right box
-					case 2: count_x = coords.x + coords.w - count_w - 3 - (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Right img
-					case 3: count_x = coords.box_x + 2; break; // Left box
-					case 4: count_x = coords.x + (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Left img
-					case 5: count_x = coords.x + (coords.w - count_w - 2) / 2; break; // Center
-				}
-				let count_y;
-				switch (ppt.itemOverlayVAlign) {
-					case 0: count_y = coords.y + (style.centerTrackCount ? count_h / 1.67 : 0); break; // Default
-					case 1: count_y = this.im.y + 1.5; break; // Top box
-					case 2: count_y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
-					case 3: count_y = coords.y + this.im.w - count_h; break; // Bottom box
-					case 4: count_y = coords.y + coords.h - count_h - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
-					case 5: count_y = coords.y + (coords.h - count_h - 2) / 2; break; // Center
-				}
+				const { x, y } = this.getOverlayPos(overlay, style, coords, w, h);
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				// Regorxxx <- Custom album art overlay color track count/year
-				gr.FillSolidRect(count_x, count_y, count_w + 2, count_h2, ui.col.bgTrackCount);
-				if (count_w > this.im.w) {
-					gr.GdiDrawText(count[0], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
-					gr.GdiDrawText(count[1], ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y + count_h, count_w, count_h, style.centerTrackCount ? panel.cc : panel.rc);
+				gr.FillSolidRect(x, y, w + 2, h2, ui.col.bgTrackCount);
+				if (w > this.im.w) {
+					gr.GdiDrawText(val[0], ui.font.tracks, ui.col.textTrackCount, x + 1, y, w, h, style.centerTrackCount ? panel.cc : panel.rc);
+					gr.GdiDrawText(val[1], ui.font.tracks, ui.col.textTrackCount, x + 1, y + h, w, h, style.centerTrackCount ? panel.cc : panel.rc);
 				} else {
-					gr.GdiDrawText(count, ui.font.tracks, ui.col.textTrackCount, count_x + 1, count_y, count_w, count_h, panel.cc);
+					gr.GdiDrawText(val, ui.font.tracks, ui.col.textTrackCount, x + 1, y, w, h, panel.cc);
 				}
 				// Regorxxx ->
 				gr.SetSmoothingMode();
 				break;
 			}
-			case 'year': {
-				if (!item.year) { break; }
-				const year_w = Math.max(gr.CalcTextWidth(item.year + ' ', ui.font.tracks), 8);
-				const year_h = Math.max(gr.CalcTextHeight(item.year, ui.font.tracks), 8);
-				let year_x;
-				switch (ppt.itemOverlayHAlign) {
-					case 0: year_x = coords.x + (style.centerTrackCount ? (coords.w - year_w - 2) / 2 : 0); break; // Default
-					case 1: year_x = coords.x + this.im.w - year_w - 3; break; // Right box
-					case 2: year_x = coords.x + coords.w - year_w - 3 - (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Right img
-					case 3: year_x = coords.box_x + 2; break; // Left box
-					case 4: year_x = coords.x + (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Left img
-					case 5: year_x = coords.x + (coords.w - year_w - 2) / 2; break; // Center
-				}
-				let year_y;
-				switch (ppt.itemOverlayVAlign) {
-					case 0: year_y = coords.y + (style.centerTrackCount ? year_h / 1.67 : 0); break; // Default
-					case 1: year_y = this.im.y + 1.5; break; // Top box
-					case 2: year_y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
-					case 3: year_y = coords.y + this.im.w - year_h; break; // Bottom box
-					case 4: year_y = coords.y + coords.h - year_h - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
-					case 5: year_y = coords.y + (coords.h - year_h - 2) / 2; break; // Center
-				}
+			default: {
+				const val = item[overlay.itemKey];
+				if (!val) { break; }
+				const w = Math.max(gr.CalcTextWidth(val + ' ', ui.font.tracks), 8);
+				const h = Math.max(gr.CalcTextHeight(val, ui.font.tracks), 8);
+				const { x, y } = this.getOverlayPos(overlay, style, coords, w, h);
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				// Regorxxx <- Custom album art overlay color track count/year
-				gr.FillSolidRect(year_x, year_y, year_w + 2, year_h, ui.col.bgTrackCount);
-				gr.GdiDrawText(item.year, ui.font.tracks, ui.col.textTrackCount, year_x + 1, year_y, year_w, year_h, panel.cc);
+				gr.FillSolidRect(x, y, w + 2, h, ui.col.bgTrackCount);
+				gr.GdiDrawText(val, ui.font.tracks, ui.col.textTrackCount, x + 1, y, w, h, panel.cc);
 				// Regorxxx ->
 				gr.SetSmoothingMode();
 				break;
 			}
 		}
+	}
+
+	getOverlayPos(overlay, style, coords, textW, textH) {
+		let x;
+		switch (ppt.itemOverlayHAlign) {
+			case 0: {  // Default
+				switch (overlay.type) {
+					case 'items':
+					case 'items (#)':
+					case 'tracks':
+					case 'tracks (#)': {
+						x = coords.x + (style.centerTrackCount ? (coords.w - textW - 2) / 2 : coords.w - textW - 3); break;
+					}
+					default: {
+						x = coords.x + (style.centerTrackCount ? (coords.w - textW - 2) / 2 : 0); break;
+					}
+				}
+				break;
+			}
+			case 1: x = coords.box_x + this.box.w - textW - 3; break; // Right frame
+			case 2: x = coords.x - (this.im.w - coords.w) / 2 + this.im.w - textW - 3; break; // Right box
+			case 3: x = coords.x + coords.w - textW - 3 - (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Right img
+			case 4: x = coords.box_x; break; // Left frame
+			case 5: x = coords.x - (this.im.w - coords.w) / 2; break; // Left box
+			case 6: x = coords.x + (style.overlayOffsetV ? coords.w * style.overlayOffsetH : 0); break; // Left img
+			case 7: x = coords.x + (coords.w - textW - 2) / 2; break; // Center
+		}
+		let y;
+		switch (ppt.itemOverlayVAlign) {
+			case 0: y = coords.y + (style.centerTrackCount ? textH / 1.67 : 0); break; // Default
+			case 1: y = coords.box_y + 3; break; // Top frame
+			case 2: y = this.im.y + 1.5; break; // Top box
+			case 3: y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
+			case 4: y = coords.box_y + this.box.h - textH; break; // Bottom frame
+			case 5: y = coords.y + this.im.w - textH; break; // Bottom box
+			case 6: y = coords.y + coords.h - textH - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
+			case 7: y = coords.y + (coords.h - textH - 2) / 2; break; // Center
+		}
+		return { x, y };
 	}
 	// Regorxxx ->
 
