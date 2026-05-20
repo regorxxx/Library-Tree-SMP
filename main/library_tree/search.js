@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/05/26
+//20/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -74,7 +74,7 @@ class Search {
 						if (isArrFrom) { toArr.push(...tag.from); }
 						else { toArr.push(tag.from); }
 					}
-					return fromArr.flatMap((from) => toArr.map((to) => { return { from, to: to }; }));
+					return fromArr.flatMap((from) => toArr.map((to) => { return { from, to: to, bInternalRemap: true }; }));
 				} else {
 					return [{ from: tag, to: tag, bInternalRemap: true }];
 				}
@@ -107,17 +107,19 @@ class Search {
 			if (!operators.track) { selItems = new FbMetadbHandleList(selItems[0]); }
 			const trackQueries = $.getHandleListTags(selItems, searchTags.map((t) => t.from)).map((trackTags) => {
 				return $.queryJoin(
-					searchTags.map((searchTag, i) => {
-						if (!operators.tag && i > 0) { return; }
-						const values = [...new Set(trackTags[i].filter(Boolean).map(s => s.toLowerCase()))];
-						if (!operators.value) { values.length = 1; }
-						return searchTag.bInternalRemap && searchTag.to.toUpperCase() === 'ALBUM ARTIST'
-							? $.queryJoin([
-								$.queryCombinations(values, 'ALBUM ARTIST', operators.value),
-								$.queryCombinations(values, 'ARTIST', operators.value),
-							].filter(Boolean), 'OR')
-							: $.queryCombinations(values, searchTag.to, operators.value);
-					}).filter(Boolean),
+					[...new Set(
+						searchTags.map((searchTag, i) => {
+							if (!operators.tag && i > 0) { return; }
+							const values = [...new Set(trackTags[i].filter(Boolean).map(s => s.toLowerCase()))];
+							if (!operators.value) { values.length = 1; }
+							return searchTag.bInternalRemap && searchTag.to.toUpperCase() === 'ALBUM ARTIST'
+								? $.queryJoin([
+									$.queryCombinations(values, 'ALBUM ARTIST', operators.value, void (0), void (0), 'ALBUM ARTIST PRESENT AND '),
+									$.queryCombinations(values, 'ARTIST', operators.value, void (0), void (0), 'ALBUM ARTIST MISSING AND ')
+								].filter(Boolean), 'OR')
+								: $.queryCombinations(values, searchTag.to, operators.value);
+						}).filter(Boolean)
+					)],
 					operators.tag
 				);
 			}).filter(Boolean);

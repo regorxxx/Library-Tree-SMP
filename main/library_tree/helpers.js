@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/05/26
+//20/05/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
@@ -458,7 +458,7 @@ class Helpers {
 		return (val.match(/[()]/g) ? this._q(val) : val);
 	}
 
-	queryCombinations(tagsArray, queryKey, tagsArrayLogic /*AND, OR [NOT]*/, subTagsArrayLogic /*AND, OR [NOT]*/, match = 'IS' /*IS, HAS, EQUAL*/) {
+	queryCombinations(tagsArray, queryKey, tagsArrayLogic /*AND, OR [NOT]*/, subTagsArrayLogic /*AND, OR [NOT]*/, match = 'IS' /*IS, HAS, EQUAL*/, prefix = '') {
 		// Wrong tagsArray
 		if (tagsArray === null || Object.prototype.toString.call(tagsArray) !== '[object Array]' || tagsArray.length === null || tagsArray.length === 0) { return; }
 		if (typeof queryKey === 'undefined' || queryKey === null || !queryKey) { return; }
@@ -510,7 +510,11 @@ class Helpers {
 				i++;
 			}
 		}
-		return query;
+		return query
+			? prefix
+				? prefix + '(' + query + ')'
+				: query
+			: '';
 	}
 
 	queryJoin(queryArray, setLogic = 'AND') {
