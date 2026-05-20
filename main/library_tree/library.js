@@ -792,10 +792,7 @@ class Library {
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
-		// Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
-		if (fb.AddLocationsAsyncV2) { fb.AddLocationsAsyncV2(['dummy.mp3']).then((track) => panel.dummyTrack = track[0]); }
-		else { panel.dummyTrack = this.list[0]; }
-		// Regorxxx ->
+		panel.setDummyTrack(this.list); // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
 	}
 
 	isMainChanged(handleList) {
