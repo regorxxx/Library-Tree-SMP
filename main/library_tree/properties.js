@@ -522,7 +522,7 @@ let properties = [
 	['Search Drag n\' Drop Method (Auto=0, Tags=1, Disabled=-1)', 0, 'searchDragMethod'],
 	['Search Drag n\' Drop Tags (no modifier)', JSON.stringify([{ from: [...new Set([globTags.artistRaw, 'ALBUM ARTIST', 'ARTIST', 'ALBUMARTISTS', 'INVOLVEDPEOPLE'])], to: [globTags.artistRaw] }]), 'searchDragTags'],
 	['Search Drag n\' Drop Tags (ctrl modifier)', JSON.stringify([{ from: [...new Set([globTags.artistRaw, 'ALBUM ARTIST', 'ARTIST', 'ALBUMARTISTS', 'INVOLVEDPEOPLE'])], to: ['INVOLVEDPEOPLE'] }]), 'searchDragTagsCtrl'],
-	['Search Drag n\' Drop Tags (alt modifier)', JSON.stringify([{ from: [globTags.genre], to: [globTags.genre] }, { from: [globTags.style], to: [globTags.style] }]), 'searchDragTagsAlt'],
+	['Search Drag n\' Drop Tags (alt modifier)', JSON.stringify([{ from: [globTags.titleRaw], to: [globTags.titleRaw] }]), 'searchDragTagsAlt'],
 	['Search Drag n\' Drop Multi-value Operator (no modifier)', 'OR', 'searchDragValOp'],
 	['Search Drag n\' Drop Multi-value Operator (ctrl modifier)', 'OR', 'searchDragValOpCtrl'],
 	['Search Drag n\' Drop Multi-value Operator (alt modifier)', 'AND', 'searchDragValOpAlt'],
