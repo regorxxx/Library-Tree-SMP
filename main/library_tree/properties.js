@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/05/26
+//20/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -563,6 +563,7 @@ let properties = [
 	['Sources|Views|Filters presets use on Notify switch', false, 'presetRulesOnNotifyUse'],
 	// Regorxxx ->
 	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
+	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'], // Regorxxx <- Drag n' Drop minimum distance ->
 ];
 
 const ppt = new PanelProperties;
