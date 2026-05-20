@@ -178,7 +178,7 @@ class Populate {
 
 	// Regorxxx <- Top tracks
 	selectAndRun(x, y, callback, bRepaint = true) {
-		if (y < panel.search.h) return;
+		if (y < panel.search.h) { return; }
 		const ix = this.get_ix(x, y, true, false);
 		panel.pos = ix;
 		if (ix < this.tree.length && ix >= 0) {
@@ -195,7 +195,8 @@ class Populate {
 	addTopTracks(x, y, bAddToPls, bUseDefaultPls = !ppt.sendToCur) {
 		this.selectAndRun(
 			x, y,
-			() => this.loadTopTracks(bAddToPls, bUseDefaultPls)
+			() => this.loadTopTracks(bAddToPls, bUseDefaultPls),
+			void (0)
 		);
 	}
 
@@ -834,7 +835,7 @@ class Populate {
 			// Regorxxx ->
 		}
 		return typeof value === 'undefined'
-			? { value: '', rawValue: void (0), valueFormat: void(0), items }
+			? { value: '', rawValue: void (0), valueFormat: void (0), items }
 			: (this.cache[type][key] = { value, rawValue, valueFormat, items }); // NOSONAR
 	}
 	// Regorxxx ->
@@ -2372,7 +2373,6 @@ class Populate {
 					});
 				}
 			}, 180);
-
 		} else if (isForcedPlsAltAction || (type == 'mbtn' || type == 'alt') && [3, 4, 5, 6].includes(ppt[`${type}ClickAction`])) {
 			if (panel.isStandardSource()) {
 				this.addTopTracks(x, y, ppt[`${type}ClickAction`] >= 5, ![4, 6].includes(ppt[`${type}ClickAction`]));
@@ -2839,7 +2839,7 @@ class Populate {
 	}
 
 	send(item, x, y) {
-		if (!this.check_ix(item, x, y, false)) return;
+		if (!this.check_ix(item, x, y, false)) { return; }
 		// Regorxxx <- Code cleanup
 		if (vk.k('ctrl') || vk.k('shift')) this.load({ bAddToPls: false, bAutoPlay: false, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
 		else this.load({ bAddToPls: false, bAutoPlay: this.autoPlay.click, bUseDefaultPls: !ppt.sendToCur, bInsertToPls: false });
