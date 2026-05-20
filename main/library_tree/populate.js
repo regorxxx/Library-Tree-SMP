@@ -1179,11 +1179,11 @@ class Populate {
 
 	// Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager
 	dragDrop(x, y) {
-		if (!this.lbtnDn) { return; }
+		if (!this.lbtnDn || ppt.dragDropMinPx >= Number.MAX_SMP_INT) { return; } // Regorxxx <- Drag n' Drop minimum distance ->
 		const drag_diff = ppt.touchControl
 			? Math.abs(x - this.last_pressed_coord.x)
 			: Math.sqrt((Math.pow(this.last_pressed_coord.x - x, 2) + Math.pow(this.last_pressed_coord.y - y, 2)));
-		if (drag_diff > 7) {
+		if (drag_diff > (ppt.dragDropMinPx || 7)) { // Regorxxx <- Drag n' Drop minimum distance ->
 			if (ppt.touchControl) {
 				const ix = this.get_ix(x, y, true, false);
 				const item = this.tree[ix];

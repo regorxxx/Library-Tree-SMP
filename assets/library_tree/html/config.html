@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 19/05/26 -->
+﻿<!DOCTYPE html> <!-- 20/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -993,6 +993,10 @@
 						<div class="info4"><b><u>Usage:</u></b><br><br>Uses an additional query filter and sorting for current selection on top of the current view/filter.<br><br>&#x2022; Found at the Context menu or mouse action (at left)<br>&#x2022; Target playlist follows global settings above<br>&#x2022; Supports $nowplaying{}, $selected{}, ... for query and sort<br>&#x2022; Use '$rand()' as sorting to shuffle<br>&#x2022; Leave sorting empty to follow panel sorting<br>&#x2022; Selection is deduplicated to filter versions of same songs<br>&#x2022; Set duplicates removal to '[]' to skip processing; leaving it empty '' will use default settings instead<br><br><b><u>Sorting extended syntax:</u></b><br><br>&#x2022; See <a class="tooltip" id="ltReference3" href="syntax.html" target="_blank" oncontextmenu="copyToClipboardId('ltReference3')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br><br>&#x2022; <b>$harmonicsort{bShuffle}</b> - Sorting by incremental KEY<br><br>&#x2022; <b>$harmonicmix{bShuffle}</b> - Sorting by harmonic mixing rules<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>true</i>, <i>1</i>, any string or empty to shuffle<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>false</i> or <i>0</i> to skip shuffling<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$harmonicmix{true}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$harmonicmix{}</i><br><br>&#x2022; <b>$shufflebytags{tagName,sortBias,sortDir}</b> - Scatters tracks with same tag values semi-randomly<br>&emsp;&#x2219; <b>tagName</b> can be set to any tag -<i>ARTIST</i>- or array of tags -<i>["ARTIST","ALBUM ARTIST"]</i>-<br>&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i>. Or omitted (<i>random</i> used)<br>&emsp;&#x2219; <b>sortDir</b> can be set to <i>1</i>, <i>-1</i> or omitted (<i>1</i> used)<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"],random,1}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"]}</i>
 						</div>
 					</div>
+					<!-- Regorxxx -->
+					<!-- Regorxxx Drag n' Drop minimum distance -->
+					<div class="div_text4">Internal Drag n' Drop:</div>
+					<div id="dragDropMinPx"></div>
 					<div><br></div>
 					<!-- Regorxxx -->
 				</div>
@@ -1483,6 +1487,9 @@
 		if (!('parseInt' in Number)) {
 			Number.parseInt = parseInt; // NOSONAR
 		}
+		if (!('MAX_SMP_INT' in Number)) {
+			Number.MAX_SMP_INT = 4294967295;
+		}
 		// Expand alert popup with automatic type parsing
 		var formatArg = function (arg) {
 			var type = typeof arg;
@@ -1965,8 +1972,8 @@
 			input = {
 				// Regorxxx <- Top tracks | Throttle selection playlist update | Performance improvements
 				behaviour: {
-					name: ['plsRefreshLimit', 'autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl'],
-					type: ['int', 'int', 'text', 'text', 'text', 'text', 'text']
+					name: ['plsRefreshLimit', 'autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl', 'dragDropMinPx'],
+					type: ['int', 'int', 'text', 'text', 'text', 'text', 'text', 'int']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Drag n' drop to search box | Customizable quicksearch timer
@@ -3026,6 +3033,9 @@
 				i = 1; window.topTracksSorting.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="topTracks_container' + i + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="topTracks_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				i = 2; window.topTracksRemDupl.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="topTracks_container' + i + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="topTracks_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				// Regorxxx ->
+				// Regorxxx <- Drag n' Drop minimum distance
+				i = 0; window.dragDropMinPx.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="dragDrop_container' + i + '" class="inp_label1">Min. distance to start drag n\' drop (px)</label><input id="dragDrop_container' + i + '" name="behaviour_input" class="input75" /></div>');
+				// Regorxxx ->
 			}
 
 			// Regorxxx <- Drag n' drop to search box
@@ -3583,10 +3593,21 @@
 			}
 
 			inputs = document.querySelectorAll("[name$='_input']");
+			// Regorxxx <- Parse Infinity values
+			var val;
 			for (i = 0; i < inputs.length; i++) {
-				(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = input.all.type[i] == 'text' ? inputs[i].value : input.all.type[i] == 'int' ? Number.parseInt(inputs[i].value) : Number.parseFloat(inputs[i].value);
+				val = inputs[i].value;
+				if (input.all.type[i] === 'text') {
+					(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = val;
+				} else if (input.all.type[i] == 'int') {
+					val = val !== null && Number(val) < Number.MAX_SMP_INT ? Number.parseInt(inputs[i].value) : Infinity;
+					if (val === Infinity) { val = Number.MAX_SMP_INT; }
+					(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = val;
+				} else {
+					(ppt[input.all.name[i] + '_internal'] || cfg[input.all.name[i] + '_internal']).value = Number.parseFloat(val);
+				}
 			}
-
+			// Regorxxx ->
 			var boxes = document.querySelectorAll("[name$='_checkbox']");
 			for (i = 0; i < boxes.length; i++) {
 				(ppt[box.all[i] + '_internal'] || cfg[box.all[i] + '_internal']).value = boxes[i].checked;
@@ -3771,10 +3792,14 @@
 
 			var nm = page.toString() + '_input';
 			inputs = document.querySelectorAll(page == 'all' ? "[name$='_input']" : "[name=" + nm + "]");
+			var val;
 			for (i = 0; i < inputs.length; i++) {
-				// Regorxxx <- Expand alert popup with automatic type parsing
-				try { inputs[i].value = ppt[input[page].name[i] + '_internal'][value]; }
-				catch (e) { popup('Error on ' + nm + ' -> ' + inputs[i].id + ' -> ' + input[page].name[i] + '_internal (' + i + ')'); }
+				// Regorxxx <- Expand alert popup with automatic type parsing | Parse Infinity values
+				try {
+					val = ppt[input[page].name[i] + '_internal'][value];
+					if (val === null) { val = Number.MAX_SMP_INT; }
+					inputs[i].value = val;
+				} catch (e) { popup('Error on ' + nm + ' -> ' + inputs[i].id + ' -> ' + input[page].name[i] + '_internal (' + i + ')'); }
 				// Regorxxx ->
 			}
 
