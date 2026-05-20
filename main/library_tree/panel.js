@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/05/26
+//20/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2463,13 +2463,34 @@ class Panel {
 	}
 
 	isDummyTrack(handleListOrHandle) {
+		if (!this.dummyTrack) { return false; }
 		return handleListOrHandle
 			? handleListOrHandle instanceof FbMetadbHandleList
-				? handleListOrHandle.Count === 1
-					? handleListOrHandle[0].Compare(this.dummyTrack)
-					: false
-				: handleListOrHandle.Compare(this.dummyTrack)
+				? handleListOrHandle.Count === 1 && handleListOrHandle.isDummyTrack
+				: handleListOrHandle.Compare(this.dummyTrack) && handleListOrHandle.isDummyTrack
 			: false;
+	}
+
+	getDummyHandleList() {
+		if (!this.dummyTrack) { return null; }
+		const handleList = new FbMetadbHandleList(this.dummyTrack);
+		handleList.isDummyTrack = true;
+		return handleList;
+	}
+
+	setDummyTrack(handleList) {
+		return new Promise((resolve) => {
+			if (handleList.Count) { this.dummyTrack = handleList[0]; resolve(true); }
+			else if (fb.AddLocationsAsyncV2) {
+				fb.AddLocationsAsyncV2(['dummy.mp3']).then((track) => {
+					this.dummyTrack = track[0];
+					resolve(true);
+				});
+			} else { resolve(false); }
+		}).then((created) => {
+			if (created) { this.dummyTrack.isDummyTrack = true; }
+			return created;
+		});
 	}
 	// Regorxxx ->
 }

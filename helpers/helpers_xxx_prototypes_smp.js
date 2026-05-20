@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/05/26
+//20/05/26
 
 /* exported extendGR, checkCompatible */
 
@@ -594,19 +594,22 @@ window.Bugs.SetPlaylistLockedActions = ![
 
 window.Bugs.GetPlaybackQueueContents = ![
 	{ version: '1.7.26.1.11', target: 'smp' },
-	{ version: '3.7.6', target: 'jsplitter' }
+	{ version: '3.7.6', target: 'jsplitter' },
+	{ version: '4.0.5.1-alpha', target: 'jsplitter' }
 ].some((host) => isCompatible(host.version, host.target));
 
 window.Bugs.DoDragDrop = ![
-	{ version: '1.7.26.1.26', target: 'smp' },
-	{ version: '3.7.16', target: 'jsplitter' }
+	{ version: '1.7.26.5.2', target: 'smp' },
+	{ version: '3.8.3', target: 'jsplitter' },
+	{ version: '4.1.2', target: 'jsplitter' }
 ].some((host) => isCompatible(host.version, host.target));
 
 /* Helpers */
 
-function compareVersions(from, to) {
+function compareVersions(from, to, sameMajor = false) {
 	if (typeof from === 'string') { from = from.split('.'); }
 	if (typeof to === 'string') { to = to.split('.'); }
+	if (sameMajor && from[0] !== to[0]) { return false; }
 	const collator = typeof strNumCollator === 'undefined'
 		? new Intl.Collator(void (0), { sensitivity: 'base', numeric: true })
 		: strNumCollator; // eslint-disable-line no-undef
@@ -622,8 +625,10 @@ function compareVersions(from, to) {
 
 function isCompatible(requiredVersionStr = '1.6.1', target = 'smp') {
 	target = target.toLowerCase();
-	return target === 'smp' || target === 'jsplitter'
-		? compareVersions(utils.Version.split('.'), requiredVersionStr.split('.')) && (target === 'jsplitter' ? fb.ComponentPath.includes('foo_uie_jsplitter') : true)
+	const isJsHost = target === 'jsplitter' || target === 'smp';
+	const hostMatch = target === 'jsplitter' && fb.ComponentPath.includes('foo_uie_jsplitter') || target === 'smp' && fb.ComponentPath.includes('foo_spider_monkey_panel');
+	return isJsHost
+		? hostMatch && compareVersions(utils.Version.split('.'), requiredVersionStr.split('.'), target === 'jsplitter')
 		: compareVersions(fb.Version.split('.'), requiredVersionStr.split('.'));
 }
 

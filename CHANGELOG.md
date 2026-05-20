@@ -65,6 +65,8 @@
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 - Album Art: multiple minor layout fixes and adjustments.
+- Drag n' drop: workaround for incorrect handling of custom artwork on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2).
+- Drag n' drop: workaround for foobar crash if custom artwork was null on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2).
 
 ## [2.0.0] - 2026-01-30
 ### Added

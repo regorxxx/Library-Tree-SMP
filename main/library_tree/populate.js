@@ -1,5 +1,5 @@
 'use strict';
-//19/05/26
+//20/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1226,21 +1226,28 @@ class Populate {
 			}
 			this.last_pressed_coord.x = this.last_pressed_coord.x = void (0); // Regorxxx <- Code cleanup ->
 			if (!handleList) { handleList = this.sortIfNeeded(this.getHandleList('newItems')); } // Regorxxx <- Expand TF support ->
+			let bIsDummyTrack = false;
 			if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty && item.plsRoot) {
 				const parent = this.getPlaylistParent(item);
-				if (panel.dummyTrack && parent.every((p) => p.count === 0)) {
-					handleList = new FbMetadbHandleList(panel.dummyTrack);
+				const dummyHandleList = panel.getDummyHandleList();
+				if (dummyHandleList && parent.every((p) => p.count === 0)) {
+					handleList = dummyHandleList;
 					this.isDragDropEmpty = true;
+					bIsDummyTrack = true;
 				}
 			}
 			fb.DoDragDrop(0, handleList, handleList.Count ? dropEffect.copy | dropEffect.link : dropEffect.none,
 				{
-					show_text: !panel.isDummyTrack(handleList),
-					use_album_art: true,
+					show_text: !bIsDummyTrack,
+					use_album_art: !bIsDummyTrack,
 					use_theming: true,
-					custom_image: window.Bugs.DoDragDrop
-						? panel.isDummyTrack(handleList) ? img.no_cover_img : null
-						: img.no_cover_img
+					...(
+						window.Bugs.DoDragDrop
+							? bIsDummyTrack
+								? { custom_image: img.no_cover_img }
+								: null
+							: { custom_image: img.no_cover_img }
+					)
 				}
 			);
 			this.lbtnDn = false;
