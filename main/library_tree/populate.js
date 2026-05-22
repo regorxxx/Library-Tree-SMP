@@ -1,5 +1,5 @@
 'use strict';
-//20/05/26
+//22/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1242,9 +1242,9 @@ class Populate {
 					show_text: !bIsDummyTrack,
 					use_album_art: !bIsDummyTrack,
 					use_theming: true,
-					...(
+					...( // BUG: Foobar2000 crash when custom_image is null | custom_image not used as fallback for unavailable album art
 						window.Bugs.DoDragDrop
-							? bIsDummyTrack
+							? bIsDummyTrack && img.no_cover_img
 								? { custom_image: img.no_cover_img }
 								: null
 							: { custom_image: img.no_cover_img }
