@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/05/26
+//22/05/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '2.0.0-beta', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -23,6 +23,7 @@ const files = [
 	'helpers\\helpers_xxx_input.js',
 	'helpers\\helpers_xxx_language.js',
 	'helpers\\helpers_xxx_prototypes_smp.js',
+	/* global checkCompatible:readable */
 	'helpers\\helpers_xxx_tags.js',
 	'helpers\\callbacks_xxx.js',
 	'helpers\\helpers_xxx_prototypes_smp_post.js',
@@ -55,6 +56,7 @@ const files = [
 if (loadAsync) {
 	readFiles(files).then(() => {
 		globProfiler.Print('helpers'); // Regorxxx <- Init profiler ->
+		checkCompatible();
 		if (!window.ID) return; // fix pss issue
 		on_size();
 		if (window.IsVisible) { window.Repaint(); }
@@ -68,6 +70,7 @@ if (loadAsync) {
 } else {
 	files.forEach(v => include(v));
 	globProfiler.Print('helpers'); // Regorxxx <- Init profiler ->
+	checkCompatible();
 	// Update check
 	if (ppt.bAutoUpdateCheck) {
 		include('helpers\\helpers_xxx_web_update.js');
