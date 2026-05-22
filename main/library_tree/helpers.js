@@ -1,23 +1,11 @@
 ﻿'use strict';
-//20/05/26
+//22/05/26
 
 /* global fso:readable, WshShell:readable, folders:readable */
 
 /* global Language:readable */
 
 /* exported tooltip, $, ease, md5 */
-
-const requiredVersionStr = '1.5.2';
-
-function is_compatible(requiredVersionStr) {
-	const requiredVersion = requiredVersionStr.split('.');
-	const currentVersion = utils.Version.split('.');
-	if (currentVersion.length > 3) currentVersion.length = 3;
-	for (let i = 0; i < currentVersion.length; ++i)
-		if (currentVersion[i] != requiredVersion[i]) return currentVersion[i] > requiredVersion[i];
-	return true;
-}
-if (!is_compatible(requiredVersionStr)) fb.ShowPopupMessage(`Library Tree requires v${requiredVersionStr}. Current component version is v${utils.Version}.`);
 
 const tooltip = window.Tooltip;
 
@@ -278,15 +266,6 @@ class Helpers {
 				break;
 		}
 		return num;
-	}
-
-	wshPopup(prompt, caption) {
-		try {
-			const ns = WshShell.Popup(prompt, 0, caption, 1);
-			return ns == 1;
-		} catch (e) { // eslint-disable-line no-unused-vars
-			return true;
-		}
 	}
 
 	// Regorxxx <- Cleanup
