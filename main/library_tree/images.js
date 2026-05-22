@@ -1,5 +1,5 @@
 'use strict';
-//20/05/26
+//22/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -1034,7 +1034,7 @@ class Images {
 			case 2: y = this.im.y + 1.5; break; // Top box
 			case 3: y = coords.y + (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Top img
 			case 4: y = coords.box_y + this.box.h - textH; break; // Bottom frame
-			case 5: y = coords.y + this.im.w - textH; break; // Bottom box
+			case 5: y = this.im.y + this.im.w - textH; break; // Bottom box
 			case 6: y = coords.y + coords.h - textH - (style.overlayOffsetV ? coords.w * style.overlayOffsetV : 0); break; // Bottom img
 			case 7: y = coords.y + (coords.h - textH - 2) / 2; break; // Center
 		}
