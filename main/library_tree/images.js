@@ -727,7 +727,7 @@ class Images {
 				const cur_img = this.zooming ? null : this.getImg(item.key);
 				const grpCol = this.getGrpCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
 				const lotCol = this.getLotCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
-				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell.i, cell.bNowPlaying || cell.bSel, (cell.bHover || cell.bSel)); // Regorxxx <- Zoom hover effect ->
+				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
 					if (cell.i % 2 == 0) gr.FillSolidRect(0, box_y + 1, panel.tree.stripe.w, this.row.h, ui.col.bg1);
@@ -1063,11 +1063,11 @@ class Images {
 		gr.FillSolidRect(coords.x, coords.y, coords.w, coords.h, this.getSelBgCol(item, cell.bNowp));
 	}
 
-	drawSelBg(gr, art, style, cur_img, box_x, box_y, i, nowpOrSel, bHover) {
+	drawSelBg(gr, art, style, cur_img, box_x, box_y, cell) {
 		if (this.labels.hide && (!style.fillBg || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
-			case nowpOrSel && !(ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i)): // Regorxxx <- Rectangle selection on art view ->
+			case (cell.bNowPlaying || cell.bSel) && !(pop.selRect.down && pop.selRect.over.has(cell.i)): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.imgBgSel;
 				switch (this.labels.overlay || this.labels.hide) {
 					case true:
@@ -1084,7 +1084,7 @@ class Images {
 						break;
 				}
 				break;
-			case pop.highlight.row == 2 && i == pop.m.i || ppt.selRectArt && panel.imgView && pop.selRect.down && pop.selRect.over.has(i): // Regorxxx <- Rectangle selection on art view ->
+			case pop.highlight.row == 2 && cell.i == pop.m.i || pop.selRect.down && pop.selRect.over.has(cell.i): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.bg_h;
 				if ((this.labels.overlay || this.labels.hide) && style.fillBg) {
 					x = box_x + Math.round((this.box.w - (cur_img ? cur_img.Width : this.im.w)) / 2);
@@ -1101,7 +1101,7 @@ class Images {
 			default: return;
 		}
 		// Regorxxx <- Zoom hover effect
-		if (art.hoverZoom && bHover) {
+		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
 		}
