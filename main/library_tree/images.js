@@ -770,14 +770,14 @@ class Images {
 				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x, box_y }); // Regorxxx <- Item overlay horizontal alignment ->
 				if (cell.bHover) {
 					if (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg))) {
-						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
-						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
+						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, cell); } // Regorxxx <- Zoom hover effect ->
+						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', cell); } // Regorxxx <- Zoom hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (cell.bSel) {
-					if (this.labels.overlay && !style.fillBg) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
-					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, (cell.bHover || cell.bSel)); } // Regorxxx <- Zoom hover effect ->
+					if (this.labels.overlay && !style.fillBg) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', cell); } // Regorxxx <- Zoom hover effect ->
+					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, cell); } // Regorxxx <- Zoom hover effect ->
 					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
@@ -862,7 +862,7 @@ class Images {
 		return coords;
 	};
 
-	drawFrame(gr, art, box_x, box_y, col, weight, bHover) {
+	drawFrame(gr, art, box_x, box_y, col, weight, cell) {
 		let x, y, w, h, l_w;
 		switch (weight) {
 			case 'stnd':
@@ -881,7 +881,7 @@ class Images {
 				break;
 		}
 		// Regorxxx <- Zoom hover effect
-		if (art.hoverZoom && bHover) {
+		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
 		}
@@ -900,9 +900,9 @@ class Images {
 		gr.DrawRect(x, y, w, h, l_w, col);
 	}
 
-	drawImageFrame(gr, art, style, item, coords, col, bHover) {
+	drawImageFrame(gr, art, style, item, coords, col, cell) {
 		// Regorxxx <- Zoom hover effect
-		if (art.hoverZoom && bHover) {
+		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
 		}
