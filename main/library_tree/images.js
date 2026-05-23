@@ -1,5 +1,5 @@
 'use strict';
-//22/05/26
+//24/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -884,6 +884,16 @@ class Images {
 		if (art.hoverZoom && bHover) {
 			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
+		}
+		// Regorxxx ->
+		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
+		if (this.style.vertical) {
+			const offset = Math.max(panel.search.h, y) - y;
+			y += offset;
+			h -= offset;
+		} else {
+			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y);
+			h = Math.min(window.Height - ppt.marginTopBottom - y, sbar.y - y - ppt.marginTopBottom, h);
 		}
 		// Regorxxx ->
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
