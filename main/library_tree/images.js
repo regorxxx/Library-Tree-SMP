@@ -1469,7 +1469,7 @@ class Images {
 					true
 				);
 				if (typeof BrushType === 'undefined' || art.reflectionStyle === 2) {
-					gr.DrawImage(clone, coords.x, coords.y + image.Height - offsetY / 2, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
+					gr.DrawImage(clone, coords.x, coords.y + image.Height, coords.w, Math.ceil(offsetY * scale), 0, 0, image.Width, Math.ceil(offsetY * scale), 0, alpha);
 				} else {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					const brush = gdi.Brush(BrushType.Bitmap, clone.ApplyAlpha(alpha), BrushWrapMode.Clamp);
