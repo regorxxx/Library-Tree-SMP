@@ -33,7 +33,7 @@
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).
 - Drag n' Drop: improved tooltip text when selecting top tracks.
-- Drag n' Drop: reworked handling of ALBUM ARTIST tag, so it's remapped to ALBUM ARTIST and ARTIST in a better way withing generated queries, to ensure the track exist if possible.
+- Drag n' Drop: for drag n' drop into search box, reworked handling of ALBUM ARTIST tag, so it's remapped to ALBUM ARTIST and ARTIST in a better way withing generated queries, to ensure the track exist if possible.
 - Quick-search: foobar2000 shortcuts are now skipped while quick-searching if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Quick-search: quick-search is skipped if first char is space.
 - Search: foobar2000 shortcuts are now skipped while search box is focused if JS-host supports it (for ex. to bypass play/pause when pressing space bar). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
@@ -71,8 +71,8 @@
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 - Album Art: multiple minor layout fixes and adjustments.
-- Drag n' drop: workaround for incorrect handling of custom artwork on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2).
-- Drag n' drop: workaround for foobar crash if custom artwork was null on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2).
+- Drag n' drop: workaround for incorrect handling of custom artwork on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
+- Drag n' drop: workaround for foobar crash if custom artwork was null on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
 
 ## [2.0.0] - 2026-01-30
 ### Added
