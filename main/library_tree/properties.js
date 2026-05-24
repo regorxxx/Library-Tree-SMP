@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/05/26
+//24/05/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -237,8 +237,8 @@ let properties = [
 	['Image Type', 0, 'artId'],
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
 	// Regorxxx <- Custom TF art
-	['Image Label [TF-1] view', '.\\profile\\images\\$lower($nodename).*', 'albumArtTf1View'],
-	['Image Label [TF-2] view', '.\\profile\\yttm\\art_img\\$lower($cut($nodename)\\$cut($nodename,40)\\*', 'albumArtTf2View'],
+	['Image Label [TF-1] view', '.\\profile\\images\\$lower($nodenameswap).*', 'albumArtTf1View'],
+	['Image Label [TF-2] view', '.\\profile\\yttm\\art_img\\$lower($cut($nodenameswap)\\$cut($nodenameswap,40)\\*', 'albumArtTf2View'],
 	['Image Label [TF-1] folders', '$replace($directory_path(%PATH%),$directory(%PATH%,1),)*', 'albumArtTf1Folder'],
 	['Image Label [TF-2] folders', '$replace($replace($directory_path(%PATH%),$directory(%PATH%,1),,$directory(%PATH%,2),,),\\\\,\\)*', 'albumArtTf2Folder'],
 	['Image Label [TF-1] name', 'Node (by Tf)|Folder (by Tf)', 'albumArtTf1Name'],

@@ -1,9 +1,10 @@
 ﻿'use strict';
-//22/05/26
+//24/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
+/* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
 /* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
@@ -212,8 +213,10 @@ class Panel {
 			const sourceName = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetPlaylistName(idx)).join('\', \'');
 			const sourceId = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetGUID(idx)).join('\', \'');
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
+			const prefixRe = new RegExp('(?:, )(' + ppt.prefix.split('|').map(escapeRegExpV2).join('|') + ')$', 'gi');
 			s = s.replace(/\$prefix/gi, () => ppt.prefix.split('|').join(','))
-				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-'))
+				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(prefixRe).reverse().join(' ')))
+				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-').split('^@^')[0])
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
 				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
 				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
