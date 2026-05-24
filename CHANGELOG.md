@@ -67,6 +67,7 @@
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
 - Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: fixed bug, on original script, related to track count overlay not being shown for album art if statistics item counts was not enabled (despite such setting being only used on library tree mode). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081951.html#msg1081951).
+- Album Art: fixed bug, on original script, related to stats line on album art being shown right aligned while using crop art style if 2nd line was wider than available space (thus requiring tooltip to show the full info). Now they are only right aligned if the stats line itself is wider than available space, being independent of previous lines (like the rest work).
 - Album Art: clear all images cache menu entry being disabled on some unwanted situations.
 - Album Art: %FB2K_PROFILE_PATH% and %PROFILE% variables not being parsed in some cases for custom TF art.
 - Album Art: multiple minor layout fixes and adjustments.

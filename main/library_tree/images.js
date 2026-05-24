@@ -828,7 +828,13 @@ class Images {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style ->
+							if (statistics) {
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+									? panel.cc
+									: panel.lc;
+								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, flags);
+							} // Regorxxx ->
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
@@ -836,7 +842,14 @@ class Images {
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							if (statistics) { gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc); }
+							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style ->
+							if (statistics) {
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+									? panel.cc
+									: panel.lc;
+								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, flags);
+							}
+							// Regorxxx ->
 						}
 					}
 				}
