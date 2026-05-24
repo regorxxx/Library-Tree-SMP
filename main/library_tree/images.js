@@ -1104,6 +1104,9 @@ class Images {
 		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
+			if (cell.bHover && (!ppt.frameImage || style.border === 'crop') && (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg)))) {
+				y -= 1;
+			}
 		}
 		// Regorxxx ->
 		if (art.reflection && art.reflectionStyle === 0) { x -= this.bor.pad / 4; }
