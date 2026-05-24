@@ -888,11 +888,11 @@ class Images {
 		// Regorxxx ->
 		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
 		if (this.style.vertical) {
-			const offset = Math.max(panel.search.h, y) - y;
+			const offset = Math.max(panel.search.h + l_w / 2, y) - y;
 			y += offset;
 			h -= offset;
 		} else {
-			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0), y);
+			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0) + l_w / 2, y);
 			h = Math.min(window.Height - ppt.marginTopBottom - y, sbar.y - y - ppt.marginTopBottom, h);
 		}
 		// Regorxxx ->
@@ -901,13 +901,31 @@ class Images {
 	}
 
 	drawImageFrame(gr, art, style, item, coords, col, cell) {
+		const l_w = 3;
 		// Regorxxx <- Zoom hover effect
 		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
 		}
 		// Regorxxx ->
-		const l_w = 3;
+		// Regorxxx <- Clamp thumbnail padding to not overlay other elements
+		if (this.style.vertical) {
+			const offset = Math.max(panel.search.h + l_w / 2, coords.y) - coords.y;
+			if (offset) {
+				coords = {
+					...coords,
+					y: coords.y + offset,
+					h: coords.h - offset
+				};
+			}
+		} else {
+			coords = {
+				...coords,
+				y: Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0) + l_w / 2, coords.y),
+				h: Math.min(window.Height - ppt.marginTopBottom - coords.y, sbar.y - coords.y - ppt.marginTopBottom, coords.h)
+			};
+		}
+		// Regorxxx ->
 		if (item.root && !ppt.frameImageRoot) {
 			if (this.stub.rootFrame) {
 				gr.DrawImage(this.stub.rootFrame, coords.x, coords.y, coords.w, coords.h, 0, 0, this.stub.rootFrame.Width, this.stub.rootFrame.Height);
@@ -1104,7 +1122,7 @@ class Images {
 		if (art.hoverZoom && (cell.bHover || cell.bSel)) {
 			const zoomX = this.getZoomEffectIntensity();
 			x -= zoomX / 2; y -= zoomX / 2; w += zoomX; h += zoomX;
-			if (cell.bHover && (!ppt.frameImage || style.border === 'crop') && (pop.highlight.row == 3 || pop.highlight.row == 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg)))) {
+			if (cell.bHover && (!ppt.frameImage || style.border === 'crop') && (pop.highlight.row === 3 || pop.highlight.row === 2 && (((this.labels.overlay || this.labels.hide) && !style.fillBg)))) {
 				y -= 1;
 			}
 		}
