@@ -1,5 +1,5 @@
 'use strict';
-//14/05/26
+//24/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -418,10 +418,10 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch view': {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
-			if (typeof info.viewName !== 'undefined') { idx = panel.grp.findIndex(v => v.name.trim().toLowerCase() === info.viewName.toLowerCase()); }
+			if (typeof info.viewName !== 'undefined') { idx = panel.grp.findIndex(v => v.name.toLowerCase() === info.viewName.trim().toLowerCase()); }
 			else if (typeof info.viewIdx !== 'undefined' && info.viewIdx >= -1 && info.viewIdx < panel.grp.length) {
 				if (info.viewIdx === -1) { idx = panel.grp.length - 1; }
-				else if (panel.grp[info.viewIdx].name.trim() !== 'separator') { idx = info.viewIdx; }
+				else if (panel.grp[info.viewIdx].name !== 'separator') { idx = info.viewIdx; }
 			}
 			if (idx !== -1) { men.setView(idx, { bSkipPresets: !!info.skipPresets || !ppt.presetRulesOnNotifyUse }); } // Regorxxx <- Preset rules ->
 			break;
@@ -429,10 +429,10 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch filter': {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
-			if (typeof info.filterName !== 'undefined') { idx = panel.dialogFiltGrps.findIndex(v => v.name.trim().toLowerCase() === info.filterName.toLowerCase()); }
+			if (typeof info.filterName !== 'undefined') { idx = panel.dialogFiltGrps.findIndex(v => v.name.toLowerCase() === info.filterName.trim().toLowerCase()); }
 			else if (typeof info.filterIdx !== 'undefined' && info.filterIdx >= -1 && info.filterIdx < panel.dialogFiltGrps.length) {
 				if (info.filterIdx === -1) { idx = 0; }
-				else if (panel.dialogFiltGrps[info.filterIdx].name.trim() !== 'separator') { idx = info.filterIdx; }
+				else if (panel.dialogFiltGrps[info.filterIdx].name !== 'separator') { idx = info.filterIdx; }
 			}
 			const bSkipPresets = !!info.skipPresets || !ppt.presetRulesOnNotifyUse;
 			if (bSkipPresets) { ppt.toggle('presetRulesOnFilterUse'); }

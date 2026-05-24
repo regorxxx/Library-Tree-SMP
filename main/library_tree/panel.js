@@ -429,8 +429,8 @@ class Panel {
 				this.sortBy = this.sortBy.replace(/\$swapbranchprefix{/, '$$swapprefix(').replace(/~%/, '%');
 				this.view = this.view.replace(/\$swapbranchprefix{/, '$$swapprefix(');
 			}
-			this.sortBy = this.sortBy.trimStart().replace(new RegExp(this.splitter, 'g'), '  ');
-			this.view = this.view.trimStart().replace(new RegExp('\\s*' + this.splitter + '\\s*', 'g'), this.softSplitter);
+			this.sortBy = this.sortBy.replace(new RegExp(this.splitter, 'g'), '  ');
+			this.view = this.view.replace(new RegExp('\\s*' + this.splitter + '\\s*', 'g'), this.softSplitter);
 			if (this.multiProcess) {
 				this.sortBy = this.sortBy.replace(/[<>]/g, '');
 				const baseTag = [];
@@ -518,7 +518,7 @@ class Panel {
 				grps = v.split('//');
 				this.grp[i] = {
 					name: grps[0].trim(),
-					type: grps[1]
+					type: grps[1].trim()
 				};
 			}
 		});
@@ -712,7 +712,7 @@ class Panel {
 	}
 
 	getViewIndex(arr, name, type) {
-		const findViewIndex = arr.findIndex(v => v.name.trim() === name && v.type.trimStart() === type);
+		const findViewIndex = arr.findIndex(v => v.name === name.trim() && v.type === type.trim());
 		if (findViewIndex != -1) { ppt.viewBy = findViewIndex; }
 		return findViewIndex;
 	}
@@ -749,7 +749,7 @@ class Panel {
 			grps = v[1].split('//');
 			return {
 				name: grps[0].trim(),
-				type: grps[1].trimStart(),
+				type: grps[1].trim(),
 				level1: v[2],
 				level2: v[3],
 				lines: v[4],
@@ -819,14 +819,14 @@ class Panel {
 				grps = v.split('//');
 				return {
 					name: grps[0].trim(),
-					type: grps[1].trimStart(),
+					type: grps[1].trim(),
 					menu: true
 				};
 			} else if (v.includes('/hide/')) {
 				grps = v.split('/hide/');
 				return {
 					name: grps[0].trim(),
-					type: grps[1].trimStart(),
+					type: grps[1].trim(),
 					menu: false
 				};
 			}
@@ -949,7 +949,7 @@ class Panel {
 					ppt.set(v.type == 'Button Name' ? 'Filter 01: Name // Query' : `Filter ${$.padNumber(i + 2, 2)}: Name // Query`, nm);
 				});
 				const view_name = this.grp[ppt.viewBy].name;
-				const view_type = this.grp[ppt.viewBy].type.trimStart();
+				const view_type = this.grp[ppt.viewBy].type;
 				const filter_name = this.filter.mode[ppt.filterBy].name;
 				const filter_type = this.filter.mode[ppt.filterBy].type;
 				this.getViews();

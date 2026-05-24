@@ -1911,7 +1911,7 @@ class Images {
 		const fields = [];
 		const mod = pop.tree.length < 1000 ? 1 : pop.tree.length < 3500 ? Math.round(pop.tree.length / 1000) : 3;
 		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
-		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`];
+		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type}${panel.lines}`];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 
 		pop.tree.forEach((v, i) => {

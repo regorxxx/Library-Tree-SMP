@@ -438,7 +438,7 @@ class Library {
 	checkLines(arr, arrExpanded) {
 		if (ppt.albumArtGrpLevel) { return; } // user set
 		if (panel.isBranchedPlaylistSource()) { panel.lines = 1; return; }
-		const view = panel.grp[ppt.viewBy].type.trim();
+		const view = panel.grp[ppt.viewBy].type;
 		const defaultView = panel.folderView
 			? panel.defaultViews.length - 1
 			: panel.defaultViews.includes(view);

@@ -1,5 +1,5 @@
 'use strict';
-//19/05/26
+//24/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1626,7 +1626,7 @@ class MenuItems {
 				ppt.albumArtGrpLevel = i;
 				break;
 			case 3: {
-				const key = `${panel.grp[ppt.viewBy].type.trim()}${panel.lines}`;
+				const key = `${panel.grp[ppt.viewBy].type}${panel.lines}`;
 				const ok_callback = (status, input) => {
 					if (status != 'cancel') {
 						const albumArtGrpNames = $.jsonParse(ppt.albumArtGrpNames, {});
