@@ -65,6 +65,10 @@ class Panel {
 			: null;
 		// Regorxxx ->
 		this.dummyTrack = null; // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
+		// Regorxxx <- Code cleanup
+		this.prefix = ppt.prefix.split('|');
+		this.prefixRe = new RegExp('(?:, )(' + this.prefix.map(escapeRegExpV2).join('|') + ')$', 'i');
+		// Regorxxx ->
 
 		this.filter = {
 			menu: [],
@@ -213,9 +217,8 @@ class Panel {
 			const sourceName = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetPlaylistName(idx)).join('\', \'');
 			const sourceId = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetGUID(idx)).join('\', \'');
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
-			const prefixRe = new RegExp('(?:, )(' + ppt.prefix.split('|').map(escapeRegExpV2).join('|') + ')$', 'gi');
-			s = s.replace(/\$prefix/gi, () => ppt.prefix.split('|').join(','))
-				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(prefixRe).reverse().join(' ')))
+			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
+				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))
 				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-').split('^@^')[0])
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
 				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
@@ -397,7 +400,6 @@ class Panel {
 				for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
 				return indices.reverse();
 			};
-			const prefix = ppt.prefix.split('|');
 			this.statistics = /play(_|)count|auto(_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
 			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
@@ -409,7 +411,7 @@ class Panel {
 				ix1 = this.view.indexOf('$stripbranchprefix{');
 				ix2 = findClosingBrace(this.view, ix1 + 18);
 				const mvIndices = indexOfAll(this.view, '%<');
-				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + prefix + ')');
+				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
 				mvIndices.forEach(v => {
 					if (v > ix1 && v < ix2) this.view = this.view.slice(0, v) + '~~' + this.view.slice(v);
 				});
@@ -420,7 +422,7 @@ class Panel {
 				ix1 = this.view.indexOf('$swapbranchprefix{');
 				ix2 = findClosingBrace(this.view, ix1 + 17);
 				const mvIndices = indexOfAll(this.view, '%<');
-				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + prefix + ')');
+				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
 				mvIndices.forEach(v => {
 					if (v > ix1 && v < ix2) this.view = this.view.slice(0, v) + '~' + this.view.slice(v);
 				});
@@ -1621,7 +1623,7 @@ class Panel {
 			delete v.statistics;
 			delete v._statistics;
 		});
-		lib.prefix = ppt.prefix.split('|'); // Regorxxx <- Fix values on reset ->
+		this.prefix = ppt.prefix.split('|'); // Regorxxx <- Fix values on reset ->
 		// Regorxxx <- Sorting transliteration
 		this.sortingTransLangs = ppt.sortingTransLangs.length && ppt.sortingTransLangs.toLowerCase() !== 'el|ru|jp|ch'
 			? ppt.sortingTransLangs.split('|').filter(Boolean)

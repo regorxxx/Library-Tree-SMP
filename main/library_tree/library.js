@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/05/26
+//24/05/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -34,7 +34,6 @@ class Library {
 		this.noListUpd = false;
 		this.none = '';
 		this.node = [];
-		this.prefix = ppt.prefix.split('|');
 		this.root = [];
 		this.scr = [];
 		this.searchCache = {};
@@ -1009,14 +1008,14 @@ class Library {
 		if (!n.includes('~#!#')) return n;
 		let ln = 0;
 		const noPrefix = v => !n.includes(v + ' ');
-		if (this.prefix.every(noPrefix)) return n.replace(/~~#!#/g, '#!#').replace(/~#!#/g, '#!#');
+		if (panel.prefix.every(noPrefix)) return n.replace(/~~#!#/g, '#!#').replace(/~#!#/g, '#!#'); // Regorxxx <- Code cleanup ->
 		let pr1 = n.split('~~#!#');
 		let ret1 = '';
 		for (let j = 1; j < pr1.length; j++) {
 			const pr2 = pr1[j].split('#!#');
 			const pr = pr2[0].split('@@');
 			pr.forEach((v, i) => {
-				this.prefix.forEach(w => {
+				panel.prefix.forEach(w => {
 					ln = w.length + 1;
 					if (v.slice(0, ln) == w + ' ') { pr[i] = v.slice(ln); }
 				});
@@ -1031,7 +1030,7 @@ class Library {
 			const pr2 = pr3[j].split('#!#');
 			const pr = pr2[0].split('@@');
 			pr.forEach((v, i) => {
-				this.prefix.forEach(w => {
+				panel.prefix.forEach(w => { // Regorxxx <- Code cleanup ->
 					ln = w.length + 1;
 					if (v.slice(0, ln) == w + ' ') { pr[i] = v.slice(ln) + ', ' + w; }
 				});
