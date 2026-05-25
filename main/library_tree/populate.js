@@ -3626,12 +3626,12 @@ class Populate {
 			: lib.playlistSourceRoot.filter((root) => root.node === parent).map((p) => p.idx);
 	}
 
-	getNodePosInSource(node, sourceIdx) {
+	getNodePosInSource(node, sourceIdx, idx = 0) {
 		if (sourceIdx === -1) { return -1; }
 		if (this.isPlaylistParent(node)) { return -1; }
 		if (panel.isPlaylistSource() && ppt.plsSorting) {
 			const sel = this.addItems([], node, true);
-			const h = this.getHandleList(void (0), sel)[0];
+			const h = this.getHandleList(void (0), sel).Convert().at(idx);
 			const list = plman.GetPlaylistItems(sourceIdx).Convert();
 			let i = 0;
 			if (panel.multiProcess) {
@@ -3644,6 +3644,14 @@ class Populate {
 				return this.tree.indexOf(node) - parent.idx;
 			}
 		} else { return -1; }
+	}
+
+	getNodeFirstPosInSource(node, sourceIdx) {
+		return this.getNodePosInSource(node, sourceIdx);
+	}
+
+	getNodeLastPosInSource(node, sourceIdx) {
+		return this.getNodePosInSource(node, sourceIdx, -1);
 	}
 
 	setFocusOnPlaylistIdx(idx) {

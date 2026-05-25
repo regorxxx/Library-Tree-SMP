@@ -905,9 +905,13 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				const isAllPls = !bIsSinglePlaylist && selNodes.every((node) => pop.isPlaylistParent(node));
 				const selParents = selNodes.flatMap((node) => pop.getPlaylistParentIdx(node));
 				const isSamePls = new Set(selParents).isEqual(new Set(plsIdxArr));
-				const pos = bIsSinglePlaylist && pop.row.i === -1
-					? -1 // ALlow sending to end
-					: pop.getNodePosInSource(pop.tree.at(pop.row.i), plsIdxArr[0]);
+				const pos = bIsSinglePlaylist
+					? pop.row.i === -1
+						? -1 // ALlow sending to end
+						: pop.row.i === 0 && ppt.rootNode
+							? 0
+							: pop.getNodeLastPosInSource(pop.tree.at(pop.row.i), plsIdxArr[0])
+					: pop.getNodeLastPosInSource(pop.tree.at(pop.row.i), plsIdxArr[0]);
 				const isTargetPls = !bIsSinglePlaylist && pop.isPlaylistParent(pop.tree[pop.row.i]);
 				if (isAllPls && isTargetPls && !dropMask.has(mask, 'ctrl') && ppt.plsSorting) {
 					const toIdx = plsIdxArr[0];
