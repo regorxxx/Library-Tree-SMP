@@ -2440,8 +2440,11 @@ class Panel {
 	addToPlaylist(selItems, plsIdxArr, pos, bScroll) {
 		if (isArrayEqual(plsIdxArr, [-1]) || !selItems.Count) { return false; }
 		plsIdxArr.forEach((plsIdx) => {
+			const posIdx = Number.isFinite(pos) && pos !== -1 ? pos : plman.PlaylistItemCount(plsIdx);
+			plman.UndoBackup(plsIdx);
 			plman.ClearPlaylistSelection(plsIdx);
-			plman.InsertPlaylistItems(plsIdx, Number.isFinite(pos) && pos !== -1 ? pos : plman.PlaylistItemCount(plsIdx), selItems, true);
+			plman.InsertPlaylistItems(plsIdx, posIdx, selItems, true);
+			plman.SetPlaylistSelection(plsIdx, $.range(posIdx, selItems.Count -1, 1), true);
 		});
 		if (bScroll) {
 			plman.ActivePlaylist = plsIdxArr[0];
@@ -2455,6 +2458,7 @@ class Panel {
 	moveToPlaylist(selItems, plsIdxArr, pos, bScroll) {
 		if (isArrayEqual(plsIdxArr, [-1]) || !selItems.Count) { return false; }
 		plsIdxArr.forEach((plsIdx) => {
+			plman.UndoBackup(plsIdx);
 			plman.ClearPlaylistSelection(plsIdx);
 			plman.InsertPlaylistItems(plsIdx, plman.PlaylistItemCount(plsIdx), selItems, true);
 		});

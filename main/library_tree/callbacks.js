@@ -1,5 +1,5 @@
 'use strict';
-//24/05/26
+//25/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -906,7 +906,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				const isSamePls = new Set(selParents).isEqual(new Set(plsIdxArr));
 				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
 				const isTargetPls = pop.isPlaylistParent(pop.tree[pop.row.i]);
-				if (isAllPls && isTargetPls && !dropMask.has(mask, 'ctrl')) {
+				if (isAllPls && isTargetPls && !dropMask.has(mask, 'ctrl') && ppt.plsSorting) {
 					const toIdx = plsIdxArr[0];
 					if (selParents.length !== 1 || toIdx !== selParents[0]) {
 						selParents.filter((idx) => idx > toIdx).forEach((idx) => plman.MovePlaylist(idx, toIdx));
@@ -929,7 +929,10 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					}
 				}
 			} else {
-				if (!dropMask.has(mask, 'ctrl') && fb.GetSelectionType() === 1) { plman.RemovePlaylistSelection(plman.ActivePlaylist, false); }
+				if (!dropMask.has(mask, 'ctrl') && fb.GetSelectionType() === 1) {
+					plman.UndoBackup(plman.ActivePlaylist);
+					plman.RemovePlaylistSelection(plman.ActivePlaylist, false);
+				}
 				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
 				panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 			}
@@ -937,6 +940,7 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 		}
 	}
 	pop.isDragDropEmpty = false;
+	pop.isDragDropTopTracks = false;
 });
 // Regorxxx ->
 
