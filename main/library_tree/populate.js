@@ -1,5 +1,5 @@
 'use strict';
-//22/05/26
+//25/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3063,7 +3063,7 @@ class Populate {
 					}
 				});
 			} else {
-				this.range(item.item, items);
+				this.sel_items.forEach((idx) => items.push(idx));
 			}
 			firstPls = plsIdxArr[0];
 			this.selectAndFocus({ selection: { idx: items, focus: items[0] }, plsIdx: firstPls });
