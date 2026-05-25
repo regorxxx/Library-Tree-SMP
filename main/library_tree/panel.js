@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/05/26
+//25/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1801,7 +1801,7 @@ class Panel {
 								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
 							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
 							const isPlsParent = pop.isPlaylistParent(node);
-							if (bInternal && !dropMask.has(mask, 'ctrl') && isAllPls && isPlsParent) {
+							if (bInternal && !dropMask.has(mask, 'ctrl') && isAllPls && isPlsParent && ppt.plsSorting) {
 								text = 'Move playlists to ' + (pop.getPlaylistParentIdx(node)[0] + 1) + ' º pos';
 							} else if (!pop.isDragDropEmpty) {
 								text = (
@@ -1813,7 +1813,7 @@ class Panel {
 										pop.isDragDropTopTracks
 											? 'Top '
 											: ''
-									) + 'tracks to playlist ' + name +
+									) + 'tracks to ' + name.cut(21) +
 									(
 										isPlsParent || !ppt.plsSorting
 											? ' (at end)'
