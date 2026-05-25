@@ -417,7 +417,6 @@ class Populate {
 						});
 						let i = multi_rem.length;
 						while (i--) { br.splice(multi_rem[i], 1); }
-						this.sort(multi_obj);
 						multi_obj.forEach((v) => {
 							n = v.nm;
 							nU = n.toUpperCase();
@@ -443,8 +442,10 @@ class Populate {
 								multi_pos.delete(v);
 							}
 						});
-						multi_pos.forEach((idx, v) => {
-							br.splice(idx + 1, 0, {
+						const count = { total: new Set(multi_pos.values()).size };
+						[...multi_pos.entries()].sort((a, b) => b[1] - a[1]).forEach(([v, idx]) => {
+							if (!count[idx]) { count.total--; count[idx] = 0; }
+							br.splice(idx + count[idx] - count.total, 0, {
 								nm: v.nm,
 								sel: false,
 								track: v.track,
@@ -452,6 +453,8 @@ class Populate {
 								item: this.copy(v.item),
 								srt: v.srt
 							});
+							count[idx]++;
+
 						});
 					} else {
 						br.forEach((v, i) => {
