@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/05/26
+//25/05/26
 
 /* exported compareObjects, compareKeys, isJSON, roughSizeOfObject, deepAssign, BiMap, isFunction, $args, isPromise, matchCase, capitalizePartial, capitalizeAll, _p, _bt, _qCond, _ascii, _asciify, isArrayStrings, isArrayNumbers, isArrayEqual, zeroOrVal, emptyOrVal, isInt, isFloat, cyclicOffset, range, round, isUUID, isBoolean, regExBool, cartesian, isArray, _ps, isGetter, isSetter, isReal, isIntInf, isFloatInf */
 
@@ -822,6 +822,20 @@ if (!Array.prototype.findLast) {
 			i -= 1;
 		}
 		return void (0);
+	};
+}
+
+if (!Array.prototype.findLastIndex) {
+	Array.prototype.findLastIndex = function (callbackFn, thisArg) { // NOSONAR
+		if (typeof callbackFn !== 'function') { throw new TypeError('predicate must be a function'); }
+		let i = this.length - 1;
+		let val;
+		while (i >= 0) {
+			val = this[i];
+			if (callbackFn.apply(thisArg || void (0), [val, i, this])) { return i; }
+			i -= 1;
+		}
+		return -1;
 	};
 }
 
