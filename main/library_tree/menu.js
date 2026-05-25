@@ -1,5 +1,5 @@
 'use strict';
-//24/05/26
+//25/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -488,7 +488,11 @@ class MenuItems {
 						menuName: subMenuName,
 						str: 'Move up',
 						func: () => {
-							parent.forEach((p) => plman.MovePlaylist(p.idx, Math.max(p.idx - 1, 0)));
+							let prev;
+							parent.forEach((p) => {
+								prev = (lib.playlistSourceRoot.filter((t) => t.node).findLast((t) => t.idx < p.idx) || { idx: p.idx - 1 }).idx;
+								plman.MovePlaylist(p.idx, Math.max(prev, 0));
+							});
 							pop.sel_items = []; // Force recreating selection
 						}
 					});
@@ -496,7 +500,11 @@ class MenuItems {
 						menuName: subMenuName,
 						str: 'Move down',
 						func: () => {
-							parent.reverse().forEach((p) => plman.MovePlaylist(p.idx, Math.min(p.idx + 1, plman.PlaylistCount - 1)));
+							let next;
+							parent.reverse().forEach((p) => {
+								next = (lib.playlistSourceRoot.filter((t) => t.node).find((t) => t.idx > p.idx) || { idx: p.idx + 1 }).idx;
+								plman.MovePlaylist(p.idx, Math.min(next, plman.PlaylistCount - 1));
+							});
 							pop.sel_items = []; // Force recreating selection
 						}
 					});
