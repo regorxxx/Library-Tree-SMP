@@ -1787,11 +1787,21 @@ class Panel {
 			} else {
 				if (this.isBranchedPlaylistSource() && pop.row.i !== -1 || this.isActivePlaylistSource(true) || this.isPlayingPlaylistSource(true)) {
 					if (ppt.plsSource < 2) {
+						const idx = pop.row.i - (ppt.rootNode ? 1 : 0);
 						text = (
 							dropMask.has(mask, 'ctrl')
-								? 'Add tracks to '
-								: 'Move tracks to '
-						) + (ppt.plsSource === 0 ? 'Active playlist' : 'Playing playlist');
+								? 'Add tracks'
+								: 'Move tracks'
+						) +
+							(bInternal
+								? ''
+								: (ppt.plsSource === 0 ? ' to Active playlist' : ' to Playing playlist')
+							) +
+							(
+								ppt.plsSorting && pop.row.i >= 0
+									? (idx <= 0 ? ' (at front)' : ' (at pos)')
+									: ' (at end)'
+							);
 					} else {
 						const node = pop.tree[pop.row.i];
 						if (node) {
@@ -2444,7 +2454,7 @@ class Panel {
 			plman.UndoBackup(plsIdx);
 			plman.ClearPlaylistSelection(plsIdx);
 			plman.InsertPlaylistItems(plsIdx, posIdx, selItems, true);
-			plman.SetPlaylistSelection(plsIdx, $.range(posIdx, selItems.Count -1, 1), true);
+			plman.SetPlaylistSelection(plsIdx, $.range(posIdx, selItems.Count - 1, 1), true);
 		});
 		if (bScroll) {
 			plman.ActivePlaylist = plsIdxArr[0];

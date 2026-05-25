@@ -894,18 +894,21 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				}
 			}
 		} else if (panel.isBranchedPlaylistSource() || panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)) {
+			const bIsSinglePlaylist = panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true);
 			const newPlaying = panel.isPlayingPlaylistSource(true) && plman.PlayingPlaylist === -1;
 			if (newPlaying) { plman.PlayingPlaylist = panel.createLibPlaylistPlaying(); }
-			const plsIdxArr = panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)
+			const plsIdxArr = bIsSinglePlaylist
 				? panel.getPlaylistSource()
 				: pop.getPlaylistParentIdx(pop.tree[pop.row.i]);
 			if (action.IsInternal) {
 				const selNodes = pop.lastSelMul.map((idx) => pop.tree[idx]);
-				const isAllPls = selNodes.every((node) => pop.isPlaylistParent(node));
+				const isAllPls = !bIsSinglePlaylist && selNodes.every((node) => pop.isPlaylistParent(node));
 				const selParents = selNodes.flatMap((node) => pop.getPlaylistParentIdx(node));
 				const isSamePls = new Set(selParents).isEqual(new Set(plsIdxArr));
-				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
-				const isTargetPls = pop.isPlaylistParent(pop.tree[pop.row.i]);
+				const pos = bIsSinglePlaylist && pop.row.i === -1
+					? -1 // ALlow sending to end
+					: pop.getNodePosInSource(pop.tree.at(pop.row.i), plsIdxArr[0]);
+				const isTargetPls = !bIsSinglePlaylist && pop.isPlaylistParent(pop.tree[pop.row.i]);
 				if (isAllPls && isTargetPls && !dropMask.has(mask, 'ctrl') && ppt.plsSorting) {
 					const toIdx = plsIdxArr[0];
 					if (selParents.length !== 1 || toIdx !== selParents[0]) {
@@ -933,7 +936,9 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					plman.UndoBackup(plman.ActivePlaylist);
 					plman.RemovePlaylistSelection(plman.ActivePlaylist, false);
 				}
-				const pos = pop.getNodePosInSource(pop.tree[pop.row.i], plsIdxArr[0]);
+				const pos = bIsSinglePlaylist && pop.row.i === -1
+					? -1 // ALlow sending to end
+					: pop.getNodePosInSource(pop.tree.at(pop.row.i), plsIdxArr[0]);
 				panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 			}
 			if (panel.isPlayingPlaylistSource(true) && !fb.IsPlaying && pop.autoPlay.send) { plman.ExecutePlaylistDefaultAction(plman.PlayingPlaylist, 0); }
