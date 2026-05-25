@@ -324,3 +324,51 @@ function focusOnItem(plsIdx, idx, selection = [], bClear = true) {
 	plman.SetPlaylistFocusItem(plsIdx, idx);
 	plman.EnsurePlaylistItemVisible(plsIdx, idx);
 }
+
+function movePlaylistSelection(plsIdx, posIdx, bScroll) { // Works with non contiguous selection
+	plman.UndoBackup(plsIdx);
+	const selIdxArr = getPlaylistSelectedIndexes(plsIdx);
+	let toPlsPos = posIdx === -1 ? plman.PlaylistItemCount(plsIdx) - 1 : posIdx;
+	let bMoved = false;
+	const toSel = [];
+	const chunks = selIdxArr.chunkBy((curr, prev) => curr !== prev + 1);
+	const middle = chunks.findIndex((arr) => arr.includes(posIdx));
+	if (middle !== -1) { toPlsPos = chunks[middle].at(0) - 1; }
+	let mBreak = middle === -1 ? chunks.findLastIndex((arr) => arr[0] < posIdx) : middle - 1;
+	let toMove = mBreak === -1 ? [] : chunks.slice(0, mBreak + 1);
+	if (toMove.length) {
+		bMoved = true;
+		let movedCount = 0;
+		toMove.reverse().forEach((arr) => {
+			plman.ClearPlaylistSelection(plsIdx);
+			plman.SetPlaylistSelection(plsIdx, arr, true);
+			plman.MovePlaylistSelection(plsIdx, toPlsPos - arr.at(-1) - movedCount);
+			movedCount += arr.length;
+		});
+		range(toPlsPos, toPlsPos - movedCount + 1, -1).forEach((i) => toSel.push(i));
+		toSel.sort((a, b) => a - b);
+	}
+	toMove = selIdxArr.filter((idx) => idx > toPlsPos);
+	if (bMoved) { toPlsPos += 1; }
+	if (middle !== -1) { toPlsPos = chunks[middle].at(-1) + 1; chunks[middle].forEach((i) => toSel.push(i)); }
+	mBreak = middle === -1 ? chunks.findLastIndex((arr) => arr[0] < posIdx) : middle;
+	toMove = mBreak === -1 ? chunks : chunks.slice(mBreak + 1);
+	if (toMove.length) {
+		let movedCount = 0;
+		toMove.forEach((arr) => {
+			plman.ClearPlaylistSelection(plsIdx);
+			plman.SetPlaylistSelection(plsIdx, arr, true);
+			plman.MovePlaylistSelection(plsIdx, toPlsPos - arr.at(0) + movedCount);
+			movedCount += arr.length;
+		});
+		range(toPlsPos, toPlsPos + movedCount - 1, 1).forEach((i) => toSel.push(i));
+	}
+	plman.ClearPlaylistSelection(plsIdx);
+	plman.SetPlaylistSelection(plsIdx, toSel, true);
+	if (bScroll) {
+		plman.ActivePlaylist = plsIdx;
+		plman.SetPlaylistFocusItem(plman.ActivePlaylist, toSel[0]);
+		plman.EnsurePlaylistItemVisible(plman.ActivePlaylist, toSel[0]);
+	}
+	return toSel;
+}

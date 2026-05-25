@@ -3,7 +3,7 @@
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
-/* global getLocks:readable */
+/* global getLocks:readable, movePlaylistSelection:readable, getPlaylistSelectedIndexes:readable */
 /* global dropEffect:readable */
 /* global dropMask:readable, VK_SHIFT:readable, VK_CONTROL:readable */
 
@@ -923,15 +923,34 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 					if (selItems.Count) {
 						if (isSamePls) {
 							const toIdx = plsIdxArr[0];
-							if (!dropMask.has(mask, 'ctrl') && fb.GetSelectionType() === 0) { plman.RemovePlaylistSelection(toIdx, false); }
-							panel.addToPlaylist(selItems, plsIdxArr, pos, true);
+							if (!dropMask.has(mask, 'ctrl') && fb.GetSelectionType() === 0) { movePlaylistSelection(toIdx, pos, true); }
+							else { panel.addToPlaylist(selItems, plsIdxArr, pos, true); }
 						} else {
 							if (!dropMask.has(mask, 'ctrl') && fb.GetSelectionType() === 0) {
+								const toIdx = plsIdxArr[0];
+								let toPos = pos;
 								panel.getPlaylistSource().forEach((idx) => {
-									if (idx !== -1) { plman.RemovePlaylistSelection(idx, false); }
+									if (idx !== -1) {
+										if (toIdx === idx) {
+											plman.UndoBackup(idx);
+											const selIdx = getPlaylistSelectedIndexes(idx);
+											if (selIdx.includes(toPos)) {
+												while (selIdx.includes(toPos)) {
+													toPos--;
+												}
+												toPos = Math.max(0, toPos);
+											}
+											plman.RemovePlaylistSelection(idx, false);
+										} else {
+											plman.UndoBackup(idx);
+											plman.RemovePlaylistSelection(idx, false);
+										}
+									}
 								});
+								panel.addToPlaylist(selItems, plsIdxArr, toPos, true);
+							} else {
+								panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 							}
-							panel.addToPlaylist(selItems, plsIdxArr, pos, true);
 						}
 					}
 				}
