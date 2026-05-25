@@ -1,7 +1,7 @@
 'use strict';
-//18/05/26
+//25/05/26
 
-/* exported playlistCountLocked, removeNotSelectedTracks, getPlaylistNames, removePlaylistByName, clearPlaylistByName, arePlaylistNamesDuplicated, findPlaylistNamesDuplicated, sendToPlaylist, getHandlesFromUIPlaylists, getLocks, setLocks, getPlaylistSelectedIndexes, getPlaylistSelectedIndexFirst, getPlaylistSelectedIndexLast, getSource, MAX_QUEUE_ITEMS, focusOnItem, findTracksAtPlaylist, hasAnyLocks */
+/* exported playlistCountLocked, removeNotSelectedTracks, getPlaylistNames, removePlaylistByName, clearPlaylistByName, arePlaylistNamesDuplicated, findPlaylistNamesDuplicated, sendToPlaylist, getHandlesFromUIPlaylists, getLocks, setLocks, getPlaylistSelectedIndexes, getPlaylistSelectedIndexFirst, getPlaylistSelectedIndexLast, getSource, MAX_QUEUE_ITEMS, focusOnItem, findTracksAtPlaylist, hasAnyLocks, movePlaylistSelection */
 
 include('helpers_xxx_prototypes.js');
 /* global range:readable, isArrayNumbers:readable */
@@ -188,7 +188,7 @@ function getHandlesFromUIPlaylists(names = [], bSort = true) {
  * @returns {{ isLocked: boolean, isSMPLock: boolean, name: string, types: ('AddItems'|'RemoveItems'|'ReorderItems'|'ReplaceItems'|'RenamePlaylist'|'RemovePlaylist'|'ExecuteDefaultAction')[], index: number }}
  */
 function getLocks(plsNameOrIdx) {
-	if (plsNameOrIdx === -1 ) { return { isLocked : false, isSMPLock: true, name: null, types: [], index: -1 }; }
+	if (plsNameOrIdx === -1) { return { isLocked: false, isSMPLock: true, name: null, types: [], index: -1 }; }
 	const index = typeof plsNameOrIdx === 'string'
 		? plman.FindPlaylist(plsNameOrIdx)
 		: plsNameOrIdx;
@@ -272,20 +272,30 @@ function setLocks(plsNameOrIdx, lockTypes, logic = 'replace') {
 
 function getPlaylistSelectedIndexes(playlistIndex) {
 	if (playlistIndex === -1 || playlistIndex >= plman.PlaylistCount) { return null; }
-	return range(0, plman.PlaylistItemCount(playlistIndex) - 1, 1)
-		.map((idx) => plman.IsPlaylistItemSelected(playlistIndex, idx) ? idx : null).filter((n) => n !== null);
+	const arr = [];
+	const count = plman.PlaylistItemCount(playlistIndex);
+	for (let i = 0; i < count; i++) {
+		if (plman.IsPlaylistItemSelected(playlistIndex, i)) { arr.push(i); }
+	}
+	return arr;
 }
 
 function getPlaylistSelectedIndexFirst(playlistIndex) {
 	if (playlistIndex === -1 || playlistIndex >= plman.PlaylistCount) { return -1; }
-	return range(0, plman.PlaylistItemCount(playlistIndex) - 1, 1)
-		.findIndex((idx) => plman.IsPlaylistItemSelected(playlistIndex, idx));
+	const count = plman.PlaylistItemCount(playlistIndex);
+	for (let i = 0; i < count; i++) {
+		if (plman.IsPlaylistItemSelected(playlistIndex, i)) { return i; }
+	}
+	return -1;
 }
 
 function getPlaylistSelectedIndexLast(playlistIndex) {
 	if (playlistIndex === -1 || playlistIndex >= plman.PlaylistCount) { return -1; }
-	return range(plman.PlaylistItemCount(playlistIndex) - 1, 0, -1)
-		.findIndex((idx) => plman.IsPlaylistItemSelected(playlistIndex, idx));
+	const count = plman.PlaylistItemCount(playlistIndex);
+	for (let i = count - 1; i >= 0; i--) {
+		if (plman.IsPlaylistItemSelected(playlistIndex, i)) { return i; }
+	}
+	return -1;
 }
 
 function getSource(type, arg) {

@@ -662,8 +662,23 @@ if (!Array.prototype.chunk) {
 	// [1, 2, 3, 4, 5, 6, 7].chunk(3) // => [[1, 2, 3], [4, 5, 6], [7]]
 	Array.prototype.chunk = function (chunkSize) { // NOSONAR
 		const R = [];
-		for (let i = 0; i < this.length; i += chunkSize) {
+		const len = this.length;
+		for (let i = 0; i < len; i += chunkSize) {
 			R.push(this.slice(i, i + chunkSize));
+		}
+		return R;
+	};
+}
+
+if (!Array.prototype.chunkBy) {
+	// [1, 2, 3, 5, 6, 7].chunkBy((curr, prev) => curr !== prev + 1) // => [[1, 2, 3], [5, 6, 7]]
+	Array.prototype.chunkBy = function (fn) { // NOSONAR
+		const R = [];
+		const len = this.length;
+		let j = 0;
+		for (let i = 0; i < len; i++) {
+			if (i > 0 && fn(this[i], this[i - 1])) { R.push(this.slice(j, i)); j = i; }
+			if (i === len -1 ) { R.push(this.slice(j)); }
 		}
 		return R;
 	};
@@ -679,14 +694,6 @@ if (!Array.prototype.average) {
 	Array.prototype.average = function (fn) { // NOSONAR
 		return (fn ? this.map(fn) : this).reduce((prev, curr, i) => prev + (curr - prev) / (i + 1), 0);
 	};
-}
-
-function zeroOrVal(e) {
-	return (e === 0 || e);
-}
-
-function emptyOrVal(e) {
-	return (e === '' || e);
 }
 
 // Fisher-Yates algorithm on multiple arrays at the same time
