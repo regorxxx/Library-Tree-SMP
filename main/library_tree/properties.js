@@ -107,7 +107,7 @@ let properties = [
 	['Custom Colour Text', '171,171,190', 'text'],
 	['Custom Colour Text Highlight', '121,194,255', 'text_h'],
 	['Custom Colour Text Selected', '255,255,255', 'textSel'],
-	['Custom Colour Text Nowplaying Highlight', 'rgb(121-194-255)', 'nowp'],
+	['Custom Colour Text Nowplaying Highlight', '121,194,255', 'nowp'],
 	['Custom Colour Search Text', '171,171,190', 'search'],
 	['Custom Colour Buttons', '113,125,147', 'txt_box'],
 	['Custom Colour Background', '4,39,68', 'bg'],
