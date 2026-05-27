@@ -149,7 +149,7 @@ class UserInterface {
 
 	// Regorxxx <- Code cleanup
 	assignColours() {
-		const propRGB = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box'];
+		const propRGB = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'apls']; // Regorxxx <- Highlight active playlist ->
 		const propRGBA = ['bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count/year ->
 		this.col.txt = '';
 		this.col.txt_h = '';
@@ -652,6 +652,9 @@ class UserInterface {
 			this.col.text = colH;
 		}
 		if (this.col.nowp === '') this.col.nowp = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 255) : $.RGB(128, 228, 27) : this.col.text_h;
+		// Regorxxx <- Highlight active playlist
+		if (this.col.apls === '') { this.col.apls = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 220) : $.RGB(128, 238, 47) : this.col.text_h; }
+		// Regorxxx ->
 
 		if (this.col.bg_h === '') {
 			this.col.bg_h = ppt.highLightRow > 2 ? (this.img.blurDark ? 0x24000000 : 0x1E30AFED) : this.img.blurDark ? 0x19ffffff : this.img.blurLight || lightBg ? 0x19000000 : 0x19ffffff;

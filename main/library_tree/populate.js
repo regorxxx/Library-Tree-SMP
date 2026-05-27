@@ -1,5 +1,5 @@
 'use strict';
-//25/05/26
+//27/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1277,6 +1277,10 @@ class Populate {
 		const nowp_c = [];
 		const row = [];
 		const y1 = Math.round(panel.search.h - sbar.delta + panel.node_y) + Math.floor(ui.sz.node / 2);
+		// Regorxxx <- Highlight active playlist
+		const plsBranch = panel.isBranchedPlaylistSource();
+		let isAp = false;
+		// Regorxxx  ->
 		let i = 0;
 		let item_x = 0;
 		let item_y = 0;
@@ -1430,11 +1434,34 @@ class Populate {
 				if (item.np && this.highlight.nowPlayingSidemarker) {
 					gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.nowp);
 				}
-				if (item.np && this.highlight.nowPlayingIndicator && item.track) nm[i] = item.np + nm[i];
-				const np = item.np && this.highlight.nowPlaying;
-				const txt_co = np && !item.sel ? ui.col.nowp : item.sel && this.fullLineSelection ? (this.highlight.row ? ui.col.textSel : ui.col.text) : this.m.i == i && this.highlight.text ? ui.col.text_h : ui.col.counts || ui.col.count;
+				// Regorxxx <- Highlight active playlist
+				if (this.highlight.activePlaylist || this.highlight.activePlaylistSidemarker) {
+					if (level === 0 && plsBranch && !isAp && isArrayEqual(this.getPlaylistParentIdx(item), [plman.ActivePlaylist])) {
+						isAp = item;
+						if (this.highlight.activePlaylistSidemarker) { gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.apls); };
+					}
+				}
+				// Regorxxx ->
+				if (item.np && this.highlight.nowPlayingIndicator && item.track) { nm[i] = item.np + nm[i]; }
 				const type = item.sel ? (this.highlight.row || !this.fullLineSelection ? 2 : 0) : this.m.i == i && this.highlight.text ? 1 : 0;
-				const txt_c = np && !item.sel ? ui.col.nowp : ui.col.txtArr[type];
+				const np = item.np && this.highlight.nowPlaying;
+				// Regorxxx <- Highlight active playlist
+				const ap = isAp === item && this.highlight.activePlaylist; // Regorxxx <- Highlight active playlist ->
+				const txt_co = np && !item.sel
+					? ui.col.nowp
+					: ap && !item.sel
+						? ui.col.apls
+						: item.sel && this.fullLineSelection
+							? (this.highlight.row ? ui.col.textSel : ui.col.text)
+							: this.m.i == i && this.highlight.text
+								? ui.col.text_h
+								: ui.col.counts || ui.col.count;
+				const txt_c = np && !item.sel
+					? ui.col.nowp
+					: ap && !item.sel
+						? ui.col.apls
+						: ui.col.txtArr[type];
+				// Regorxxx ->
 				if (panel.colMarker) { this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text'); }
 				else { gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc); }
 				if (this.countsRight || this.statisticsShow) {
@@ -3147,7 +3174,9 @@ class Populate {
 			nowPlayingSidemarker: ppt.nowPlayingSidemarker,
 			nowPlayingShow: ppt.highLightNowplaying || ppt.nowPlayingIndicator || ppt.nowPlayingSidemarker,
 			row: ppt.highLightRow,
-			text: ppt.highLightText
+			text: ppt.highLightText,
+			activePlaylistSidemarker: ppt.activePlaylistIndicator, // Regorxxx <- Highlight active playlist ->
+			activePlaylist: ppt.highLightActivePlaylist // Regorxxx <- Highlight active playlist ->
 		};
 		this.iconVerticalPad = ppt.iconVerticalPad;
 		this.nodeCounts = panel.imgView && img.getOverlay(ppt.itemOverlayType).isCount ? 1 : ppt.nodeCounts; // Regorxxx <- Fix track overlay on imgs | New overlay styles ->

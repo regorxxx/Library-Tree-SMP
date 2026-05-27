@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 20/05/26 -->
+﻿<!DOCTYPE html> <!-- 26/05/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1109,15 +1109,15 @@
 					<div id="themeStyle" style="padding-top:0.5em;"></div>
 					<div id="coverFormat"></div>
 					<div id="panelStyle"></div>
-				</div>
-
-				<!-- Regorxxx New Statistics. Adjust column width -->
-				<div class="column29">
 					<div class="div_text1">Root</div>
 					<span class="dropdown"><a id="root_dropdown" class="dropbtn" href="#" onclick="return toggle('root');"></a>
 						<span id="root" class="dropdown-content"></span>
 					</span>
 					<div id="rootStyle" style="padding-top:0.5em;"></div>
+				</div>
+
+				<!-- Regorxxx New Statistics. Adjust column width -->
+				<div class="column29">
 					<div class="div_text2">Node style</div>
 					<span class="dropdown"><a id="node_dropdown" class="dropbtn" href="#" onclick="return toggle('node');"></a>
 						<span id="node" class="dropdown-content"></span>
@@ -1125,6 +1125,8 @@
 					<div id="nodeLines" style="padding-top:0.5em;"></div>
 					<div class="div_text2">Line style</div>
 					<div id="lines"></div>
+					<div class="div_text2">Show</div>
+					<div id="show"></div>
 				</div>
 
 				<!-- Regorxxx New Statistics. Adjust column width -->
@@ -1136,8 +1138,6 @@
 					<div id="frameStyle" style="padding-top:0.5em;"></div>
 					<div class="div_text2">Hover effect (foreground)</div>
 					<div id="showH2"></div>
-					<div class="div_text2">Show</div>
-					<div id="show"></div>
 					<div class="div_text2">Layout metrics</div>
 					<div class="row">
 						<div class="column38">
@@ -1892,7 +1892,10 @@
 				? ['Select [panel]', 'Select [tracks & panel]']
 				: ['Select', 'Send to playlist'];
 			// Regorxxx ->
-			var colourLabels = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Text search', 'Buttons', 'Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
+			// Regorxxx <- Code cleanup | Highlight active playlist
+			var colourLabelsRGB = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Active Playlist sidemarker highlight', 'Text search', 'Buttons'];
+			var colourLabelsRGBA = ['Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
+			// Regorxxx ->
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
 			var cusNodeLabels = ['Custom icon expand|collapse', 'Custom icon font name', 'Custom icon padding (+/-)', 'Square nodes: use windows'];
 			var cusScrollLabels = ['Step (0 = page)', 'Smooth duration max (ms)', 'Touch duration max (ms)', 'Touch sensitivity 0-10'];
@@ -1930,7 +1933,7 @@
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control', 'Windows style dark theme fix'];  // Regorxxx <- Scrollbar on windows style improvements ->
 			var selectionLabels = ['Full line', 'Play on enter or send from menu', 'Reset when clicking on blank regions']; // Regorxxx <- Reset selection on blank regions ->
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
-			var showLabels = ['Row stripes', 'Nowplaying in highlight', 'Nowplaying sidemarker (tree / text)', 'Nowplaying indicator (tree / text)', 'Album art options', 'Facet view', 'Tracks (tree)'];
+			var showLabels = ['Row stripes', 'Nowplaying in highlight', 'Nowplaying sidemarker (tree / text)', 'Nowplaying indicator (tree / text)','Active pls. in highlight', 'Active pls. sidemarker (tree / text)', 'Album art options', 'Facet view', 'Tracks (tree)']; // Regorxxx <- Highlight active playlist ->
 			// Regorxxx <- New statistics
 			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips'];
 			var statisticsDecimalsLabels = ['Number of decimals shown'];
@@ -2002,10 +2005,10 @@
 					type: ['int', 'int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
-				// Regorxxx <- Tooltip font | Custom album art overlay track count
+				// Regorxxx <- Tooltip font | Custom album art overlay track count | Highlight active playlist
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'apls', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Sorting transliteration | Preserve tree sorting at selection | Performance improvements
@@ -2027,10 +2030,10 @@
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
-				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) ->
+				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered ->
-				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count ->
+				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
 			// Regorxxx <- New search tab
@@ -3129,7 +3132,7 @@
 				i = 2; window.frameStyle.insertAdjacentHTML('beforeend', '<div><input id="frame_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="frame_checkbox' + i + '" class="checkbox_label">Effect style (album art): flare</label></div>');
 				// Regorxxx ->
 				for (i = 4; i < 7; i++) { window.showH2.insertAdjacentHTML('beforeend', '<div><input id="showH2_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showH2_checkbox' + i + '" class="checkbox_label">' + highLightLabels[i] + '</label></div>'); }
-				for (i = 0; i < 7; i++) { window.show.insertAdjacentHTML('beforeend', '<div><input id="show_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="show_checkbox' + i + '" class="checkbox_label">' + showLabels[i] + '</label></div>'); }
+				for (i = 0; i < showLabels.length; i++) { window.show.insertAdjacentHTML('beforeend', '<div><input id="show_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="show_checkbox' + i + '" class="checkbox_label">' + showLabels[i] + '</label></div>'); } // Regorxxx <- Highlight active playlist ->
 			}
 
 			function setStatistcs() {
@@ -3240,17 +3243,33 @@
 
 			var bg = [];
 			var fg = [];
+			// Regorxxx <- Code cleanup
 			function setCustomColours(value) {
-				var items = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->
-				for (var i = 0; i < items.length; i++) {
-					bg[i] = assign(ppt[items[i] + '_internal'][value], i < 6 ? 0 : 1);
-					fg[i] = getSelCol(bg[i]);
-					bg[i] = "rgb(" + bg[i][0] + "," + bg[i][1] + "," + bg[i][2] + ")";
-					var el = document.getElementById('colour_container' + i);
-					el.style.background = bg[i];
-					el.style.color = fg[i];
+				var itemsRGB = ['text', 'text_h', 'textSel', 'nowp', 'apls', 'search', 'txt_box']; // Regorxxx <- Highlight active playlist ->
+				var itemsRGBA = ['bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->v
+				var i = 0;
+				var j = 0;
+				var el;
+				for (i = 0; i < itemsRGB.length; i++) { // NOSONAR
+					bg[j] = assign(ppt[itemsRGB[i] + '_internal'][value], 0);
+					fg[j] = getSelCol(bg[j]);
+					bg[j] = "rgb(" + bg[j][0] + "," + bg[j][1] + "," + bg[j][2] + ")";
+					el = document.getElementById('colour_container' + j);
+					el.style.background = bg[j];
+					el.style.color = fg[j];
+					j++;
+				}
+				for (i = 0; i < itemsRGBA.length; i++) { // NOSONAR
+					bg[j] = assign(ppt[itemsRGBA[i] + '_internal'][value], 1);
+					fg[j] = getSelCol(bg[j]);
+					bg[j] = "rgb(" + bg[j][0] + "," + bg[j][1] + "," + bg[j][2] + ")";
+					el = document.getElementById('colour_container' + j);
+					el.style.background = bg[j];
+					el.style.color = fg[j];
+					j++;
 				}
 			}
+			// Regorxxx ->
 
 			function setCustom() {
 				i = 0; window.fonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>');
@@ -3258,8 +3277,11 @@
 				// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 				for (i = 4; i < 6; i++) { window.tooltipFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
 				// Regorxxx ->
-				for (i = 0; i < 6; i++) { window.colours1.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
-				for (i = 6; i < 21; i++) { window.colours2.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + i + '" name="custom_input" class="input40" /><label for="colour_container' + i + '" class="inp_label2">' + colourLabels[i] + '</label></div>'); }
+				// Regorxxx <- Code cleanup
+				j = 0;
+				for (i = 0; i < colourLabelsRGB.length; i++) { window.colours1.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + j + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + j + '" name="custom_input" class="input40" /><label for="colour_container' + j + '" class="inp_label2">' + colourLabelsRGB[i] + '</label></div>'); j++; }
+				for (i = 0; i < colourLabelsRGBA.length; i++) { window.colours2.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="colour_checkbox' + j + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="colour_container' + j + '" name="custom_input" class="input40" /><label for="colour_container' + j + '" class="inp_label2">' + colourLabelsRGBA[i] + '</label></div>'); j++; }
+				// Regorxxx ->
 			}
 
 			function setAdvanced() {
@@ -3348,9 +3370,7 @@
 				// Regorxxx ->
 			}
 
-			if (ppt['albumArtShow_internal'][value]) {
-				window.show_checkbox4.parentNode.disabled = true;
-			}
+			if (ppt['albumArtShow_internal'][value]) { window.show_checkbox6.parentNode.disabled = true; } // Regorxxx <- Highlight active playlist ->
 			// Regorxxx <- Remember checkboxes more logic behavior
 			if (!window.remember_checkbox0.checked) { window.remember_checkbox1.checked = window.remember_checkbox2.checked = false; }
 			window.remember_checkbox1.parentNode.disabled = window.remember_checkbox2.parentNode.disabled = !window.remember_checkbox0.checked;
@@ -3360,7 +3380,7 @@
 			window.thumbSize_dropdown.disabled = window.flowMode_checkbox.checked; // Regorxxx <- Disable thumbnail size using flow mode instead of hiding it ->
 			window.checkbox_folderView.disabled = true;
 			window.checkbox_menuName.disabled = true;
-			document.getElementById("albumArtCfg").style.display = window.show_checkbox4.checked ? "block" : "none";
+			document.getElementById("albumArtCfg").style.display = window.show_checkbox6.checked ? "block" : "none"; // Regorxxx <- Highlight active playlist ->
 			window.indexLetter_checkbox2.parentNode.disabled = ppt['albumArtLetterNo_internal'].value == 0;
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";
 			window.bar_checkbox2.disabled = !window.bar_checkbox1.checked; // Regorxxx <- Filter / View / Source button ->
@@ -3392,7 +3412,7 @@
 			window.itemCounts_checkbox3.parentNode.disabled = ppt['nodeCounts_internal'].value === 0 || ppt['itemShowStatistics_internal'].value > 0; // Regorxxx <- Fix checkbox ->
 			setNodeLabels();
 			window.showH2_checkbox5.parentNode.disabled = window.cusNode_checkbox3.checked && (ppt['nodeStyle_internal'].value == 0 || ppt['nodeStyle_internal'].value == 7);
-			document.getElementById("albumArtCfg").style.display = window.show_checkbox4.checked ? "block" : "none";
+			document.getElementById("albumArtCfg").style.display = window.show_checkbox6.checked ? "block" : "none"; // Regorxxx <- Highlight active playlist ->
 			window.albumArtLabelType2.parentNode.disabled = window.flowMode_checkbox.checked;
 			window.thumbSize_dropdown.disabled = window.flowMode_checkbox.checked; // Regorxxx <- Disable thumbnail size using flow mode instead of hiding it ->
 			window.metrics_container4.parentNode.style.display = !ppt['filterShow_internal'].value && !ppt['searchShow_internal'].value && !ppt['settingsShow_internal'].value ? "block" : "none";

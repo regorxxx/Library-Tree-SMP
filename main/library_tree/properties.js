@@ -123,6 +123,7 @@ let properties = [
 	['Custom Colour Separators', '48,71,90', 's_line'],
 	['Custom Colour Side Marker', '121,194,255', 'sideMarker'],
 	['Custom Colour Transparent Fill', '0,0,0,0.06', 'bgTrans'],
+	['Custom Colour Text Active Pls. Highlight', '121,194,220', 'apls'], // Regorxxx <- Highlight active playlist ->
 
 	['Custom Colour Text Use', false, 'textUse'],
 	['Custom Colour Text Highlight Use', false, 'text_hUse'],
@@ -143,6 +144,7 @@ let properties = [
 	['Custom Colour Separators Use', false, 's_lineUse'],
 	['Custom Colour Side Marker Use', false, 'sideMarkerUse'],
 	['Custom Colour Transparent Fill Use', false, 'bgTransUse'],
+	['Custom Colour Text Active Pls. Highlight Use', false, 'aplsUse'], // Regorxxx <- Highlight active playlist ->
 
 	// Regorxxx <- Custom album art overlay track count/year
 	['Custom Colour Art Track Count Text', '255,255,255', 'textTrackCount'],
@@ -392,6 +394,8 @@ let properties = [
 	['Nowplaying Indicator Last', false, 'nowPlayingIndicatorLast'],
 	['Nowplaying Sidemarker', false, 'nowPlayingSidemarker'],
 	['Nowplaying Sidemarker Last', false, 'nowPlayingSidemarkerLast'],
+	['Active Playlist Sidemarker', true, 'activePlaylistIndicator'], // Regorxxx <- Highlight active playlist ->
+	['Active Playlist Highlight', false, 'highLightActivePlaylist'], // Regorxxx <- Highlight active playlist ->
 
 	['Play on Enter or Send from Menu', false, 'autoPlay'],
 	['Playlist: Custom Sort', '', 'customSort'],

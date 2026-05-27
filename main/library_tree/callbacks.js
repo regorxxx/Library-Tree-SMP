@@ -674,7 +674,7 @@ addEventListener('on_playlist_switch', () => {
 	if (panel.isActivePlaylistSource()) { // Regorxxx <- Active/Playing/All playlist source ->
 		lib.playlist_update();
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
-	}
+	} else if (pop.highlight.activePlaylistSidemarker && panel.isBranchedPlaylistSource()) { panel.treePaint(); } // Regorxxx <- Highlight active playlist ->
 	ui.focus_changed();
 });
 

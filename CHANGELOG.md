@@ -29,6 +29,7 @@
 - Album Art: new setting to allow vertically centering thumbnails for non-filling images. Setting can be found at 'Album Art' tab (HTML options panel) or 'Image Thumbnail Vertically centered' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: rectangle selection feature now also supports custom actions set by user. i.e. if L. Click is set to 'Select [panel]' then rectangle selection will only select on panel, but if it's set to 'Send to playlist' it will select on panel and send everything to playlist as single click would do. Alt. click actions are also supported.
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
+	- UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
 ### Changed
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).

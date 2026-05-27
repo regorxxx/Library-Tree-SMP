@@ -3,6 +3,7 @@
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
+/* global isArrayEqual:readable */
 /* global getFiles:readable, _deleteFolder:readable, WshShell:readable, popup:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
@@ -477,6 +478,13 @@ class Images {
 		return !item.root && pop.inRange(pop.nowp, item.item);
 	}
 
+	// Regorxxx <- Highlight active playlist
+	checkActivePlaylist(item) {
+		if (!pop.highlight.activePlaylist) { return false; }
+		return isArrayEqual(pop.getPlaylistParentIdx(item), [plman.ActivePlaylist]);
+	}
+	// Regorxxx ->
+
 	checkRootImg() {
 		const key = pop.tree.length ? pop.tree[0].key : null;
 		if (!key) return;
@@ -686,6 +694,7 @@ class Images {
 		const art = this.getArt(ppt.artId);
 		const stack = [[], [], []];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
+		const plsBranch = panel.isBranchedPlaylistSource(); // Regorxxx <- Highlight active playlist ->
 		for (let i = this.start; i < this.end; i++) {
 			const bHover = i === pop.m.i;
 			const item = pop.tree[i];
@@ -698,7 +707,8 @@ class Images {
 				selIdx: bSel ? pop.lastSelMul.indexOf(i) : -1,
 				bHover,
 				bSel,
-				bNowPlaying: this.checkNowPlaying(item)
+				bNowPlaying: this.checkNowPlaying(item),
+				bActivePls: plsBranch && panel.lines !== 2 && this.checkActivePlaylist(item, plsBranch), // Regorxxx <- Highlight active playlist ->
 			});
 			if (this.column == this.columns - 1) { this.column = 0; }
 			else { this.column++; }
@@ -725,7 +735,7 @@ class Images {
 					: '';
 				// Regorxxx ->
 				const cur_img = this.zooming ? null : this.getImg(item.key);
-				// Regorxxx <- Code cleanup
+				// Regorxxx <- Highlight active playlist | Code cleanup
 				const grpCol = this.getGrpCol(item, cell);
 				const lotCol = this.getLotCol(item, cell);
 				// Regorxxx ->
@@ -1099,7 +1109,7 @@ class Images {
 		if (this.labels.hide && (!style.fillBg || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
-			case (cell.bNowPlaying || cell.bSel) && !(pop.selRect.down && pop.selRect.over.has(cell.i)): // Regorxxx <- Rectangle selection on art view ->
+			case (cell.bNowPlaying || cell.bActivePls || cell.bSel) && !(pop.selRect.down && pop.selRect.over.has(cell.i)): // Regorxxx <- Rectangle selection on art view ->
 				col = ui.col.imgBgSel;
 				switch (this.labels.overlay || this.labels.hide) {
 					case true:
@@ -1723,19 +1733,21 @@ class Images {
 		}
 	}
 
-	// Regorxxx <- Code cleanup
+	// Regorxxx <- Highlight active playlist | Code cleanup
 	getGrpCol(item, cell) {
 		return cell.bNowPlaying
 			? ui.col.nowp
-			: cell.bHover && pop.highlight.text
-				? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
-				: item.sel
-					? this.labels.overlayDark
-						? ui.col.text
-						: ui.col.textSel
-					: this.labels.overlayDark 
-						? $.RGB(240, 240, 240) 
-						: ui.col.text;
+			: cell.bActivePls
+				? ui.col.apls
+				: cell.bHover && pop.highlight.text
+					? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
+					: item.sel
+						? this.labels.overlayDark
+							? ui.col.text
+							: ui.col.textSel
+						: this.labels.overlayDark 
+							? $.RGB(240, 240, 240) 
+							: ui.col.text;
 	}
 	// Regorxxx ->
 
@@ -1892,19 +1904,21 @@ class Images {
 		this.albumArtDiskCache ? (preLoad && !ppt.albumArtNodeCollage ? this.preLoad() : this.getImages()) : this.loadThrottle(); // Regorxxx <- Branch collage art ->
 	}
 
-	// Regorxxx <- Code cleanup
+	// Regorxxx <- Highlight active playlist | Code cleanup
 	getLotCol(item, cell) {
 		return cell.bNowPlaying
 			? ui.col.nowp
-			: cell.bHover && pop.highlight.text
-				? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
-				: item.sel
-					? this.labels.overlayDark
-						? ui.col.lotBlend
-						: ui.col.selBlend
-					: this.labels.overlayDark
-						? $.RGB(220, 220, 220)
-						: ui.col.lotBlend;
+			: cell.bActivePls
+				? ui.col.apls
+				: cell.bHover && pop.highlight.text
+					? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
+					: item.sel
+						? this.labels.overlayDark
+							? ui.col.lotBlend
+							: ui.col.selBlend
+						: this.labels.overlayDark
+							? $.RGB(220, 220, 220)
+							: ui.col.lotBlend;
 	}
 	// Regorxxx ->
 
