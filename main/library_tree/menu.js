@@ -1,5 +1,5 @@
 'use strict';
-//25/05/26
+//27/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1100,6 +1100,16 @@ class MenuItems {
 		}
 		// Regorxxx ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
+		// Regorxxx <- Show album art entry at settings
+		if (ppt.albumArtOptionsShow) {
+			menu.newItem({
+				str: panel.imgView ? (ppt.facetView ? 'Show text' : 'Show tree') : 'Show album art',
+				func: () => this.setPlaylist(4),
+				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED,
+			});
+			menu.newItem({ menuName: mainMenu(), separator: true });
+		}
+		// Regorxxx ->
 		// Regorxxx <- Code cleanup
 		menu.newItem({
 			menuName: mainMenu(),

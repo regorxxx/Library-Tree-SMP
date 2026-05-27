@@ -48,6 +48,7 @@
 - Album Art: clearing image cache now only clears database for current art type, not all art.
 - Album Art: year overlay now displays '-' if no date is found. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081951.html#msg1081951).
 - Album Art: heart shape style is now vertically centered (instead of starting at bottom of frame).
+- UI: show album art/tree menu entry is now also shown at the settings menu.
 - Statistics: custom statistics display labels split into 2 settings: album art overlay and tree. Additionally the album art tooltip will now use the full text of tree display labels. Settings can be found at 'Statistics' tab (HTML options panel) or 'Statistics Titleformat Custom display tree' and 'Statistics Titleformat Custom display art' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081951.html#msg1081951).
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
