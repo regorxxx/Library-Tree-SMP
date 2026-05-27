@@ -1390,6 +1390,97 @@ class Panel {
 						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
 						break;
 					}
+					case 15: { // Playlist manager (tree)
+						applySettings = (status, confirmed) => {
+							if (confirmed) {
+								// Source | View
+								ppt.libSource = 0;
+								ppt.plsSource = 2;
+								ppt.fixedPlaylist = false;
+								ppt.fixedPlaylistName = 'All';
+								if (!ppt.presetLoadCurView) {
+									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
+									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									ppt.artId = 0;
+								}
+								ppt.plsPopEmpty = true;
+								ppt.plsFlatView = false;
+								ppt.plsSorting = true;
+								// Behaviour
+								ppt.rootNode = 0;
+								ppt.autoCollapse = false;
+								ppt.treeAutoExpandSingle = false;
+								ppt.itemShowStatistics = 0;
+								// UI
+								ppt.countsRight = true;
+								ppt.fullLineSelection = true;
+								ppt.nodeStyle = 1;
+								ppt.facetView = false;
+								ui.sbar.type = 1;
+								ppt.sbarType = 1;
+								ppt.sbarShow = 1;
+								ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
+								ppt.nowPlayingIndicator = true;
+								ppt.highLightActivePlaylist = ppt.activePlaylistIndicator = true;
+								ppt.rowStripes = true;
+								// Art
+								this.imgView = ppt.albumArtShow = false;
+								this.load();
+							}
+						};
+						caption = 'Quick Setup: Playlist Manager (tree)';
+						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+						break;
+					}
+					case 16: { // Playlist manager (art)
+						applySettings = (status, confirmed) => {
+							if (confirmed) {
+								// Source | View
+								ppt.libSource = 0;
+								ppt.plsSource = 2;
+								ppt.fixedPlaylist = false;
+								ppt.fixedPlaylistName = 'All';
+								if (!ppt.presetLoadCurView) {
+									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
+									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									ppt.artId = 0;
+								}
+								ppt.plsPopEmpty = true;
+								ppt.plsFlatView = false;
+								ppt.plsSorting = true;
+								// Behaviour
+								ppt.rootNode = 0;
+								ppt.autoCollapse = false;
+								ppt.treeAutoExpandSingle = false;
+								ppt.itemShowStatistics = 2;
+								// UI
+								ppt.countsRight = true;
+								ppt.fullLineSelection = true;
+								ppt.nodeStyle = 1;
+								ppt.facetView = false;
+								ui.sbar.type = 1;
+								ppt.sbarType = 1;
+								ppt.sbarShow = 1;
+								ppt.nowPlayingSidemarker = ppt.nowPlayingIndicator = ppt.highLightNowplaying = false;
+								ppt.highLightActivePlaylist = ppt.activePlaylistIndicator = true;
+								// Art
+								ppt.albumArtLabelType = 3;
+								ppt.itemOverlayType = img.getOverlayIdxByType('tracks (#)'); // Regorxxx <- New overlay styles ->
+								this.imgView = ppt.albumArtShow = true;
+								ppt.albumArtFlowMode = false;
+								ppt.imgStyleFront = 1;
+								ppt.thumbNailSize = 2;
+								ppt.albumArtGrpLevel = 1;
+								ppt.albumArtNodeCollage = true;
+								ppt.itemOverlayVAlign = ppt.itemOverlayHAlign = 0;
+								ppt.itemOverlayCountForce = true;
+								this.load();
+							}
+						};
+						caption = 'Quick Setup: Playlist Manager (art)';
+						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+						break;
+					}
 				}
 				if (applySettings) {
 					const wsh = !utils.MessageBox && popUpBox.isHtmlDialogSupported() // Regorxxx <- Native themed popups ->

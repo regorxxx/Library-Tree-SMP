@@ -29,7 +29,8 @@
 - Album Art: new setting to allow vertically centering thumbnails for non-filling images. Setting can be found at 'Album Art' tab (HTML options panel) or 'Image Thumbnail Vertically centered' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
 - Album Art: rectangle selection feature now also supports custom actions set by user. i.e. if L. Click is set to 'Select [panel]' then rectangle selection will only select on panel, but if it's set to 'Send to playlist' it will select on panel and send everything to playlist as single click would do. Alt. click actions are also supported.
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
-	- UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
+- UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
+- Quicksetup: new quicksetup presets for playlist manager features.
 ### Changed
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).
@@ -104,7 +105,7 @@
 - External integration: added documentation to settings menu. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1077214.html#msg1077214).
 - Auto-DJ: new 'From live view ' option plays tracks from the entire tree available, being adjusted to any view, search or filter changes on every new track (so it can be tweaked with dynamic filters on real time). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
 - Auto-DJ: new setting to set how the next track is chosen: randomly, by genre-mood, genre or mood tags matching. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078517.html#msg1078517).
-- UI: new quicksetup presets.
+- Quicksetup: new quicksetup presets.
 - UI: 'Move to front queue', 'Move to back queue' and 'Move in queue...' menu entries to move tracks within the playback queue while using the associated source.
 - UI: added support for D2D draw mode if JS Host supports it (currently only JSplitter 3.7.8+ or 4.1.0+). It must be set per instance, at the properties panel ('Draw mode: GDI (0), D2D (1)'). If JS Host doesn't support it, it will fallback to GDI. Note D2D mode may produce UI artifacts under Wine or not be fully equivalent to GDI, use at your own consideration and only report problems to JS host component devs.
 - UI: added new setting for custom Art track count/year color overlay and text. Found at 'Custom' tab (HTML options panel) or 'Custom Colour Art Track Count [...]' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1078585.html#msg1078585).

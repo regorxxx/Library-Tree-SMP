@@ -829,9 +829,11 @@ class MenuItems {
 				{ name: 'Modern [default]', idx: 1 },
 				{ name: 'Ultra-Modern', idx: 2 },
 				{ name: 'Clean', idx: 3, separator: true },
-				{ name: 'Facets', idx: 4, },
+				{ name: 'Facets', idx: 4, separator: true },
 				{ name: 'Playback Queue viewer', idx: 13 },
 				{ name: 'Playback Queue flow', idx: 14, separator: true },
+				{ name: 'Playlist Manager (tree)', idx: 15 },
+				{ name: 'Playlist Manager (art)', idx: 16, separator: true },
 
 			].forEach((v) => menu.newItem({
 				menuName: 'Quick setup',
