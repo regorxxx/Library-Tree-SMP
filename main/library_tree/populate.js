@@ -571,56 +571,110 @@ class Populate {
 	// Regorxxx ->
 
 	insertPlsRootNodes(br) {
-		lib.playlistSourceRoot.forEach((plsRootNode) => delete plsRootNode.node);
+		lib.playlistSourceRoot.forEach((plsRootNode) => {
+			delete plsRootNode.node;
+			if (plsRootNode.nodes) { plsRootNode.nodes.length = 0; }
+			else { plsRootNode.nodes = []; }
+		});
 		const toAdd = [...lib.playlistSourceRoot];
 		let rootNode, plsRootNode, prevPlsRootNode;
-		for (let i = 0; i < br.length; i++) {
-			rootNode = br[i];
-			for (let j = 0; j < toAdd.length; j++) {
-				plsRootNode = toAdd[j];
-				if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
-					plsRootNode.node = rootNode;
-					rootNode.plsRoot = true;
-					// Insert empty nodes between non-empty ones
-					if (ppt.plsSorting && ppt.plsPopEmpty) {
-						for (let h = j - 1; h >= 0; h--) {
-							prevPlsRootNode = toAdd[h];
-							if (!Object.hasOwn(prevPlsRootNode, 'node')) {
-								br.splice(i, 0, {
-									nm: prevPlsRootNode.name,
-									sel: false,
-									child: [],
-									track: false,
-									item: [{ start: -1, end: -1, count: 0 }],
-									srt: lib.sort(prevPlsRootNode.name),
-									plsRoot: true
-								});
-								prevPlsRootNode.node = br.at(i);
+		let nm;
+		if (panel.imgView && panel.lines === 2) {
+			for (let i = 0; i < br.length; i++) {
+				rootNode = br[i];
+				nm = rootNode.nm.split('^@^')[0];
+				for (let j = 0; j < toAdd.length; j++) {
+					plsRootNode = toAdd[j];
+					if (plsRootNode.name === nm) { // Duplicated playlist names will share the same node
+						plsRootNode.nodes.push(rootNode);
+						// Insert empty nodes between non-empty ones
+						if (ppt.plsSorting && ppt.plsPopEmpty) {
+							for (let h = j - 1; h >= 0; h--) {
+								prevPlsRootNode = toAdd[h];
+								if (!Object.hasOwn(prevPlsRootNode, 'node') && !prevPlsRootNode.nodes.length) {
+									br.splice(i, 0, {
+										nm: prevPlsRootNode.name,
+										sel: false,
+										child: [],
+										track: false,
+										item: [{ start: -1, end: -1, count: 0 }],
+										srt: lib.sort(prevPlsRootNode.name),
+										plsRoot: true
+									});
+									prevPlsRootNode.node = br.at(i);
+								}
 							}
 						}
 					}
-					toAdd.splice(j, 1);
-					break;
 				}
 			}
-		}
-		// Insert empty nodes at end
-		if (ppt.plsPopEmpty) {
-			toAdd.forEach((plsRootNode) => {
-				if (!Object.hasOwn(plsRootNode, 'node')) {
-					const node = {
-						nm: plsRootNode.name,
-						sel: false,
-						child: [],
-						track: false,
-						item: [{ start: -1, end: -1, count: 0 }],
-						srt: lib.sort(plsRootNode.name),
-						plsRoot: true
-					};
-					br.push(node);
-					plsRootNode.node = node;
+			// Insert empty nodes at end
+			if (ppt.plsPopEmpty) {
+				toAdd.forEach((plsRootNode) => {
+					if (!Object.hasOwn(plsRootNode, 'node') && !plsRootNode.nodes.length) {
+						const node = {
+							nm: plsRootNode.name,
+							sel: false,
+							child: [],
+							track: false,
+							item: [{ start: -1, end: -1, count: 0 }],
+							srt: lib.sort(plsRootNode.name),
+							plsRoot: true
+						};
+						br.push(node);
+						plsRootNode.node = node;
+					}
+				});
+			}
+		} else {
+			for (let i = 0; i < br.length; i++) {
+				rootNode = br[i];
+				for (let j = 0; j < toAdd.length; j++) {
+					plsRootNode = toAdd[j];
+					if (plsRootNode.name === rootNode.nm) { // Duplicated playlist names will share the same node
+						plsRootNode.node = rootNode;
+						rootNode.plsRoot = true;
+						// Insert empty nodes between non-empty ones
+						if (ppt.plsSorting && ppt.plsPopEmpty) {
+							for (let h = j - 1; h >= 0; h--) {
+								prevPlsRootNode = toAdd[h];
+								if (!Object.hasOwn(prevPlsRootNode, 'node')) {
+									br.splice(i, 0, {
+										nm: prevPlsRootNode.name,
+										sel: false,
+										child: [],
+										track: false,
+										item: [{ start: -1, end: -1, count: 0 }],
+										srt: lib.sort(prevPlsRootNode.name),
+										plsRoot: true
+									});
+									prevPlsRootNode.node = br.at(i);
+								}
+							}
+						}
+						toAdd.splice(j, 1);
+						break;
+					}
 				}
-			});
+			}
+			// Insert empty nodes at end
+			if (ppt.plsPopEmpty) {
+				toAdd.forEach((plsRootNode) => {
+					if (!Object.hasOwn(plsRootNode, 'node')) {
+						const node = {
+							nm: plsRootNode.name,
+							sel: false,
+							child: [],
+							track: false,
+							item: [{ start: -1, end: -1, count: 0 }],
+							srt: lib.sort(plsRootNode.name),
+							plsRoot: true
+						};
+						br.push(node);
+						plsRootNode.node = node;
+					}
+				});
+			}
 		}
 	}
 
@@ -1198,6 +1252,7 @@ class Populate {
 			this.isDragDropTopTracks = false;
 			const ix = this.get_ix(this.last_pressed_coord.x, this.last_pressed_coord.y, true, false);
 			const item = this.tree[ix];
+			this.getTreeSel(); // Regorxxx <- Update selection on drag n' drop ->
 			let handleList;
 			if (panel.isPlaylistSource()) {
 				if (vk.k('alt')) {
@@ -1892,7 +1947,11 @@ class Populate {
 		}
 		if (!handle && fb.IsPlaying) { handle = fb.GetNowPlaying(); }
 		if (!handle) { this.nowp = -1; return this.nowp; }
-		this.nowp = panel.list.Find(handle);
+		// Regorxxx <- Multiple-playlist flat view
+		this.nowp = panel.isBranchedPlaylistSource()
+			? this.findHandlePanelInSource(handle, plman.PlayingPlaylist)
+			: panel.list.Find(handle);
+		// Regorxxx ->
 		panel.treePaint();
 	}
 
@@ -3047,11 +3106,17 @@ class Populate {
 		if (plsIdxArr.length > 1) {
 			if (panel.isBranchedPlaylistSource()) {
 				const items = [...this.sel_items];
-				const itemsPerPls = plsIdxArr.map((idx) => {
-					const roots = this.getPlaylistParentUi(idx).filter((root) => root.node);
-					const panelSelIdx = items.filter((i) => roots.some((root) => this.inRange(i, root.node.item)));
-					return { idx, panelSelIdx, plsSelIdx: [], count: panelSelIdx.length };
-				});
+				const itemsPerPls = panel.imgView && panel.lines === 2
+					? plsIdxArr.map((idx) => {
+						const roots = this.getPlaylistParentUi(idx);
+						const panelSelIdx = items.filter((i) => roots.some((root) => root.nodes && root.nodes.some((node) => this.inRange(i, node.item))));
+						return { idx, panelSelIdx, plsSelIdx: [], count: panelSelIdx.length };
+					})
+					: plsIdxArr.map((idx) => {
+						const roots = this.getPlaylistParentUi(idx).filter((root) => root.node);
+						const panelSelIdx = items.filter((i) => roots.some((root) => this.inRange(i, root.node.item)));
+						return { idx, panelSelIdx, plsSelIdx: [], count: panelSelIdx.length };
+					});
 				itemsPerPls.forEach((o) => {
 					plman.ClearPlaylistSelection(o.idx);
 					if (o.panelSelIdx.length) {
@@ -3628,7 +3693,7 @@ class Populate {
 		const parent = this.getTopParent(node);
 		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
 			? lib.playlistSourceRoot
-			: lib.playlistSourceRoot.filter((root) => root.node === parent);
+			: lib.playlistSourceRoot.filter((root) => root.node === parent || root.nodes && root.nodes.includes(node));
 	}
 
 	getPlaylistParentUi(idx) {
@@ -3652,7 +3717,7 @@ class Populate {
 		const parent = this.getTopParent(node);
 		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
 			? panel.getPlaylistSource()
-			: lib.playlistSourceRoot.filter((root) => root.node === parent).map((p) => p.idx);
+			: lib.playlistSourceRoot.filter((root) => root.node === parent || root.nodes && root.nodes.includes(node)).map((p) => p.idx);
 	}
 
 	getNodePosInSource(node, sourceIdx, idx = 0) {
@@ -3681,6 +3746,19 @@ class Populate {
 
 	getNodeLastPosInSource(node, sourceIdx) {
 		return this.getNodePosInSource(node, sourceIdx, -1);
+	}
+
+	findHandleInSource(handle, plsIdx) {
+		return this.getPlaylistParentUi(plsIdx).map((root) => { return { root: root, idx: root.handleList.Find(handle) }; });
+	}
+
+	findHandlePanelInSource(handle, plsIdx) {
+		let idx = -1;
+		for (const root of lib.playlistSourceRoot) {
+			if (root.idx === plsIdx) { idx = idx + 1 + root.handleList.Find(handle); break; }
+			else if (root.count) { idx += root.count; }
+		}
+		return idx;
 	}
 
 	setFocusOnPlaylistIdx(idx) {
