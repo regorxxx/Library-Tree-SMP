@@ -1863,7 +1863,7 @@ class Populate {
 			this.nowp = -1;
 			return this.nowp;
 		}
-		if (!handle && fb.IsPlaying) handle = fb.GetNowPlaying();
+		if (!handle && fb.IsPlaying) { handle = fb.GetNowPlaying(); }
 		if (!handle) { this.nowp = -1; return this.nowp; }
 		this.nowp = panel.list.Find(handle);
 		panel.treePaint();
