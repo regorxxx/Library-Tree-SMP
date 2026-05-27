@@ -1,5 +1,5 @@
 'use strict';
-//24/05/26
+//27/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -473,7 +473,7 @@ class Images {
 	}
 
 	checkNowPlaying(item) {
-		if (!ppt.highLightNowplaying) return false;
+		if (!pop.highlight.nowPlaying) { return false; }
 		return !item.root && pop.inRange(pop.nowp, item.item);
 	}
 
@@ -725,8 +725,10 @@ class Images {
 					: '';
 				// Regorxxx ->
 				const cur_img = this.zooming ? null : this.getImg(item.key);
-				const grpCol = this.getGrpCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
-				const lotCol = this.getLotCol(item, cell.bNowPlaying, pop.highlight.text && cell.bHover);
+				// Regorxxx <- Code cleanup
+				const grpCol = this.getGrpCol(item, cell);
+				const lotCol = this.getLotCol(item, cell);
+				// Regorxxx ->
 				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
@@ -905,7 +907,6 @@ class Images {
 			y += offset;
 			h -= offset;
 		} else {
-			y = Math.max(panel.search.h + (ui.style.topBarShow ? ppt.marginTopBottom : 0) + l_w / 2, y);
 			h = Math.min(window.Height - ppt.marginTopBottom - y, sbar.y - y - ppt.marginTopBottom, h);
 		}
 		// Regorxxx ->
@@ -1722,9 +1723,21 @@ class Images {
 		}
 	}
 
-	getGrpCol(item, nowp, hover) {
-		return nowp ? ui.col.nowp : hover ? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h) : item.sel ? this.labels.overlayDark ? ui.col.text : ui.col.textSel : this.labels.overlayDark ? $.RGB(240, 240, 240) : ui.col.text;
+	// Regorxxx <- Code cleanup
+	getGrpCol(item, cell) {
+		return cell.bNowPlaying
+			? ui.col.nowp
+			: cell.bHover && pop.highlight.text
+				? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
+				: item.sel
+					? this.labels.overlayDark
+						? ui.col.text
+						: ui.col.textSel
+					: this.labels.overlayDark 
+						? $.RGB(240, 240, 240) 
+						: ui.col.text;
 	}
+	// Regorxxx ->
 
 	// Regorxxx <- Code cleanup | Improve image loading | Branch collage art
 	getImages() {
@@ -1879,9 +1892,21 @@ class Images {
 		this.albumArtDiskCache ? (preLoad && !ppt.albumArtNodeCollage ? this.preLoad() : this.getImages()) : this.loadThrottle(); // Regorxxx <- Branch collage art ->
 	}
 
-	getLotCol(item, nowp, hover) {
-		return nowp ? ui.col.nowp : hover ? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h) : item.sel ? this.labels.overlayDark ? ui.col.lotBlend : ui.col.selBlend : this.labels.overlayDark ? $.RGB(220, 220, 220) : ui.col.lotBlend;
+	// Regorxxx <- Code cleanup
+	getLotCol(item, cell) {
+		return cell.bNowPlaying
+			? ui.col.nowp
+			: cell.bHover && pop.highlight.text
+				? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
+				: item.sel
+					? this.labels.overlayDark
+						? ui.col.lotBlend
+						: ui.col.selBlend
+					: this.labels.overlayDark
+						? $.RGB(220, 220, 220)
+						: ui.col.lotBlend;
 	}
+	// Regorxxx ->
 
 	getMostFrequentField(arr) {
 		const counts = arr.reduce((a, c) => {
@@ -1947,7 +1972,7 @@ class Images {
 		const tfArtId = panel.folderView ? null : new FbTitleFormat(panel.getBranchTf()); // Regorxxx <- Branch collage art ->
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type}${panel.lines}`];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
-
+		const plsBranch = panel.isBranchedPlaylistSource(); // Regorxxx <- Multiple-playlist flat view ->
 		pop.tree.forEach((v, i) => {
 			const handle = panel.list[v.item[0].start];
 			v.handle = handle;
@@ -1992,7 +2017,7 @@ class Images {
 					}
 				}
 				// Regorxxx ->
-			} else if (panel.isBranchedPlaylistSource() && ppt.plsPopEmpty) {
+			} else if (plsBranch && ppt.plsPopEmpty) {
 				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles | Date fallback
 				switch (overlay.type) {
@@ -2010,7 +2035,7 @@ class Images {
 			}
 			// Regorxxx ->
 			// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
-			if (!!pop.rootNode && panel.isBranchedPlaylistSource()) {
+			if (!!pop.rootNode && plsBranch) {
 				for (const plsRootNode of lib.playlistSourceRoot) {
 					if (plsRootNode.name === v.nm) { // Duplicated playlist names will share the same node
 						plsRootNode.node = v;
