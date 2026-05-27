@@ -1,5 +1,5 @@
 'use strict';
-//16/05/26
+//27/05/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -147,15 +147,17 @@ class UserInterface {
 
 	// Methods
 
+	// Regorxxx <- Code cleanup
 	assignColours() {
-		const prop = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count/year ->
+		const propRGB = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box'];
+		const propRGBA = ['bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count/year ->
 		this.col.txt = '';
 		this.col.txt_h = '';
 		this.icon.col_c = '';
 		this.icon.col_e = '';
 		this.icon.col_h = '';
 		this.style.bg = false;
-		const set = (c, t) => {
+		const set = (c, mode) => {
 			c = c.replace(/[^0-9.,-]/g, '').split(/[,-]/);
 			let cc = '';
 			if (c.length != 3 && c.length != 4) return '';
@@ -167,11 +169,11 @@ class UserInterface {
 					else c[i] = $.clamp(Math.round(c[i]), 0, 255);
 				}
 			}
-			switch (t) {
-				case 0:
+			switch (mode) {
+				case 'rgb':
 					cc = $.RGB(c[0], c[1], c[2]);
 					break;
-				case 1:
+				case 'rgba':
 					switch (c.length) {
 						case 3:
 							cc = $.RGB(c[0], c[1], c[2]);
@@ -184,10 +186,10 @@ class UserInterface {
 			}
 			return cc;
 		};
-		prop.forEach((v, i) => {
-			this.col[v] = set(ppt[v + 'Use'] ? ppt[v] : '', i < 6 ? 0 : 1);
-		});
+		propRGB.forEach((v) => this.col[v] = set(ppt[v + 'Use'] ? ppt[v] : '', 'rgb'));
+		propRGBA.forEach((v) => this.col[v] = set(ppt[v + 'Use'] ? ppt[v] : '', 'rgba'));
 	}
+	// Regorxxx ->
 
 	block() {
 		return this.w <= 10 || this.h <= 10 || !window.IsVisible;
