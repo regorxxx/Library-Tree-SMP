@@ -1,5 +1,5 @@
 ﻿'use strict';
-//25/05/26
+//27/05/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2498,18 +2498,20 @@ class Panel {
 	}
 
 	setDummyTrack(handleList) {
-		return new Promise((resolve) => {
-			if (handleList.Count) { this.dummyTrack = handleList[0]; resolve(true); }
-			else if (fb.AddLocationsAsyncV2) {
-				fb.AddLocationsAsyncV2(['dummy.mp3']).then((track) => {
-					this.dummyTrack = track[0];
-					resolve(true);
-				});
-			} else { resolve(false); }
-		}).then((created) => {
-			if (created) { this.dummyTrack.isDummyTrack = true; }
-			return created;
-		});
+		return this.dummyTrack
+			? Promise.resolve(true)
+			: new Promise((resolve) => {
+				if (handleList.Count) { this.dummyTrack = handleList[0]; resolve(true); }
+				else if (fb.AddLocationsAsyncV2) {
+					fb.AddLocationsAsyncV2(['dummy.mp3']).then((track) => {
+						this.dummyTrack = track[0];
+						resolve(true);
+					});
+				} else { resolve(false); }
+			}).then((created) => {
+				if (created) { this.dummyTrack.isDummyTrack = true; }
+				return created;
+			});
 	}
 	// Regorxxx ->
 }
