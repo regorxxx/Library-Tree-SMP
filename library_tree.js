@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/05/26
+//28/05/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '2.0.0-beta', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -25,6 +25,7 @@ const files = [
 	'helpers\\helpers_xxx_prototypes_smp.js',
 	/* global checkCompatible:readable */
 	'helpers\\helpers_xxx_tags.js',
+	!utils.CRC32 || !utils.MD5 ? 'helpers\\helpers_xxx_checksum.js' : '',
 	'helpers\\callbacks_xxx.js',
 	'helpers\\helpers_xxx_prototypes_smp_post.js',
 	'helpers\\helpers_xxx_UI_draw.js',
@@ -50,7 +51,7 @@ const files = [
 	'main\\library_tree\\menu.js',
 	'main\\library_tree\\initialise.js',
 	'main\\library_tree\\callbacks.js'
-];
+].filter(Boolean);
 // Regorxxx ->
 
 if (loadAsync) {

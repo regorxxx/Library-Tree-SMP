@@ -1,7 +1,7 @@
 'use strict';
-//27/05/26
+//28/05/26
 
-/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, md5:readable, pluralize:readable, popUpBox:readable, lib:readable */
+/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
 /* global isArrayEqual:readable */
 /* global getFiles:readable, _deleteFolder:readable, WshShell:readable, popup:readable */
@@ -323,7 +323,7 @@ class Images {
 	cacheAlbumArt(result) {
 		const o = this.cache[result.key];
 		if (o && o.img == 'called') {
-			const saveName = md5.hashStr(result.path) + result.ext; // Regorxxx <- Allow images with transparencies ->
+			const saveName = utils.MD5(result.path) + result.ext; // Regorxxx <- Allow images with transparencies ->
 			this.cacheIt(result.image, result.key, result.ix, saveName);
 		}
 	}
@@ -1745,8 +1745,8 @@ class Images {
 						? this.labels.overlayDark
 							? ui.col.text
 							: ui.col.textSel
-						: this.labels.overlayDark 
-							? $.RGB(240, 240, 240) 
+						: this.labels.overlayDark
+							? $.RGB(240, 240, 240)
 							: ui.col.text;
 	}
 	// Regorxxx ->
@@ -1825,7 +1825,7 @@ class Images {
 								if (this.albumArtDiskCache) {
 									results.forEach((r) => {
 										if (!this.database[r.key] || !$.file(this.cacheFolder + this.database[r.key])) {
-											const saveName = 'b_' + md5.hashStr(r.key) + r.ext;
+											const saveName = 'b_' + utils.MD5(r.key) + r.ext;
 											this.cacheIt(r.image, r.key, r.ix, saveName);
 										}
 									});
@@ -1995,7 +1995,7 @@ class Images {
 			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
 			// Regorxxx <- Multiple-playlist flat view
 			if (handle) {
-				v.key = md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+				v.key = utils.MD5(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles
 				switch (overlay.type) {
 					case 'none': break;
@@ -2025,14 +2025,14 @@ class Images {
 						if (tag && !ids.has(tag)) {
 							ids.add(tag);
 							v.handleArr.push(handle);
-							v.keyArr.push(md5.hashStr(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
+							v.keyArr.push(utils.MD5(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
 						}
 						if (ids.size === 4) { break; }
 					}
 				}
 				// Regorxxx ->
 			} else if (plsBranch && ppt.plsPopEmpty) {
-				v.key = md5.hashStr('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+				v.key = utils.MD5('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles | Date fallback
 				switch (overlay.type) {
 					case 'none': break;
