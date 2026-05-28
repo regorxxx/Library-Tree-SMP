@@ -49,7 +49,7 @@ addEventListener('on_char', (code) => {
 
 addEventListener('on_focus', (is_focused) => {
 	if (panel.isFileExplorerSource()) { return; }
-	panel.on_focus(is_focused); // Regorxxx <- Code cleanup ->
+	panel.on_focus(is_focused); // Regorxxx <- Code cleanup | Disable shortcuts for input boxes ->
 	pop.on_focus(is_focused);
 });
 

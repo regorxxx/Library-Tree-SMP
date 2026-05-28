@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/05/26
+//28/05/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -307,7 +307,6 @@ class Search {
 	lbtn_dn(x, y) {
 		panel.searchPaint();
 		this.lbtnDn = panel.search.active = this.trace(x, y, 'button'); // Regorxxx <- Code cleanup ->
-		if (window.SetShortcutFilter) { window.SetShortcutFilter(panel.search.active); } // Regorxxx <- Disable shortcuts for input boxes ->
 		if (this.lbtnDn) {
 			if (this.shift) {
 				this.start = this.cx;
@@ -655,7 +654,6 @@ class Search {
 	}
 
 	focus() {
-		if (window.SetShortcutFilter) { window.SetShortcutFilter(true); } // Regorxxx <- Disable shortcuts for input boxes ->
 		panel.searchPaint();
 		panel.search.active = true;
 		this.shift = false;
@@ -715,7 +713,6 @@ class Find {
 		// Regorxxx <- Quick-search at any position of string
 		const text = String.fromCodePoint(code).toLowerCase(); // Regorxxx <- Quick-search optimization ->
 		if (this.jSearch.length === 0 && text === ' ') { return; } // Regorxxx <- Filter quick-search for space as first char ->
-		else if (window.SetShortcutFilter) { window.SetShortcutFilter(true); } // Regorxxx <- Disable shortcuts for input boxes ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
 			const name = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '');
@@ -893,7 +890,6 @@ class Find {
 			this.bAnyPosition = false; // Regorxxx <- Quick-search at any position of string ->
 			panel.treePaint();
 			timer.jsearch2.id = null;
-			if (window.SetShortcutFilter) { window.SetShortcutFilter(false); } // Regorxxx <- Disable shortcuts for input boxes ->
 		}, 1200);
 	}
 

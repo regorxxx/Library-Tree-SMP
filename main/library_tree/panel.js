@@ -2606,8 +2606,9 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Code cleanup
+	// Regorxxx <- Code cleanup | Disable shortcuts for input boxes
 	on_focus(bFocused) {
+		if (window.SetShortcutFilter) { window.SetShortcutFilter(bFocused); }
 		if (!bFocused) {
 			timer.clear(timer.cursor);
 			this.search.cursor = false;
