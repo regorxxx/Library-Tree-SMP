@@ -48,11 +48,8 @@ addEventListener('on_char', (code) => {
 });
 
 addEventListener('on_focus', (is_focused) => {
-	if (!is_focused) {
-		timer.clear(timer.cursor);
-		panel.search.cursor = false;
-		panel.searchPaint();
-	}
+	if (panel.isFileExplorerSource()) { return; }
+	panel.on_focus(is_focused); // Regorxxx <- Code cleanup ->
 	pop.on_focus(is_focused);
 });
 
