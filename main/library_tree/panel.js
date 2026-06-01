@@ -209,6 +209,13 @@ class Panel {
 		}
 	}
 
+	isNoHandleCustomTf(s, node) {
+		if (typeof s === 'string') {
+			return (!/%\w*%/.test(s) || ['$nowplaying', '$selected', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) && (node || !['$nodename'].some((w) => s.includes(w))) && (!['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.isBranchedPlaylistSource() && node) && !['$meta_branch_remap', '$meta_branch', '$harmonicsort', '$harmonicmix', '$shufflebytags'].some((w) => s.includes(w));
+		}
+		return false;
+	}
+
 	processCustomTf(s, node) {
 		if (typeof s === 'string') {
 			const sourceIdx = this.getSourceIdxFromSettings();
