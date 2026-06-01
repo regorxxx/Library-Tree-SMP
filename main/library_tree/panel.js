@@ -218,11 +218,22 @@ class Panel {
 
 	processCustomTf(s, node) {
 		if (typeof s === 'string') {
-			const sourceIdx = this.getSourceIdxFromSettings();
-			const sourceType = this.getSourceType(sourceIdx);
-			const plsIdx = this.getPlaylistSource();
-			const sourceName = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetPlaylistName(idx)).join('\', \'');
-			const sourceId = isArrayEqual(plsIdx, [-1]) ? '' : plsIdx.map((idx) => plman.GetGUID(idx)).join('\', \'');
+			const sourceType = this.getSourceType(this.getSourceIdxFromSettings());
+			const sourceParent = !['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.init || !lib.playlistSourceRoot.length
+				? null
+				: this.isBranchedPlaylistSource() && node
+					? pop.getPlaylistParent(node)
+					: lib.playlistSourceRoot;
+			const sourceName = !s.includes('$sourcename') || this.init || !lib.playlistSourceRoot.length
+				? ''
+				: this.isBranchedPlaylistSource() && node
+					? sourceParent.map((p) => p.name).join('\', \'')
+					: lib.playlistSourceRoot.map((p) => p.name).join('\', \'');
+			const sourceId = !s.includes('$sourceid') || this.init || !lib.playlistSourceRoot.length
+				? ''
+				: this.isBranchedPlaylistSource() && node
+					? sourceParent.map((p) => p.guid).join('\', \'')
+					: lib.playlistSourceRoot.map((p) => p.guid).join('\', \'');
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))

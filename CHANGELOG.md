@@ -32,6 +32,7 @@
 - UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
 - Quicksetup: new quicksetup presets for playlist manager features.
 ### Changed
+- Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).
 - Drag n' Drop: improved tooltip text when selecting top tracks.
