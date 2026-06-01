@@ -57,6 +57,7 @@
 - HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).
 ### Removed
 ### Fixed
+- Syntax: fix $sourcetype only returning 'Active playlist' instead of all available playlist source types.
 - Sources: fix Active playlist source not working on some cases after setting Playing playlist source.
 - Sources: setting 'Sort by Playlist idx' not working with multi-value branching on views TF.
 - Syntax: [JS regexp special replacement patterns](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_string_as_the_replacement) not being allowed within custom TF in some cases, like tags with '$' not properly working for album art custom TF. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081385.html#msg1081385).

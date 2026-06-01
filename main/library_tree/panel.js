@@ -2392,7 +2392,7 @@ class Panel {
 	}
 
 	sourceTypes() {
-		return { 'Playlist(s)': -1, 'Active Playlist': 0, 'Library': 1, 'Panel(s)': 2, 'Playback Queue': 3, 'Auto-DJ Queue': 4 };
+		return { 'Playlist(s)': -1, [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist')]: 0, 'Library': 1, 'Panel(s)': 2, 'Playback Queue': 3, 'Auto-DJ Queue': 4 };
 	}
 
 	getSourceType(idx) {
