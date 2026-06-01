@@ -1,5 +1,5 @@
 'use strict';
-//28/05/26
+//01/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -307,7 +307,7 @@ class Images {
 	}
 
 	async get_album_art_async(handle, art, key, ix) {
-		const result = { path: '', image: null, ext: '', key, ix }; // Regorxxx <- Allow images with transparencies ->
+		const result = { path: '', image: null, ext: '', key, ix, bSave: true }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
@@ -315,6 +315,7 @@ class Images {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
 				result.ext = this.getCacheFileExt(files[0]); // Regorxxx <- Allow images with transparencies ->
+				result.bSave = !panel.isPlayingCustomTf(art.tf);
 			}
 		} else {
 			const artProm = await utils.GetAlbumArtAsyncV2(0, handle, art.idx, false);
@@ -329,7 +330,7 @@ class Images {
 	cacheAlbumArt(result) {
 		const o = this.cache[result.key];
 		if (o && o.img == 'called') {
-			const saveName = utils.MD5(result.path) + result.ext; // Regorxxx <- Allow images with transparencies ->
+			const saveName = result.bSave ? utils.MD5(result.path) + result.ext : null; // Regorxxx <- Allow images with transparencies | Expand TF support ->
 			this.cacheIt(result.image, result.key, result.ix, saveName);
 		}
 	}
@@ -1823,19 +1824,15 @@ class Images {
 									if (this.albumArtDiskCache && this.database[subKey] && $.file(this.cacheFolder + this.database[subKey])) {
 										promises.push(this.load_image_async(subKey, this.cacheFolder + this.database[subKey], v.ix));
 									} else {
+										this.cache[subKey] = {
+											img: 'called',
+											accessed: ++this.accessed
+										};
 										promises.push(this.get_album_art_async(handle, art, subKey, v.ix));
 									}
 								}
 							}
 							Promise.all(promises).then((results) => {
-								if (this.albumArtDiskCache) {
-									results.forEach((r) => {
-										if (!this.database[r.key] || !$.file(this.cacheFolder + this.database[r.key])) {
-											const saveName = 'b_' + utils.MD5(r.key) + r.ext;
-											this.cacheIt(r.image, r.key, r.ix, saveName);
-										}
-									});
-								}
 								if (results.length > 1) {
 									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
 									this.cacheIt(img, key, v.ix);
