@@ -1,5 +1,5 @@
 'use strict';
-//27/05/26
+//01/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -375,7 +375,10 @@ class Populate {
 
 	// Regorxxx <- Support SORT BY query sorting | Code cleanup | Preserve tree sorting at selection | Support playlist sorting
 	buildTree(br, level, node, full, block, clearArt, addExtraNodes) {
-		if (br === lib.root && addExtraNodes && panel.isBranchedPlaylistSource()) { this.insertPlsRootNodes(ppt.rootNode ? br[0].child : br); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
+		// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
+		addExtraNodes = addExtraNodes && br === lib.root && panel.isBranchedPlaylistSource();
+		if (addExtraNodes && (!panel.imgView || panel.lines !== 2)) { this.insertPlsRootNodes(ppt.rootNode ? br[0].child : br); }
+		// Regorxxx ->
 		const l = this.rootNode ? level - 1 : level;
 		let j = 0;
 		if (!br[0].sorted) {
@@ -515,6 +518,7 @@ class Populate {
 			this.sort(br);
 			br[0].sorted = true;
 		}
+		if (addExtraNodes && panel.imgView && panel.lines === 2) { this.insertPlsRootNodes(ppt.rootNode ? br[0].child : br); } // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 		const br_l = br.length;
 		const par = this.tree.length - 1;
 		if (level == 0) { this.clearTree(clearArt); }
