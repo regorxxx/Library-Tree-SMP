@@ -1844,6 +1844,8 @@ class Images {
 							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
 						} else if (v.handle) {
 							this.get_album_art_async(v.handle, art, key, v.ix);
+						} else if (Object.hasOwn(art, 'tf') && panel.isNoHandleCustomTf(art.tf)) { // Regorxxx <- Multiple-playlist flat view ->
+							this.get_album_art_async(null, art, key, v.ix);
 						}
 					}
 				} else {
