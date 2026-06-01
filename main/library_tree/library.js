@@ -563,8 +563,7 @@ class Library {
 			handleList.OrderByFormat(tf, 1);
 			return handleList;
 		}
-		const tfClean = panel.processCustomTf(tf)
-			.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '').replace(/%ISPAUSEd%/gi, fb.isPaused ? '$not(0)' : '');
+		const tfClean = panel.processCustomTf(tf);
 		const sortMatches = /~#sort\d+/g.exec(tfClean) || [];
 		let tfEval = tfClean;
 		sortMatches.forEach((match) => {

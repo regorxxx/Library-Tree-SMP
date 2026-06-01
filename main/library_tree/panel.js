@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/05/26
+//01/06/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -225,8 +225,10 @@ class Panel {
 				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
-				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'));
-			s = _resolvePath(s);
+				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'))
+				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
+				.replace(/%ISPAUSED%/gi, fb.isPaused ? '$not(0)' : '');
+			s = _resolvePath(s.trimStart());
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
 				if (!q) { s = s.replace(/\$randfloat({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
