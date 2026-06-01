@@ -299,11 +299,17 @@ class Images {
 		return this.cachePath + this.getArt(idx, folderView).cacheName;
 	}
 
+	getArtMask(tf, handle, node) {
+		tf = panel.processCustomTf(tf, node);
+		return handle
+			? new FbTitleFormat(tf).EvalWithMetadb(handle)
+			: new FbTitleFormat(tf).Eval(true);
+	}
+
 	async get_album_art_async(handle, art, key, ix) {
 		const result = { path: '', image: null, ext: '', key, ix }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
-			const tf = panel.processCustomTf(art.tf, pop.tree[ix]);
-			const mask = new FbTitleFormat(tf).EvalWithMetadb(handle);
+			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
