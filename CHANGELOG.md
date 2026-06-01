@@ -30,6 +30,7 @@
 - Album Art: rectangle selection feature now also supports custom actions set by user. i.e. if L. Click is set to 'Select [panel]' then rectangle selection will only select on panel, but if it's set to 'Send to playlist' it will select on panel and send everything to playlist as single click would do. Alt. click actions are also supported.
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
 - UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
+- Syntax:  $nodeplaying and $source playing variables for usage with art type 'File (by TF)'.
 - Quicksetup: new quicksetup presets for playlist manager features.
 ### Changed
 - Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.

@@ -211,7 +211,15 @@ class Panel {
 
 	isNoHandleCustomTf(s, node) {
 		if (typeof s === 'string') {
-			return (!/%\w*%/.test(s) || ['$nowplaying', '$selected', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) && (node || !['$nodename'].some((w) => s.includes(w))) && (!['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.isBranchedPlaylistSource() && node) && !['$meta_branch_remap', '$meta_branch', '$harmonicsort', '$harmonicmix', '$shufflebytags'].some((w) => s.includes(w));
+			return (!/%\w*%/.test(s) || ['$nowplaying', '$selected', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) && (node || !['$nodename', '$nodeplaying'].some((w) => s.includes(w))) && (!['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.isBranchedPlaylistSource() && node) && !['$meta_branch_remap', '$meta_branch', '$harmonicsort', '$harmonicmix', '$shufflebytags'].some((w) => s.includes(w));
+		}
+		return false;
+	}
+
+	isPlayingCustomTf(s) {
+		if (typeof s === 'string') {
+			s = s.toLowerCase();
+			return (['$nowplaying', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) || ['$nodeplaying', '$sourceplaying'].some((w) => s.includes(w));
 		}
 		return false;
 	}
@@ -219,7 +227,7 @@ class Panel {
 	processCustomTf(s, node) {
 		if (typeof s === 'string') {
 			const sourceType = this.getSourceType(this.getSourceIdxFromSettings());
-			const sourceParent = !['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.init || !lib.playlistSourceRoot.length
+			const sourceParent = !['$sourcename', '$sourceid', '$sourceplaying'].some((w) => s.includes(w)) || this.init || !lib.playlistSourceRoot.length
 				? null
 				: this.isBranchedPlaylistSource() && node
 					? pop.getPlaylistParent(node)
@@ -238,10 +246,12 @@ class Panel {
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))
 				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-').split('^@^')[0])
+				.replace(/\$nodeplaying/gi, () => fb.IsPlaying && node && pop.inRange(pop.nowp, node.item) ? '$not(0)' : '')
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
 				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
 				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
+				.replace(/\$sourceplaying/gi, () => fb.IsPlaying && node && sourceParent.some((p) => plman.PlayingPlaylist === p.idx) ? '$not(0)' : '')
 				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
 				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'))
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')

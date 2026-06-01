@@ -1,5 +1,5 @@
 'use strict';
-//25/05/26
+//01/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -550,6 +550,7 @@ addEventListener('on_playback_new_track', (handle) => {
 	if (panel.autoDj.running) { panel.updateAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed(); // Regorxxx <- Now playing index ->
+	if (panel.imgView && panel.isPlayingCustomTf(img.getArt(ppt.artId, panel.folderView).tf)) { img.clearCache(); } // Regorxxx <- Expand TF support ->
 });
 
 // Regorxxx <- Active/Playing/All playlist source
@@ -586,6 +587,7 @@ addEventListener('on_playback_stop', (reason) => {
 	if (panel.autoDj.running) { panel.stopAutoDj(); } // Regorxxx <- Auto-DJ feature ->
 	lib.flushViewCache([3, 4]); // Regorxxx <- Internal cache of views ->
 	on_queue_changed(); // Regorxxx <- Now playing index ->
+	if (panel.imgView && panel.isPlayingCustomTf(img.getArt(ppt.artId, panel.folderView).tf)) { img.clearCache(); } // Regorxxx <- Expand TF support ->
 });
 
 addEventListener('on_playback_queue_changed', () => {
