@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/05/26
+//01/06/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -708,13 +708,7 @@ class Library {
 		if (panel.isStandardSource() && (!this.list.Count || !fb.IsLibraryEnabled() && (panel.isFixedPlaylistSource() || panel.isLibrarySource()))) {
 			pop.clearTree();
 			sbar.setRows(0);
-			// Regorxxx <- Queue source | Auto-DJ source
-			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
-				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
-				: panel.isQueueLikeSource()
-					? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
-					: 'Nothing received';
-			// Regorxxx ->
+			this.setEmptyText(); // Regorxxx <- Code cleanup ->
 			panel.treePaint();
 			return;
 		}
@@ -922,13 +916,7 @@ class Library {
 		if (this.list.Count) this.v2_init = false;
 
 		if (panel.isStandardSource() && (!this.list.Count || !fb.IsLibraryEnabled() && (panel.isFixedPlaylistSource() || panel.isLibrarySource()))) {
-			// Regorxxx <- Queue source | Auto-DJ source
-			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
-				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
-				: panel.isQueueLikeSource()
-					? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
-					: 'Nothing received';
-			// Regorxxx ->
+			this.setEmptyText(); // Regorxxx <- Code cleanup ->
 			panel.treePaint();
 		}
 	}
@@ -1121,13 +1109,7 @@ class Library {
 		} else panel.list = this.list;
 
 		if (panel.isStandardSource() && !this.full_list.Count) {
-			// Regorxxx <- Queue source
-			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
-				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : 'Nothing to show\n\nClick here to configure the media library')
-				: panel.isQueueSource()
-					? 'Empty playback queue'
-					: 'Nothing received';
-			// Regorxxx ->
+			this.setEmptyText(); // Regorxxx <- Code cleanup ->
 		}
 	}
 
@@ -1475,6 +1457,16 @@ class Library {
 			count: end - start + 1
 		}];
 	}
+
+	// Regorxxx <- Queue source | Auto-DJ source | Code cleanup
+	setEmptyText() {
+		this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
+			? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
+			: panel.isQueueLikeSource()
+				? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
+				: 'Nothing received';
+	}
+	// Regorxxx ->
 
 	setMemory(i) {
 		const o = ['rememberTree', 'rememberView'][i];
