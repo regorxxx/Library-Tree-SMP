@@ -31,6 +31,9 @@
 						<li class="level1">
 							<div class="li"><span class="li"><a href="#sorting_summary" class="toc">Playlist and Top tracks Sorting</a></span></div>
 						</li>
+						<li class="level1">
+							<div class="li"><span class="li"><a href="#art_summary" class="toc">Album art custom TF</a></span></div>
+						</li>
 					</ul>
 				</ul>
 			</div>
@@ -1262,6 +1265,359 @@
 				</ul>
 		</div>
 		<!-- SECTION "Sorting" -->
+		<!-- SECTION "Album Art" -->
+		<h2><a name="art_summary" id="art_summary">Album art custom TF</a></h2>
+		<div class="level2">
+			<table class="inline" style="width: 99%;">
+				<tr>
+					<th> Function </th>
+					<th> Description </th>
+					<th> Example </th>
+					<th> Comment </th>
+				</tr>
+				<tr>
+					<td> <em>$nodename</em> </td>
+					<td>
+						Returns node name (for every item shown at the panel). Special characters are already escaped.
+						<br>
+						<br>
+						Note [swap/strip] prefix settings are already applied.
+					</td>
+					<td>
+						<em>
+							$nodename.jpg
+						</em>
+					</td>
+					<td>
+						Looks for jpg files which match the node name.
+						<br>
+						<br>
+						'Rock' -> 'Rock.jpg'
+						<br>
+						<br>
+						'Tergo Lupi, A' -> 'Tergo Lupi, A.jpg'
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodenameswap</em> </td>
+					<td>
+						Returns node name with swapped prefixes. Special characters are already escaped.
+						<br>
+						<br>
+						Will swap back prefixes after comma char (,). Swapped terms follow user prefix settings.
+						<br>
+						<br>
+						Stripped prefixes can not be restored.
+					</td>
+					<td>
+						<em>
+							$nodenameswap.jpg
+						</em>
+					</td>
+					<td>
+						'Tergo Lupi, A' -> 'A Tergo Lupi.jpg'
+						<br>
+						<br>
+						'Rolling Stones, The' -> 'The Rolling Stones.jpg'
+						<br>
+						<br>
+						'Rolling Stones' -> 'Rolling Stones.jpg'
+						<br>
+						<br>
+						'Crosby, Stills & Nash' -> 'Crosby, Stills & Nash.jpg'
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodeplaying</em> </td>
+					<td>
+						Returns true when node is the playing one (playing track is any of its children).
+						<br>
+						<br>
+						Note usage of this variable will impact the usage of caching.
+					</td>
+					<td>
+						<em>
+							$if($nodeplaying,playing,$lower($nodename)).*
+						</em>
+					</td>
+					<td>
+						Looks for 'playing.*' file while playing, otherwise any file matching the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$prefix</em> </td>
+					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
+					<td>
+						<em>
+							$swapprefix(%TAG%,$prefix)
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							$swapprefix(%TAG%,A,The,An)
+						</em>
+					</td>
+					<td>
+						Expression used on TF pattern.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcetype</em> </td>
+					<td> Returns current source type. Special characters are already escaped. </td>
+					<td>
+						<em>
+							$if($strcmp($sourcetype,library),lib_,)$nodename.*
+						</em>
+					</td>
+					<td>
+						Looks for files prefixed with 'lib_' when source is Library, otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcename</em> </td>
+					<td>
+						Returns current source name for playlist sources. Special characters are already escaped.
+						<br>
+						<br>
+						For multi-branch playlist views, the source name is the one corresponding to the specific node; without that setting, all of them are joined with commas (since there is no distintion to where the track is sourced from).
+					</td>
+					<td>
+						<em>
+							$if($strcmp($sourcename,library viewer selection),specialcover,$nodename).*
+						</em>
+					</td>
+					<td>
+						Looks for file named 'specialcover.*' when source is 'library viewer selection', otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourcenameortype</em> </td>
+					<td>
+						Returns current source name for playlist sources or source type otherwise. Special characters are already escaped.
+						<br>
+						<br>
+						For multi-branch playlist views, the source name is the one corresponding to the specific node; without that setting, all of them are joined with commas (since there is no distintion to where the track is sourced from).
+					</td>
+					<td>
+						<em>
+							$if($strcmp($sourcenameortype,library),specialcover,$nodename).*
+						</em>
+					</td>
+					<td>
+						Looks for file named 'specialcover.*' when source is Library or playlist source is 'library', otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourceid</em> </td>
+					<td> Returns current source GUID. It only works with playlist sources. </td>
+					<td>
+						<em>
+							if($strcmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),specialcover,$nodename).*
+						</em>
+					</td>
+					<td>
+						Looks for file named 'specialcover.*' when source playlist's GUID matches, otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$sourceplaying</em> </td>
+					<td>
+						Returns true when node's source is the playing one. It only works with playlist sources.
+						<br>
+						<br>
+						Note this may match multiple nodes depending on art group level setting used for multi-branch playlist views.
+						<br>
+						<br>
+						Note usage of this variable will impact the usage of caching.
+					</td>
+					<td>
+						<em>
+							$if($sourceplaying,playing,$lower($nodename)).*
+						</em>
+					</td>
+					<td>
+						Looks for 'playing.*' file for all playing playlist items, otherwise any file matching the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$viewname</em> </td>
+					<td> Returns current view name. Special characters are already escaped. </td>
+					<td>
+						<em>
+							$if($strcmp($viewname,test),test_,)$nodename.*
+						</em>
+					</td>
+					<td>
+						Looks for files prefixed with 'test_' when view matches 'test', otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$filtername</em> </td>
+					<td> Returns current filter name. Special characters are already escaped. </td>
+					<td>
+						<em>
+							$if($strcmp($filtername,lossless),l_,)$nodename.*
+						</em>
+					</td>
+					<td>
+						Looks for files prefixed with 'l_' when filter matches 'lossless', otherwise just match the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nowplaying{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing track. </td>
+					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),playing,$nodename).*</em> </td>
+					<td> Looks for file named 'playing.*' when artist is the currently playing one, otherwise just match the node name. </td>
+				</tr>
+				<tr>
+					<td> <em>$selected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the selected track. </td>
+					<td> <em>$if($strcmp(%ARTIST%,$selected{%ARTIST%}),selected,$nodename).*</em> </td>
+					<td> Looks for file named 'selected.*' when artist is the currently selected one, otherwise just match the node name. </td>
+				</tr>
+				<tr>
+					<td> <em>$nowplayingorselected{X}</em> </td>
+					<td> Returns value of X (TF expression) for the playing or selected (focused) track as fallback. </td>
+					<td> <em>$if($strcmp(Rock,$nowplayingorselected{$meta(GENRE,0)}),nps,$nodename).*</em> </td>
+					<td> Looks for file named 'nps.*' when genre is the currently playing/selected one, otherwise just match the node name. </td>
+				</tr>
+				<tr>
+					<td> <em>$iterate{'X',N,C}</em> </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td>
+						<em>$iterate{'$meta(ARTIST,$counter)',2,-}</em>
+						<br>
+						<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;->
+						<br>
+						<br>
+						$meta(ARTIST,0)-$meta(ARTIST,1)
+					</td>
+					<td>
+						Uses 2 first artists for sorting. This example is equivalent to '%ARTIST%', but only using N first values, instead of all.
+						<br>
+						<br>
+						Internally changed to this.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randint{max}<br>$randint{min,max}</em> </td>
+					<td> Returns a random integer number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br> Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randint{}
+							<br>
+							<br>
+							$randint{5}
+							<br>
+							<br>
+							$randint{3,5}
+							<br>
+							<br>
+							$randint{3,5}-$randint{3,5}_cover.*
+						</em>
+					</td>
+					<td>
+						1
+						<br>
+						<br>
+						2
+						<br>
+						<br>
+						4
+						<br>
+						<br>
+						Looks for any random file named between 3-5, i.e. '3-4_cover.*', '4-3_cover.*', ...
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandint{max}<br>$pseudorandint{min,max}</em> </td>
+					<td> Equal to $randint{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$pseudorandint(10,30)-$pseudorandint(10,30)_cover.*
+						</em>
+					</td>
+					<td>
+						Looks for any random file named between 10-30, i.e. '10-10_cover.*', '25-25_cover.*', ...
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$randfloat{max}<br>$randfloat{min,max}</em> </td>
+					<td> Returns a random float number between min and max (included).<br>If min is not specified, 0 is used. If max is not specified, 1 is used.<br>Note every function instance will return a different value. </td>
+					<td>
+						<em>
+							$randfloat{}
+							<br>
+							<br>
+							$randfloat{5}
+							<br>
+							<br>
+							$randfloat{3,5}
+						</em>
+					</td>
+					<td>
+						0.98
+						<br>
+						<br>
+						2.45
+						<br>
+						<br>
+						3.78
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$pseudorandfloat{max}<br>$pseudorandfloat{min,max}</em> </td>
+					<td> Equal to $randfloat{} but every function instance will return the same random value. </td>
+					<td>
+						<em>
+							$randfloat{1,4} - $randfloat{1,4}
+						</em>
+					</td>
+					<td>
+						0.98 - 0.98
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> Supports all TF expressions natively found on foobar2000: </div>
+					</li>
+					<ul>
+						<li>
+							<div class="li"> Foobar2000 Title Formatting reference: <a href="https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference">https://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Title_Formatting_Reference</a> </div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> Can be used to display custom art related to actual View TF pattern instead of track-based. </div>
+						<ul>
+							<li>
+								<div class="li">e.g. Genre tree with custom images for every node:</div>
+							</li>
+							<ul>
+								<li>
+									<div class="li">Set TF to: '.\profile\images\$lower($nodename)'</div>
+								</li>
+								<li>
+									<div class="li">Add genre as at '.\profile\images\*.jpg'</div>
+								</li>
+								<li>
+									<div class="li">For ex. rock genre at '.\profile\images\rock.jpg</div>
+								</li>
+							</ul>
+						</ul>
+					</li>
+					<li>
+						<div class="li"> Paths starting with '<b>.\profile\</b>' are relative to foobar profile folder.'<b>%FB2K_PROFILE_PATH%</b>' or '<b>%PROFILE%</b>' may also be used. </div>
+					</li>
+				</ul>
+		</div>
+		<!-- SECTION "Album Art" -->
 	</div>
 </body>
 
