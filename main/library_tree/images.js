@@ -310,6 +310,10 @@ class Images {
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
+			if (mask.includes('@@')) {
+				const idx = (panel.artVariables.find((av) => mask.includes(av.id)) || {idx: -1}).idx;
+				if (idx !== -1) { return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false); }
+			}
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];

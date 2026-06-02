@@ -69,6 +69,13 @@ class Panel {
 		this.prefix = ppt.prefix.split('|');
 		this.prefixRe = new RegExp('(?:, )(' + this.prefix.map(escapeRegExpV2).join('|') + ')$', 'i');
 		// Regorxxx ->
+		// Regorxxx <- Custom TF art
+		this.artVariables = img.art.map((art) => {
+			const idx = art.idx;
+			const id = '@@' + idx + '@@';
+			return { idx, regExp: new RegExp('\\$' + escapeRegExpV2(art.type), 'gi'), replacer: () => this.imgView ? id : '-N/A-', id };
+		});
+		// Regorxxx ->
 
 		this.filter = {
 			menu: [],
@@ -252,6 +259,7 @@ class Panel {
 				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'))
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
 				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
+			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
 			s = _resolvePath(s.trimStart());
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);

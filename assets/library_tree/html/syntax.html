@@ -1345,6 +1345,26 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$front<br>$back<br>$disc<br>$icon<br>$artist</em> </td>
+					<td>
+						Uses the specified art type instead of looking for a file.
+						<br>
+						<br>
+						If present on evaluated expression, overrides any other art/file.
+						<br>
+						<br>
+						Note usage of these variables invalidates any kind of caching.
+					</td>
+					<td>
+						<em>
+							$if($nodeplaying,$front,$lower($nodename).*)
+						</em>
+					</td>
+					<td>
+						Looks for front album art file while playing, otherwise any file matching the node name.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$prefix</em> </td>
 					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
 					<td>
