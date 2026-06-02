@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 05/04/26 -->
+<!DOCTYPE html> <!-- 02/06/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -170,7 +170,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcename</em> </td>
-					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td> Returns current source name for playlist sources. Special characters are already escaped.
 					<td>
 						<em>
 							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcename,library viewer selection),, - %RATING%)
@@ -189,7 +189,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcenameortype</em> </td>
-					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td> Returns current source name for playlist sources or source type otherwise. Special characters are already escaped.
 					<td>
 						<em>
 							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcenameortype,library),, - %RATING%)
@@ -208,7 +208,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourceid</em> </td>
-					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td> Returns current source GUID. It only works with playlist sources.
 					<td>
 						<em>
 							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),, - %RATING%)
@@ -533,7 +533,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcename</em> </td>
-					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td> Returns current source name. It only works with playlist sources. Special characters are already escaped.
 					<td>
 						<em>
 							"$stricmp($sourcename,library viewer selection)" MISSING OR %RATING% PRESENT
@@ -547,7 +547,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcenameortype</em> </td>
-					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td> Returns current source name for playlist sources or source type otherwise. Special characters are already escaped.
 					<td>
 						<em>
 							"$stricmp($sourcenameortype,library)" MISSING OR %RATING% PRESENT
@@ -561,7 +561,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourceid</em> </td>
-					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td> Returns current source GUID. It only works with playlist sources.
 					<td>
 						<em>
 							"$stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE)" MISSING OR %RATING% PRESENT
@@ -951,7 +951,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcename</em> </td>
-					<td> Returns current source name, when source is 'Active playlist'. Special characters are already escaped.
+					<td> Returns current source name. It only works with playlist sources. Special characters are already escaped.
 					<td>
 						<em>
 							$if($strcmp($sourcename,library viewer selection),$harmonicmix{},)
@@ -963,7 +963,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcenameortype</em> </td>
-					<td> Returns current source name, when source is 'Active playlist', or source type otherwise. Special characters are already escaped.
+					<td> Returns current source name for playlist sources or source type otherwise. Special characters are already escaped.
 					<td>
 						<em>
 							$if($strcmp($sourcenameortype,library),$harmonicmix{},)
@@ -975,7 +975,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourceid</em> </td>
-					<td> Returns current source GUID, when source is 'Active playlist'.
+					<td> Returns current source GUID. It only works with playlist sources.
 					<td>
 						<em>
 							if($strcmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE),$harmonicmix{},)
@@ -1018,7 +1018,7 @@
 				<tr>
 					<td> <em>$selected{X}</em> </td>
 					<td> Returns value of X (TF expression) for the selected track. </td>
-					<td> <em>$if($strcmp(%ARTIST%,$nowplaying{%ARTIST%}),0,1)$harmonicmix{}</em> </td>
+					<td> <em>$if($strcmp(%ARTIST%,$selected{%ARTIST%}),0,1)$harmonicmix{}</em> </td>
 					<td> Performs harmonic mixing, then puts selected (focused) artist first, leaving the rest as previously sorted. </td>
 				</tr>
 				<tr>
