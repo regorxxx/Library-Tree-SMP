@@ -1,5 +1,5 @@
 'use strict';
-//01/06/26
+//02/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -306,8 +306,8 @@ class Images {
 			: new FbTitleFormat(tf).Eval(true);
 	}
 
-	async get_album_art_async(handle, art, key, ix) {
-		const result = { path: '', image: null, ext: '', key, ix, bSave: true }; // Regorxxx <- Allow images with transparencies ->
+	async get_album_art_async(handle, art, key, ix, bSave = true) {
+		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
@@ -315,7 +315,7 @@ class Images {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
 				result.ext = this.getCacheFileExt(files[0]); // Regorxxx <- Allow images with transparencies ->
-				result.bSave = !panel.isPlayingCustomTf(art.tf);
+				if (result.bSave) { result.bSave = !panel.isPlayingCustomTf(art.tf); }
 			}
 		} else {
 			const artProm = await utils.GetAlbumArtAsyncV2(0, handle, art.idx, false);

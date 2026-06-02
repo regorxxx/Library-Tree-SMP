@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/06/26
+//02/06/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -184,7 +184,7 @@ class Panel {
 		window.RepaintRect(0, this.paint_y, ui.w, ui.h - this.paint_y + 1, true);
 	}
 
-	// Regorxxx <- Expose TF formatting for arbitrary input | Expand TF support | Merge now playing and selected as fallback | Expose custom prefixes as tag
+	// Regorxxx <- Expose TF formatting for arbitrary input | Expand TF support | Merge now playing and selected as fallback | Expose custom prefixes as tag | Custom TF art
 	eval(n, type) {
 		let handle, tfo;
 		switch (type) {
@@ -227,21 +227,17 @@ class Panel {
 	processCustomTf(s, node) {
 		if (typeof s === 'string') {
 			const sourceType = this.getSourceType(this.getSourceIdxFromSettings());
-			const sourceParent = !['$sourcename', '$sourceid', '$sourceplaying'].some((w) => s.includes(w)) || this.init || !lib.playlistSourceRoot.length
-				? null
-				: this.isBranchedPlaylistSource() && node
+			const sourceParent = ['$sourcename', '$sourceid', '$sourceplaying'].some((w) => s.includes(w)) && !this.init && lib.playlistSourceRoot.length
+				? this.isBranchedPlaylistSource() && node
 					? pop.getPlaylistParent(node)
-					: lib.playlistSourceRoot;
-			const sourceName = !s.includes('$sourcename') || this.init || !lib.playlistSourceRoot.length
-				? ''
-				: this.isBranchedPlaylistSource() && node
-					? sourceParent.map((p) => p.name).join('\', \'')
-					: lib.playlistSourceRoot.map((p) => p.name).join('\', \'');
-			const sourceId = !s.includes('$sourceid') || this.init || !lib.playlistSourceRoot.length
-				? ''
-				: this.isBranchedPlaylistSource() && node
-					? sourceParent.map((p) => p.guid).join('\', \'')
-					: lib.playlistSourceRoot.map((p) => p.guid).join('\', \'');
+					: lib.playlistSourceRoot
+				: null;
+			const sourceName = s.includes('$sourcename') && sourceParent
+				? sourceParent.map((p) => p.name).join('\', \'')
+				: '';
+			const sourceId = s.includes('$sourceid') && sourceParent
+				? sourceParent.map((p) => p.guid).join('\', \'')
+				: '';
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))
@@ -255,7 +251,7 @@ class Panel {
 				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
 				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'))
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
-				.replace(/%ISPAUSED%/gi, fb.isPaused ? '$not(0)' : '');
+				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
 			s = _resolvePath(s.trimStart());
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
