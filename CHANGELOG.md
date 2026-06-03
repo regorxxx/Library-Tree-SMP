@@ -30,14 +30,14 @@
 - Album Art: rectangle selection feature now also supports custom actions set by user. i.e. if L. Click is set to 'Select [panel]' then rectangle selection will only select on panel, but if it's set to 'Send to playlist' it will select on panel and send everything to playlist as single click would do. Alt. click actions are also supported.
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
 - UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
-- Syntax: added $nodeplaying and $sourceplaying variables for usage with art type 'File (by TF)'.
-- Syntax: added $front, $back, $disc,... variables to retrieve specified art type as fallback for usage along art type 'File (by TF)'.
-- Syntax: added album art custom TF section.
+- Syntax: added $nodeplaying and $sourceplaying variables for usage with art type 'File (by TF)'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
+- Syntax: added $front, $back, $disc,... variables to retrieve specified art type as fallback for usage along art type 'File (by TF)'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
+- Syntax: added album art custom TF section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Quicksetup: new quicksetup presets for playlist manager features.
 - Debug: new album art Custom TF results logging setting, which outputs the result of custom TF styles expressions for every node (along the number of files matched). i.e. it can be temporarily used to "preview" the expressions used for testing purposes. Setting can be found at 'Advanced' tab (HTML options panel) or 'Logging album art custom TF' (properties panel).
 ### Changed
 - Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.
-- Syntax: improve syntax docs. Added links at HTML options panels directly to related sections, instead of index.
+- Syntax: improve syntax docs. Added links at HTML options panels directly to related sections, instead of index. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Drag n' drop: use handles directly provided from drag n' drop if JS-host allows it, instead of selection retrieval. See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081184.html#msg1081184).
 - Drag n' Drop: changed keyboard modified to send top tracks to auto DJ to Alt (from Ctrl).
 - Drag n' Drop: improved tooltip text when selecting top tracks.
