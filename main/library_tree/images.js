@@ -1,10 +1,10 @@
 'use strict';
-//02/06/26
+//03/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
 /* global isArrayEqual:readable */
-/* global getFiles:readable, _deleteFolder:readable, WshShell:readable, popup:readable */
+/* global getFiles:readable, _deleteFolder:readable, WshShell:readable, popup:readable, _foldPath:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
@@ -312,9 +312,13 @@ class Images {
 			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
 			if (mask.includes('@@')) {
 				const idx = (panel.artVariables.find((av) => mask.includes(av.id)) || {idx: -1}).idx;
-				if (idx !== -1) { return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false); }
+				if (idx !== -1) {
+					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + pop.tree[ix].nm + ' -> ' + _foldPath(mask) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
+					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
+				}
 			}
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
+			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + pop.tree[ix].nm + ' -> ' + _foldPath(mask) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 02/06/26 -->
+﻿<!DOCTYPE html> <!-- 03/06/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1927,7 +1927,7 @@
 			var contextMenuLabels = ['Hide (disabled)', 'Append to main menu', 'Show as sub-menu', 'Show as secondary menu (on click)']; // Regorxxx <- Contextual menu option ->
 			var scrollbarLabels = ['Bar Width', 'Narrow bar width (0 = auto)', 'Arrow width', 'Arrow padding (+/-)', 'Grip min height', 'Custom icon', 'Custom icon font name', 'Custom icon offset (%)', 'Prefer full height scrollbar'];
 			var facetsLabels = ['Prefer internal cache (if supported)', 'Chained source notifications']; // Regorxxx <- Don't create cache playlists if possible | Chained facets updates ->
-			var loggingLabels = ['Library loading profiling']; // Regorxxx <- Library profiling ->
+			var loggingLabels = ['Library loading profiling', 'Album art custom TF results']; // Regorxxx <- Library profiling | Art logging ->
 			var languageLabels = ['Transliteration order (| separator)']; // Regorxxx <- Sorting transliteration ->
 			var autodjLabels = ['Stop when repeating a track', 'Random', 'By Genre-Mood matching', 'By Genre matching', 'By Mood matching']; // Regorxxx <- Auto-DJ feature ->
 			var scrollLabels = ['Use windows metrics', 'Smooth scroll', 'Touch control', 'Windows style dark theme fix'];  // Regorxxx <- Scrollbar on windows style improvements ->
@@ -2034,7 +2034,7 @@
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist ->
-				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
+				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'logArtCustomTf', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
 			// Regorxxx <- New search tab
 			box.all = box.presets.concat(box.behaviour, box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
@@ -3306,8 +3306,8 @@
 				// Regorxxx ->
 				i = 0; window.mode.insertAdjacentHTML('beforeend', '<div><input id="mode_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="mode_checkbox' + i + '" class="checkbox_label">Enabled</label></div>');
 				for (i = 0; i < 2; i++) { window.modeInput.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="modeInput_container' + i + '" name="advanced_input" class="input35" /><label for="modeInput_container' + i + '" class="inp_label2">' + modeLabels[i] + '</label></div>'); }
-				// Regorxxx <- Library profiling
-				i = 0; window.logging.insertAdjacentHTML('beforeend', '<div><input id="logging_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="logging_checkbox' + i + '" class="checkbox_label">' + loggingLabels[i] + '</label></div>');
+				// Regorxxx <- Library profiling | Art logging
+				for (i = 0; i < loggingLabels.length; i++) { window.logging.insertAdjacentHTML('beforeend', '<div><input id="logging_checkbox' + i + '" name="advanced_checkbox" style="' + cbox + '" type="checkbox" /><label for="logging_checkbox' + i + '" class="checkbox_label">' + loggingLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Sorting transliteration
 				i = 0; window.sortingTransLangs.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="language_container' + i + '" name="advanced_input" class="input35" /><label for="language_container' + i + '" class="inp_label2">' + languageLabels[i] + '</label></div>');

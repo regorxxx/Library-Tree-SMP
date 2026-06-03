@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/05/26
+//03/06/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -518,6 +518,7 @@ let properties = [
 
 
 	['Logging library profiler', true, 'logLibProfiler'], // Regorxxx <- Library profiling ->
+	['Logging album art custom TF', false, 'logArtCustomTf'], // Regorxxx <- Art logging ->
 	['Statistics Rating/Popularity Decimals', 1, 'ratingDecimals'], // Regorxxx <- Rating decimals ->
 	['Playlist: Prefer internal cache (if supported)', true, 'panelInternalCache'], // Regorxxx <- Don't create cache playlists if possible ->
 	['Playlist: Use Mouse actions on playlist sources', true, 'plsActions'], // Regorxxx <- Mouse actions on playlist sources ->

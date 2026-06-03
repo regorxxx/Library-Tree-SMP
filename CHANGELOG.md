@@ -34,6 +34,7 @@
 - Syntax: added $front, $back, $disc,... variables to retrieve specified art type as fallback for usage along art type 'File (by TF)'.
 - Syntax: added album art custom TF section.
 - Quicksetup: new quicksetup presets for playlist manager features.
+- Debug: new album art Custom TF results logging setting, which outputs the result of custom TF styles expressions for every node (along the number of files matched). i.e. it can be temporarily used to "preview" the expressions used for testing purposes. Setting can be found at 'Advanced' tab (HTML options panel) or 'Logging album art custom TF' (properties panel).
 ### Changed
 - Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.
 - Syntax: improve syntax docs. Added links at HTML options panels directly to related sections, instead of index.
