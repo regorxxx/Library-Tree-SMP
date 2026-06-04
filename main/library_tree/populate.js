@@ -543,7 +543,7 @@ class Populate {
 						}
 					});
 					break;
-				case l == 0 && lib.node[item.item[0].start] && lib.node[item.item[0].start].length == 1:
+				case l == 0 && lib.node[this.getFirstFromRange(item.item)] && lib.node[this.getFirstFromRange(item.item)].length == 1:
 					item.track = true;
 					break;
 			}
@@ -3007,7 +3007,8 @@ class Populate {
 	}
 
 	getFirstFromRange(item) {
-		return this.range(item)[0] || -1;
+		let idx;
+		return item.some((v) => { if (v.count !== 0) { idx = v.start; return true; } }) ? idx : -1;
 	}
 	// Regorxxx ->
 
