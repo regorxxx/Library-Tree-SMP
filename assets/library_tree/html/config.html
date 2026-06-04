@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 03/06/26 -->
+﻿<!DOCTYPE html> <!-- 04/06/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -2973,9 +2973,10 @@
 
 				window.keystroke_dropdown.innerHTML = keystrokeLabels[ppt['keyAction_internal'].value];
 				for (i = 0; i < 2; i++) { window.keystroke.insertAdjacentHTML('beforeend', '<a onclick="setKeyAction(' + i + ');">' + keystrokeLabels[i] + '</a>'); }
-				// Regorxxx <- Throttle selection playlist update | Performance improvements
+				// Regorxxx <- Mouse actions on playlist sources
 				i = 0; window.plsActions.insertAdjacentHTML('beforeend', '<div><input id="plsActions_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsActions_checkbox' + i + '" class="checkbox_label">Use mouse actions for playlist sources</label></div>');
-				// Regorxxx ->				// Regorxxx <- Throttle selection playlist update | Performance improvements
+				// Regorxxx ->
+				// Regorxxx <- Throttle selection playlist update | Performance improvements
 				i = 0; window.keystrokeDelay.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="keystroke_container' + i + '" name="behaviour_input" class="input35" /><label for="keystroke_container' + i + '" class="inp_label2">Send to playlist delay (ms)</label></div>');
 				// Regorxxx ->
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[ppt['sbarShow_internal'].value];
@@ -3904,6 +3905,8 @@
 				ppt.curNoCoverImg_internal.value = ppt.curNoCoverImg_internal.default_value;
 				// Regorxxx ->
 				setOverlay(ppt['itemOverlayType_internal'].default_value);
+				setOverlayVAlign(ppt['itemOverlayVAlign_internal'].default_value); // Regorxxx <- Item overlay vertical alignment ->
+				setOverlayHAlign(ppt['itemOverlayHAlign_internal'].default_value); // Regorxxx <- Item overlay horizontal alignment ->
 				setThumbSize(ppt['thumbNailSize_internal'].default_value);
 			}
 			if (cur.page == 'custom') setCustomColours('default_value');
