@@ -1,5 +1,5 @@
 'use strict';
-//03/06/26
+//04/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -34,6 +34,7 @@ class Images {
 		this.start = 0;
 		this.toSave = [];
 		this.zooming = false;
+		this.maxCollageArtItems = 4; // Regorxxx <- Branch collage art ->
 
 		this.bor = {
 			bot: 6,
@@ -309,16 +310,17 @@ class Images {
 	async get_album_art_async(handle, art, key, ix, bSave = true) {
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
-			const mask = this.getArtMask(art.tf, handle, pop.tree[ix]);
+			const item = pop.tree[ix];
+			const mask = this.getArtMask(art.tf, handle, item);
 			if (mask.includes('@@')) {
-				const idx = (panel.artVariables.find((av) => mask.includes(av.id)) || {idx: -1}).idx;
+				const idx = (panel.artVariables.find((av) => mask.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
-					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + pop.tree[ix].nm + ' -> ' + _foldPath(mask) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
+					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(mask) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
 			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
-			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + pop.tree[ix].nm + ' -> ' + _foldPath(mask) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
+			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(mask) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
@@ -1822,7 +1824,7 @@ class Images {
 						if (ppt.albumArtNodeCollage && handlesCount) {
 							const promises = [];
 							const keys = new Set();
-							const max = Math.min(handlesCount, 4);
+							const max = Math.min(handlesCount, this.maxCollageArtItems);
 							for (let i = 0; i < handlesCount; i++) {
 								if (keys.size === max) { break; }
 								const handle = v.handleArr[i];
@@ -2040,7 +2042,7 @@ class Images {
 							v.handleArr.push(handle);
 							v.keyArr.push(utils.MD5(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId));
 						}
-						if (ids.size === 4) { break; }
+						if (ids.size === this.maxCollageArtItems) { break; }
 					}
 				}
 				// Regorxxx ->
