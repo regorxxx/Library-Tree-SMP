@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/06/26
+//04/06/26
 
 /* global $:readable */
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
@@ -226,6 +226,7 @@ let properties = [
 	['Image Show Index Year Auto', true, 'albumArtYearAuto'],
 	['Image Show Options', true, 'albumArtOptionsShow'],
 	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
+	['Image Item Track Preference', 0, 'albumArtPreferHandle'], // Regorxxx <- Track preference art ->
 	['Image Style [Front]', 1, 'imgStyleFront'],
 	['Image Style [Back]', 1, 'imgStyleBack'],
 	['Image Style [Disc]', 2, 'imgStyleDisc'],

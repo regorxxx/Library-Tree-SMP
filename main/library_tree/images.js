@@ -34,6 +34,7 @@ class Images {
 		this.start = 0;
 		this.toSave = [];
 		this.zooming = false;
+		this.nowp = { key: '', id: '', handle: null }; // Regorxxx <- Track preference art ->
 		this.maxCollageArtItems = 4; // Regorxxx <- Branch collage art ->
 
 		this.bor = {
@@ -2002,12 +2003,50 @@ class Images {
 		this.groupField = albumArtGrpNames[`${panel.grp[ppt.viewBy].type}${panel.lines}`];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 		const plsBranch = panel.isBranchedPlaylistSource(); // Regorxxx <- Multiple-playlist flat view ->
+		const albumTF = new FbTitleFormat('%ALBUM%'); // Regorxxx <- Track preference art ->
 		pop.tree.forEach((v, i) => {
-			const handle = panel.list[v.item[0].start];
-			v.handle = handle;
+			// Regorxxx <- Track preference art
 			const arr = pop.tree[i].name.split('^@^');
 			v.grp = panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1];
 			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
+			let handle;
+			let handleCut = -1;
+			switch (ppt.albumArtPreferHandle) {
+				case 1: handle = panel.list[pop.getLastFromRange(v.item)]; break; // last
+				case 2: { // random
+					const idx = pop.getRandFromRange(v.item);
+					handle = panel.list[idx];
+					handleCut = pop.getPosInRange(idx, v.item);
+					break;
+				}
+				case 3: { // playing
+					const nowpPos = ppt.albumArtPreferHandle === 3 && pop.nowp !== -1 ? pop.getPosInRange(pop.nowp, v.item) : -1;
+					if (nowpPos !== -1 && !v.root) {
+						handle = fb.GetNowPlaying();
+						if (handle) {
+							v.key = utils.MD5(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
+							if (this.nowp.key !== v.key) {
+								const id = albumTF.EvalWithMetadb(handle);
+								if (this.nowp.id === id) {
+									handle = this.nowp.handle;
+								} else {
+									this.trimCache(this.nowp.key);
+									this.trimCache(v.key);
+									this.nowp.handle = handle;
+									this.nowp.id = id;
+								}
+								this.nowp.key = v.key;
+							}
+							handleCut = nowpPos;
+							break;
+						}
+					}
+				}
+				case 0: // eslint-disable-line no-fallthrough
+				default: handle = panel.list[pop.getFirstFromRange(v.item)]; break; // first
+			}
+			// Regorxxx ->
+			v.handle = handle;
 			// Regorxxx <- Multiple-playlist flat view
 			if (handle) {
 				v.key = utils.MD5(handle.Path + handle.SubSong + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
@@ -2032,6 +2071,25 @@ class Images {
 					const handleArr = ppt.albumArtNodeCollage
 						? pop.range(v.item).map((idx) => panel.list[idx])
 						: [];
+					// Regorxxx <- Track preference art
+					switch (ppt.albumArtPreferHandle) {
+						case 3: handleArr.splice(0, handleCut); break; // Playing
+						case 2: { // random
+							if (handleCut < handleArr.length / 2) {
+								handleArr.splice(0, handleCut);
+								break;
+							}
+						} // eslint-disable-next-line no-fallthrough
+						case 1: handleArr.reverse(); // last
+						case 0: // eslint-disable-line no-fallthrough
+						default: { // first
+							if (handleCut !== -1) {
+								handleArr.splice(handleCut, Infinity);
+							}
+							break;
+						}
+					}
+					// Regorxxx ->
 					v.handleArr = [];
 					for (const handle of handleArr) {
 						const tag = tfArtId

@@ -1,5 +1,5 @@
 'use strict';
-//01/06/26
+//04/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3009,6 +3009,21 @@ class Populate {
 	getFirstFromRange(item) {
 		let idx;
 		return item.some((v) => { if (v.count !== 0) { idx = v.start; return true; } }) ? idx : -1;
+	}
+
+	getLastFromRange(item) {
+		let idx;
+		return [...item].reverse().some((v) => { if (v.count !== 0) { idx = v.end; return true; } }) ? idx : -1;
+	}
+
+	getRandFromRange(item) {
+		let idx;
+		return [...item].shuffle().some((v) => { if (v.count !== 0) { idx = Math.randomInt(v.start, v.end, true); return true; } }) ? idx : -1;
+	}
+
+	getPosInRange(idx, item) {
+		let j = -1;
+		return item.some((v) => { if (v.count !== 0) { for (let i = v.start; i <= v.end; i++) { j++; if (idx === i) { return true; } } } }) ? j : -1;
 	}
 	// Regorxxx ->
 
