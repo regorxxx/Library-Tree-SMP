@@ -62,6 +62,8 @@
 - HTML: improved mouse actions shown at 'Behaviour' tab, dynamically adjusted according to mode, source and 'Playlist: Use Mouse actions on playlist sources' setting (see above).
 - HTML: compatibility with HTML popups is now checked once at startup, like all my other scripts.
 - HTML: improved options reload in some cases when clicking 'Apply' (with updated properties).
+- Helpers: updated curl.exe to v8.20.0-slim. See [here](https://github.com/lordmulder/cURL-build-win32).
+- Helpers: updated 7za.exe to v26.01. See [here](https://www.7-zip.org/download.html).
 ### Removed
 ### Fixed
 - Syntax: fix $sourcetype only returning 'Active playlist' instead of all available playlist source types.
