@@ -131,7 +131,7 @@ class Images {
 			preLoad: 7
 		};
 
-		this.labels = { statistics: ppt.itemShowStatistics ? 1 : 0 };
+		this.labels = { statistics: ppt.itemShowStatistics || ppt.nodeCounts && ppt.albumArtLabelType !== 2 ? 1 : 0 }; // Regorxxx <- Don't bind track count to other stats ->
 
 		this.letter = {
 			albumArtYearAuto: ppt.albumArtYearAuto,
@@ -742,13 +742,14 @@ class Images {
 				pop.getItemCount(item);
 				const grp = item.grp;
 				const lot = item.lot;
-				// Regorxxx <- Improve statistics tooltip
+				// Regorxxx <- Improve statistics tooltip | Don't bind track count to other stats ->
+				const hasStats = Object.hasOwn(item, '_statistics');
 				const statistics = this.labels.statistics
-					? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + item._statistics
+					? (!item.root && this.labels.counts ? item.count + (item.count && hasStats ? ' | ' : '') : '') + (hasStats ? item._statistics : '')
 					: '';
 				const statisticsTt = this.labels.statistics
 					? stat.ttFunc
-						? (!item.root && this.labels.counts ? item.count + (item.count && item._statistics ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': ' + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
+						? (!item.root && this.labels.counts ? item.count + (item.count && hasStats ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': ' + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
 						: statistics
 					: '';
 				// Regorxxx ->
@@ -2208,7 +2209,7 @@ class Images {
 					overlay: ppt.albumArtLabelType === 3 || ppt.albumArtLabelType === 4,
 					overlayDark: ppt.albumArtLabelType === 4,
 					flip: ppt.albumArtFlipLabels,
-					statistics: ppt.itemShowStatistics ? 1 : 0,
+					statistics: ppt.itemShowStatistics || pop.nodeCounts && ppt.albumArtLabelType !== 2 ? 1 : 0, // Regorxxx <- Don't bind track count to other stats ->
 					fade: ppt.albumArtLabelType === 3
 				};
 				// Regorxxx <- Code cleanup | Effect per art type
@@ -2271,7 +2272,7 @@ class Images {
 					overlay: ppt.albumArtLabelType === 3 || ppt.albumArtLabelType === 4,
 					overlayDark: ppt.albumArtLabelType === 4,
 					flip: ppt.albumArtFlipLabels,
-					statistics: ppt.itemShowStatistics ? 1 : 0,
+					statistics: ppt.itemShowStatistics || pop.nodeCounts && ppt.albumArtLabelType !== 2 ? 1 : 0, // Regorxxx <- Don't bind track count to other stats ->
 					fade: ppt.albumArtLabelType === 3
 				};
 				// Regorxxx <- Code cleanup | Effect per art type

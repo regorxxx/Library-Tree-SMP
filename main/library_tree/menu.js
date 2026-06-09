@@ -2040,7 +2040,7 @@ class MenuItems {
 		}
 	}
 
-	// Regorxxx <- External integration
+	// Regorxxx <- External integration | Don't bind track count to other stats
 	statisticsTypes() {
 		const userCustomTypes = ppt.tfCustomLabels.split('|');
 		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
@@ -2048,7 +2048,7 @@ class MenuItems {
 				if (!userCustomTypes[i] || !userCustomTypes[i].length) { userCustomTypes[i] = t; }
 				else { userCustomTypes[i] += ' [' + t + ']'; }
 			});
-		const types = [pop.countsRight && !panel.imgView ? ['None', '# Tracks', '# Items'][pop.nodeCounts] : 'None', 'Bitrate', 'Duration', 'Total size', 'Rating', 'Popularity', 'Date', 'Playback queue', 'Playcount', 'First played', 'Last played', 'Added', 'Loved', 'Hated', 'Feedback (loved - hated)', ...userCustomTypes];
+		const types = [pop.countsRight || panel.imgView ? ['None', '# Tracks', '# Items'][pop.nodeCounts] : 'None', 'Bitrate', 'Duration', 'Total size', 'Rating', 'Popularity', 'Date', 'Playback queue', 'Playcount', 'First played', 'Last played', 'Added', 'Loved', 'Hated', 'Feedback (loved - hated)', ...userCustomTypes];
 		if (pop.statistics.length !== types.length) { console.log(window.ScriptInfo.Name + ': error on default statistics. Missmatch between menu entries and available stats.'); }
 		return types;
 	}
