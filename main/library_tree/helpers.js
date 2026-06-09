@@ -1,11 +1,11 @@
 ﻿'use strict';
-//28/05/26
+//09/06/26
 
-/* global fso:readable, WshShell:readable, folders:readable */
+/* global fso:readable, WshShell:readable, folders:readable, popup:readable */
 
-/* global Language:readable */
+/* global Language:readable, popUpBox:readable */
 
-/* exported tooltip, $, ease, md5 */
+/* exported tooltip, $, ease */
 
 const tooltip = window.Tooltip;
 
@@ -560,6 +560,21 @@ class Helpers {
 	getImageAssets(assetFolder) {
 		return utils.Glob(folders.xxx + 'assets/library_tree/images/' + assetFolder + '/*');
 	}
+
+	// Regorxxx <- Native themed popups | Code cleanup
+	okCancelPopup(caption, prompt, callback = () => void(0), type = 'okCancel') {
+		const types = {
+			ok: { html: ['Ok'], popupButtons: popup.ok, popupOut: popup.okr },
+			okCancel: { html: ['Ok', 'Cancel'], popupButtons: popup.ok_cancel, popupOut: popup.okr },
+			yesNo: { html: ['Yes', 'No'], popupButtons: popup.yes_no, popupOut: popup.yes }
+		};
+		const label = types[type] || types.okCancel;
+		const wsh = !utils.MessageBox && popUpBox.isHtmlDialogSupported()
+			? popUpBox.confirm(caption, prompt, ...label.html, '', '', callback)
+			: true;
+		if (wsh) { callback('ok', WshShell.Popup(prompt, 0, caption, label.popupButtons) === label.popupOut); }
+	}
+	// Regorxxx ->
 }
 
 const $ = new Helpers;

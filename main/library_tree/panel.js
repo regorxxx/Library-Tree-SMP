@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/06/26
+//09/06/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -8,7 +8,7 @@
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
 /* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
-/* global _resolvePath:readable, WshShell:readable, popup:readable  */
+/* global _resolvePath:readable */
 
 /* exported Panel */
 
@@ -1516,12 +1516,7 @@ class Panel {
 						break;
 					}
 				}
-				if (applySettings) {
-					const wsh = !utils.MessageBox && popUpBox.isHtmlDialogSupported() // Regorxxx <- Native themed popups ->
-						? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', applySettings)
-						: true;
-					if (wsh) { applySettings('ok', WshShell.Popup(prompt, 0, caption, popup.ok_cancel) === popup.okr); } // Regorxxx <- Native themed popups | Code cleanup ->
-				}
+				if (applySettings) { $.okCancelPopup(caption, prompt, applySettings, 'yesNo'); } // Regorxxx <- Native themed popups | Code cleanup ->
 				break;
 			}
 			// Regorxxx ->

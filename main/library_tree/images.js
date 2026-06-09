@@ -1,10 +1,10 @@
 'use strict';
-//04/06/26
+//09/06/26
 
-/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, popUpBox:readable, lib:readable */
+/* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
 /* global isArrayEqual:readable */
-/* global getFiles:readable, _deleteFolder:readable, WshShell:readable, popup:readable, _foldPath:readable */
+/* global getFiles:readable, _deleteFolder:readable, _foldPath:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
@@ -2470,10 +2470,7 @@ class Images {
 			};
 			const caption = 'Reset All Images';
 			const prompt = 'This action resets the library tree thumbnail disk cache\n\nContinue?';
-			const wsh = !utils.MessageBox && popUpBox.isHtmlDialogSupported() // Regorxxx <- Native themed popups ->
-				? popUpBox.confirm(caption, prompt, 'Yes', 'No', '', '', continue_confirmation)
-				: true;
-			if (wsh) { continue_confirmation('ok', WshShell.Popup(prompt, 0, caption, popup.ok_cancel) === popup.okr); } // Regorxxx <- Native themed popups | Code cleanup ->
+			$.okCancelPopup(caption, prompt, continue_confirmation, 'yesNo'); // Regorxxx <- Native themed popups | Code cleanup ->
 			return;
 		}
 
