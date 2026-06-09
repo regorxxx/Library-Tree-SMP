@@ -1839,6 +1839,27 @@ class Populate {
 						// Regorxxx ->
 						break;
 					}
+					default: {
+						// Regorxxx <- New statistics | Code cleanup
+						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
+							switch (this.nodeCounts) {
+								case 1: {
+									v.count = this.trackCount(v.item);
+									v.count += v.count > 1 ? ' tracks' : ' track';
+									break;
+								}
+								case 2: {
+									const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+									const key = this.getKey(v);
+									v.count = this.branchCount(v, !!v.root, true, false, key, type);
+									v.count += v.count > 1 ? ' items' : ' item';
+									break;
+								}
+							}
+						}
+						// Regorxxx ->
+						break;
+					}
 				}
 				// Regorxxx ->
 				const getItemCount = !v.root && !overlay.isCount && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (this.nodeCounts == 1 || this.nodeCounts == 2); // Regorxxx <- New overlay styles ->
