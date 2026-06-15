@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/05/26
+//12/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -947,7 +947,7 @@ class MenuItems {
 				func: () => {
 					ppt.toggle('bAutoUpdateCheck');
 					if (ppt.bAutoUpdateCheck) {
-						include('..\\..\\helpers\\helpers_xxx_web_update.js');
+						include('..\\..\\helpers\\helpers_xxx_web.js');
 						/* global checkUpdate:readable */
 						setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 					}
@@ -959,7 +959,7 @@ class MenuItems {
 				menuName: 'Updates',
 				str: 'Check for updates...',
 				func: () => {
-					if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web_update.js'); }
+					if (typeof checkUpdate === 'undefined') { include('..\\..\\helpers\\helpers_xxx_web.js'); }
 					checkUpdate({ bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb, bDisableWarning: false })
 						.then((bFound) => !bFound && fb.ShowPopupMessage('No updates found.', window.FullPanelName + ': Update check'));
 				}

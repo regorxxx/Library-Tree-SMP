@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/05/26
+//12/06/26
 
 if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '2.0.0-beta', features: { drag_n_drop: true, grab_focus: true } }); }
 
@@ -63,7 +63,7 @@ if (loadAsync) {
 		if (window.IsVisible) { window.Repaint(); }
 		// Update check
 		if (ppt.bAutoUpdateCheck) {
-			include('helpers\\helpers_xxx_web_update.js');
+			include('helpers\\helpers_xxx_web.js');
 			/* global checkUpdate:readable */
 			setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 		}
@@ -74,7 +74,7 @@ if (loadAsync) {
 	checkCompatible();
 	// Update check
 	if (ppt.bAutoUpdateCheck) {
-		include('helpers\\helpers_xxx_web_update.js');
+		include('helpers\\helpers_xxx_web.js');
 		setTimeout(checkUpdate, 120000, { bDownload: globSettings.bAutoUpdateDownload, bOpenWeb: globSettings.bAutoUpdateOpenWeb });
 	}
 }
