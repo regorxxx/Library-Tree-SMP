@@ -36,7 +36,7 @@
 - Syntax: added album art custom TF section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Quicksetup: new quicksetup presets for playlist manager features.
 - Debug: new album art Custom TF results logging setting, which outputs the result of custom TF styles expressions for every node (along the number of files matched). i.e. it can be temporarily used to "preview" the expressions used for testing purposes. Setting can be found at 'Advanced' tab (HTML options panel) or 'Logging album art custom TF' (properties panel).
-- Configuration: added new "userAgent" (Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36) and "curlImpersonate" (curl_chrome146.bat) at global settings (globSettings.json) for arbitrary downloads using curl and/or JS-host methods.
+- Configuration: added new "userAgent" (Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36) and "curlImpersonate" (curl_firefox147.bat) at global settings (globSettings.json) for arbitrary downloads using curl and/or JS-host methods.
 - Helpers: added curl-impersonate.exe v1.5.6. See [here](https://github.com/lexiforest/curl-impersonate).
 ### Changed
 - Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.
