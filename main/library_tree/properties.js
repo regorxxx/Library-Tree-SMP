@@ -1,7 +1,8 @@
-﻿'use strict';
-//04/06/26
+'use strict';
+//19/06/26
 
 /* global $:readable */
+/* global folders:readable */ // helpers\helpers_xxx.js
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
 /* global _b:readable, _t:readable */ // helpers\helpers_xxx_prototypes.js
 /* global queryJoin:readable */ // helpers\helpers_xxx_tags.js
@@ -241,7 +242,7 @@ let properties = [
 	['Image View By: Same As Tree', true, 'artTreeSameView'],
 	// Regorxxx <- Custom TF art
 	['Image Label [TF-1] view', '.\\profile\\images\\$lower($nodenameswap).*', 'albumArtTf1View'],
-	['Image Label [TF-2] view', '.\\profile\\yttm\\art_img\\$lower($cut($nodenameswap)\\$cut($nodenameswap,40)\\*', 'albumArtTf2View'],
+	['Image Label [TF-2] view', folders.getBioArtistArtPath({artist: '$nodenameswap'}) + '*', 'albumArtTf2View'],
 	['Image Label [TF-1] folders', '$replace($directory_path(%PATH%),$directory(%PATH%,1),)*', 'albumArtTf1Folder'],
 	['Image Label [TF-2] folders', '$replace($replace($directory_path(%PATH%),$directory(%PATH%,1),,$directory(%PATH%,2),,),\\\\,\\)*', 'albumArtTf2Folder'],
 	['Image Label [TF-1] name', 'Node (by Tf)|Folder (by Tf)', 'albumArtTf1Name'],
