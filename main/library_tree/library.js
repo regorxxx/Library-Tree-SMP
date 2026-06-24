@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/06/26
+//24/06/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -206,7 +206,11 @@ class Library {
 				});
 			} else {
 				const tfo = FbTitleFormat(panel.view);
-				items = tfo.EvalWithMetadbs(handleList);
+				// Regorxxx <- Support for stream tag-retrieval
+				items = panel.isStreamSupport()
+					? tfo.EvalWithMetadbsDynamic(handleList)
+					: tfo.EvalWithMetadbs(handleList);
+				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = this.list.Find(h);
 					if (i != -1) this.format(items[j], panel.splitter, i, this.libNode);
@@ -260,7 +264,11 @@ class Library {
 					});
 				} else {
 					const tfo = FbTitleFormat(panel.view);
-					items = tfo.EvalWithMetadbs(newSearchItems);
+					// Regorxxx <- Support for stream tag-retrieval
+					items = panel.isStreamSupport()
+						? tfo.EvalWithMetadbsDynamic(newSearchItems)
+						: tfo.EvalWithMetadbs(newSearchItems);
+					// Regorxxx ->
 					newSearchItems.Convert().forEach((h, j) => {
 						i = panel.list.Find(h);
 						if (i != -1) this.format(items[j], panel.splitter, i, this.searchNode);
@@ -297,7 +305,11 @@ class Library {
 				if (!this.list.Count) this.none = 'Nothing found';
 			} else {
 				const tfo = FbTitleFormat(panel.view);
-				items = tfo.EvalWithMetadbs(handleList);
+				// Regorxxx <- Support for stream tag-retrieval
+				items = panel.isStreamSupport()
+					? tfo.EvalWithMetadbsDynamic(handleList)
+					: tfo.EvalWithMetadbs(handleList);
+				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = this.list.Find(h);
 					if (i != -1) this.format(items[j], panel.splitter, i, this.libNode);
@@ -322,7 +334,11 @@ class Library {
 				});
 			} else {
 				const tfo = FbTitleFormat(panel.view);
-				items = tfo.EvalWithMetadbs(handleList);
+				// Regorxxx <- Support for stream tag-retrieval
+				items = panel.isStreamSupport()
+					? tfo.EvalWithMetadbsDynamic(handleList)
+					: tfo.EvalWithMetadbs(handleList);
+				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = panel.list.Find(h);
 					if (i != -1) this.format(items[j], panel.splitter, i, this.searchNode);
@@ -350,7 +366,11 @@ class Library {
 		switch (true) {
 			case !folder: {
 				const tfo = FbTitleFormat(panel.view);
-				items = tfo.EvalWithMetadbs(insert);
+				// Regorxxx <- Support for stream tag-retrieval
+				items = panel.isStreamSupport()
+					? tfo.EvalWithMetadbsDynamic(insert)
+					: tfo.EvalWithMetadbs(insert);
+				// Regorxxx ->
 				insert.Convert().forEach((h, j) => {
 					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
 					this.format(items[j], panel.splitter, i, n);
@@ -793,7 +813,11 @@ class Library {
 		switch (tree_type) { // check for changes to items; any change updates all
 			case 0: {
 				let tfo = FbTitleFormat(panel.view);
-				items = tfo.EvalWithMetadbs(handleList);
+				// Regorxxx <- Support for stream tag-retrieval
+				items = panel.isStreamSupport()
+					? tfo.EvalWithMetadbsDynamic(handleList)
+					: tfo.EvalWithMetadbs(handleList);
+				// Regorxxx ->
 				let ret = handleList.Convert().some((h, j) => {
 					i = this.list.Find(h);
 					if (i != -1) {
@@ -1164,21 +1188,24 @@ class Library {
 						if (panel.search.txt || ppt.filterBy) {
 							let i = 0;
 							roots.forEach((root) => {
-								tfo.EvalWithMetadbs(root.handleList).forEach((v) => {
-									arr[i] = [root.name, ...v.split(splitter)];
-									i++;
-								});
+								(panel.isStreamSupport() ? tfo.EvalWithMetadbsDynamic(root.handleList) : tfo.EvalWithMetadbs(root.handleList)) // Regorxxx <- Support for stream tag-retrieval ->
+									.forEach((v) => {
+										arr[i] = [root.name, ...v.split(splitter)];
+										i++;
+									});
 							});
 						} else {
 							let j = 0;
-							tfo.EvalWithMetadbs(li).forEach((v, i) => {
-								if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
-								arr[i] = [roots[0].name, ...v.split(splitter)];
-								j++;
-							});
+							(panel.isStreamSupport() ? tfo.EvalWithMetadbsDynamic(li) : tfo.EvalWithMetadbs(li)) // Regorxxx <- Support for stream tag-retrieval ->
+								.forEach((v, i) => {
+									if (j >= roots[0].count) { roots.splice(0, 1); j = 0; }
+									arr[i] = [roots[0].name, ...v.split(splitter)];
+									j++;
+								});
 						}
 					} else {
-						tfo.EvalWithMetadbs(li).forEach((v, i) => arr[i] = v.split(splitter));
+						(panel.isStreamSupport() ? tfo.EvalWithMetadbsDynamic(li) : tfo.EvalWithMetadbs(li)) // Regorxxx <- Support for stream tag-retrieval ->
+							.forEach((v, i) => arr[i] = v.split(splitter));
 					}
 					break;
 				}

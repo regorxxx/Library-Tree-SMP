@@ -1,5 +1,5 @@
 'use strict';
-//01/06/26
+//24/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -140,6 +140,16 @@ addEventListener('on_metadb_changed', (handleList, isDatabase) => {
 		});
 	}
 });
+
+// Regorxxx <- Support for stream tag-retrieval
+addEventListener('on_playback_dynamic_info_track', () => {
+	if (lib.list.Count != lib.libNode.length) { return; }
+	if (panel.isStreamSupport()) {
+		lib.playlist_update(plman.PlayingPlaylist);
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+	}
+});
+// Regorxxx ->
 
 addEventListener('on_mouse_lbtn_dblclk', (x, y) => {
 	but.lbtn_dn(x, y);

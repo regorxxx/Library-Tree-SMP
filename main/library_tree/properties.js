@@ -1,5 +1,5 @@
 'use strict';
-//19/06/26
+//24/06/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -571,6 +571,7 @@ let properties = [
 	// Regorxxx ->
 	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
 	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'], // Regorxxx <- Drag n' Drop minimum distance ->
+	['Stream tag-retrieval support (experimental)', false, 'streamSupport'], // Regorxxx <- Support for stream tag-retrieval ->
 ];
 
 const ppt = new PanelProperties;

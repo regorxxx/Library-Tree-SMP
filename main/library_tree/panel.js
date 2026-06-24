@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/06/26
+//24/06/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2643,6 +2643,27 @@ class Panel {
 			this.search.cursor = false;
 			this.searchPaint();
 		}
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Support for stream tag-retrieval
+	isStreamSupport(tf = this.view) {
+		if (this.folderView || !ppt.streamSupport || !fb.IsPlaying) { return false; }
+		if (this.init){
+			if (lib.list.Count) {
+				const np = fb.GetNowPlaying();
+				if (np && lib.list.Find(np) === -1) { return false; }
+			} else { return false; }
+		} else {
+			if (pop.nowp === -1) { return false; }
+		}
+		if (this.isPlaylistSource()) {
+			if (plman.PlayingPlaylist === -1 || !this.getPlaylistSource().includes(plman.PlayingPlaylist)) { return false; }
+		} else if (this.isQueueSource()) {
+			if (!ppt.queueNowPlaying) { return false; }
+		} else { return false; }
+		const expr = (typeof tf === 'string' ? tf : tf.Expression).toUpperCase();
+		return (expr.includes('ARTIST') || expr.includes('TITLE'));
 	}
 	// Regorxxx ->
 }

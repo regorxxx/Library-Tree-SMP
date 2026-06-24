@@ -1,9 +1,9 @@
 ﻿'use strict';
-//09/06/26
+//24/06/26
 
 /* global fso:readable, WshShell:readable, folders:readable, popup:readable */
 
-/* global Language:readable, popUpBox:readable */
+/* global Language:readable, popUpBox:readable, ppt:readable */
 
 /* exported tooltip, $, ease */
 
@@ -385,7 +385,11 @@ class Helpers {
 			i++;
 		}
 		let tfo = fb.TitleFormat(tagString);
-		outputArray = tfo.EvalWithMetadbs(handleList);
+		// Regorxxx <- Support for stream tag-retrieval
+		outputArray = this.isStreamSupport(tfo)
+			? tfo.EvalWithMetadbsDynamic(handleList)
+			: tfo.EvalWithMetadbs(handleList);
+		// Regorxxx ->
 		if (bMerged) { // Just an array of values per track: n x 1
 			for (let i = 0; i < outputArray_length; i++) {
 				outputArray[i] = outputArray[i].split(', ');
@@ -562,7 +566,7 @@ class Helpers {
 	}
 
 	// Regorxxx <- Native themed popups | Code cleanup
-	okCancelPopup(caption, prompt, callback = () => void(0), type = 'okCancel') {
+	okCancelPopup(caption, prompt, callback = () => void (0), type = 'okCancel') {
 		const types = {
 			ok: { html: ['Ok'], popupButtons: popup.ok, popupOut: popup.okr },
 			okCancel: { html: ['Ok', 'Cancel'], popupButtons: popup.ok_cancel, popupOut: popup.okr },
@@ -573,6 +577,14 @@ class Helpers {
 			? popUpBox.confirm(caption, prompt, ...label.html, '', '', callback)
 			: true;
 		if (wsh) { callback('ok', WshShell.Popup(prompt, 0, caption, label.popupButtons) === label.popupOut); }
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Support for stream tag-retrieval
+	isStreamSupport(tf) {
+		if (!ppt.streamSupport || !fb.IsPlaying) { return false; }
+		const expr = (typeof tf === 'string' ? tf : tf.Expression).toUpperCase();
+		return (expr.includes('ARTIST') || expr.includes('TITLE'));
 	}
 	// Regorxxx ->
 }
