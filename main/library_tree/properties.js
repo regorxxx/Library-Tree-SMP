@@ -1,5 +1,5 @@
 'use strict';
-//24/06/26
+//29/06/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -468,7 +468,7 @@ let properties = [
 	['Statistics Titleformat Last Played', _b('$date(' + _t(globTags.sortLastPlayed) + ')'), 'tfLastPlayed'],
 	['Statistics Titleformat Playcount DataPinningScheme|Field', '%ARTIST%%ALBUM%%DISCNUMBER%%TRACKNUMBER%%TITLE%|' + _t(globTags.playCount), 'tfPc'],
 	['Statistics Titleformat Rating', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfRating'],
-	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%)]', 'tfLoved'],
+	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%,%LFM_LOVED%)]', 'tfLoved'],
 	// Regorxxx ->
 	// Regorxxx <- New statistics | Improve statistics tooltip
 	['Statistics Titleformat Custom-1 (sum)', '$if($or($meta_test(LYRICS),$meta_test(UNSYNCEDLYRICS)),1,0)', 'tfCustom1Sum'],
@@ -476,7 +476,7 @@ let properties = [
 	['Statistics Titleformat Custom-3 (sum)', '$ifgreater($if2($strstr($lower(' + globTags.genreStyle.map((t) => _t(t)).join('\', \'') + '),instrumental),$strstr($lower(%LANGUAGE%),zxx)),0,0,1)', 'tfCustom3Sum'],
 	['Statistics Titleformat Custom-1 (avg)', '[%DYNAMIC RANGE%]', 'tfCustom1Avg'],
 	['Statistics Titleformat Custom-2 (avg)', '[' + _t(globTags.bpm) + ']', 'tfCustom2Avg'],
-	['Statistics Titleformat Custom-3 (avg)', '$min($add($select($add(' + _t(globTags.feedback) + ',%2003_LOVED%,2),-10,0,10),$select(' + _t(globTags.rating) + ',0,2,5,7,10)),10)', 'tfCustom3Avg'],
+	['Statistics Titleformat Custom-3 (avg)', '$min($add($select($add(' + _t(globTags.feedback) + ',%2003_LOVED%,%LFM_LOVED%,2),-10,0,10),$select(' + _t(globTags.rating) + ',0,2,5,7,10)),10)', 'tfCustom3Avg'],
 	['Statistics Titleformat Custom-1 (p-mean)', '[%DYNAMIC RANGE%]', 'tfCustom1MeX'],
 	['Statistics Titleformat Custom-2 (p-mean)', '[' + _t(globTags.bpm) + ']', 'tfCustom2MeX'],
 	['Statistics Titleformat Custom-3 (p-mean)', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfCustom3MeX'],
