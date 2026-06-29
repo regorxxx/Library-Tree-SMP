@@ -134,8 +134,9 @@ class Populate {
 			rating: FbTitleFormat(ppt.tfRating),
 			loved: FbTitleFormat(ppt.tfLoved),
 			key: FbTitleFormat(_t(globTags.key)),
-			openKey: FbTitleFormat(globTags.openKey),
-			camelotKey: FbTitleFormat(globTags.camelotKey),
+			openKey: FbTitleFormat(_t(globTags.openKey)),
+			camelotKey: FbTitleFormat(_t(globTags.camelotKey)),
+			bpm: FbTitleFormat(_t(globTags.bpm)),
 			custom1Sum: FbTitleFormat(ppt.tfCustom1Sum),
 			custom2Sum: FbTitleFormat(ppt.tfCustom2Sum),
 			custom3Sum: FbTitleFormat(ppt.tfCustom3Sum),
@@ -3288,6 +3289,27 @@ class Populate {
 						valueFormat = rawValue = value;
 						value = panel.imgView && this.label
 							? [v.root ? 'Camelot key ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'BPM', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.bpm;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = values.filter(v => v !== '');
+					const ln = values.length;
+					if (ln) {
+						if (ln == 1) { value = values[0]; }
+						else {
+							values.sort((a, b) => this.collator.compare(a, b));
+							value = values[0] + '-' + values.at(-1);
+						}
+						valueFormat = rawValue = value;
+						value = panel.imgView && this.label
+							? [v.root ? 'BPM ' : ''] + valueFormat
 							: valueFormat;
 					}
 					return { rawValue, value, valueFormat };
