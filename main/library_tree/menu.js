@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/06/26
+//29/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -670,39 +670,30 @@ class MenuItems {
 		// Regorxxx <- New statistics
 		{
 			menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
-			const statsMenus = [
-				{ menuName: 'File properties', idx: [1, 2, 3] },
-				{ menuName: 'Rating', idx: [4, 5] },
-				{ menuName: 'Playback', idx: [7, 8, 9, 10, 11] },
-				{ menuName: 'Loved stats', idx: [12, 13, 14] },
-				{ menuName: 'File tags', idx: [6] },
-				'sep',
-				{ menuName: 'Sum [custom]', idx: [15, 16, 17] },
-				{ menuName: 'Average [custom]', idx: [18, 19, 20] },
-				{ menuName: 'P-Mean [custom]', idx: [21, 22, 23] },
-				'sep'
-			];
-			const statsEntries = this.statisticsTypes();
+			const statsEntries = pop.getStatisticsEntries();
+			const statsMenus = [...pop.getStatisticsTypes(), 'sep'];
+			statsMenus.some((name, i, arr) => name.includes('[custom') ? arr.splice(i, 0, 'sep') : false);
 			menu.newItem({
 				menuName: 'Statistics',
-				str: statsEntries[0],
+				str: statsEntries[0].name,
 				func: () => this.setStatistics(0),
 				checkRadio: !ppt.itemShowStatistics,
 				separator: true
 			});
-			statsMenus.forEach((m) => {
-				if (m === 'sep') { menu.newItem({ menuName: 'Statistics', separator: true }); }
-				else { menu.newMenu({ ...m, appendTo: 'Statistics', flags: m.idx.includes(ppt.itemShowStatistics) ? MF_CHECKED : void (0) }); }
+			statsMenus.forEach((menuName) => {
+				if (menuName === 'sep') { menu.newItem({ menuName: 'Statistics', separator: true }); }
+				else { menu.newMenu({ menuName, appendTo: 'Statistics', flags: statsEntries[ppt.itemShowStatistics].type.includes(menuName) ? MF_CHECKED : void (0) }); }
 			});
-			[...this.statisticsTypes(), 'Configure statistics...'].forEach((v, i) => {
+			[...statsEntries, { name: 'Configure statistics...', type: [''] }].forEach((v, i) => {
 				if (i === 0) { return; }
-				const menuName = (statsMenus.find((m) => m.idx && m.idx.includes(i)) || {}).menuName || 'Statistics';
-				menu.newItem({
-					menuName,
-					str: v,
-					func: () => this.setStatistics(i),
-					checkRadio: i == ppt.itemShowStatistics,
-					separator: !i
+				v.type.forEach((menuName) => {
+					menu.newItem({
+						menuName:  menuName || 'Statistics',
+						str: v.name,
+						func: () => this.setStatistics(i),
+						checkRadio: i == ppt.itemShowStatistics,
+						separator: !i
+					});
 				});
 			});
 		}
@@ -2040,19 +2031,7 @@ class MenuItems {
 		}
 	}
 
-	// Regorxxx <- External integration | Don't bind track count to other stats
-	statisticsTypes() {
-		const userCustomTypes = ppt.tfCustomLabels.split('|');
-		['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
-			.forEach((t, i) => {
-				if (!userCustomTypes[i] || !userCustomTypes[i].length) { userCustomTypes[i] = t; }
-				else { userCustomTypes[i] += ' [' + t + ']'; }
-			});
-		const types = [pop.countsRight || panel.imgView ? ['None', '# Tracks', '# Items'][pop.nodeCounts] : 'None', 'Bitrate', 'Duration', 'Total size', 'Rating', 'Popularity', 'Date', 'Playback queue', 'Playcount', 'First played', 'Last played', 'Added', 'Loved', 'Hated', 'Feedback (loved - hated)', ...userCustomTypes];
-		if (pop.statistics.length !== types.length) { console.log(window.ScriptInfo.Name + ': error on default statistics. Missmatch between menu entries and available stats.'); }
-		return types;
-	}
-
+	// Regorxxx <- External integration
 	sourceTypes() {
 		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue', 'Auto-DJ Queue']; // Regorxxx <- Queue source | Auto-DJ source ->
 	}

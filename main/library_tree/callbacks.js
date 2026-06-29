@@ -1,5 +1,5 @@
 'use strict';
-//24/06/26
+//29/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -497,7 +497,7 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch statistics': {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
-			const types = men.statisticsTypes();
+			const types = pop.getStatisticsNames();
 			const customRe = / \[custom-\d \(avg\)\]/i;
 			if (typeof info.statisticsName !== 'undefined') {
 				const statsName = info.statisticsName.toLowerCase();

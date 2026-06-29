@@ -1,5 +1,5 @@
-'use strict';
-//09/06/26
+﻿'use strict';
+//29/06/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -695,206 +695,7 @@ class Populate {
 		this.addItems(items, v, true); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
 		const handleList = this.getHandleList(void (0), items);
-		let ln, n, tf, value, rawValue, valueFormat, values;
-		switch (ppt.itemShowStatistics) {
-			case 1: { // bitrate
-				values = this.tf.bitrate.EvalWithMetadbs(handleList);
-				if (values.length == 1) {
-					value = Number(values[0]) || '';
-				} else {
-					let lengths = FbTitleFormat('%LENGTH_SECONDS_FP%').EvalWithMetadbs(handleList);
-					const total = values.map((v, i) => v * lengths[i]);
-					let totals = total.map(v => Number.parseFloat(v) || '');
-					totals = totals.filter((v, i) => v && lengths[i] ? v : lengths.splice(i, 1));
-					totals = totals.reduce((a, b) => a + b, 0);
-					lengths = lengths.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
-					value = Number(Math.round(totals / lengths)) || '';
-				}
-				if (typeof value !== 'undefined') {
-					rawValue = value;
-					valueFormat = value = value + (panel.imgView ? ' kbps' : '');
-				}
-				break;
-			}
-			case 2: { // duration
-				rawValue = handleList.CalcTotalDuration();
-				valueFormat = value = utils.FormatDuration(rawValue);
-				break;
-			}
-			case 3: { // total size
-				let bytes = this.tf.bytes.EvalWithMetadbs(handleList);
-				let size = [...new Set(bytes)];
-				size = size.map(v => {
-					const a = v.split('|');
-					return a[a.length - 1];
-				});
-				if (size.length) {
-					size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
-					rawValue = size;
-					valueFormat = value = this.formatBytes(size);
-				}
-				break;
-			}
-			case 4: // rating
-			case 5: // popularity
-				tf = ppt.itemShowStatistics == 4 ? this.tf.rating : this.tf.popularity;
-				values = tf.EvalWithMetadbs(handleList);
-				values = this.getNumbers(values);
-				values = values.filter(Boolean);
-				ln = values.length;
-				if (ln) {
-					values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
-					rawValue = values / ln;
-					valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
-					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 4 ? 'Rating ' : 'Popularity ') + value; }
-				}
-				break;
-			case 6: // date (first release)
-			case 9: // firstPlayed
-			case 10: // lastPlayed
-			case 11: { // added
-				tf = ppt.itemShowStatistics == 6
-					? this.tf.date
-					: ppt.itemShowStatistics == 9
-						? this.tf.firstPlayed
-						: ppt.itemShowStatistics == 10
-							? this.tf.lastPlayed
-							: this.tf.added;
-				let dates = tf.EvalWithMetadbs(handleList);
-				dates = dates.filter(v => v !== '');
-				ln = dates.length;
-				let date;
-				if (ln) {
-					if (ln == 1) { date = dates[0]; }
-					else {
-						date = ppt.itemShowStatistics == 6 || ppt.itemShowStatistics == 9 || ppt.itemShowStatistics == 11
-							? dates.reduce((pre, cur) => Date.parse(pre) > Date.parse(cur) ? cur : pre)
-							: dates.reduce((pre, cur) => Date.parse(cur) > Date.parse(pre) ? cur : pre);
-					}
-				}
-				if (date) {
-					valueFormat = rawValue = date;
-					value = panel.imgView && this.label
-						? ['', '', '', '', '', '', (v.root ? 'First release ' : ''), '', '', 'First played ', 'Last played ', 'Added '][ppt.itemShowStatistics] + valueFormat
-						: valueFormat;
-				}
-				break;
-			}
-			// Regorxxx <- Now playing index | Duplicated idx bug on original script
-			case 7: {// queue
-				/** @type {string|string[]} */
-				let index = '';
-				let indices = new Set();
-				const queueHandles = plman.GetPlaybackQueueHandles();
-				const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
-				const count = handleList.Count;
-				const queueCount = queueHandles.Count;
-				for (let i = 0; i < count; i++) {
-					if (np && handleList[i].Compare(np)) { indices.add(0); }
-					for (let k = 0; k < queueCount; k++) {
-						if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); }
-					}
-				}
-				ln = indices.size;
-				if (ln) {
-					if (ln === 1) { index = indices.values().next().value.toString(); }
-					else {
-						index = this.arrayToRange([...indices]);
-						index.join();
-					}
-				}
-				if (index === '0') {
-					rawValue = 0;
-					valueFormat = String.fromCodePoint(9654); /* ▶ */
-					value = panel.imgView && this.label
-						? 'Now playing'
-						: valueFormat;
-				} else if (index && index.length > 0) {
-					const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
-					rawValue = index;
-					valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
-					if (panel.imgView && this.label) { value = 'Queue ' + value; }
-				}
-				break;
-			}
-			// Regorxxx ->
-			case 8: {// playcount
-				let playcount = this.tf.pc.EvalWithMetadbs(handleList);
-				const played = [...new Set(playcount)];
-				n = played.map(v => {
-					const a = v.split('|');
-					return a[a.length - 1];
-				});
-				playcount = this.getNumbers(n);
-				if (playcount.length) {
-					playcount = n.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
-					valueFormat = rawValue = playcount;
-					value = panel.imgView
-						? (this.label ? 'Played ' : '') + playcount + 'x'
-						: playcount;
-				}
-				break;
-			}
-			// Regorxxx <- New statistics
-			case 12: // loved
-			case 13: // Hated
-			case 14: {// Feedback
-				tf = this.tf.loved;
-				values = tf.EvalWithMetadbs(handleList);
-				values = this.getNumbers(values);
-				values = ppt.itemShowStatistics == 14
-					? values.filter(Boolean)
-					: ppt.itemShowStatistics == 12
-						? values.filter((v) => v > 0)
-						: values.filter((v) => v < 0);
-				ln = values.length;
-				if (ln) {
-					value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
-					valueFormat = rawValue = value;
-					if (panel.imgView && this.label) { value = (ppt.itemShowStatistics == 14 ? 'Feedback ' : (ppt.itemShowStatistics == 13 ? 'Hated ' : 'Loved ')) + value; }
-				}
-				break;
-			}
-			case 15:
-			case 16:
-			case 17:
-			case 18:
-			case 19:
-			case 20:
-			case 21:
-			case 22:
-			case 23: {
-				switch (ppt.itemShowStatistics) {
-					case 15: tf = this.tf.custom1Sum; break;
-					case 16: tf = this.tf.custom2Sum; break;
-					case 17: tf = this.tf.custom3Sum; break;
-					case 18: tf = this.tf.custom1Avg; break;
-					case 19: tf = this.tf.custom2Avg; break;
-					case 20: tf = this.tf.custom3Avg; break;
-					case 21: tf = this.tf.custom1MeX; break;
-					case 22: tf = this.tf.custom2MeX; break;
-					case 23: tf = this.tf.custom3MeX; break;
-				}
-				values = tf.EvalWithMetadbs(handleList).filter((v) => v !== '');
-				ln = values.length;
-				if (ln) {
-					const exp = Number(ppt.expCustomMeX) || 1;
-					values = ppt.itemShowStatistics <= 20
-						? values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0)
-						: values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
-					rawValue = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
-						? values
-						: values / ln;
-					if (ppt.itemShowStatistics > 20) { rawValue = rawValue ** (1 / exp); }
-					valueFormat = value = ppt.itemShowStatistics >= 15 && ppt.itemShowStatistics <= 17
-						? values
-						: $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals; // Regorxxx <- Rating decimals;
-					if (panel.imgView && this.label) { value = this.label + ' ' + value; }
-				}
-				break;
-			}
-			// Regorxxx ->
-		}
+		const { value, rawValue, valueFormat } = this.statistics[ppt.itemShowStatistics].evalFunc(handleList);
 		return typeof value === 'undefined'
 			? { value: '', rawValue: void (0), valueFormat: void (0), items }
 			: (this.cache[type][key] = { value, rawValue, valueFormat, items }); // NOSONAR
@@ -948,7 +749,7 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].nameTree + ': ' + item.statistics) // Regorxxx <- New statistics | Code cleanup ->
+						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].nameTree + ': ' + (item.stats.valueFormat || item.stats.value)) // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
@@ -1880,6 +1681,21 @@ class Populate {
 				}
 			}
 		}
+	}
+
+	getStatisticsCountName() {
+		return this.countsRight || panel.imgView ? ['None', '# Tracks', '# Items'][this.nodeCounts] : 'None';
+	}
+	getStatisticsNames() {
+		return [this.getStatisticsCountName(), ...this.statistics.slice(1).map((s) => s.name)];
+	}
+
+	getStatisticsTypes() {
+		return [...new Set(this.statistics.slice(1).map((s) => s.type).flat(Infinity))];
+	}
+
+	getStatisticsEntries() {
+		return [{ name: this.getStatisticsCountName(), type: [''] }, ...this.statistics.slice(1).map((s) => { return { name: s.name, type: s.type }; })];
 	}
 	// Regorxxx ->
 
@@ -3293,24 +3109,340 @@ class Populate {
 		this.showTracks = ppt.facetView ? false : ppt.showTracks;
 		// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
 		this.statistics = [
-			{ name: '', showTrackCount: true, showTooltip: false },
-			{ name: 'Bitrate', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + ' kbps' },
-			{ name: 'Duration', showTrackCount: true, showTooltip: false, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Total size', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Rating', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Popularity', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Date', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Queue', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : '') },
-			{ name: 'Playcount', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' listens') },
-			{ name: 'First played', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Last played', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Added', showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : '') },
-			{ name: 'Loved', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' tracks') },
-			{ name: 'Hated', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : 'tracks') },
-			{ name: 'Feedback', showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks') }
+			{ name: '', type: [''], showTrackCount: true, showTooltip: false },
+			{
+				name: 'Bitrate', type: ['File properties'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + ' kbps', evalFunc: (handleList) => {
+					const values = this.tf.bitrate.EvalWithMetadbs(handleList);
+					let rawValue, value, valueFormat;
+					if (values.length == 1) {
+						value = Number(values[0]) || '';
+					} else {
+						let lengths = FbTitleFormat('%LENGTH_SECONDS_FP%').EvalWithMetadbs(handleList);
+						const total = values.map((v, i) => v * lengths[i]);
+						let totals = total.map(v => Number.parseFloat(v) || '');
+						totals = totals.filter((v, i) => v && lengths[i] ? v : lengths.splice(i, 1));
+						totals = totals.reduce((a, b) => a + b, 0);
+						lengths = lengths.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
+						value = Number(Math.round(totals / lengths)) || '';
+					}
+					if (typeof value !== 'undefined') {
+						rawValue = value;
+						valueFormat = value = value + (panel.imgView ? ' kbps' : '');
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Duration', type: ['File properties'], showTrackCount: true, showTooltip: false, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					rawValue = handleList.CalcTotalDuration();
+					valueFormat = value = utils.FormatDuration(rawValue);
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Total size', type: ['File properties'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					let bytes = this.tf.bytes.EvalWithMetadbs(handleList);
+					let size = [...new Set(bytes)];
+					size = size.map(v => {
+						const a = v.split('|');
+						return a[a.length - 1];
+					});
+					if (size.length) {
+						size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
+						rawValue = size;
+						valueFormat = value = this.formatBytes(size);
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Rating', type: ['Rating'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.rating;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter(Boolean);
+					const ln = values.length;
+					if (ln) {
+						values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
+						rawValue = values / ln;
+						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
+						if (panel.imgView && this.label) { value = 'Rating ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Popularity', type: ['Rating'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.popularity;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter(Boolean);
+					const ln = values.length;
+					if (ln) {
+						values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
+						rawValue = values / ln;
+						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
+						if (panel.imgView && this.label) { value = 'Popularity ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Date (first)', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.date;
+					let dates = tf.EvalWithMetadbs(handleList);
+					dates = dates.filter(v => v !== '');
+					const ln = dates.length;
+					let date;
+					if (ln) { date = ln == 1 ? dates[0] : dates.reduce((pre, cur) => Date.parse(pre) > Date.parse(cur) ? cur : pre); }
+					if (date) {
+						valueFormat = rawValue = date;
+						value = panel.imgView && this.label
+							? [v.root ? 'First release ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Date (last)', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.date;
+					let dates = tf.EvalWithMetadbs(handleList);
+					dates = dates.filter(v => v !== '');
+					const ln = dates.length;
+					let date;
+					if (ln) { date = ln == 1 ? dates[0] : dates.reduce((pre, cur) => Date.parse(cur) > Date.parse(pre) ? cur : pre); }
+					if (date) {
+						valueFormat = rawValue = date;
+						value = panel.imgView && this.label
+							? [v.root ? 'First release ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Playback queue', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : ''), evalFunc: (handleList) => {
+					// Regorxxx <- Now playing index | Duplicated idx bug on original script
+					let rawValue, value, valueFormat;
+					/** @type {string|string[]} */
+					let index = '';
+					let indices = new Set();
+					const queueHandles = plman.GetPlaybackQueueHandles();
+					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
+					const count = handleList.Count;
+					const queueCount = queueHandles.Count;
+					for (let i = 0; i < count; i++) {
+						if (np && handleList[i].Compare(np)) { indices.add(0); }
+						for (let k = 0; k < queueCount; k++) {
+							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); }
+						}
+					}
+					const ln = indices.size;
+					if (ln) {
+						if (ln === 1) { index = indices.values().next().value.toString(); }
+						else {
+							index = this.arrayToRange([...indices]);
+							index.join();
+						}
+					}
+					if (index === '0') {
+						rawValue = 0;
+						valueFormat = String.fromCodePoint(9654); /* ▶ */
+						value = panel.imgView && this.label
+							? 'Now playing'
+							: valueFormat;
+					} else if (index && index.length > 0) {
+						const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
+						rawValue = index;
+						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+						if (panel.imgView && this.label) { value = 'Queue ' + value; }
+					}
+					// Regorxxx ->
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Playcount', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' listens'), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					let playcount = this.tf.pc.EvalWithMetadbs(handleList);
+					const played = [...new Set(playcount)];
+					const n = played.map(v => {
+						const a = v.split('|');
+						return a[a.length - 1];
+					});
+					playcount = this.getNumbers(n);
+					if (playcount.length) {
+						playcount = n.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
+						valueFormat = rawValue = playcount;
+						value = panel.imgView
+							? (this.label ? 'Played ' : '') + playcount + 'x'
+							: playcount;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'First played', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.firstPlayed;
+					let dates = tf.EvalWithMetadbs(handleList);
+					dates = dates.filter(v => v !== '');
+					const ln = dates.length;
+					let date;
+					if (ln) { date = ln == 1 ? dates[0] : dates.reduce((pre, cur) => Date.parse(pre) > Date.parse(cur) ? cur : pre); }
+					if (date) {
+						valueFormat = rawValue = date;
+						value = panel.imgView && this.label
+							? 'First played ' + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Last played', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.lastPlayed;
+					let dates = tf.EvalWithMetadbs(handleList);
+					dates = dates.filter(v => v !== '');
+					const ln = dates.length;
+					let date;
+					if (ln) { date = ln == 1 ? dates[0] : dates.reduce((pre, cur) => Date.parse(cur) > Date.parse(pre) ? cur : pre); }
+					if (date) {
+						valueFormat = rawValue = date;
+						value = panel.imgView && this.label
+							? 'Last played ' + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Added', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.added;
+					let dates = tf.EvalWithMetadbs(handleList);
+					dates = dates.filter(v => v !== '');
+					const ln = dates.length;
+					let date;
+					if (ln) { date = ln == 1 ? dates[0] : dates.reduce((pre, cur) => Date.parse(pre) > Date.parse(cur) ? cur : pre); }
+					if (date) {
+						valueFormat = rawValue = date;
+						value = panel.imgView && this.label
+							? 'Added ' + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Loved (count)', type: ['Loved stats'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' tracks'), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.loved;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter((v) => v > 0);
+					const ln = values.length;
+					if (ln) {
+						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
+						valueFormat = rawValue = value;
+						if (panel.imgView && this.label) { value = 'Loved ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Loved (icon)', type: ['Loved stats'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' tracks'), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.loved;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter((v) => v > 0);
+					const ln = values.length;
+					if (ln) {
+						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
+						valueFormat = rawValue = value;
+						if (handleList.Count === 1) { value = '💜'; }
+						if (panel.imgView && this.label) { value = 'Loved ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Loved and Rating (icon)', type: ['Rating', 'Loved stats'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					if (handleList.Count === 1) {
+						const tf = this.tf.loved;
+						let values = tf.EvalWithMetadbs(handleList);
+						values = this.getNumbers(values);
+						values = values.filter((v) => v > 0);
+						const ln = values.length;
+						if (ln) {
+							value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
+							valueFormat = rawValue = value;
+							value = '💜';
+							if (panel.imgView && this.label) { value = 'Loved ' + value; }
+						}
+					}
+					if (!value) {
+						const tf = this.tf.rating;
+						let values = tf.EvalWithMetadbs(handleList);
+						values = this.getNumbers(values);
+						values = values.filter(Boolean);
+						const ln = values.length;
+						if (ln) {
+							values = values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0);
+							rawValue = values / ln;
+							valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
+							if (panel.imgView && this.label) { value = 'Rating ' + value; }
+						}
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Hated (count)', type: ['Loved stats'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : 'tracks'), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.loved;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter((v) => v < 0);
+					const ln = values.length;
+					if (ln) {
+						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
+						valueFormat = rawValue = value;
+						if (panel.imgView && this.label) { value = 'Hated ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Feedback (loved - hated)', type: ['Loved stats'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' loved - hated tracks'), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.loved;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = this.getNumbers(values);
+					values = values.filter(Boolean);
+					const ln = values.length;
+					if (ln) {
+						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
+						valueFormat = rawValue = value;
+						if (panel.imgView && this.label) { value = 'Feedback ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}
+			}
 		];
 		this.statistics.forEach((s) => s.nameArt = s.nameTree = s.name);
 		{
+			const userCustomTypesNames = ppt.tfCustomLabels.split('|');
 			const userCustomTypesArt = ppt.tfCustomDisplayArt.split('|');
 			const userCustomTypesTree = ppt.tfCustomDisplayTree.split('|');
 			const userCustomTooltip = ppt.tfCustomTooltip.split('|');
@@ -3319,8 +3451,48 @@ class Populate {
 					this.statistics.push({
 						nameArt: !userCustomTypesArt[i] || !userCustomTypesArt[i].length ? t : userCustomTypesArt[i],
 						nameTree: !userCustomTypesTree[i] || !userCustomTypesTree[i].length ? t : userCustomTypesTree[i],
+						name: !userCustomTypesNames[i] || !userCustomTypesNames[i].length ? t : userCustomTypesNames[i] + ' [' + t + ']',
+						type: [
+							i <= 2
+								? 'Sum [custom]' :
+								i <= 5
+									? 'Average [custom]'
+									: 'P-Mean [custom]'
+						],
 						showTrackCount: true, showTooltip: true,
-						ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || ''))
+						ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : (userCustomTooltip[i] || '')),
+						evalFunc: (handleList) => {
+							let rawValue, value, valueFormat;
+							let tf;
+							switch (i) {
+								case 0: tf = this.tf.custom1Sum; break;
+								case 1: tf = this.tf.custom2Sum; break;
+								case 2: tf = this.tf.custom3Sum; break;
+								case 3: tf = this.tf.custom1Avg; break;
+								case 4: tf = this.tf.custom2Avg; break;
+								case 5: tf = this.tf.custom3Avg; break;
+								case 6: tf = this.tf.custom1MeX; break;
+								case 7: tf = this.tf.custom2MeX; break;
+								case 8: tf = this.tf.custom3MeX; break;
+							}
+							let values = tf.EvalWithMetadbs(handleList).filter((v) => v !== '');
+							const ln = values.length;
+							if (ln) {
+								const exp = Number(ppt.expCustomMeX) || 1;
+								values = i <= 5
+									? values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0)
+									: values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b ** exp, 0); // Power mean with exponent X
+								rawValue = i >= 0 && i <= 2
+									? values
+									: values / ln;
+								if (i >= 6) { rawValue = rawValue ** (1 / exp); }
+								valueFormat = value = i >= 0 && i <= 2
+									? values
+									: $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals; // Regorxxx <- Rating decimals;
+								if (panel.imgView && this.label) { value = this.label + ' ' + value; }
+							}
+							return { rawValue, value, valueFormat };
+						}
 					});
 				});
 		}
