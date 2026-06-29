@@ -528,6 +528,7 @@ addEventListener('on_paint', (gr) => {
 				lib.cacheId = fb.AddLocationsAsync([cache]);
 			} else {
 				const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split(/\s*\|\s*/);
+				lib.setEmptyText(); // Regorxxx <- Code cleanup ->
 				window.NotifyOthers(window.ScriptInfo.Name + ': ask selection', panelSelectionPlaylists);
 			}
 		} else {
