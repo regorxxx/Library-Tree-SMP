@@ -5,7 +5,7 @@
 
 /* global SmoothingMode:readable, dropEffect:readable */
 /* global debounce:readable */
-/* global isArrayEqual:readable */
+/* global isArrayEqual:readable, _t:readable */
 /* global globTags:readable */
 /* global findTracksAtPlaylist:readable */
 /* global Language:readable */
@@ -133,6 +133,9 @@ class Populate {
 			popularity: FbTitleFormat(ppt.tfPopularity),
 			rating: FbTitleFormat(ppt.tfRating),
 			loved: FbTitleFormat(ppt.tfLoved),
+			key: FbTitleFormat(_t(globTags.key)),
+			openKey: FbTitleFormat(globTags.openKey),
+			camelotKey: FbTitleFormat(globTags.camelotKey),
 			custom1Sum: FbTitleFormat(ppt.tfCustom1Sum),
 			custom2Sum: FbTitleFormat(ppt.tfCustom2Sum),
 			custom3Sum: FbTitleFormat(ppt.tfCustom3Sum),
@@ -3222,6 +3225,69 @@ class Populate {
 						valueFormat = rawValue = date;
 						value = panel.imgView && this.label
 							? [v.root ? 'First release ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Key (Standard key)', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.key;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = values.filter(v => v !== '');
+					const ln = values.length;
+					if (ln) {
+						if (ln == 1) { value = values[0]; }
+						else {
+							values.sort((a, b) => this.collator.compare(a, b));
+							value = values[0] + '-' + values.at(-1);
+						}
+						valueFormat = rawValue = value;
+						value = panel.imgView && this.label
+							? [v.root ? 'Key ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Key (Open key)', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.openKey;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = values.filter(v => v !== '');
+					const ln = values.length;
+					if (ln) {
+						if (ln == 1) { value = values[0]; }
+						else {
+							values.sort((a, b) => this.collator.compare(a, b));
+							value = values[0] + '-' + values.at(-1);
+						}
+						valueFormat = rawValue = value;
+						value = panel.imgView && this.label
+							? [v.root ? 'Open key ' : ''] + valueFormat
+							: valueFormat;
+					}
+					return { rawValue, value, valueFormat };
+				}
+			},
+			{
+				name: 'Key (Camelot key)', type: ['File tags'], showTrackCount: true, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList, v) => {
+					let rawValue, value, valueFormat;
+					const tf = this.tf.camelotKey;
+					let values = tf.EvalWithMetadbs(handleList);
+					values = values.filter(v => v !== '');
+					const ln = values.length;
+					if (ln) {
+						if (ln == 1) { value = values[0]; }
+						else {
+							values.sort((a, b) => this.collator.compare(a, b));
+							value = values[0] + '-' + values.at(-1);
+						}
+						valueFormat = rawValue = value;
+						value = panel.imgView && this.label
+							? [v.root ? 'Camelot key ' : ''] + valueFormat
 							: valueFormat;
 					}
 					return { rawValue, value, valueFormat };
