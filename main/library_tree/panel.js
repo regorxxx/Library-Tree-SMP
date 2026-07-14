@@ -249,6 +249,7 @@ class Panel {
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))
 				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-').split('^@^')[0])
+				.replace(/\$nodetype/gi, '$if2($get(nodetype),$put(nodetype,$select($if($strstr(%_path_raw%,http://),1,$if($strstr(%_path_raw%,https://),1,$if($strstr(%_path_raw%,fy+),4,$if($strstr(%_path_raw%,3dydfy:),4,$if($strstr(%_path_raw%,youtube.),4,$if($strstr(%_path_raw%,www.),1,$if($strstr(%_path_raw%,unpack),3,2))))))),stream,track,container,youtube)))')
 				.replace(/\$nodeplaying/gi, () => fb.IsPlaying && node && pop.inRange(pop.nowp, node.item) ? '$not(0)' : '')
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
 				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
@@ -2649,7 +2650,7 @@ class Panel {
 	// Regorxxx <- Support for stream tag-retrieval
 	isStreamSupport(tf = this.view, bStop = false) {
 		if (this.folderView || !ppt.streamSupport || !bStop && !fb.IsPlaying) { return false; }
-		if (this.init){
+		if (this.init) {
 			if (lib.list.Count) {
 				const np = fb.GetNowPlaying();
 				if (np && lib.list.Find(np) === -1) { return false; }

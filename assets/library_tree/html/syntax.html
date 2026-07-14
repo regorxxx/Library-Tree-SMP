@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 02/06/26 -->
+<!DOCTYPE html> <!-- 14/07/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -154,7 +154,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped.
+					<td> Returns current source type. Special characters are already escaped. <br><br> 'Playlist(s)'|'All playlists'|'Playing Playlist'|'Active Playlist'|'Library'|'Panel(s)'|'Playback Queue'|'Auto-DJ Queue'
 					<td>
 						<em>
 							%ARTIST%|%ALBUM%|%TITLE%$if($stricmp($sourcetype,library),, - %RATING%)
@@ -226,6 +226,25 @@
 						<br>
 						<br>
 						Internally changed to this, depending on active playlist's GUID matching.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodetype</em> </td>
+					<td> Returns node type: <br><br> 'stream'|'file'|'container'|'youtube'
+					<td>
+						<em>
+							$if($stricmp($nodetype,stream),Radios,Library)|%ARTIST%|%ALBUM%|%TITLE%
+							<br>
+							&nbsp;&nbsp;&nbsp;&nbsp;->
+							<br>
+							Radios|%ARTIST%|%ALBUM%|%TITLE% <i>or</i> Library|%ARTIST%|%ALBUM%|%TITLE%
+						</em>
+					</td>
+					<td>
+						Expression used on view TF pattern.
+						<br>
+						<br>
+						Internally changed to this, depending on tracks being streams or files.
 					</td>
 				</tr>
 				<tr>
@@ -522,7 +541,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped.
+					<td> Returns current source type. Special characters are already escaped. <br><br> 'Playlist(s)'|'All playlists'|'Playing Playlist'|'Active Playlist'|'Library'|'Panel(s)'|'Playback Queue'|'Auto-DJ Queue'
 					<td>
 						<em>
 							"$stricmp($sourcetype,library)" MISSING OR %RATING% PRESENT
@@ -574,6 +593,21 @@
 						Example as filter or expresion in search box.
 						<br>
 						Displays only rated tracks if active playlist's GUID matches, all tracks otherwise.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodetype</em> </td>
+					<td> Returns node type: <br><br> 'stream'|'file'|'container'|'youtube'
+					<td>
+						<em>
+							"$stricmp($nodetype,stream)" PRESENT
+						</em>
+					</td>
+					<td>
+						Example as filter or expresion in search box.
+						<br>
+						<br>
+						Displays only streams.
 					</td>
 				</tr>
 				<tr>
@@ -942,7 +976,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped.
+					<td> Returns current source type. Special characters are already escaped. <br><br> 'Playlist(s)'|'All playlists'|'Playing Playlist'|'Active Playlist'|'Library'|'Panel(s)'|'Playback Queue'|'Auto-DJ Queue'
 					<td>
 						<em>
 							$if($strcmp($sourcetype,library),$harmonicmix{},)
@@ -986,6 +1020,18 @@
 					</td>
 					<td>
 						Performs harmonic mixing only if active playlist's GUID matches.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodetype</em> </td>
+					<td> Returns node type: <br><br> 'stream'|'file'|'container'|'youtube'
+					<td>
+						<em>
+							$if($stricmp($nodetype,stream),0,1)|%ARTIST%
+						</em>
+					</td>
+					<td>
+						Puts streams first, then sorts by artist.
 					</td>
 				</tr>
 				<tr>
@@ -1345,6 +1391,18 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$nodetype</em> </td>
+					<td> Returns node type: <br><br> 'stream'|'file'|'container'|'youtube'
+					<td>
+						<em>
+							$if($stricmp($nodetype,stream),radios,library)\$lower($nodename).*
+						</em>
+					</td>
+					<td>
+						Looks for at 'radios' subfolder for streams and at 'library' subfolder for any other track.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$front<br>$back<br>$disc<br>$icon<br>$artist</em> </td>
 					<td>
 						Uses the specified art type instead of looking for a file.
@@ -1385,7 +1443,7 @@
 				</tr>
 				<tr>
 					<td> <em>$sourcetype</em> </td>
-					<td> Returns current source type. Special characters are already escaped. </td>
+					<td> Returns current source type. Special characters are already escaped. <br><br> 'Playlist(s)'|'All playlists'|'Playing Playlist'|'Active Playlist'|'Library'|'Panel(s)'|'Playback Queue'|'Auto-DJ Queue' </td>
 					<td>
 						<em>
 							$if($strcmp($sourcetype,library),lib_,)$nodename.*
