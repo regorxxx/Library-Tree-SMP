@@ -1906,7 +1906,7 @@ class Populate {
 						const plsIdx = this.getPlaylistParentIdx(item);
 						const handleIdx = this.getFirstFromRange(item.item);
 						if (!isArrayEqual(plsIdx, [-1]) && handleIdx !== -1) {
-							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true)
+							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true) || ppt.filterBy || !ppt.plsSorting || lib.filterSort
 								? plman.GetPlaylistItems(plsIdx).Find(panel.list[handleIdx])
 								: handleIdx;
 							if (idx !== -1) {
