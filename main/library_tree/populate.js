@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/06/26
+//14/07/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1798,6 +1798,7 @@ class Populate {
 			: panel.list.Find(handle);
 		// Regorxxx ->
 		panel.treePaint();
+		return this.nowp;
 	}
 
 	getNumbers(arr) { // test [0, '0', "0", "0.5", 10, '10', "", '', '-', null, true, false, 'Oh']

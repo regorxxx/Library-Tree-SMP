@@ -1,5 +1,5 @@
 'use strict';
-//29/06/26
+//14/07/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -585,7 +585,12 @@ addEventListener('on_playback_stop', (reason) => {
 	pop.getNowplaying('', true);
 	on_item_focus_change();
 	if (panel.isQueueLikeSource() && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
-	if (panel.isPlayingPlaylistSource(true)) {
+	// Regorxxx <- Support for stream tag-retrieval
+	if (lib.list.Count === lib.libNode.length && panel.isStreamSupport(void(0), true)) {
+		lib.playlist_update(plman.PlayingPlaylist);
+		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+	// Regorxxx ->
+	} else if (panel.isPlayingPlaylistSource(true)) {
 		const idx = panel.getPlaylistSource();
 		if (lib.playingPlaylistNeedsUpdate(idx)) {
 			lib.playlist_update(idx);

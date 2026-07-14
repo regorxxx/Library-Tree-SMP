@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/26
+//14/07/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1168,6 +1168,7 @@ class Library {
 					li = panel.list = this.list;
 					this.libNode = [];
 					arr = this.libNode;
+					pop.getNowplaying(); // Regorxxx <- Support for stream tag-retrieval ->
 					break;
 				case 1:
 					this.searchNode = [];
