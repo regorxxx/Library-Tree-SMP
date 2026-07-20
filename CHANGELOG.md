@@ -32,6 +32,7 @@
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
 - UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
 - Statistics: new Loved (icon), Loved and Rating (icon), Date (last), Key (standard key), Key (Open key), Key (Camelot key), BPM built-in statistics.
+- Statistics: added new settings to display additional strings for custom-slot statistics at tree/art nodes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1084355.html#msg1084355).
 - Syntax: added $nodeplaying and $sourceplaying variables for usage with art type 'File (by TF)'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Syntax: added $front, $back, $disc,... variables to retrieve specified art type as fallback for usage along art type 'File (by TF)'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Syntax: added album art custom TF section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
@@ -53,6 +54,7 @@
 - UI: improved mouse cursor effects in some cases.
 - UI: contextual menu for playlist sources has been reworked and cleaned up to hide non-relevant menu entries like "Send to current playlist" while tracking the active playlist, etc. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081235.html#msg1081235).
 - UI: support for dark themed popups if JS host allows it.
+- UI: Counts & Statistics custom color now is also applied on album art mode. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1084391.html#msg1084391).
 - Sources: when selecting multiple playlist as sources, by pressing Shift, if a playlist is already included it will be removed instead. Additionally duplicated playlists (by name or GUID) are no longer allowed. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159)
 - Sources: playlist sources now allow multiple selection by pressing Shift or Ctrl. Previously they only allowed to select a single node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159).
 - Album art: expanded art type 'File (by TF)' to 2 different slots which allows to assign art to specific nodes by TF, independently of foobar2000 art preferences. It may be used to load art based on folders or node names, instead of being track-based. e.g. For a genre/style tree, to show custom art for every genre (instead of art from the first track for such node); or show a custom image for every folder while using folder view. Now label names are also customizable. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080070.html#msg1080070).

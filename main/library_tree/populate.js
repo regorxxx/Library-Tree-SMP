@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/07/26
+//20/07/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1158,6 +1158,7 @@ class Populate {
 			level = this.inlineRoot ? Math.max(this.tree[b].level - 1, 0) : this.tree[b].level;
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
+		const statsExtraStr =  this.statistics[ppt.itemShowStatistics].displayVal || ''; // Regorxxx <- Improve statistics labels ->
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
 			this.getItemCount(item);
@@ -1170,7 +1171,7 @@ class Populate {
 				let note_w = !item.np || item.track ? 0 : this.row.note_w;
 				item.name_w = gr.CalcTextWidth(panel.colMarker ? nm[i].replace(/@!#.*?@!#/g, '') : nm[i], ui.font.main) - note_w;
 				item.count_w = this.nodeCounts && this.countsRight || this.statisticsShow ?
-					gr.CalcTextWidth(counts || '000', ui.font.small) + (counts ? ui.row.h * 0.2 : 0) : 0;
+					gr.CalcTextWidth((counts || '000') + (this.statisticsShow ? statsExtraStr : ''), ui.font.small) + (counts ? ui.row.h * 0.2 : 0) : 0; // Regorxxx <- Improve statistics labels ->
 				if (!this.fullLineSelection) {
 					item.w = item.name_w;
 					item.id = this.id;
@@ -1329,7 +1330,7 @@ class Populate {
 				if (panel.colMarker) { this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text'); }
 				else { gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc); }
 				if (this.countsRight || this.statisticsShow) {
-					gr.GdiDrawText(this.statisticsShow ? item.statistics : item.count, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+					gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc); // Regorxxx <- Improve statistics labels ->
 				}
 			}
 		}
@@ -3535,6 +3536,7 @@ class Populate {
 			const userCustomTypesArt = ppt.tfCustomDisplayArt.split('|');
 			const userCustomTypesTree = ppt.tfCustomDisplayTree.split('|');
 			const userCustomTooltip = ppt.tfCustomTooltip.split('|');
+			const userCustomValue = ppt.tfCustomDisplayVal.split('|');
 			['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)']
 				.forEach((t, i) => {
 					this.statistics.push({
@@ -3581,7 +3583,8 @@ class Populate {
 								if (panel.imgView && this.label) { value = this.label + ' ' + value; }
 							}
 							return { rawValue, value, valueFormat };
-						}
+						},
+						displayVal: userCustomValue[i]
 					});
 				});
 		}

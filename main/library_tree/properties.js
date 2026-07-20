@@ -1,5 +1,5 @@
-'use strict';
-//29/06/26
+﻿'use strict';
+//20/07/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -470,7 +470,7 @@ let properties = [
 	['Statistics Titleformat Rating', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfRating'],
 	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%,%LFM_LOVED%)]', 'tfLoved'],
 	// Regorxxx ->
-	// Regorxxx <- New statistics | Improve statistics tooltip
+	// Regorxxx <- New statistics | Improve statistics tooltip | Improve statistics labels
 	['Statistics Titleformat Custom-1 (sum)', '$if($or($meta_test(LYRICS),$meta_test(UNSYNCEDLYRICS)),1,0)', 'tfCustom1Sum'],
 	['Statistics Titleformat Custom-2 (sum)', '$ifequal(' + _t(globTags.rating) + ',5,1,0)', 'tfCustom2Sum'],
 	['Statistics Titleformat Custom-3 (sum)', '$ifgreater($if2($strstr($lower(' + globTags.genreStyle.map((t) => _t(t)).join('\', \'') + '),instrumental),$strstr($lower(%LANGUAGE%),zxx)),0,0,1)', 'tfCustom3Sum'],
@@ -482,6 +482,7 @@ let properties = [
 	['Statistics Titleformat Custom-3 (p-mean)', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfCustom3MeX'],
 	['Statistics Titleformat p-mean exponent', 3, 'expCustomMeX'],
 	['Statistics Titleformat Custom labels', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomLabels'],
+	['Statistics Titleformat Custom display values', '||||||||', 'tfCustomDisplayVal'],
 	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|| DR| BPMs| ', 'tfCustomTooltip'],
 	['Statistics Titleformat Custom display art', '🗒|🔝★|🎸|<DR>|<BPM>|<★>|<DR>|<BPM>|<★>', 'tfCustomDisplayArt'],
 	['Statistics Titleformat Custom display tree', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomDisplayTree'],

@@ -1,5 +1,5 @@
 'use strict';
-//09/06/26
+//21/07/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -754,9 +754,10 @@ class Images {
 					: '';
 				// Regorxxx ->
 				const cur_img = this.zooming ? null : this.getImg(item.key);
-				// Regorxxx <- Highlight active playlist | Code cleanup
+				// Regorxxx <- Highlight active playlist | Code cleanup | Customizable stats color
 				const grpCol = this.getGrpCol(item, cell);
 				const lotCol = this.getLotCol(item, cell);
+				const statsCol = this.getStatsCol(item, cell);
 				// Regorxxx ->
 				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
@@ -836,12 +837,12 @@ class Images {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style ->
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
 								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, this.text.w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						} else {
@@ -851,12 +852,12 @@ class Images {
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style ->
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
 								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, this.text.w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}
@@ -873,12 +874,12 @@ class Images {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style ->
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
 								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y3, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, this.text.w, this.text.h, flags);
 							} // Regorxxx ->
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
@@ -887,12 +888,12 @@ class Images {
 							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style ->
+							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style  | Customizable stats color
 							if (statistics) {
 								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, lotCol, x, y2, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, this.text.w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}
@@ -1950,6 +1951,24 @@ class Images {
 						: this.labels.overlayDark
 							? $.RGB(220, 220, 220)
 							: ui.col.lotBlend;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Highlight active playlist | Code cleanup | Customizable stats color
+	getStatsCol(item, cell) {
+		return cell.bNowPlaying
+			? ui.col.nowp
+			: cell.bActivePls
+				? ui.col.apls
+				: cell.bHover && pop.highlight.text
+					? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
+					: item.sel
+						? this.labels.overlayDark
+							? ui.getBlend(ui.col.lotBlend, ui.col.counts || ui.col.coun, 0.8)
+							: ui.getBlend(ui.col.selBlend, ui.col.counts || ui.col.coun, 0.8)
+						: this.labels.overlayDark
+							? ui.getBlend($.RGB(220, 220, 220), ui.col.counts || ui.col.coun, 0.1)
+							: ui.col.counts || ui.col.count;
 	}
 	// Regorxxx ->
 
