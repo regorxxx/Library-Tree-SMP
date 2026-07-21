@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/07/26
+//21/07/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -314,7 +314,7 @@ class Panel {
 				cache = q[3];
 				s = s.replace(
 					q[0],
-					() => logicDic.includes(cache)
+					() => logicDic.has(cache)
 						? queryJoin(Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
 						: Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
 							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
