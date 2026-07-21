@@ -1964,11 +1964,11 @@ class Images {
 					? (panel.textDiffHighlight ? ui.col.nowp : ui.col.text_h)
 					: item.sel
 						? this.labels.overlayDark
-							? ui.getBlend(ui.col.lotBlend, ui.col.counts || ui.col.coun, 0.8)
-							: ui.getBlend(ui.col.selBlend, ui.col.counts || ui.col.coun, 0.8)
+							? ui.col.counts ? ui.getBlend(ui.col.lotBlend, ui.col.counts, 0.8) : ui.col.lotBlend
+							: ui.col.counts ? ui.getBlend(ui.col.selBlend, ui.col.counts, 0.8) : ui.col.selBlend
 						: this.labels.overlayDark
-							? ui.getBlend($.RGB(220, 220, 220), ui.col.counts || ui.col.coun, 0.1)
-							: ui.col.counts || ui.col.count;
+							? ui.col.counts ? ui.getBlend($.RGB(220, 220, 220), ui.col.counts, 0.1) : $.RGB(220, 220, 220)
+							: ui.col.counts || ui.col.lotBlend;
 	}
 	// Regorxxx ->
 

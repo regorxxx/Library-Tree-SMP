@@ -688,7 +688,7 @@ class MenuItems {
 				if (i === 0) { return; }
 				v.type.forEach((menuName) => {
 					menu.newItem({
-						menuName:  menuName || 'Statistics',
+						menuName: menuName || 'Statistics',
 						str: v.name,
 						func: () => this.setStatistics(i),
 						checkRadio: i == ppt.itemShowStatistics,
