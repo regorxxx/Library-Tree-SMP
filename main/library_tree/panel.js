@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/07/26
+//27/07/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -621,6 +621,9 @@ class Panel {
 			['Filter XX: Name // Query', 'Lossless // "$info(ENCODING)" IS lossless'],
 			['Filter XX: Name // Query', 'Lossy // "$info(ENCODING)" IS lossy'],
 			['Filter XX: Name // Query', 'Missing Replaygain // %REPLAYGAIN_TRACK_GAIN% MISSING AND %TRUEPEAK_SCANNER_TRACK_GAIN% MISSING'],
+			['Filter XX: Name // Query', 'separator // .'],
+			['Filter XX: Name // Query', 'Albums // (RELEASETYPE IS album) OR (RELEASETYPE MISSING AND (NOT DESCRIPTION IS single AND NOT DESCRIPTION IS ep))'],
+			['Filter XX: Name // Query', 'Singles and EPs // (RELEASETYPE IS single OR RELEASETYPE IS ep) OR (RELEASETYPE MISSING AND (DESCRIPTION IS single OR DESCRIPTION IS ep))'],
 			['Filter XX: Name // Query', 'separator // .'],
 			['Filter XX: Name // Query', 'Never Played // %PLAY_COUNT% MISSING AND %LASTFM_PLAY_COUNT% MISSING AND %2003_PLAYCOUNT% MISSING'],
 			['Filter XX: Name // Query', 'Played Often // ' + queryJoin([
