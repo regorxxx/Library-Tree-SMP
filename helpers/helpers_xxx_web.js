@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/07/26
+//30/07/26
 
 /* exported downloadText, paginatedFetch, abortWebRequests, addUrlParams, sendV2, downloadFile, downloadFileV2, downloadImg, checkUpdate, getWikiImg, HTMLFile */
 
@@ -9,7 +9,7 @@ include('helpers_xxx_prototypes.js');
 /* global tryActiveX:readable, doOnce:readable */
 /* global _q:readable */
 include('helpers_xxx_file.js');
-/* global doc:readable, _exec:readable, _runCmd:readable, _isFile:readable, _resolvePath:readable, popup:readable, WshShell:readable, _runCmd:readable, popup:readable, _explorer:readable */
+/* global doc:readable, _exec:readable, _runCmd:readable, _isFile:readable, _resolvePath:readable, popup:readable, WshShell:readable, _runCmd:readable, popup:readable, _explorer:readable, _open:readable */
 
 // Http Requests when utils.HTTPRequestAsync is available. Properties are duplicated
 // with different casing so it works as 1:1 replacement for XMLHttp and
@@ -273,6 +273,9 @@ function onStateChange(timer, resolve, reject, func = null, type = null, request
 				if (this.responseText.includes('CRYPT_E_REVOCATION_OFFLINE (0x80092013)') && !(this instanceof ActiveXObject)) {
 					request.bBuiltIn = false;
 					resolve(send(request));
+				} else if (this.status === 403 && request.bCurlFallback) {
+					downloadFile(request.URL, folders.temp + utils.MD5(request.URL))
+						.then((path) => resolve(_open(path) || ''));
 				} else {
 					window.IsUnload
 						? reject({ status: 408, responseText: 'Forced shutdown' })
@@ -319,7 +322,7 @@ function onStateChangeV2(resolve, reject, func = null, type = null) {
 }
 
 // May be used to async run a func for the response or as promise
-function send({ method = 'GET', URL, body = void (0), func = null, requestHeader = [/*[header, type]*/], bypassCache = false, timeOut = 30000, type, bBuiltIn = true }) {
+function send({ method = 'GET', URL, body = void (0), func = null, requestHeader = [/*[header, type]*/], bypassCache = false, timeOut = 30000, type, bBuiltIn = true, bCurlFallback = true }) { // eslint-disable-line no-unused-vars
 	addWebCallbacks();
 	const p = new Promise((resolve, reject) => {
 		if (window.IsUnload) { reject({ status: 408, responseText: 'Forced shutdown' }); return; } // NOSONAR
@@ -352,7 +355,7 @@ function send({ method = 'GET', URL, body = void (0), func = null, requestHeader
 				reject({ status, responseText: 'Request Timeout' });  // NOSONAR
 			}
 		}, timeOut, xmlhttp);
-		xmlhttp.onreadystatechange = onStateChange.bind(xmlhttp, timer, resolve, reject, func, type, { ...arguments[0] });
+		xmlhttp.onreadystatechange = onStateChange.bind(xmlhttp, timer, resolve, reject, func, type, { method, URL, body, func, requestHeader, bypassCache, timeOut, type, bBuiltIn, bCurlFallback });
 		xmlhttp.send(method === 'POST' ? body : void (0));
 	});
 	return p;
