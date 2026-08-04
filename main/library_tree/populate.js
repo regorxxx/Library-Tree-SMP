@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/07/26
+//04/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -281,7 +281,7 @@ class Populate {
 			}
 		});
 		this.condense(br.child);
-		this.buildTree(lib.root, 0, node, true, block, clearArt, ppt.rootNode); // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
+		this.buildTree(lib.root, 0, node, true, block, clearArt, ppt.rootNode && base); // Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view | Basic playlist manager ->
 	}
 	// Regorxxx ->
 
@@ -1908,13 +1908,13 @@ class Populate {
 						const handleIdx = this.getFirstFromRange(item.item);
 						if (!isArrayEqual(plsIdx, [-1]) && handleIdx !== -1) {
 							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true) || ppt.filterBy || !ppt.plsSorting || lib.filterSort
-								? plman.GetPlaylistItems(plsIdx).Find(panel.list[handleIdx])
+								? plman.GetPlaylistItems(plsIdx[0]).Find(panel.list[handleIdx])
 								: handleIdx;
 							if (idx !== -1) {
 								this.setFocus = true;
-								plman.SetPlaylistFocusItem(plsIdx, idx);
-								plman.ExecutePlaylistDefaultAction(plsIdx, idx);
-								plman.ActivePlaylist = plsIdx;
+								plman.SetPlaylistFocusItem(plsIdx[0], idx);
+								plman.ExecutePlaylistDefaultAction(plsIdx[0], idx);
+								plman.ActivePlaylist = plsIdx[0];
 								break;
 							}
 						}
@@ -3025,7 +3025,7 @@ class Populate {
 		}
 		if (!this.isDragDrop) {
 			if (firstPls !== -1) { plman.ActivePlaylist = firstPls; }
-			else if (item.plsRoot && this.trackCount(item.item) === 0) {
+			else if (item && item.plsRoot && this.trackCount(item.item) === 0) {
 				const parent = this.getPlaylistParentIdx(item);
 				if (!isArrayEqual(parent, [-1])) { plman.ActivePlaylist = parent[0]; }
 			}
@@ -4020,9 +4020,14 @@ class Populate {
 	getPlaylistParentIdx(node) {
 		if (!node) { return [-1]; }
 		const parent = this.getTopParent(node);
-		return parent.root || ppt.plsSource === 0 || ppt.plsSource === 1
-			? panel.getPlaylistSource()
-			: lib.playlistSourceRoot.filter((root) => root.node === parent || root.nodes && root.nodes.includes(node)).map((p) => p.idx);
+		if (parent.root || ppt.plsSource === 0 || ppt.plsSource === 1) {
+			return panel.getPlaylistSource();
+		} else {
+			const plsIdx = lib.playlistSourceRoot.filter((root) => root.node === parent || root.nodes && root.nodes.includes(node)).map((p) => p.idx);
+			return plsIdx.length
+				? plsIdx
+				: [-1];
+		}
 	}
 
 	getNodePosInSource(node, sourceIdx, idx = 0) {
