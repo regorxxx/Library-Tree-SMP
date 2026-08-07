@@ -1,10 +1,10 @@
 'use strict';
-//21/07/26
+//07/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
 /* global isArrayEqual:readable */
-/* global getFiles:readable, _deleteFolder:readable, _foldPath:readable */
+/* global getFiles:readable, _deleteFolder:readable, _foldPath:readable, imgAllowedExt:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
@@ -312,16 +312,19 @@ class Images {
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const item = pop.tree[ix];
-			const mask = this.getArtMask(art.tf, handle, item);
-			if (mask.includes('@@')) {
-				const idx = (panel.artVariables.find((av) => mask.includes(av.id)) || { idx: -1 }).idx;
+			const path = this.getArtMask(art.tf, handle, item);
+			if (path.includes('@@')) {
+				const idx = (panel.artVariables.find((av) => path.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
-					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(mask) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
+					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
-			const files = getFiles(mask, new Set(['.png', '.jpg', '.jpeg', '.gif']));
-			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(mask) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
+			const [, folder, mask] = path.includes('*') || path.includes('?') // Retrieve file mask if possible
+				? /^([^*?]+)\\([^\\]*?(?:[?*])+[^\\]*?)$/i.exec(path) || [void(0), path, void(0)]
+				: [void(0), path, void(0)];
+			const files = getFiles(folder || path, new Set(imgAllowedExt), mask ? '*\\' + mask : void(0));
+			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
@@ -333,6 +336,10 @@ class Images {
 			result.path = artProm.path;
 			result.image = artProm.image;
 			result.ext = this.getCacheFileExt(result.path);
+		}
+		if (!result.image) {
+			console.log(window.ScriptInfo.Name + ': ' + result.path + ' -> ' + 'Non valid or unsupported image'); // Regorxxx <- Art logging ->
+			result.bSave = false;
 		}
 		this.cacheAlbumArt(result);
 		return result;
@@ -357,7 +364,7 @@ class Images {
 	}
 
 	isTransparentExt(ext) {
-		return ['.png', '.gif'].includes(ext);
+		return ['.png', '.gif', '.webp'].includes(ext);
 	}
 
 	async load_image_async(key, image_path, ix, rawCache) {
