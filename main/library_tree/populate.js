@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/08/26
+//08/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3356,7 +3356,8 @@ class Populate {
 					}
 					// Regorxxx ->
 					return { rawValue, value, valueFormat };
-				}
+				},
+				clearedOnQueueChange: true
 			},
 			{
 				name: 'Playcount', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' listens'), evalFunc: (handleList) => {

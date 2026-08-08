@@ -1,5 +1,5 @@
 'use strict';
-//14/07/26
+//08/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -694,7 +694,7 @@ addEventListener('on_playlist_switch', () => {
 });
 
 const on_queue_changed = $.debounce(() => {
-	if (ppt.itemShowStatistics != 7) return;
+	if (!pop.statistics[ppt.itemShowStatistics].clearedOnQueueChange) { return; } // Regorxxx <- New statistics | Code cleanup ->
 	pop.tree.forEach(v => {
 		v.id = '';
 		v.count = '';
