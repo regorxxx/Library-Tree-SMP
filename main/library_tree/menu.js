@@ -1,5 +1,5 @@
 ﻿'use strict';
-//29/06/26
+//08/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -239,9 +239,15 @@ class MenuItems {
 				});
 				menu.newItem({ separator: true });
 				menu.newItem({
+					str: 'Shuffle queue',
+					func: () => panel.shuffleQueue()
+				});
+				menu.newItem({ separator: true });
+				menu.newItem({
 					str: 'Remove from queue',
 					func: () => panel.removeFromQueue(this.items)
 				});
+				menu.newItem({ separator: true });
 				menu.newItem({
 					str: 'Flush playback queue',
 					func: () => plman.FlushPlaybackQueue()
