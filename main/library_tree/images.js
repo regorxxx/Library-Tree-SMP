@@ -1,5 +1,5 @@
 'use strict';
-//07/08/26
+//09/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -321,9 +321,9 @@ class Images {
 				}
 			}
 			const [, folder, mask] = path.includes('*') || path.includes('?') // Retrieve file mask if possible
-				? /^([^*?]+)\\([^\\]*?(?:[?*])+[^\\]*?)$/i.exec(path) || [void(0), path, void(0)]
-				: [void(0), path, void(0)];
-			const files = getFiles(folder || path, new Set(imgAllowedExt), mask ? '*\\' + mask : void(0));
+				? /^([^*?]+)\\([^\\]*?(?:[?*])+[^\\]*?)$/i.exec(path) || [void (0), path, void (0)]
+				: [void (0), path, void (0)];
+			const files = getFiles(folder || path, new Set(imgAllowedExt), mask ? '*\\' + mask : void (0));
 			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
@@ -337,7 +337,7 @@ class Images {
 			result.image = artProm.image;
 			result.ext = this.getCacheFileExt(result.path);
 		}
-		if (!result.image) {
+		if (result.path && !result.image) {
 			console.log(window.ScriptInfo.Name + ': ' + result.path + ' -> ' + 'Non valid or unsupported image'); // Regorxxx <- Art logging ->
 			result.bSave = false;
 		}
