@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/04/26
+//09/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
@@ -57,6 +57,8 @@ class Buttons {
 
 		this.setSbarIcon();
 		this.createImages();
+
+		this.multiBtnSetName(panel.filter.mode[ppt.filterBy].name, true); // Regorxxx <- Filter / View / Source button ->
 	}
 
 	// Methods
@@ -327,9 +329,9 @@ class Buttons {
 			this.hot_h = Math.max(panel.search.sp - this.hoverArea * 2, 4);
 			this.margin = Math.max(ppt.margin * 2 + 2, 12) / 4;
 			this.arc = Math.max(Math.round(Math.min(panel.search.sp - this.hoverArea * 2, panel.settings.w + this.margin / 2) / 4), 1);
-			this.s.w1 = panel.settings.w + but.margin;
+			this.s.w1 = panel.settings.w + this.margin;
 			this.s.w2 = ui.w - ui.sz.marginSearch - 1 + panel.settings.offset;
-			this.s.x = this.s.w2 - panel.settings.w - but.margin / 2;
+			this.s.x = this.s.w2 - panel.settings.w - this.margin / 2;
 		}
 		if (ppt.sbarShow) {
 			switch (ui.sbar.type) { // NOSONAR

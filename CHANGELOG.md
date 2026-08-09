@@ -100,6 +100,7 @@
 - Album Art: multiple minor layout fixes and adjustments.
 - Drag n' drop: workaround for incorrect handling of custom artwork on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
 - Drag n' drop: workaround for foobar crash if custom artwork was null on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
+- UI: header repaint glitches at startup. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085135.html#msg1085135).
 
 ## [2.0.0] - 2026-01-30
 ### Added
