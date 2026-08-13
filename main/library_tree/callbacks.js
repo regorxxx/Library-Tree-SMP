@@ -1,5 +1,5 @@
 'use strict';
-//08/08/26
+//11/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -921,11 +921,9 @@ addEventListener('on_drag_drop', (action, x, y, mask) => {
 				const selParents = selNodes.flatMap((node) => pop.getPlaylistParentIdx(node));
 				const isSamePls = new Set(selParents).isEqual(new Set(plsIdxArr));
 				const pos = bIsSinglePlaylist
-					? pop.row.i === -1
-						? -1 // ALlow sending to end
-						: pop.row.i === 0 && ppt.rootNode
-							? 0
-							: pop.getNodeLastPosInSource(pop.tree.at(pop.row.i), plsIdxArr[0])
+					? ppt.rootNode && pop.row.i === 0
+						? 0 // ALlow sending to front at root
+						: pop.getNodePosInSource(pop.tree.at(pop.row.i), plsIdxArr[0])
 					: pop.getNodeLastPosInSource(pop.tree.at(pop.row.i), plsIdxArr[0]);
 				const isTargetPls = !bIsSinglePlaylist && pop.isPlaylistParent(pop.tree[pop.row.i]);
 				if (isAllPls && isTargetPls && !dropMask.has(mask, 'ctrl') && ppt.plsSorting) {

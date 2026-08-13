@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/08/26
+//11/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -4035,6 +4035,9 @@ class Populate {
 		if (sourceIdx === -1) { return -1; }
 		if (this.isPlaylistParent(node)) { return -1; }
 		if (panel.isPlaylistSource() && ppt.plsSorting) {
+			if (panel.isActivePlaylistSource(true) || panel.isPlayingPlaylistSource(true)) {
+				return Math.max(this.tree.indexOf(node) + (ppt.rootNode ? -1 : 0), -1);
+			}
 			const sel = this.addItems([], node, true);
 			const h = this.getHandleList(void (0), sel).Convert().at(idx);
 			const list = plman.GetPlaylistItems(sourceIdx).Convert();
@@ -4046,7 +4049,9 @@ class Populate {
 				}
 			} else {
 				const parent = this.getPlaylistParent(node);
-				return this.tree.indexOf(node) - parent.idx;
+				return isArrayEqual(parent, [-1])
+					? - 1
+					: this.tree.indexOf(node) - (parent[0].idx + 1) + (ppt.rootNode ? -1 : 0);
 			}
 		} else { return -1; }
 	}
