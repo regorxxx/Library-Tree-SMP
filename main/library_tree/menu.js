@@ -283,7 +283,7 @@ class MenuItems {
 					{
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
-							str: 'Send top track' + target,
+							str: 'Send top tracks' + target,
 							func: () => this.setPlaylist(6),
 							flags: this.getPaylistFlag(2),
 						});
@@ -1135,6 +1135,7 @@ class MenuItems {
 		// Regorxxx <- Show album art entry at settings
 		if (ppt.albumArtOptionsShow) {
 			menu.newItem({
+				menuName: mainMenu(),
 				str: panel.imgView ? (ppt.facetView ? 'Show text' : 'Show tree') : 'Show album art',
 				func: () => this.setPlaylist(4),
 				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED,
