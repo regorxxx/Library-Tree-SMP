@@ -1788,4 +1788,11 @@ class Library {
 		return !isArrayEqual(this.playlistSourceIdx, [plsIdx]);
 	}
 	// Regorxxx ->
+
+	// Regorxxx <- Support for stream tag-retrieval
+	updateStream() {
+		this.playlist_update(plman.PlayingPlaylist);
+		this.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+	}
+	// Regorxxx ->
 }

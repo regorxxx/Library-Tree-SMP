@@ -1,5 +1,5 @@
 'use strict';
-//11/08/26
+//13/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -143,11 +143,8 @@ addEventListener('on_metadb_changed', (handleList, isDatabase) => {
 
 // Regorxxx <- Support for stream tag-retrieval
 addEventListener('on_playback_dynamic_info_track', () => {
-	if (lib.list.Count != lib.libNode.length) { return; }
-	if (panel.isStreamSupport()) {
-		lib.playlist_update(plman.PlayingPlaylist);
-		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
-	}
+	if (lib.list.Count != lib.libNode.length || panel.isFileExplorerSource()) { return; }
+	if (panel.isStreamSupport()) { lib.updateStream(); }
 });
 // Regorxxx ->
 
@@ -580,16 +577,18 @@ addEventListener('on_playback_starting', () => {
 // Regorxxx ->
 
 addEventListener('on_playback_stop', (reason) => {
-	if (reason == 2) return;
+	if (reason == 2) {
+		// Regorxxx <- Support for stream tag-retrieval
+		if (lib.list.Count === lib.libNode.length && panel.isStreamSupport(void (0), true)) { lib.updateStream(); }
+		return;
+	}
 	lib.checkFilter('playback'); // Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns -	>
 	pop.getNowplaying('', true);
 	on_item_focus_change();
 	if (panel.isQueueLikeSource() && ppt.queueNowPlaying) { lib.treeState100(false, 2); } // Regorxxx <- Queue source | Auto-DJ source | Throttle library updates ->
 	// Regorxxx <- Support for stream tag-retrieval
-	if (lib.list.Count === lib.libNode.length && panel.isStreamSupport(void(0), true)) {
-		lib.playlist_update(plman.PlayingPlaylist);
-		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
-	// Regorxxx ->
+	if (lib.list.Count === lib.libNode.length && panel.isStreamSupport(void (0), true)) {
+		lib.updateStream();
 	} else if (panel.isPlayingPlaylistSource(true)) {
 		const idx = panel.getPlaylistSource();
 		if (lib.playingPlaylistNeedsUpdate(idx)) {
