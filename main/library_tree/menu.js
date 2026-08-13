@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/08/26
+//13/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -759,6 +759,18 @@ class MenuItems {
 					}
 				},
 				checkItem: ppt.albumArtNodeCollage
+			});
+			// Regorxxx ->
+			// Regorxxx <- Art carousel
+			menu.newItem({
+				menuName: 'Album art',
+				str: 'Carousel mode',
+				func: () => {
+					ppt.toggle('imgCarousel');
+					if (ppt.imgCarousel) { img.startCarousel(); }
+					else { img.stopCarousel(); }
+				},
+				checkItem: ppt.imgCarousel
 			});
 			// Regorxxx ->
 			menu.newItem({ menuName: 'Album art', separator: true });

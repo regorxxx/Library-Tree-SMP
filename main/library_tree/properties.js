@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/07/26
+//13/08/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -344,6 +344,7 @@ let properties = [
 	['Image Hover Zoom [TF-1]', false, 'imgTf1HoverZoom'],
 	['Image Hover Zoom [TF-2]', false, 'imgTf2HoverZoom'],
 	// Regorxxx ->
+	['Image Carousel enabled', false, 'imgCarousel'], // Regorxxx <- Art carousel ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],

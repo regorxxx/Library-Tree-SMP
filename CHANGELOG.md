@@ -35,6 +35,7 @@
 - Album art: added support for .webp images. Note it requires codec installation on system, i.e. [this](https://apps.microsoft.com/detail/9pg2dk419drg?hl=en-GB&gl=GB) or [this](https://storage.googleapis.com/downloads.webmproject.org/releases/webp/WebpCodecSetup.exe) and a system restart.
 - Album art: added console logging for unsupported or non valid images.
 - Album art: added $nodenameswap variable to 'File (by TF)' art types, to display node names with swapped back prefixes (following prefix setting). i.e. to retrieve 'The Rolling Stones', instead of 'Rolling Stones, The'.
+- Album Art: new art carousel feature which displays current art in an infinite scroll animation, like [this](https://github.com/p2ashiura/Album-Train). While it's enabled, animation will only stop if mouse is over panel and be locked to an item if it's the playing one, otherwise it keeps scrolling.
 - UI: new settings to highlight active playlist while using playlist sources and multi-branch playlist view feature. Switch can be found at 'Display' tab (HTML options panel) or 'Active Playlist Sidemarker' and 'Active Playlist Highlight' (properties panel); color can be found at 'Custom' tab (HTML options panel) or 'Custom Colour Text Active Pls. Highlight' (properties panel).
 - Statistics: new Loved (icon), Loved and Rating (icon), Date (last), Key (standard key), Key (Open key), Key (Camelot key), BPM built-in statistics.
 - Statistics: added new settings to display additional strings for custom-slot statistics at tree/art nodes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1084355.html#msg1084355).
@@ -93,7 +94,7 @@
 - UI: fixed last hovered item being redrawn when following selection from other panels (due to scrolling) related to bugfix for original script. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080902.html#msg1080902) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081391.html#msg1081391).
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
 - UI: header repaint glitches at startup. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085135.html#msg1085135).
-- UI: fixed bug, on original script, related to color markers not being cleaned at playlist creation (and other actions). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085269.html#msg1085269).
+	
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
 - Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).

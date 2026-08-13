@@ -37,6 +37,12 @@ class Images {
 		this.nowp = { key: '', id: '', handle: null }; // Regorxxx <- Track preference art ->
 		this.maxCollageArtItems = 4; // Regorxxx <- Branch collage art ->
 		this.artProfiler = null; // Regorxxx <- Art profiler ->
+		// Regorxxx <- Art carousel
+		this.carousel = {
+			timer: null,
+			dir: 1
+		};
+		// Regorxxx ->
 
 		this.bor = {
 			bot: 6,
@@ -195,6 +201,7 @@ class Images {
 		this.setRoot();
 		this.setNoArtist();
 		this.setNoCover();
+		if (ppt.imgCarousel) { this.startCarousel(); } // Regorxxx <- Art carousel ->
 	}
 
 	// Methods
@@ -2656,5 +2663,34 @@ class Images {
 	trimCache(key) {
 		delete this.cache[key];
 	}
+
+	// Regorxxx <- Art carousel
+	startCarousel() {
+		this.stopCarousel();
+		this.carousel.dir = 1;
+		const fps = 20;
+		this.carousel.timer = setInterval(() => {
+			if (typeof sbar === 'undefined' || !window.IsVisible) { return; }
+			if (!ppt.imgCarousel || !panel.imgView) { return this.stopCarousel(); }
+			const offset = sbar.row.h / 60 * 10 / fps;
+			if (pop.m.i === -1 && pop.nowp === -1) {
+				if (sbar.scroll === sbar.max_scroll) { this.carousel.dir = -1; }
+				else if (sbar.scroll === 0) { this.carousel.dir = 1; }
+				sbar.checkScroll((sbar.scroll + this.carousel.dir * offset), 'step');
+			} else if (panel.m.x === -1 && pop.nowp !== -1) {
+				setTimeout(() => pop.nowPlayingShow(), 500);
+			}
+		}, 1000 / fps);
+		return this.carousel.timer;
+	}
+
+	stopCarousel() {
+		if (this.carousel.timer) {
+			clearInterval(this.carousel.timer);
+			this.carousel.timer = null;
+			this.carousel.dir = 1;
+		}
+	}
+	// Regorxxx ->
 }
 const img = new Images;
