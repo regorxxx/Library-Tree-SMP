@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/08/26
+//13/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -757,7 +757,7 @@ class Populate {
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
 					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
-					text = (panel.colMarker ? item.name.replace(/@!#.*?@!#/g, '') : item.name) + (!this.countsRight || this.statisticsShow ? item.count : '');
+					text = panel.cleanMarkers(item.name) + (!this.countsRight || this.statisticsShow ? item.count : ''); // Regorxxx <- Code cleanup ->
 					text = text.replace(/&/g, '&&');
 				}
 				if (text != tooltip.Text) this.deactivateTooltip();
@@ -773,7 +773,7 @@ class Populate {
 				let trace3 = false;
 				if (img.labels.hide) {
 					text = panel.lines == 2 ? (ppt.albumArtFlipLabels ? item.lot + '\n' + item.grp : item.grp + '\n' + item.lot) : item.grp;
-					if (panel.colMarker) text = text.replace(/@!#.*?@!#/g, '');
+					text = panel.cleanMarkers(text); // Regorxxx <- Code cleanup ->
 					text = text.replace(/&/g, '&&');
 					if (text != tooltip.Text) this.deactivateTooltip();
 				} else {
@@ -785,7 +785,7 @@ class Populate {
 					trace2 = item.tt.y2 == -1 ? false : x >= item.tt.x && x <= item.tt.x + item.tt.w && y >= item.tt.y2 && y <= item.tt.y2 + img.text.h;
 					trace3 = item.tt.y3 == -1 ? false : x >= item.tt.x && x <= item.tt.x + item.tt.w && y >= item.tt.y3 && y <= item.tt.y3 + img.text.h;
 					text = trace1 || trace2 || trace3 ? item.tt.text : '';
-					if (panel.colMarker) text = text.replace(/@!#.*?@!#/g, '');
+					text = panel.cleanMarkers(text); // Regorxxx <- Code cleanup ->
 					text = text.replace(/&/g, '&&');
 					if (text != tooltip.Text) this.deactivateTooltip();
 					if (!trace1 && !trace2 && !trace3 || !item.tt[1] && !item.tt[2] && !item.tt[3]) {
@@ -1169,7 +1169,7 @@ class Populate {
 			if (item.np && item.id != this.id) this.row.note_w = gr.CalcTextWidth(item.np, ui.font.main);
 			if (item.id != this.id || item.np) {
 				let note_w = !item.np || item.track ? 0 : this.row.note_w;
-				item.name_w = gr.CalcTextWidth(panel.colMarker ? nm[i].replace(/@!#.*?@!#/g, '') : nm[i], ui.font.main) - note_w;
+				item.name_w = gr.CalcTextWidth(panel.cleanMarkers(nm[i]), ui.font.main) - note_w; // Regorxxx <- Code cleanup ->
 				item.count_w = this.nodeCounts && this.countsRight || this.statisticsShow ?
 					gr.CalcTextWidth((counts || '000') + (this.statisticsShow ? statsExtraStr : ''), ui.font.small) + (counts ? ui.row.h * 0.2 : 0) : 0; // Regorxxx <- Improve statistics labels ->
 				if (!this.fullLineSelection) {
@@ -2892,7 +2892,8 @@ class Populate {
 
 	sendToNewPlaylist() {
 		const names = this.tree.filter(v => v.sel).map(v => v.name.split('^@^').join(' - ')); // Regorxxx <- Fix new playlist for branches ->
-		plman.ActivePlaylist = plman.CreatePlaylist(plman.PlaylistCount, [...new Set(names)].join('; '));
+		const name = panel.cleanMarkers([...new Set(names)].join('; ')); // Regorxxx <- Fix color markers being shown at names ->
+		plman.ActivePlaylist = plman.CreatePlaylist(plman.PlaylistCount, name);
 		this.load({ bAddToPls: false, bAutoPlay: this.autoPlay.send, bUseDefaultPls: false, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 	}
 

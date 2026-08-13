@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/05/26
+//13/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -715,7 +715,7 @@ class Find {
 		if (this.jSearch.length === 0 && text === ' ') { return; } // Regorxxx <- Filter quick-search for space as first char ->
 		let advance = false;
 		if (panel.pos >= 0 && panel.pos < pop.tree.length) {
-			const name = pop.tree[panel.pos].name.replace(/@!#.*?@!#/g, '');
+			const name = panel.cleanMarkers(pop.tree[panel.pos].name); // Regorxxx <- Code cleanup ->
 			const char = name.trim().charAt(0).toLowerCase();
 			const speChar = pop.specialCharTransform(name).trim().charAt(0).toLowerCase();
 			// Regorxxx <- Fixed quick-search on same letter | Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration
@@ -750,7 +750,7 @@ class Find {
 				pop.tree.forEach((v, i) => {
 					if (!v.root) {
 						// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
-						const name = v.name.replace(/@!#.*?@!#/g, '');
+						const name = panel.cleanMarkers(v.name); // Regorxxx <- Code cleanup ->
 						const char = name.trim().charAt(0).toLowerCase();
 						const speChar = pop.specialCharTransform(name).trim().charAt(0).toLowerCase();
 						init = ppt.findTrans
@@ -916,7 +916,7 @@ class Find {
 		let first = -1;
 		pop.tree.some((v, i) => {
 			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
-			const name = v.name.replace(/@!#.*?@!#/g, '');
+			const name = panel.cleanMarkers(v.name); // Regorxxx <- Code cleanup ->
 			const nameNorm = ppt.findTrans
 				? $.asciify(pop.specialCharTransform(Language.transliterate(name, { languages: panel.sortingTransLangs })))
 				: $.asciify(pop.specialCharTransform(name));
@@ -941,7 +941,7 @@ class Find {
 		for (let i = len, v; i >= 0; i--) {
 			v = pop.tree[i];
 			// Regorxxx <- Fix quick-searck for non ascii first char, greek and cyrilic | Quicksearch transliteration | Fix quick-searck for quotes, apostrophes, dashes and hyphens
-			const name = v.name.replace(/@!#.*?@!#/g, '');
+			const name = panel.cleanMarkers(v.name); // Regorxxx <- Code cleanup ->
 			const nameNorm = ppt.findTrans
 				? $.asciify(pop.specialCharTransform(Language.transliterate(name, { languages: panel.sortingTransLangs })))
 				: $.asciify(pop.specialCharTransform(name));

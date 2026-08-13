@@ -1,5 +1,5 @@
 ﻿'use strict';
-//06/05/26
+//13/08/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -233,7 +233,7 @@ class Scrollbar {
 			const ix = img.style.vertical ? (Math.ceil((panel.m.y + sbar.delta - img.panel.y) / img.row.h) - 1) * (ppt.albumArtFlowMode ? 1 : img.columns) : Math.ceil((panel.m.x + sbar.delta - img.panel.x) / img.columnWidth) - 1;
 			if (ix < 0 || ix > pop.tree.length - 1) return;
 			let letter = panel.lines == 1 || !ppt.albumArtFlipLabels ? pop.tree[ix].grp : pop.tree[ix].lot;
-			if (panel.colMarker) letter = letter.replace(/@!#.*?@!#/g, '');
+			letter = panel.cleanMarkers(letter); // Regorxxx <- Code cleanup ->
 			if (img.letter.no != 0) {
 				if (img.letter.albumArtYearAuto) {
 					let sub = letter.substring(0, 4);

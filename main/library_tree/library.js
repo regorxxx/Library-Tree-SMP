@@ -1,5 +1,5 @@
 'use strict';
-//10/08/26
+//13/08/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -1518,10 +1518,7 @@ class Library {
 	}
 
 	sort(name) {
-		if (panel.multiProcess) name = name.replace(/#!#/g, '');
-		if (panel.noDisplay) name = name.replace(/#@#/g, '');
-		if (panel.colMarker) name = name.replace(/@!#.*?@!#/g, '');
-		if (panel.imgView) name = name.replace(/\^@\^/g, '  ');
+		name = panel.cleanMarkers(name); // Regorxxx <- Code cleanup ->
 		return [name, name, name, false];
 	}
 

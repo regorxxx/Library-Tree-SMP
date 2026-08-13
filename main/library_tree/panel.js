@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/08/26
+//13/08/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -75,6 +75,14 @@ class Panel {
 			const id = '@@' + idx + '@@';
 			return { idx, regExp: new RegExp('\\$' + escapeRegExpV2(art.type), 'gi'), replacer: () => this.imgView ? id : '-N/A-', id };
 		});
+		// Regorxxx ->
+		// Regorxxx <- Code cleanup
+		this.panelMarkers = {
+			multiProcess: /#!#/g,
+			noDisplay: /#@#/g,
+			colMarker: /@!#.*?@!#/g,
+			imgView: /\^@\^/g
+		};
 		// Regorxxx ->
 
 		this.filter = {
@@ -247,8 +255,8 @@ class Panel {
 				: '';
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
-				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))
-				.replace(/\$nodename/gi, () => sanitizeTagTfo((node || {}).nm || '-N/A-').split('^@^')[0])
+				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))))
+				.replace(/\$nodename/gi, () => sanitizeTagTfo(this.cleanMarkers((node || {}).nm || '-N/A-').split('^@^')[0]))
 				.replace(/\$nodetype/gi, '$if2($get(nodetype),$put(nodetype,$select($if($strstr(%_path_raw%,http://),1,$if($strstr(%_path_raw%,https://),1,$if($strstr(%_path_raw%,fy+),4,$if($strstr(%_path_raw%,3dydfy:),4,$if($strstr(%_path_raw%,youtube.),4,$if($strstr(%_path_raw%,www.),1,$if($strstr(%_path_raw%,unpack),3,2))))))),stream,track,container,youtube)))')
 				.replace(/\$nodeplaying/gi, () => fb.IsPlaying && node && pop.inRange(pop.nowp, node.item) ? '$not(0)' : '')
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
@@ -385,6 +393,16 @@ class Panel {
 			case 'playlist': return ['$sourcename', '$sourcenameortype', '$sourceid'].some((v) => s.includes(v));
 			case 'source': return ['$sourcetype', '$sourcename', '$sourcenameortype', '$sourceid', '$sourcenameortype'].some((v) => s.includes(v));
 		}
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Code cleanup
+	cleanMarkers(s) {
+		if (this.multiProcess) { s = s.replace(this.panelMarkers.multiProcess, ''); }
+		if (this.noDisplay) { s = s.replace(this.panelMarkers.noDisplay, ''); }
+		if (this.colMarker) { s = s.replace(this.panelMarkers.colMarker, ''); }
+		if (this.imgView) { s = s.replace(this.panelMarkers.imgView, '  '); }
+		return s;
 	}
 	// Regorxxx ->
 
@@ -1932,7 +1950,7 @@ class Panel {
 							const parent = pop.getTopParent(node);
 							const name = node.root
 								? '- All -'
-								: this.colMarker ? parent.name.replace(/@!#.*?@!#/g, '') : parent.name;
+								: this.cleanMarkers(parent.name); // Regorxxx <- Code cleanup ->
 							const isAllPls = pop.lastSelMul.every((idx) => pop.isPlaylistParent(pop.tree[idx]));
 							const isPlsParent = pop.isPlaylistParent(node);
 							if (bInternal && !dropMask.has(mask, 'ctrl') && isAllPls && isPlsParent && ppt.plsSorting) {

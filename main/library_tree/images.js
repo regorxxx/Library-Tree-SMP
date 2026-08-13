@@ -1,5 +1,5 @@
 'use strict';
-//12/08/26
+//13/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -36,7 +36,7 @@ class Images {
 		this.zooming = false;
 		this.nowp = { key: '', id: '', handle: null }; // Regorxxx <- Track preference art ->
 		this.maxCollageArtItems = 4; // Regorxxx <- Branch collage art ->
-		this.artProfiler = null;
+		this.artProfiler = null; // Regorxxx <- Art profiler ->
 
 		this.bor = {
 			bot: 6,
@@ -245,7 +245,7 @@ class Images {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type
+	// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Art profiler
 	formatArt(a, folderView) {
 		/** @type {{idx: number, type: string, name:string, cacheName: string, lines: number, style: number, reflection: boolean, reflectionStyle: number, reflectionRoot: boolean, border: boolean, shadow: boolean, mute: boolean, bloom: boolean, blur: boolean, vignette: boolean, grayScale: boolean, hoverZoom: boolean, tf: string, trim: boolean, showMenu: string, switchIdx: number[]}} */
 		const copy = { ...a };
@@ -581,8 +581,8 @@ class Images {
 
 	checkTooltip(gr, item, coords, tt, font) {
 		if (panel.colMarker) {
-			if (tt.tt1) tt.tt1 = tt.tt1.replace(/@!#.*?@!#/g, '');
-			if (tt.tt2) tt.tt2 = tt.tt2.replace(/@!#.*?@!#/g, '');
+			if (tt.tt1) { tt.tt1 = panel.cleanMarkers(tt.tt1); } // Regorxxx <- Code cleanup ->
+			if (tt.tt2) { tt.tt2 = panel.cleanMarkers(tt.tt2); } // Regorxxx <- Code cleanup ->
 		}
 		let text = tt.tt1 || '';
 		if (tt.tt2 && (panel.lines == 2 || panel.lines == 1 && this.labels.statistics)) { text += '\n' + tt.tt2; }

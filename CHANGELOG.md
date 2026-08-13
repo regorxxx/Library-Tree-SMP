@@ -92,6 +92,8 @@
 - UI: fixed bug, on original script, related to thumbnail padding overlaying other UI elements in some cases or not respecting margin settings (specially using flow mode). Now value is clamped. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081415.html#msg1081415).
 - UI: fixed last hovered item being redrawn when following selection from other panels (due to scrolling) related to bugfix for original script. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080902.html#msg1080902) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081391.html#msg1081391).
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
+- UI: header repaint glitches at startup. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085135.html#msg1085135).
+- UI: fixed bug, on original script, related to color markers not being cleaned at playlist creation (and other actions). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085269.html#msg1085269).
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
 - Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).
@@ -102,7 +104,6 @@
 - Album Art: multiple minor layout fixes and adjustments.
 - Drag n' drop: workaround for incorrect handling of custom artwork on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
 - Drag n' drop: workaround for foobar crash if custom artwork was null on drag n' drop by SMP (<= v1.7.26.5.1, i.e. all versions) and JSplitter (<= v4.1.1 or <= v3.8.2). See [here](https://hydrogenaudio.org/index.php/topic,126743.msg1081990.html#msg1081990).
-- UI: header repaint glitches at startup. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085135.html#msg1085135).
 
 ## [2.0.0] - 2026-01-30
 ### Added
