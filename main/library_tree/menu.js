@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/08/26
+//11/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -241,6 +241,14 @@ class MenuItems {
 				menu.newItem({
 					str: 'Shuffle queue',
 					func: () => panel.shuffleQueue()
+				});
+				menu.newItem({
+					str: 'Sort queue by TF...',
+					func: () => {
+						const input = Input.string('string', '', 'Enter TF expression:\n\nAll syntax found at \'Playlist and Top Tracks sorting\' section on ' + window.ScriptInfo.Name + ' syntax Help is also supported. For example:\n\n• %ARTIST%|%TITLE%\n• $shufflebytags{"GENRE",rating}', 'Queue sort', '%ARTIST%|%TITLE%');
+						if (input === null) { return; }
+						panel.sortQueue(input);
+					}
 				});
 				menu.newItem({ separator: true });
 				menu.newItem({
@@ -488,7 +496,7 @@ class MenuItems {
 				}
 				menu.newItem({ menuName, separator: true });
 				{
-					const subMenuName = 'Sort';
+					const subMenuName = 'Sort (playlist)';
 					menu.newMenu({ menuName: subMenuName, appendTo: menuName });
 					menu.newItem({
 						menuName: subMenuName,
@@ -541,9 +549,34 @@ class MenuItems {
 						}
 					});
 				}
+				{
+					const subMenuName = 'Sort (tracks)';
+					menu.newMenu({ menuName: subMenuName, appendTo: menuName });
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Shuffle',
+						func: () => plman.SortByFormat(parent[0].idx, '')
+					});
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Sort by TF...',
+						func: () => {
+							const input = Input.string('string', '', 'Enter TF expression:\n\nAll syntax found at \'Playlist and Top Tracks sorting\' section on ' + window.ScriptInfo.Name + ' syntax Help is also supported. For example:\n\n• %ARTIST%|%TITLE%\n• $shufflebytags{"GENRE",rating}', 'Playlist sort', '%ARTIST%|%TITLE%');
+							if (input === null) { return; }
+							if (panel.processCustomTf(input) === input) {
+								plman.SortByFormat(parent[0].idx, input);
+							} else {
+								if (locks[0].types.includes('AddItems')) { fb.ShowPopupMessage('Sorting can not be applied due to playlist lock.', window.ScriptInfo.Name); return; }
+								const handleList = lib.processCustomSort(plman.GetPlaylistItems(parent[0].idx), input);
+								plman.ClearPlaylist(parent[0].idx);
+								plman.InsertPlaylistItems(parent[0].idx, 0, handleList);
+							}
+						}
+					});
+				}
 			} else {
 				{
-					const subMenuName = 'Sort';
+					const subMenuName = 'Sort (playlist)';
 					menu.newMenu({ menuName: subMenuName, appendTo: menuName });
 					menu.newItem({
 						menuName: subMenuName,

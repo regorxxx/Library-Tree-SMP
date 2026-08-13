@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/08/26
+//11/08/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2258,7 +2258,27 @@ class Panel {
 		queueItems.shuffle();
 		plman.FlushPlaybackQueue();
 		const bDone = this.fillQueue(queueItems);
-		if (bDone && bScroll) {
+		if (bDone && selItems && bScroll) {
+			const now = Date.now();
+			const id = setInterval(() => {
+				const item = this.list.Find(selItems[0]);
+				if (item) {
+					pop.selShow(item, false);
+					clearInterval(id);
+				} else if (Date.now() - now > 6000) { clearInterval(id); }
+			}, 1000);
+		}
+		return bDone;
+	}
+
+	sortQueue(tf, selItems, bScroll) {
+		let queueHandles = plman.GetPlaybackQueueHandles();
+		if (typeof tf === 'string') { queueHandles = lib.processCustomSort(queueHandles, tf); }
+		else { queueHandles.OrderByFormat(tf, 1); }
+		const { selection } = this.extractFromQueue(queueHandles);
+		plman.FlushPlaybackQueue();
+		const bDone = this.fillQueue(selection);
+		if (bDone && selItems && bScroll) {
 			const now = Date.now();
 			const id = setInterval(() => {
 				const item = this.list.Find(selItems[0]);
