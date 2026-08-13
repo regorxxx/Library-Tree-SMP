@@ -318,9 +318,9 @@ class Images {
 
 	async get_album_art_async(handle, art, key, ix, bSave = true) {
 		if (ppt.logLibProfiler) {
-			if (!this.artProfiler) { this.artProfiler = new FbProfiler('artProfiler'); }
+			this.createArtProfiler();
 			this.artProfiler.CheckPoint('get_album_art_async');
-		} else { this.artProfiler = null; }
+		} else { this.clearArtProfiler(); }
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const item = pop.tree[ix];
@@ -369,21 +369,42 @@ class Images {
 		}
 	}
 
+	createArtProfiler() {
+		if (!this.artProfiler) { this.artProfiler = new FbProfiler('artProfiler'); }
+	}
+
+	clearArtProfiler() {
+		if (!this.artProfiler) { return; }
+		['load_image_async', 'getFiles', 'get_album_art_async'].forEach((n) => {
+			if (this.artProfiler.HasCheckPointPrintInterval(n)) { this.artProfiler.CheckPointPrintInterval(0, n); }
+		});
+		this.artProfiler = null;
+	}
+
 	printArtProfiler() {
-		if (!this.artProfiler.HasCheckPointPrintInterval('get_album_art_async')) {
+		if (!this.artProfiler) { return; }
+		if (this.artProfiler.HasCheckPoint('load_image_async') && !this.artProfiler.HasCheckPointPrintInterval('load_image_async')) {
+			this.artProfiler.CheckPointPrintInterval(
+				10000, 'load_image_async',
+				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
+				{ bAverage: true, bPerInterval: true, bOnVisible: true },
+				(point) => point.time === 0 && this.artProfiler ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+			);
+		}
+		if (this.artProfiler.HasCheckPoint('get_album_art_async') && !this.artProfiler.HasCheckPointPrintInterval('get_album_art_async')) {
 			this.artProfiler.CheckPointPrintInterval(
 				10000, 'get_album_art_async',
 				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
 				{ bAverage: true, bPerInterval: true, bOnVisible: true },
-				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+				(point) => point.time === 0 && this.artProfiler ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
 			);
 		}
-		if (!this.artProfiler.HasCheckPointPrintInterval('getFiles')) {
+		if (this.artProfiler.HasCheckPoint('getFiles') && !this.artProfiler.HasCheckPointPrintInterval('getFiles')) {
 			this.artProfiler.CheckPointPrintInterval(
 				10000, 'getFiles',
 				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
 				{ bAverage: true, bPerInterval: true, bOnVisible: true },
-				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+				(point) => point.time === 0 && this.artProfiler ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
 			);
 		}
 	}
@@ -403,7 +424,10 @@ class Images {
 	}
 
 	async load_image_async(key, image_path, ix, rawCache) {
-		this.artProfiler.CheckPoint('load_image_async');
+		if (ppt.logLibProfiler) {
+			this.createArtProfiler();
+			this.artProfiler.CheckPoint('load_image_async');
+		} else { this.clearArtProfiler(); }
 		const result = {
 			path: image_path,
 			image: Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path),
@@ -416,14 +440,9 @@ class Images {
 			if (rawCache) { this.cacheItPreLoad(result.image, key, ix); }
 			else { this.cacheIt(result.image, key, ix); }
 		}
-		this.artProfiler.CheckPointStep('load_image_async');
-		if (!this.artProfiler.HasCheckPointPrintInterval('load_image_async')) {
-			this.artProfiler.CheckPointPrintInterval(
-				10000, 'load_image_async',
-				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
-				{ bAverage: true, bPerInterval: true, bOnVisible: true },
-				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
-			);
+		if (ppt.logLibProfiler) {
+			this.artProfiler.CheckPointStep('load_image_async');
+			this.printArtProfiler();
 		}
 		return result;
 	}
