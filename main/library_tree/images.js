@@ -1,5 +1,5 @@
 'use strict';
-//09/08/26
+//12/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -36,6 +36,7 @@ class Images {
 		this.zooming = false;
 		this.nowp = { key: '', id: '', handle: null }; // Regorxxx <- Track preference art ->
 		this.maxCollageArtItems = 4; // Regorxxx <- Branch collage art ->
+		this.artProfiler = null;
 
 		this.bor = {
 			bot: 6,
@@ -309,6 +310,10 @@ class Images {
 	}
 
 	async get_album_art_async(handle, art, key, ix, bSave = true) {
+		if (ppt.logLibProfiler) {
+			if (!this.artProfiler) { this.artProfiler = new FbProfiler('artProfiler'); }
+			this.artProfiler.CheckPoint('get_album_art_async');
+		} else { this.artProfiler = null; }
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
 		if (Object.hasOwn(art, 'tf')) {
 			const item = pop.tree[ix];
@@ -317,13 +322,13 @@ class Images {
 				const idx = (panel.artVariables.find((av) => path.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
 					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
+					if (ppt.logLibProfiler) { this.artProfiler.CheckPointStep('get_album_art_async'); }
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
-			const [, folder, mask] = path.includes('*') || path.includes('?') // Retrieve file mask if possible
-				? /^([^*?]+)\\([^\\]*?(?:[?*])+[^\\]*?)$/i.exec(path) || [void (0), path, void (0)]
-				: [void (0), path, void (0)];
-			const files = getFiles(folder || path, new Set(imgAllowedExt), mask ? '*\\' + mask : void (0));
+			if (ppt.logLibProfiler) { this.artProfiler.CheckPoint('getFiles'); }
+			const files = getFiles(path, new Set(imgAllowedExt)); // Pass the pattern as is to avoid performance impact
+			if (ppt.logLibProfiler) { this.artProfiler.CheckPointStep('getFiles'); }
 			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && $.file(files[0])) {
 				result.path = files[0];
@@ -342,6 +347,10 @@ class Images {
 			result.bSave = false;
 		}
 		this.cacheAlbumArt(result);
+		if (ppt.logLibProfiler) {
+			this.artProfiler.CheckPointStep('get_album_art_async');
+			this.printArtProfiler();
+		}
 		return result;
 	}
 
@@ -350,6 +359,25 @@ class Images {
 		if (o && o.img == 'called') {
 			const saveName = result.bSave ? utils.MD5(result.path) + result.ext : null; // Regorxxx <- Allow images with transparencies | Expand TF support ->
 			this.cacheIt(result.image, result.key, result.ix, saveName);
+		}
+	}
+
+	printArtProfiler() {
+		if (!this.artProfiler.HasCheckPointPrintInterval('get_album_art_async')) {
+			this.artProfiler.CheckPointPrintInterval(
+				10000, 'get_album_art_async',
+				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
+				{ bAverage: true, bPerInterval: true, bOnVisible: true },
+				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+			);
+		}
+		if (!this.artProfiler.HasCheckPointPrintInterval('getFiles')) {
+			this.artProfiler.CheckPointPrintInterval(
+				10000, 'getFiles',
+				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
+				{ bAverage: true, bPerInterval: true, bOnVisible: true },
+				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+			);
 		}
 	}
 	// Regorxxx ->
@@ -368,6 +396,7 @@ class Images {
 	}
 
 	async load_image_async(key, image_path, ix, rawCache) {
+		this.artProfiler.CheckPoint('load_image_async');
 		const result = {
 			path: image_path,
 			image: Date.now() - this.asyncBypass > 5000 ? await gdi.LoadImageAsyncV2(0, image_path) : gdi.Image(image_path),
@@ -379,6 +408,15 @@ class Images {
 		if (o && o.img == 'called') {
 			if (rawCache) { this.cacheItPreLoad(result.image, key, ix); }
 			else { this.cacheIt(result.image, key, ix); }
+		}
+		this.artProfiler.CheckPointStep('load_image_async');
+		if (!this.artProfiler.HasCheckPointPrintInterval('load_image_async')) {
+			this.artProfiler.CheckPointPrintInterval(
+				10000, 'load_image_async',
+				' - ' + (window.DrawMode === 1 ? 'D2D' : 'GDI+'),
+				{ bAverage: true, bPerInterval: true, bOnVisible: true },
+				(point) => point.time === 0 ? !this.artProfiler.CheckPointPrintInterval(0, point.name) : false
+			);
 		}
 		return result;
 	}
