@@ -263,7 +263,7 @@ class Panel {
 			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
 			s = _resolvePath(s.trimStart());
 			while (s.includes('$randfloat{')) {
-				const q = s.match(/\$randfloat{(.*?),?(.+?)?}/);
+				const q = s.match(/\$randfloat{(\w*?)(?:,(\w+?))?}/);
 				if (!q) { s = s.replace(/\$randfloat({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
@@ -275,7 +275,7 @@ class Panel {
 				);
 			}
 			while (s.includes('$randint{')) {
-				const q = s.match(/\$randint{(.*?),?(.+?)?}/);
+				const q = s.match(/\$randint{(\w*?)(?:,(\w+?))?}/);
 				if (!q) { s = s.replace(/\$randint({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(
 					q[0],
@@ -286,7 +286,7 @@ class Panel {
 			}
 			let cache = null;
 			while (s.includes('$pseudorandfloat{')) {
-				const q = s.match(/\$pseudorandfloat{(.*?),?(.+?)?}/);
+				const q = s.match(/\$pseudorandfloat{(\w*?)(?:,(\w+?))?}/);
 				if (!q) { s = s.replace(/\$pseudorandfloat({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = $.round(
@@ -299,7 +299,7 @@ class Panel {
 			}
 			cache = null;
 			while (s.includes('$pseudorandint{')) {
-				const q = s.match(/\$pseudorandint{(.*?),?(.+?)?}/);
+				const q = s.match(/\$pseudorandint{(\w*?)(?:,(\w+?))?}/);
 				if (!q) { s = s.replace(/\$pseudorandint({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				if (cache === null) {
 					cache = typeof q[2] === 'undefined'
@@ -309,14 +309,14 @@ class Panel {
 				s = s.replace(q[0], cache);
 			}
 			while (s.includes('$iterate{')) {
-				const q = s.match(/\$iterate{'(.+?)',?(.+?)?,?(.+?)?}/);
+				const q = s.match(/\$iterate{'(.+?)'(?:,(\d*?))?(?:,(.*?))?}/);
 				if (!q) { s = s.replace(/\$iterate({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				cache = q[3];
 				s = s.replace(
 					q[0],
 					() => logicDic.has(cache)
-						? queryJoin(Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
-						: Array.from({ length: q[2] || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
+						? queryJoin(Array.from({ length: Number(q[2]) || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
+						: Array.from({ length: Number(q[2]) || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
 							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
 				);
 			}

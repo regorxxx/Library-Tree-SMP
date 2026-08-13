@@ -1158,7 +1158,7 @@ class Populate {
 			level = this.inlineRoot ? Math.max(this.tree[b].level - 1, 0) : this.tree[b].level;
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
-		const statsExtraStr =  this.statistics[ppt.itemShowStatistics].displayVal || ''; // Regorxxx <- Improve statistics labels ->
+		const statsExtraStr = this.statistics[ppt.itemShowStatistics].displayVal || ''; // Regorxxx <- Improve statistics labels ->
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
 			this.getItemCount(item);

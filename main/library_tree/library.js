@@ -1,5 +1,5 @@
-﻿'use strict';
-//14/07/26
+'use strict';
+//10/08/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -583,7 +583,7 @@ class Library {
 			handleList.OrderByFormat(tf, 1);
 			return handleList;
 		}
-		const tfClean = panel.processCustomTf(tf);
+		const tfClean = panel.processCustomTf(tf).trim();
 		const sortMatches = /~#sort\d+/g.exec(tfClean) || [];
 		let tfEval = tfClean;
 		sortMatches.forEach((match) => {
@@ -606,7 +606,7 @@ class Library {
 			}
 		}
 		while (tfEval.includes('$shufflebytags{')) {
-			let [, tagName, sortBias, sortDir] = tf.match(/\$shufflebytags{((?:\[".*"\])|(?:[^,{}]+)),?([^,{}]*),?([^,{}]*?)}/) || [];
+			let [, tagName, sortBias, sortDir] = tf.match(/\$shufflebytags{((?:\["[^{}]+"\])|(?:[^,{}]+))(?:,([^,{}]+))?(?:,([^,{}]+))?}/) || [];
 			if (tagName) {
 				tagName = tagName.trim();
 				tagName = $.jsonParse(tagName, tagName);
@@ -623,7 +623,7 @@ class Library {
 			tfEval = tfEval.replace(tfEval.match(/\$shufflebytags{.*?}/)[0], '');
 		}
 		// Allow mixing special $funcs{} and standard TF, as long as it's valid
-		if (tf === tfClean || !tfClean.match(/^( *\$not\(0\)\$puts\(.+\) *)*$/)) {
+		if (tf === tfClean || !/^(?:\$not\(0\)\$puts\(~#\w+?,~#\w+?{[^{}]+?}\)\s*)+$/.test(tfClean)) {
 			handleList.OrderByFormat(fb.TitleFormat(tfClean), 1);
 		}
 		return handleList;
