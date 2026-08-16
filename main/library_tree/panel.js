@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//14/08/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -7,7 +7,7 @@
 /* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
-/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable */
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable */
 /* global _resolvePath:readable */
 
 /* exported Panel */
@@ -226,7 +226,7 @@ class Panel {
 
 	isNoHandleCustomTf(s, node) {
 		if (typeof s === 'string') {
-			return (!/%\w*%/.test(s) || ['$nowplaying', '$selected', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) && (node || !['$nodename', '$nodeplaying'].some((w) => s.includes(w))) && (!['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.isBranchedPlaylistSource() && node) && !['$meta_branch_remap', '$meta_branch', '$harmonicsort', '$harmonicmix', '$shufflebytags'].some((w) => s.includes(w));
+			return (!/%\w*%/.test(s) || ['$nowplaying', '$selected', '$nowplayingorselected', '%isplaying%', '%ispaused%', '#isplaying#', '#ispaused#'].some((w) => s.includes(w))) && (node || !['$nodename', '$nodeplaying'].some((w) => s.includes(w))) && (!['$sourcename', '$sourceid'].some((w) => s.includes(w)) || this.isBranchedPlaylistSource() && node) && !['$meta_branch_remap', '$meta_branch', '$harmonicsort', '$harmonicmix', '$shufflebytags'].some((w) => s.includes(w));
 		}
 		return false;
 	}
@@ -234,7 +234,7 @@ class Panel {
 	isPlayingCustomTf(s) {
 		if (typeof s === 'string') {
 			s = s.toLowerCase();
-			return (['$nowplaying', '$nowplayingorselected', '%isplaying%', '%ispaused%'].some((w) => s.includes(w))) || ['$nodeplaying', '$sourceplaying'].some((w) => s.includes(w));
+			return (['$nowplaying', '$nowplayingorselected', '%isplaying%', '%ispaused%', '#isplaying#', '#ispaused#'].some((w) => s.includes(w))) || ['$nodeplaying', '$sourceplaying'].some((w) => s.includes(w));
 		}
 		return false;
 	}
@@ -384,6 +384,8 @@ class Panel {
 				s = s.replace(q[0], () => '$not(0)$puts(~#sort' + i + ',' + q[0].replace('$', '~#') + ')');
 				i++;
 			}
+			// TF from other scripts
+			if (s.includes('#')) { s = queryReplaceWithStatic(s); }
 		}
 		return s;
 	}

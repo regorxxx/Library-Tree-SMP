@@ -43,6 +43,7 @@
 - Syntax: added $front, $back, $disc,... variables to retrieve specified art type as fallback for usage along art type 'File (by TF)'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Syntax: added album art custom TF section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1082453.html#msg1082453).
 - Syntax: added $nodetype variable for both art and tree view. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1084036.html#msg1084036).
+- Syntax: added support for dynamic queries syntax as found on all my other scripts, i.e. #SOMETHIN#. Note usage on filters will not autoupdate on selection/playback changes (contrary to library tree special syntax). See [here](https://github.com/regorxxx/Infinity-Tools-SMP/blob/main/helpers/readme/dynamic_query.txt).
 - Quicksetup: new quicksetup presets for playlist manager features.
 - Debug: new album art Custom TF results logging setting, which outputs the result of custom TF styles expressions for every node (along the number of files matched). i.e. it can be temporarily used to "preview" the expressions used for testing purposes. Setting can be found at 'Advanced' tab (HTML options panel) or 'Logging album art custom TF' (properties panel).
 - Debug: new album art performance logging associated to setting found at 'Advanced' tab (HTML options panel) or 'Logging library profiler' (properties panel).
