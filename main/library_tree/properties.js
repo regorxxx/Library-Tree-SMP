@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//17/08/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -343,6 +343,13 @@ let properties = [
 	['Image Hover Zoom [Artist]', false, 'imgArtistHoverZoom'],
 	['Image Hover Zoom [TF-1]', false, 'imgTf1HoverZoom'],
 	['Image Hover Zoom [TF-2]', false, 'imgTf2HoverZoom'],
+	['Image Perspective [Front]', false, 'imgFrontPerspective'],
+	['Image Perspective [Back]', false, 'imgBackPerspective'],
+	['Image Perspective [Disc]', false, 'imgDiscPerspective'],
+	['Image Perspective [Icon]', false, 'imgIconPerspective'],
+	['Image Perspective [Artist]', false, 'imgArtistPerspective'],
+	['Image Perspective [TF-1]', false, 'imgTf1Perspective'],
+	['Image Perspective [TF-2]', false, 'imgTf2Perspective'],
 	// Regorxxx ->
 	['Image Carousel enabled', false, 'imgCarousel'], // Regorxxx <- Art carousel ->
 
@@ -365,6 +372,7 @@ let properties = [
 	['Library Source: Playlist force sorting', false, 'plsSorting'], // Regorxxx <- Support playlist sorting ->
 	['Library Source: Playlist flat view', true, 'plsFlatView'], // Regorxxx <- Multiple-playlist flat view ->
 	['Library Source: Playlist empty nodes (non-flat view)', true, 'plsPopEmpty'], // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
+	['Library Source: Stream tags (experimental)', false, 'streamSupport'], // Regorxxx <- Support for stream tag-retrieval ->
 
 	['Limit Menu Expand: 10-6000', 500, 'treeExpandLimit'],
 	['Limit Tree Auto Expand: 10-1000', 350, 'autoExpandLimit'],
@@ -572,8 +580,7 @@ let properties = [
 	['Sources|Views|Filters presets use on Notify switch', false, 'presetRulesOnNotifyUse'],
 	// Regorxxx ->
 	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
-	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'], // Regorxxx <- Drag n' Drop minimum distance ->
-	['Stream tag-retrieval support (experimental)', false, 'streamSupport'], // Regorxxx <- Support for stream tag-retrieval ->
+	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'] // Regorxxx <- Drag n' Drop minimum distance ->
 ];
 
 const ppt = new PanelProperties;

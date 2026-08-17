@@ -973,6 +973,7 @@ class Panel {
 			}
 		}
 		if (this.imgView) {
+			img.perspectiveCoords = {}; // Regorxxx <- New img styles ->
 			if (this.init) img.sizeDebounce();
 			else if (sbar.scroll > sbar.max_scroll) sbar.checkScroll(sbar.max_scroll);
 		}
