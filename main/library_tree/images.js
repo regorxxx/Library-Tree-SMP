@@ -263,6 +263,7 @@ class Images {
 		if (!Object.hasOwn(copy, 'name') || !copy.name) { copy.name = copy.type; }
 		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
 		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale', 'hoverZoom', 'perspective'].forEach((k) => copy[k] = ppt[copy[k]]);
+		if (window.DrawMode !== 1) { copy.perspective = false; }
 		return copy;
 	}
 
