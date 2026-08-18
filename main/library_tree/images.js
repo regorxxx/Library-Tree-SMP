@@ -1,5 +1,5 @@
 'use strict';
-//17/08/26
+//18/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -985,16 +985,16 @@ class Images {
 			coords = { ...coords, x: coords.x - zoomX / 2, y: coords.y - zoomX / 2, w: coords.w + zoomX, h: coords.h + zoomX };
 		}
 		// Regorxxx ->
-		const { pos } = effects.perspective ? this.getPerspectiveCoords(coords) : { pos: 'middle'};
-		if (pos === 'middle') {
+		const { pos } = effects.perspective ? this.getPerspectiveCoords(coords) : { pos: { hv: 'middle' } };
+		if (pos.hv === 'middle') {
 			if (effects.shadow) { this.drawStyleShadow(gr, style, { ...coords, x: coords.x - offsetX }); }
 			if (effects.reflection) { this.drawReflection(gr, art, image, coords); }
 		}
 		gr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
-		if (effects.perspective && pos !== 'middle') { image = this.applyPerspective(image, coords); }
+		if (effects.perspective && pos.hv !== 'middle') { image = this.applyPerspective(image, coords); }
 		gr.DrawImage(image, coords.x - offsetX, coords.y, coords.w, coords.h, 0, 0, image.Width, image.Height);
 		gr.SetInterpolationMode();
-		if (pos === 'middle') {
+		if (pos.hv === 'middle') {
 			if (effects.border) { this.drawStyleBorder(gr, style, { ...coords, x: coords.x - offsetX }); } // Regorxxx <- Image border setting | Effect per art type ->
 		}
 		return coords;
@@ -1494,18 +1494,31 @@ class Images {
 		return image;
 	}
 
-	applyPerspective(image, coords) {
+	applyPerspectiveH(image, coords) {
 		const { angle, zoom } = this.getPerspectiveCoords(coords);
-		if (angle) {
+		angle.v = 0;
+		zoom.hv = zoom.h;
+		return this.applyPerspective(image, coords, { angle, zoom });
+	}
+
+	applyPerspectiveV(image, coords) {
+		const { angle, zoom } = this.getPerspectiveCoords(coords);
+		angle.h = 0;
+		zoom.hv = zoom.v;
+		return this.applyPerspective(image, coords, { angle, zoom });
+	}
+
+	applyPerspective(image, coords, { angle, zoom } = this.getPerspectiveCoords(coords)) {
+		if (angle.v || angle.h) {
 			image = applyEffect(image, (img) => {
 				const transf = d2d.Effect(Effects.D3DPerspectiveTransform.ID);
 				transf.SetInput(0, img);
-				transf.SetValue(Effects.D3DPerspectiveTransform.PerspectiveOrigin, new Float32Array([img.Width / 2 * zoom, img.Height / 2 * zoom]));
-				transf.SetValue(Effects.D3DPerspectiveTransform.RotationOrigin, new Float32Array([img.Width / 2 * zoom, img.Height / 2 * zoom, 0]));
-				transf.SetValue(Effects.D3DPerspectiveTransform.Rotation, new Float32Array([0, angle, 0]));
+				transf.SetValue(Effects.D3DPerspectiveTransform.PerspectiveOrigin, new Float32Array([img.Width / 2 * zoom.hv, img.Height / 2 * zoom.hv]));
+				transf.SetValue(Effects.D3DPerspectiveTransform.RotationOrigin, new Float32Array([img.Width / 2 * zoom.hv, img.Height / 2 * zoom.hv, 0]));
+				transf.SetValue(Effects.D3DPerspectiveTransform.Rotation, new Float32Array([angle.v, angle.h, 0]));
 				const scale = d2d.Effect(Effects.Scale.ID);
 				scale.SetInputEffect(0, transf);
-				scale.SetValue(Effects.Scale.Scale, new Float32Array([img.Width / coords.w * zoom, img.Height / coords.h * zoom]));
+				scale.SetValue(Effects.Scale.Scale, new Float32Array([img.Width / coords.w * zoom.hv, img.Height / coords.h * zoom.hv]));
 				scale.SetValue(Effects.Scale.CenterPoint, new Float32Array([img.Width / 2, img.Height / 2]));
 				return scale;
 			});
@@ -1514,27 +1527,51 @@ class Images {
 	}
 
 	getPerspectiveCoords(coords) {
-		const key = coords.x + '-' + coords.w;
-		let { angle, zoom, pos } = this.perspectiveCoords[key] || {}; // Cleared on panel.on_size()
-		if (!angle) {
-			const artRight = coords.x + coords.w;
-			const left = window.Width / 3;
-			const right = window.Width * 2 / 3;
-			if (artRight > left && coords.x < right) {
-				angle = zoom = 0;
-				pos = 'middle';
-			} else if (artRight < left && coords.x < right) {
-				angle = 360 - Math.abs((1 - artRight / left) * 110);
-				zoom = 1 - (360 - angle) / 110 * 0.25; // Images needs to be zoomed out a bit to compensate perspective
-				pos = 'left';
-			} else {
-				angle = (coords.x - right) / left * 110;
-				zoom = 1 - angle / 110 * 0.25;
-				pos = 'right';
+		const angleObj = { h: 0, v: 0 };
+		const zoomObj = { h: 1, v: 1, hv: 1 };
+		const posObj = { h: 'middle', v: 'middle', hv: 'middle' };
+		const axis = Math.min(Math.max(ppt.imgPerspectiveAxis, 0), 3);
+		[
+			{ start: 'x', end: 'w', key: 'Width', axis: 'h' },
+			{ start: 'y', end: 'h', key: 'Height', axis: 'v' }
+		].forEach((o) => {
+			if (!this.style.vertical && o.axis === 'v') { return; }
+			if (o.axis === 'v' && axis === 1) { return; }
+			if (o.axis === 'h' && axis === 2) { return; }
+			if (axis === 3) {
+				if (o.axis === 'v' && !this.style.vertical) { return; }
+				if (o.axis === 'h' && this.style.vertical) { return; }
 			}
-			this.perspectiveCoords[key] = { angle, zoom, pos };
-		}
-		return { angle, zoom, pos };
+			const key = o.axis + '-' + coords[o.start] + '-' + coords[o.end];
+			let { angle, zoom, pos } = this.perspectiveCoords[key] || { angle: 0, zoom: 1, pos: 'middle' }; // Cleared on panel.on_size()
+			if (!angle) {
+				const artEnd = coords[o.start] + coords[o.end];
+				const prop = Math.min(Math.max(ppt.imgPerspectiveProp, 0), 1);
+				const start = window[o.key] * prop;
+				const end = window[o.key] * (1 - prop);
+				const alpha = Math.min(Math.max(Math.abs(ppt.imgPerspectiveAlpha), 0), 360);
+				if (artEnd > start && coords[o.start] < end) {
+					angle = zoom = 1;
+					pos = 'middle';
+				} else if (artEnd < start && coords[o.start] < end) {
+					angle = 360 - Math.abs((1 - artEnd / start) * alpha);
+					zoom = 1 - (360 - angle) / alpha * 0.25; // Images needs to be zoomed out a bit to compensate perspective
+					pos = o.axis === 'h' ? 'left' : 'top';
+				} else {
+					angle = (coords[o.start] - end) / start * alpha;
+					zoom = 1 - angle / alpha * 0.25;
+					pos = o.axis === 'h' ? 'right' : 'bottom';
+				}
+				this.perspectiveCoords[key] = { angle, zoom, pos };
+			}
+			angleObj[o.axis] = angle;
+			zoomObj[o.axis] = zoom;
+			posObj[o.axis] = pos;
+
+		});
+		posObj.hv = [...new Set(Object.values(posObj))].join(' ');
+		zoomObj.hv = Object.values(zoomObj).reduce((acc, curr) => acc * curr, 1);
+		return { angle: angleObj, zoom: zoomObj, pos: posObj };
 	}
 
 	drawStyleBorder(gr, style, coords) {

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/08/26
+//18/08/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -350,6 +350,9 @@ let properties = [
 	['Image Perspective [Artist]', false, 'imgArtistPerspective'],
 	['Image Perspective [TF-1]', false, 'imgTf1Perspective'],
 	['Image Perspective [TF-2]', false, 'imgTf2Perspective'],
+	['Image Perspective angle', 110, 'imgPerspectiveAlpha'],
+	['Image Perspective middle point', 1/3, 'imgPerspectiveProp'],
+	['Image Perspective axis: hv-0 h-1 v-2 auto-3', 0, 'imgPerspectiveAxis'],
 	// Regorxxx ->
 	['Image Carousel enabled', false, 'imgCarousel'], // Regorxxx <- Art carousel ->
 
