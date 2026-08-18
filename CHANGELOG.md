@@ -97,7 +97,7 @@
 - UI: fixed last hovered item being redrawn when following selection from other panels (due to scrolling) related to bugfix for original script. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1080902.html#msg1080902) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081391.html#msg1081391).
 - UI: fix left reflection for symmetric reflection effect in some situations with specific padding settings.
 - UI: header repaint glitches at startup. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1085135.html#msg1085135).
-	
+- UI: fixed bug, on original script, related to ctrl/shift keys listeners and selection methods which triggered some visual glitches in some cases while panel was not on focus.
 - Album art: fixed bug, on original script, related to 'Send to new playlist' contextual menu entry creating playlists with '^@^' string within the name for branched views while using any art mode. Now these names are separated with ' - ' to reflect the playlist was created from a node at a nested level (like Artist - Album).
 - Album Art: fixed bug, on original script, related to image cache not being deleted due to permissions conflict in some setups.
 - Album Art: fixed bug, on original script, related to shadow effect not being properly applied to non-filling images for specific proportions. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081441.html#msg1081441).

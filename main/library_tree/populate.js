@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//18/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -106,6 +106,8 @@ class Populate {
 
 
 		this.debounce = {}; // Regorxxx <- Throttle selection playlist update | Performance improvements ->
+
+		this.nowPlayingShowThrottle = $.throttle(this.nowPlayingShow.bind(this), 500); // Regorxxx <- Art carousel ->
 
 		// Regorxxx <- Fixed Library's "View by Folder Structure"
 		this.collator = new Intl.Collator(void (0), { sensitivity: 'accent', numeric: true });
@@ -2497,7 +2499,7 @@ class Populate {
 		if (list.Count) return true;
 	}
 
-	nowPlayingShow() {
+	nowPlayingShow(bFocus = false) { // Regorxxx <- Art carousel ->
 		if (this.nowp != -1) {
 			let np_i = -1;
 			for (let i = 0; i < this.tree.length; i++) {
@@ -2514,9 +2516,13 @@ class Populate {
 				this.clearSelected();
 				if (!this.highlight.nowPlaying) this.tree[np_i].sel = true;
 			}
-			if (np_i != -1) this.showItem(np_i, 'np');
+			if (np_i != -1) {
+				this.showItem(np_i, 'np', void(0));
+				if (bFocus) { this.m.i = this.nowp; } // Regorxxx <- Art carousel ->
+			}
 		}
 	}
+
 	// Regorxxx <- Double click scrollbar
 	selShow(item = -1, bSelect = true) { // Regorxxx <- Scrolling helpers ->
 		if (item === -1 || typeof item === 'undefined') {
@@ -3055,11 +3061,13 @@ class Populate {
 	setTreeSel(idx, state) {
 		const sel_type = idx === -1
 			? 0
-			: vk.k('shift') && this.last_sel > -1 // Regorxxx <- Allow multiple selection on playlist sources (shift, ctrl) ->
-				? 1
-				: vk.k('ctrl')
-					? 2
-					: state ? 0 : 3;
+			: this.is_focused // Regorxxx <- Avoid bugs while panel is not on fucs ->
+				? vk.k('shift') && this.last_sel > -1 // Regorxxx <- Allow multiple selection on playlist sources (shift, ctrl) ->
+					? 1
+					: vk.k('ctrl')
+						? 2
+						: state ? 0 : 3
+				: state ? 0 : 3;
 		switch (sel_type) {
 			case 0:
 				this.clearSelected();

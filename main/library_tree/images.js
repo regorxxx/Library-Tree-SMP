@@ -2785,7 +2785,7 @@ class Images {
 				else if (sbar.scroll === 0) { this.carousel.dir = 1; }
 				sbar.checkScroll((sbar.scroll + this.carousel.dir * offset), 'step');
 			} else if (panel.m.x === -1 && pop.nowp !== -1) {
-				setTimeout(() => pop.nowPlayingShow(), 500);
+				if (pop.m.i !== pop.nowp) {	pop.nowPlayingShowThrottle(true); }
 			}
 		}, 1000 / fps);
 		return this.carousel.timer;
