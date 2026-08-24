@@ -2,11 +2,18 @@
 
 ## [Table of Contents]
 - [Unreleased](#unreleased)
+- [3.0.0](#300---2026-08-24)
 - [2.0.0](#200---2026-04-28)
 - [1.0.0](#100---2026-01-30)
 - [2.4.0.mod.34]
 
 ## [Unreleased][]
+### Added
+### Changed
+### Removed
+### Fixed
+
+## [3.0.0] - 2026-08-24
 ### Added
 - Filters: added new default filter query expressions like: 'Singles and EPs', ...
 - Sources: new 'All playlists' type source available for playlist sources, similar to Active playlist or Playing playlist but tracking all available playlists (Current or new ones). i.e. it serves as a playlists content viewer. There is an additional setting at 'Advanced' tab (HTML options panel) and 'Library Source: Playlist empty nodes (non-flat view)' to set whether empty playlist should be shown or not. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081159.html#msg1081159) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1081682.html#msg1081682).
@@ -398,7 +405,8 @@
 - Assets: fixed multiple inconsistencies, artifacts, size errors, etc. on no artist, no cover and root images used on original script. File sizes has also been greatly improved which could result on performance improvements in some cases. [from Library-Tree-v2.4.0.mod.34]
 - Statistics: some statistics were not being updated unless the entire view was updated on library item tag changes. For example %RATING% if current view TF did not include such tag, but rating statistics was used. Old value was being shown instead. <ins>[new]</ins>
 
-[Unreleased]: ../../compare/v2.0.0...HEAD
+[Unreleased]: ../../compare/v3.0.0...HEAD
+[3.0.0]: ../../compare/v2.0.0...v3.0.0
 [2.0.0]: ../../compare/v1.0.0...v2.0.0
 [1.0.0]: ../../compare/ffc967f5...v1.0.0
 [2.4.0.mod.34]: ../../compare/f2d83e13...ffc967f5

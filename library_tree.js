@@ -1,7 +1,7 @@
 ﻿'use strict';
-//12/06/26
+//24/08/26
 
-if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '2.0.0-beta', features: { drag_n_drop: true, grab_focus: true } }); }
+if (!window.ScriptInfo.PackageId) { window.DefineScript('Library-Tree-SMP', { author: 'regorxxx', version: '3.0.0', features: { drag_n_drop: true, grab_focus: true } }); }
 
 window.DrawMode = Math.max(Math.min(window.GetProperty('- Draw mode: GDI (0), D2D (1)', 0), 1), 0);  // Regorxxx <- GDI/D2D draw mode ->
 
