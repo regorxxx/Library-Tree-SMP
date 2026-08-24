@@ -9,6 +9,7 @@
 
 ## [Unreleased][]
 ### Added
+- Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 ### Changed
 ### Removed
 ### Fixed

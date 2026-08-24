@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//24/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -1273,7 +1273,11 @@ class MenuItems {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Queue idx',
-				func: () => { ppt.toggle('queueSorting'); lib.treeState(false, 2); },
+				func: () => {
+					ppt.toggle('queueSorting');
+					ppt.statsSorting = false;
+					lib.treeState(false, 2);
+				},
 				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
 				checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
 			});
@@ -1281,11 +1285,36 @@ class MenuItems {
 			menu.newItem({
 				menuName: appendTo ? 'Views' : void (0),
 				str: 'Sort by Playlist idx',
-				func: () => { ppt.toggle('plsSorting'); lib.treeState(false, 2); },
+				func: () => {
+					ppt.toggle('plsSorting');
+					ppt.statsSorting = false;
+					lib.treeState(false, 2);
+				},
 				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
 				checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
 			});
 		}
+		// Regorxxx <- Sort by Stats
+		menu.newItem({
+			menuName: appendTo ? 'Views' : void (0),
+			str: 'Sort by Stats',
+			func: () => {
+				ppt.toggle('statsSorting');
+				ppt.queueSorting = ppt.plsSorting = false;
+				lib.treeState(false, 2);
+			},
+			checkItem: ppt.statsSorting && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting)
+		});
+		menu.newItem({
+			menuName: appendTo ? 'Views' : void (0),
+			str: 'Reverse sorting',
+			func: () => {
+				ppt.toggle('reverseSorting');
+				lib.treeState(false, 2);
+			},
+			checkItem: ppt.reverseSorting
+		});
+		// Regorxxx ->
 		const d = {};
 		this.getSortData(d);
 		menu.newMenu({

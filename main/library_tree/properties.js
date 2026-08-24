@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/08/26
+//24/08/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -372,6 +372,8 @@ let properties = [
 	['Library Source: Playback Queue force sorting', true, 'queueSorting'], // Regorxxx <- Queue source ->
 	['Library Source: Playback Queue show now playing', true, 'queueNowPlaying'], // Regorxxx <- Queue source ->
 	['Library Source: Use cache (experimental)', true, 'libSourceCache'], // Regorxxx <- Internal cache of views ->
+	['Library Source: Stats sorting', false, 'statsSorting'], // Regorxxx <- Sort by Stats ->
+	['Library Source: Reverse sorting', false, 'reverseSorting'], // Regorxxx <- Sort by Stats ->
 	['Library Source: Playlist force sorting', false, 'plsSorting'], // Regorxxx <- Support playlist sorting ->
 	['Library Source: Playlist flat view', true, 'plsFlatView'], // Regorxxx <- Multiple-playlist flat view ->
 	['Library Source: Playlist empty nodes (non-flat view)', true, 'plsPopEmpty'], // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->

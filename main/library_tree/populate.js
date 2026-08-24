@@ -1778,6 +1778,7 @@ class Populate {
 
 	getKey(v) {
 		const level = v.level;
+		if (typeof v.par === 'undefined' && (level > 0 || typeof level === 'undefined')) { return level + utils.MD5(JSON.stringify(v)); } // Regorxxx <- Sort by Stats ->
 		const o = {
 			a: v.nm || '',
 			b: level == 0 ? '' : this.tree[v.par].nm,
@@ -3667,6 +3668,8 @@ class Populate {
 		} else { // Default sorting for other views
 			this.sortView(data, ppt.viewSorting, 'standard');
 		}
+		if (ppt.statsSorting) { this.sortByStats(data); } // Regorxxx <- Sort by Stats ->
+		if (ppt.reverseSorting) { data.reverse(); } // Regorxxx <- Sort by Stats ->
 		// Regorxxx ->
 
 	}
@@ -3909,6 +3912,13 @@ class Populate {
 			}
 		}
 		return data;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Sort by Stats
+	sortByStats(data) {
+		data.forEach((v) => this.getItemCount(v));
+		return data.sort((a, b) => a.root ? 0 : this.collator.compare(a.statistics, b.statistics));
 	}
 	// Regorxxx ->
 

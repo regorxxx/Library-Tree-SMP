@@ -1687,6 +1687,7 @@ class Panel {
 		} else {
 			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 			if (this.isPlaylistSource() && (ppt.plsSorting || this.isBranchedPlaylistSource())) { return; } // Regorxxx <- Multiple-playlist flat view ->
+			if (ppt.statsSorting) { return; }
 			if (this.folderView) {
 				li.OrderByRelativePath();
 			} else {
