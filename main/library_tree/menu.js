@@ -1529,7 +1529,7 @@ class MenuItems {
 			}
 		}
 		// Regorxxx <- Sorting identification should not be case-sensitive
-		if (d.value.includes('//') && /%YEAR%|%DATE%/i.test(d.value)) { d.sortType = 1; }
+		if (d.value.includes('//') && /%(?:YEAR|DATE)%/i.test(d.value)) { d.sortType = 1; }
 		else if (/%ALBUM%/i.test(d.value)) { d.sortType = 2; }
 		// Regorxxx ->
 
@@ -2037,8 +2037,8 @@ class MenuItems {
 				let str = d.value.split('//');
 				if (str[1]) {
 					// Regorxxx <- Sorting identification should not be case-sensitive ->
-					str[1] = str[1].trim().replace(/(\|\s*)(.*?(%YEAR%|%DATE%))/gi, '$1' + d.sortYear[i] + '$2');
-					if (!/\|.*?(%YEAR%|%DATE%)/i.test(str[1])) { str[1] = d.sortYear[i] + str[1]; }
+					str[1] = str[1].trim().replace(/(\|\s*)([^|\s]*?%(?:YEAR|DATE)%)/gi, '$1' + d.sortYear[i] + '$2');
+					if (!/\|[^|]*?%(?:YEAR|DATE)%/i.test(str[1])) { str[1] = d.sortYear[i] + str[1]; }
 					// Regorxxx ->
 					d.value = str[0].trim() + ' // ' + str[1];
 				} else d.value = str[0];

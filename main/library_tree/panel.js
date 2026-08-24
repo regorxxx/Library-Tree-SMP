@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/08/26
+//24/08/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -455,7 +455,7 @@ class Panel {
 				for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
 				return indices.reverse();
 			};
-			this.statistics = /play(_|)count|auto(_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
+			this.statistics = /play(?:_|)count|auto(?:_|)rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
 			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
 			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
 			if (this.multiProcess) {

@@ -1,5 +1,5 @@
 'use strict';
-//13/08/26
+//24/08/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -409,8 +409,8 @@ class Library {
 	// Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns
 	doDynamicFilter(type, callback) {
 		return [
-			...(type === 'playback' || !type ? [/\$nowplaying{(.+?)}/] : []),
-			...(type === 'selection' || !type ? [/\$selected{(.+?)}/] : []),
+			...(type === 'playback' || !type ? [/\$nowplaying{(?:.+?)}/] : []),
+			...(type === 'selection' || !type ? [/\$selected{(?:.+?)}/] : []),
 			/\$nowplayingorselected{(.+?)}/
 		].filter(Boolean).some((re) => {
 			const bSearch = !ppt.searchEnter && ppt.searchRefreshTf && re.test(panel.search.txt);

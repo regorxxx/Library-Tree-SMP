@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/06/26
+//24/08/26
 
 /* global fso:readable, WshShell:readable, folders:readable, popup:readable */
 
@@ -314,7 +314,7 @@ class Helpers {
 		let rgExp, re, flag, bTransliterate;
 		try {
 			[, re, flag] = str.startsWith('/')
-				? str.match(/\/(.*)\/([gimsuyt]+)?/)
+				? str.match(/\/(?:.*)\/([gimsuyt]+)?/)
 				: [];
 			rgExp = re ? new RegExp(re, (flag || '').replace('t', '')) : null;
 			bTransliterate = (flag || '').includes('t');
@@ -431,7 +431,7 @@ class Helpers {
 
 	_qCond(tag, bUnquote = false) {
 		return bUnquote //NOSONAR
-			? tag.replace(/(^")(.*\$+.*)("$)/g, '$2')
+			? tag.replace(/(?:^")(.*\$\w+\(.*\))(?:"$)/g, '$1')
 			: tag.includes('$')
 				? this._q(tag)
 				: tag;

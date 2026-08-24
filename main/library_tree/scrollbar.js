@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//24/08/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -240,7 +240,7 @@ class Scrollbar {
 					if (/\d{4}/.test(sub)) letter = sub;
 					else {
 						sub = letter.substring(0, 6);
-						if (/([[(])\d{4}([\])])/.test(sub)) letter = sub;
+						if (/(?:[[(])\d{4}(?:[\])])/.test(sub)) letter = sub;
 						else {
 							letter = letter.substring(0, img.letter.no);
 						}

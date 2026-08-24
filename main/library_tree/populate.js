@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/08/26
+//24/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2517,7 +2517,7 @@ class Populate {
 				if (!this.highlight.nowPlaying) this.tree[np_i].sel = true;
 			}
 			if (np_i != -1) {
-				this.showItem(np_i, 'np', void(0));
+				this.showItem(np_i, 'np', void (0));
 				if (bFocus) { this.m.i = this.nowp; } // Regorxxx <- Art carousel ->
 			}
 		}
