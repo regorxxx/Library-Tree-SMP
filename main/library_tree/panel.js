@@ -1676,19 +1676,23 @@ class Panel {
 		this.settings.offset = Math.round(1 * this.settings.font.Size / 17);
 	}
 
-	// Regorxxx <- Support SORT BY query sorting
+	// Regorxxx <- Support SORT BY query sorting | Sort by Stats
 	sort(li, sortObj) {
 		if (sortObj) {
-			li.OrderByFormat(sortObj.tf, sortObj.direction);
+			li.OrderByFormat(sortObj.tf, sortObj.direction * (ppt.reverseSorting ? -1 : 1)); // TF must be already processed with processCustomTf
 		} else {
 			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 			if (this.isPlaylistSource() && (ppt.plsSorting || this.isBranchedPlaylistSource())) { return; } // Regorxxx <- Multiple-playlist flat view ->
-			if (ppt.statsSorting) { return; }
 			if (this.folderView) {
 				li.OrderByRelativePath();
+				if (ppt.reverseSorting) {
+					const temp = li.Convert().reverse();
+					li.RemoveRange(0, li.Count);
+					li.AddRange(new FbMetadbHandleList(temp));
+				 }
 			} else {
-				const tfo = FbTitleFormat(this.sortBy);
-				li.OrderByFormat(tfo, 1);
+				const tfo = FbTitleFormat(this.processCustomTf(this.sortBy));
+				li.OrderByFormat(tfo, 1 * (ppt.reverseSorting ? -1 : 1));
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/08/26
+//26/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
@@ -704,6 +704,7 @@ class MenuItems {
 		const mainMenu = () => this.show_context ? 'Settings' : 'baseMenu';
 
 		this.addViewsEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
+		this.addSortEntries(menu, mainMenu()); // Regorxxx <- Sorting menu ->
 		this.addSourceEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx <- New statistics
@@ -1229,10 +1230,15 @@ class MenuItems {
 
 	viewsMenu() {
 		vMenu.newMenu({});
-		this.addViewsEntries(vMenu);
+		// Regorxxx <- Sorting menu
+		this.addViewsEntries(vMenu, void (0), (m) => {
+			this.addSortEntries(m, 'baseMenu');
+			m.newItem({ menuName: 'baseMenu', separator: true });
+		});
+		// Regorxxx ->
 	}
 
-	addViewsEntries(menu, appendTo) {
+	addViewsEntries(menu, appendTo, extraMenu) {
 		if (appendTo) { menu.newMenu({ menuName: 'Views', appendTo }); }
 		// Regorxxx <- Allow separators on views
 		panel.menu.forEach((v, i) => {
@@ -1266,47 +1272,59 @@ class MenuItems {
 		}
 		// Regorxxx ->
 
+		if (extraMenu) { extraMenu(menu); } // Regorxxx <- Sorting menu ->
+
+		menu.newItem({
+			menuName: appendTo ? 'Views' : void (0),
+			str: 'Configure views...',
+			func: () => panel.open('views')
+		});
+	}
+
+	// Regorxxx <- Sorting menu
+	addSortEntries(menu, appendTo) {
+		if (appendTo) { menu.newMenu({ menuName: 'Sorting', appendTo }); }
 		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
 		const isPlsLike = panel.isPlaylistSource();
 		const isQueueLike = panel.isQueueLikeSource();
-		if (isQueueLike) {
-			menu.newItem({
-				menuName: appendTo ? 'Views' : void (0),
-				str: 'Sort by Queue idx',
-				func: () => {
-					ppt.toggle('queueSorting');
-					ppt.statsSorting = false;
-					lib.treeState(false, 2);
-				},
-				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
-				checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
-			});
-		} else if (isPlsLike) {
-			menu.newItem({
-				menuName: appendTo ? 'Views' : void (0),
-				str: 'Sort by Playlist idx',
-				func: () => {
-					ppt.toggle('plsSorting');
-					ppt.statsSorting = false;
-					lib.treeState(false, 2);
-				},
-				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
-				checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
-			});
-		}
+		menu.newItem({
+			menuName: appendTo ? 'Sorting' : void (0),
+			str: 'By Queue idx',
+			func: () => {
+				ppt.toggle('queueSorting');
+				ppt.statsSorting = false;
+				lib.treeState(false, 2);
+			},
+			flags: !isQueueLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+			checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
+		});
+		menu.newItem({
+			menuName: appendTo ? 'Sorting' : void (0),
+			str: 'By Playlist idx',
+			func: () => {
+				ppt.toggle('plsSorting');
+				ppt.statsSorting = false;
+				lib.treeState(false, 2);
+			},
+			flags: !isPlsLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+			checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
+		});
+		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
 		// Regorxxx <- Sort by Stats
 		menu.newItem({
-			menuName: appendTo ? 'Views' : void (0),
-			str: 'Sort by Stats',
+			menuName: appendTo ? 'Sorting' : void (0),
+			str: 'By Stats',
 			func: () => {
 				ppt.toggle('statsSorting');
 				ppt.queueSorting = ppt.plsSorting = false;
 				lib.treeState(false, 2);
 			},
-			checkItem: ppt.statsSorting && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting)
+			checkItem: ppt.statsSorting && pop.statisticsShow && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting),
+			flags: pop.statisticsShow ? MF_STRING : MF_GRAYED
 		});
+		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
 		menu.newItem({
-			menuName: appendTo ? 'Views' : void (0),
+			menuName: appendTo ? 'Sorting' : void (0),
 			str: 'Reverse sorting',
 			func: () => {
 				ppt.toggle('reverseSorting');
@@ -1315,13 +1333,13 @@ class MenuItems {
 			checkItem: ppt.reverseSorting
 		});
 		// Regorxxx ->
+		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
 		const d = {};
 		this.getSortData(d);
 		menu.newMenu({
 			menuName: d.menuName,
-			appendTo: appendTo ? 'Views' : void (0),
+			appendTo: appendTo ? 'Sorting' : void (0),
 			flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
-			separator: true
 		});
 		// Regorxxx ->
 		if (d.sortType) {
@@ -1341,13 +1359,8 @@ class MenuItems {
 				separator: i == 0 || d.sortType == 2 && (i == 2 || i == 4)
 			}));
 		}
-
-		menu.newItem({
-			menuName: appendTo ? 'Views' : void (0),
-			str: 'Configure views...',
-			func: () => panel.open('views')
-		});
 	}
+	// Regorxxx ->
 
 	sourceMenu() {
 		soMenu.newMenu({});
@@ -1567,7 +1580,7 @@ class MenuItems {
 			? lib.searchSort
 				? 'Sort N/A (Search sorting)'
 				: 'Sort N/A (Filter sorting)'
-			: d.sortType ? 'Sort selected view' : 'Sort N/A for selected view pattern';
+			: d.sortType ? 'Sort selected view' : 'Sort N/A for selected view';
 		// Regorxxx ->
 	}
 
@@ -1993,11 +2006,7 @@ class MenuItems {
 				delete v.statistics;
 				delete v._statistics;
 			});
-			pop.cache = {
-				'standard': {},
-				'search': {},
-				'filter': {}
-			};
+			pop.clearCache(); // Regorxxx <- Code cleanup ->
 			pop.statisticsShow = ppt.itemShowStatistics;
 			// Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip
 			pop.label = ppt.labelStatistics

@@ -3665,7 +3665,16 @@ class Populate {
 		if (!panel.isStandardSource() && !panel.multiProcess && !panel.isBranchedPlaylistSource()) { return; } // Regorxxx <- Support playlist sorting | Multiple-playlist flat view ->
 		if (panel.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
-		if (lib.searchSort || lib.filterSort) { return; } // Regorxxx <- Support SORT BY query sorting ->
+		// Regorxxx <- Support SORT BY query sorting | Sort by Stats
+		if (lib.searchSort || lib.filterSort) {
+			if (ppt.statsSorting) {
+				this.sortByStats(data);
+				if (ppt.reverseSorting) { data.reverse(); }
+			}
+			return;
+		}
+		// Regorxxx ->
+
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
@@ -3680,10 +3689,12 @@ class Populate {
 		} else { // Default sorting for other views
 			this.sortView(data, ppt.viewSorting, 'standard');
 		}
-		if (ppt.statsSorting) { this.sortByStats(data); } // Regorxxx <- Sort by Stats ->
-		if (ppt.reverseSorting) { data.reverse(); } // Regorxxx <- Sort by Stats ->
 		// Regorxxx ->
-
+		// Regorxxx <- Sort by Stats
+		if (ppt.statsSorting) {
+			this.sortByStats(data);
+			if (ppt.reverseSorting) { data.reverse(); }
+		}
 	}
 
 	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection | Smart sorting based on view ->
@@ -3694,7 +3705,7 @@ class Populate {
 			items = lib.processCustomSort(items, panel.playlistSort);
 		} else if (ppt.customSort.length) {
 			items = lib.processCustomSort(items, this.customSort);
-		} else if (items.Count === panel.list.Count) {
+		} else if (items.Count === panel.list.Count && panel.list.Count) {
 			const tf = new FbTitleFormat(panel.playlistSort || panel.getSmartSortTf());
 			panel.sort(items, { tf, direction: 1 });
 		}
