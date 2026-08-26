@@ -1,5 +1,5 @@
 'use strict';
-//18/08/26
+//26/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -2205,14 +2205,18 @@ class Images {
 			let handle;
 			let handleCut = -1;
 			switch (ppt.albumArtPreferHandle) {
-				case 1: handle = panel.list[pop.getLastFromRange(v.item)]; break; // last
+
+				case 1: { // last
+					handle = panel.list[pop.getLastFromRange(v.item)];
+					break;
+				}
 				case 2: { // random
 					const idx = pop.getRandFromRange(v.item);
 					handle = panel.list[idx];
 					handleCut = pop.getPosInRange(idx, v.item);
 					break;
 				}
-				case 3: { // playing
+				case 3: { // NOSONAR [fallthrough] playing
 					const nowpPos = ppt.albumArtPreferHandle === 3 && pop.nowp !== -1 ? pop.getPosInRange(pop.nowp, v.item) : -1;
 					if (nowpPos !== -1 && !v.root) {
 						handle = fb.GetNowPlaying();
@@ -2236,7 +2240,10 @@ class Images {
 					}
 				}
 				case 0: // eslint-disable-line no-fallthrough
-				default: handle = panel.list[pop.getFirstFromRange(v.item)]; break; // first
+				default: { // first
+					handle = panel.list[pop.getFirstFromRange(v.item)];
+					break;
+				}
 			}
 			// Regorxxx ->
 			v.handle = handle;
@@ -2266,7 +2273,10 @@ class Images {
 						: [];
 					// Regorxxx <- Track preference art
 					switch (ppt.albumArtPreferHandle) {
-						case 3: handleArr.splice(0, handleCut); break; // Playing
+						case 3: { // Playing
+							handleArr.splice(0, handleCut);
+							break;
+						}
 						case 2: { // random
 							if (handleCut < handleArr.length / 2) {
 								handleArr.splice(0, handleCut);
