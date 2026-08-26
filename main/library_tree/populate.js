@@ -3930,7 +3930,9 @@ class Populate {
 	// Regorxxx <- Sort by Stats
 	sortByStats(data) {
 		data.forEach((v) => this.getItemCount(v));
-		return data.sort((a, b) => a.root ? 0 : this.collator.compare(a.statistics, b.statistics));
+		return panel.imgView
+			? data.sort((a, b) => a.root ? 0 : this.collator.compare(a._statistics, b._statistics))
+			: data.sort((a, b) => a.root ? 0 : this.collator.compare(a.statistics, b.statistics));
 	}
 	// Regorxxx ->
 
