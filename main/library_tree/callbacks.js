@@ -1,5 +1,5 @@
 'use strict';
-//13/08/26
+//26/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -124,7 +124,7 @@ addEventListener('on_main_menu', (index) => {
 });
 
 addEventListener('on_metadb_changed', (handleList, isDatabase) => {
-	if (isDatabase && !panel.statistics || lib.list.Count != lib.libNode.length) return;
+	if (isDatabase && !panel.statistics && !pop.statisticsShow || lib.list.Count != lib.libNode.length) { return; } // Regorxxx <- Update stats on tag change ->
 	if (panel.isPlaylistSource()) {
 		handleList.Convert().some(h => {
 			const i = lib.full_list.Find(h);
@@ -263,11 +263,7 @@ addEventListener('on_notify_data', (name, info) => {
 				else {
 					lib.searchCache = {};
 					pop.clearTree();
-					pop.cache = {
-						'standard': {},
-						'search': {},
-						'filter': {}
-					};
+					pop.clearCache(); // Regorxxx <- Code cleanup ->
 					lib.treeState(false, 2, null, 3);
 					ui.expandHandle = lib.list.Count ? lib.list[0] : null;
 					ui.on_playback_new_track();
@@ -700,11 +696,7 @@ const on_queue_changed = $.debounce(() => {
 		delete v.statistics;
 		delete v._statistics;
 	});
-	pop.cache = {
-		'standard': {},
-		'search': {},
-		'filter': {}
-	};
+	pop.clearCache(); // Regorxxx <- Code cleanup ->
 	panel.treePaint();
 }, 250, {
 	leading: true,
