@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/08/26
+//26/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -705,6 +705,18 @@ class Populate {
 		return typeof value === 'undefined'
 			? { value: '', rawValue: void (0), valueFormat: void (0), items }
 			: (this.cache[type][key] = { value, rawValue, valueFormat, items }); // NOSONAR
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Code cleanup
+	clearCache(type = 'all') {
+		if (type.toLowerCase() === 'all') {
+			this.cache = {
+				'standard': {},
+				'search': {},
+				'filter': {}
+			};
+		} else { this.cache[type] = {}; }
 	}
 	// Regorxxx ->
 

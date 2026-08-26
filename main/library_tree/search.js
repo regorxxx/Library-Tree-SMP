@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/08/26
+//26/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
@@ -194,7 +194,7 @@ class Search {
 	clear() {
 		if (!panel.search.txt) return;
 		lib.time.Reset();
-		pop.cache.search = {};
+		pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 		this.offset = this.start = this.end = this.cx = 0;
 		panel.search.txt = '';
 		but.setSearchBtnsHide();
@@ -382,7 +382,7 @@ class Search {
 				if (ppt.searchEnter || ppt.searchSend == 1) {
 					lib.upd_search = true;
 					lib.time.Reset();
-					pop.cache.search = {};
+					pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 					lib.setNodes();
 					panel.setHeight(true);
 					if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);

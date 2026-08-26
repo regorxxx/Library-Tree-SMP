@@ -1,5 +1,5 @@
 'use strict';
-//24/08/26
+//26/08/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -60,11 +60,7 @@ class Library {
 		this.lib_update = $.debounce(() => {
 			if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 			this.time.Reset();
-			pop.cache = {
-				'standard': {},
-				'search': {},
-				'filter': {}
-			};
+			pop.clearCache(); // Regorxxx <- Code cleanup ->
 			this.searchCache = {};
 			this.upd_search = !!panel.search.txt;
 			this.rootNodes(2, ppt.process);
@@ -77,13 +73,7 @@ class Library {
 			this.searchCache = {};
 			if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 			this.treeState(false, 2);
-			if (panel.isBranchedPlaylistSource()) {
-				pop.cache = {
-					'standard': {},
-					'search': {},
-					'filter': {}
-				};
-			}
+			if (panel.isBranchedPlaylistSource()) { pop.clearCache(); } // Regorxxx <- Code cleanup ->
 			if (typeof playlistIndex !== 'undefined') {
 				if (!panel.isAllPlaylistSource(true)) { this.playlistSourceIdx = [playlistIndex]; }
 				if (playlistIndex !== -1) { on_item_focus_change(playlistIndex); }
@@ -94,7 +84,7 @@ class Library {
 		this.search = $.debounce(() => {
 			this.upd_search = true;
 			this.time.Reset();
-			pop.cache.search = {};
+			pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 			this.setNodes();
 			panel.setHeight(true);
 			if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);
@@ -107,7 +97,7 @@ class Library {
 		this.search500 = $.debounce(() => {
 			this.upd_search = true;
 			this.time.Reset();
-			pop.cache.search = {};
+			pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 			this.setNodes();
 			panel.setHeight(true);
 			if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);
@@ -421,8 +411,8 @@ class Library {
 	}
 
 	checkFilter(type) {
-		pop.cache.filter = {};
-		pop.cache.search = {};
+		pop.clearCache('filter'); // Regorxxx <- Code cleanup ->
+		pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 		this.searchCache = {};
 		// Regorxxx <- Merge now playing and selected as fallback | Expand TF support on view patterns
 		this.doDynamicFilter(type, (bSearchMatch, bFilterMatch, bViewMatch) => {
@@ -474,15 +464,11 @@ class Library {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Avoid unnecesary sorting while checking statistics which can take more than 1 second on big libraries
+	// Regorxxx <- Avoid unnecessary sorting while checking statistics which can take more than 1 second on big libraries
 	checkStatistics(handleList) {
 		const bDone = handleList.Convert().some(h => this.full_list.Find(h) !== -1);
 		if (bDone) {
-			pop.cache = {
-				'standard': {},
-				'search': {},
-				'filter': {}
-			};
+			pop.clearCache(); // Regorxxx <- Code cleanup ->
 			pop.tree.forEach(v => {
 				delete v.statistics;
 				delete v._statistics;
@@ -496,11 +482,7 @@ class Library {
 		if (!this.upd) return;
 		this.lib_update.cancel();
 		this.time.Reset();
-		pop.cache = {
-			'standard': {},
-			'search': {},
-			'filter': {}
-		};
+		pop.clearCache(); // Regorxxx <- Code cleanup ->
 		this.searchCache = {};
 		this.upd_search = !!panel.search.txt;
 		this.rootNodes(this.upd == 2 ? 2 : 1, ppt.process);
@@ -1740,11 +1722,7 @@ class Library {
 				delete v.statistics;
 				delete v._statistics;
 			});
-			pop.cache = {
-				'standard': {},
-				'search': {},
-				'filter': {}
-			};
+			pop.clearCache(); // Regorxxx <- Code cleanup ->
 			sbar.setRows(pop.tree.length);
 			pop.getNowplaying();
 			return true;
