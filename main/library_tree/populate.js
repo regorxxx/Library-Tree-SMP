@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/08/26
+//27/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -3662,7 +3662,15 @@ class Populate {
 
 
 	sort(data) {
-		if (!panel.isStandardSource() && !panel.multiProcess && !panel.isBranchedPlaylistSource()) { return; } // Regorxxx <- Support playlist sorting | Multiple-playlist flat view ->
+		// Regorxxx <- Support playlist sorting | Multiple-playlist flat view | Sort by Stats
+		if (!panel.isStandardSource() && !panel.multiProcess && !panel.isBranchedPlaylistSource()) {
+			if (ppt.statsSorting) {
+				this.sortByStats(data);
+				if (ppt.reverseSorting) { data.reverse(); }
+			}
+			return;
+		}
+		// Regorxxx ->
 		if (panel.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		// Regorxxx <- Support SORT BY query sorting | Sort by Stats
@@ -3674,7 +3682,6 @@ class Populate {
 			return;
 		}
 		// Regorxxx ->
-
 		this.specialCharSort(data);
 		// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views
 		//	First it tries to apply foobar2000 sorting for tracked library items
@@ -3695,6 +3702,7 @@ class Populate {
 			this.sortByStats(data);
 			if (ppt.reverseSorting) { data.reverse(); }
 		}
+		// Regorxxx ->
 	}
 
 	// Regorxxx <- Support SORT BY query sorting | Preserve tree sorting at selection | Smart sorting based on view ->
