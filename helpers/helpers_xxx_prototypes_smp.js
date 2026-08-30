@@ -265,7 +265,10 @@ FbMetadbHandleList.partialSort = (handleList, orderHandleList) => { // 600 ms on
 	return bOutputList ? new FbMetadbHandleList(output.filter(Boolean)) : output.filter(Boolean);
 };
 
-if (!FbMetadbHandleList.prototype.Reverse) {
+if (FbMetadbHandleList.prototype.Reverse) {
+	const old = FbMetadbHandleList.prototype.Reverse;
+	FbMetadbHandleList.prototype.Reverse = function () { return old.call(this) || this; };
+} else {
 	FbMetadbHandleList.prototype.Reverse = function () {
 		const temp = this.Convert().reverse();
 		this.RemoveRange(0, this.Count);
@@ -274,7 +277,10 @@ if (!FbMetadbHandleList.prototype.Reverse) {
 	};
 }
 
-if (!FbMetadbHandleList.prototype.Shuffle) {
+if (FbMetadbHandleList.prototype.Shuffle) {
+	const old = FbMetadbHandleList.prototype.Shuffle;
+	FbMetadbHandleList.prototype.Shuffle = function () { return old.call(this) || this; };
+} else {
 	FbMetadbHandleList.prototype.Shuffle = function () {
 		if (this.Count) {
 			const temp = this.Convert();
