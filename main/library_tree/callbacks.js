@@ -1,5 +1,5 @@
 'use strict';
-//26/08/26
+//27/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable */
 /* global isArrayEqual:readable */
@@ -195,7 +195,7 @@ addEventListener('on_mouse_mbtn_up', (x, y, mask) => {
 });
 
 addEventListener('on_mouse_move', (x, y) => {
-	if (panel.m.x == x && panel.m.y == y) return;
+	if (panel.m.x == x && panel.m.y == y) { return; }
 	pop.hand = false;
 	if (ui.style.topBarShow || ppt.sbarShow) but.move(x, y);
 	if (ppt.searchShow) search.move(x, y);
@@ -222,7 +222,7 @@ addEventListener('on_mouse_wheel', (step) => {
 
 addEventListener('on_notify_data', (name, info) => {
 	if (panel.isPanelSource() && name != 'bio_imgChange') {
-		const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split(/\s*\|\s*/);
+		const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split('|');
 		// Regorxxx <- Merge multiple panel sources
 		if (ppt.libSourceChained && panelSelectionPlaylists.length > 1) {
 			// Note this doesn't survive after panel reload, so source selections must be re-sent
@@ -520,7 +520,7 @@ addEventListener('on_paint', (gr) => {
 			if (utils.IsFile(cache)) {
 				lib.cacheId = fb.AddLocationsAsync([cache]);
 			} else {
-				const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split(/\s*\|\s*/);
+				const panelSelectionPlaylists = ppt.panelSelectionPlaylist.split('|');
 				lib.setEmptyText(); // Regorxxx <- Code cleanup ->
 				window.NotifyOthers(window.ScriptInfo.Name + ': ask selection', panelSelectionPlaylists);
 			}
