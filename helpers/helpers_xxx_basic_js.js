@@ -1,7 +1,7 @@
 ﻿'use strict';
-//05/05/26
+//31/08/26
 
-/* exported clone, getNested, setNested, addNested, baseToString, toString, escapeRegExp, escapeRegExpV2, randomString, repeatFn, delayFn, debounce, throttle, doOnce, tryFunc, tryMethod, memoize, convertStringToObject, convertObjectToString, SetReplacer, MapReplacer, module, exports, require, forEachNested, strNumCollator, dateFormatter, tryActiveX */
+/* exported clone, getNested, setNested, addNested, baseToString, toString, escapeRegExp, escapeRegExpV2, randomString, repeatFn, delayFn, debounce, throttle, doOnce, tryFunc, tryMethod, tryGetter, memoize, convertStringToObject, convertObjectToString, SetReplacer, MapReplacer, module, exports, require, forEachNested, strNumCollator, dateFormatter, tryActiveX */
 
 // https://github.com/angus-c/just
 /*
@@ -220,6 +220,14 @@ function tryMethod(fn, parent, returnOnError) {
 	return (...args) => {
 		let cache;
 		try { cache = parent[fn](...args); } catch (e) { return returnOnError; } // eslint-disable-line no-unused-vars
+		return cache;
+	};
+}
+
+function tryGetter(prop, parent, returnOnError) {
+	return () => {
+		let cache;
+		try { cache = parent[prop]; } catch (e) { return returnOnError; } // eslint-disable-line no-unused-vars
 		return cache;
 	};
 }
