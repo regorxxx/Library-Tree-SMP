@@ -1,12 +1,12 @@
 ﻿'use strict';
-//26/08/26
+//31/08/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
 /* global _explorer:readable */
 /* global isArrayEqual:readable, _p:readable, _b:readable */
-/* global createAutoplaylistPresets:readable */
+/* global createAutoPlaylistPresets:readable */
 /* global Input:readable */
 /* global getLocks:readable, setLocks:readable */
 /* global countDeadItems:readable, playlistRevive:readable, selectDeadItems:readable */
@@ -618,7 +618,7 @@ class MenuItems {
 				{	// Preset AutoPlaylists
 					const subMenuNameTwo = 'AutoPlaylists presets';
 					menu.newMenu({ menuName: subMenuNameTwo, appendTo: subMenuName });
-					createAutoplaylistPresets().forEach((opt) => {
+					createAutoPlaylistPresets().forEach((opt) => {
 						if (opt.menu && !menu.menuNames.includes(opt.menu)) { menu.newMenu({ menuName: opt.menu, appendTo: subMenuNameTwo }); }
 						const subMenuNameThree = opt.menu || subMenuNameTwo;
 						if (opt.name === 'sep') { menu.addSeparator({ menuName: subMenuNameThree }); return; }
