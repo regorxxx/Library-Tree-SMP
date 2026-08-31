@@ -1,7 +1,7 @@
 ﻿'use strict';
 //31/08/26
 
-/* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable */
+/* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
 /* global _explorer:readable */
@@ -1942,6 +1942,13 @@ class MenuItems {
 				break;
 			}
 			// Regorxxx ->
+			// Regorxxx <- File explorer mode
+			case 5: {
+				ppt.libSource = 5;
+				explorer.on_size();
+				break;
+			}
+			// Regorxxx ->
 		}
 		if (!bSkipPresets && ppt.presetRulesOnSourceUse) {
 			const rule = panel.getPresetRule({ sourceBy: ppt.libSource });
@@ -2123,7 +2130,7 @@ class MenuItems {
 
 	// Regorxxx <- External integration
 	sourceTypes() {
-		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue', 'Auto-DJ Queue']; // Regorxxx <- Queue source | Auto-DJ source ->
+		return ['Library', 'Panel(s)', 'Playlist(s)', 'Playback Queue', 'Auto-DJ Queue', 'File Explorer']; // Regorxxx <- Queue source | Auto-DJ source ->
 	}
 	// Regorxxx ->
 }

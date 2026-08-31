@@ -1,10 +1,10 @@
 ﻿'use strict';
-//19/04/26
+//27/04/26
 
-/* global UserInterface:readable, Panel:readable, Scrollbar:readable, Vkeys:readable, Library:readable, Populate:readable, Search:readable, Find:readable, Buttons:readable, PopUpBox:readable, MenuItems:readable, Timers:readable */
+/* global UserInterface:readable, Panel:readable, Scrollbar:readable, Vkeys:readable, Library:readable, Populate:readable, Search:readable, Find:readable, Buttons:readable, PopUpBox:readable, MenuItems:readable, Timers:readable, FileExplorer:readable */
 /* global require:readable */
 
-/* exported ui, panel, sbar, vk, lib, pop, search, but, find, popUpBox, men, timer, Chroma */
+/* exported ui, panel, sbar, vk, lib, pop, search, but, find, popUpBox, men, timer, Chroma, explorer */
 
 /* eslint-disable no-redeclare */
 
@@ -16,6 +16,7 @@ const sbar = new Scrollbar;
 const vk = new Vkeys;
 const lib = new Library;
 pop = new Populate;
+const explorer = new FileExplorer;
 const search = new Search;
 const find = new Find;
 but = new Buttons; // Regorxxx <- Filter / View / Source button ->
