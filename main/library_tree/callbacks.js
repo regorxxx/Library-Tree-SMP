@@ -1,5 +1,5 @@
 'use strict';
-//27/08/26
+//01/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -216,6 +216,7 @@ addEventListener('on_mouse_move', (x, y) => {
 });
 
 addEventListener('on_mouse_rbtn_up', (x, y) => {
+	if (panel.isFileExplorerSource()) { return true; } // Regorxxx <- File explorer mode ->
 	if (y < panel.search.h && x > panel.search.x && x < panel.search.x + panel.search.w) {
 		if (ppt.searchShow) search.rbtn_up(x, y);
 	} else men.rbtn_up(x, y);
@@ -521,6 +522,7 @@ addEventListener('on_notify_data', (name, info) => {
 addEventListener('on_paint', (gr) => {
 	if (!window.ID) { return; }
 	if (!window.Width || !window.Height) { return; }
+	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 	// Regorxxx <- Don't create cache playlists if possible
 	if (!lib.initialised) {
 		if (panel.isPanelSource() && ppt.panelInternalCache) {

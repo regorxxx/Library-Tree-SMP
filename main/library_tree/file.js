@@ -1,5 +1,5 @@
 'use strict';
-//31/08/26
+//01/09/26
 
 /* exported FileExplorer */
 
@@ -7,7 +7,8 @@
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable */
 /* global tryGetter:readable */
 /* global capitalize:readable */
-/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable */
+/* global Flag:readable */
+/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable */
 /* global opaqueColor:readable, _gr:readable */
 /* global _menu:readable */
 /* global Input:readable */
@@ -89,6 +90,7 @@ class FileExplorer {
 		};
 		this.fileFilters = window.GetProperty('File Explorer: File Type Filter', Object.keys(this.fileType).join(';')).split(';');
 		this.calcSize = window.GetProperty('File Explorer: Calculate file/folder size', false);
+		this.smpFileMethods = window.GetProperty('File Explorer: JS-Host file parsing methods', false);
 		this.font = {
 			main: ui.font.main,
 			hover: gdi.Font(ui.font.main.Name, ui.font.main.Size, 4)
@@ -177,8 +179,7 @@ class FileExplorer {
 	scanCheckAll(node, event, x, y) {
 		let i, j;
 		// node action below
-		node.checkMouse(event, x, y);
-		// end.
+		let temp = node.checkMouse(event, x, y);
 		if (!node.collapsed) {
 			for (i = 0; i < node.child.length; i++) {
 				this.scanCheckAll(node.child[i], event, x, y);
@@ -187,6 +188,7 @@ class FileExplorer {
 				node.item[j].checkMouse(event, x, y);
 			}
 		}
+		return temp;
 	}
 
 	resetNodeFocus(node) {
@@ -209,44 +211,75 @@ class FileExplorer {
 	}
 
 	fillTreeLevel(path, node, recursive) {
-		let i;
-		let folder, file;
-		let fileSuffix2, fileSuffix3, fileSuffix4;
-		let oFolder = fso.GetFolder(path);
-		let oFolders = new Enumerator(oFolder.SubFolders);
-		let oFiles = new Enumerator(oFolder.Files);
-		node.childChecked = true;
-		for (; !oFolders.atEnd(); oFolders.moveNext()) {
-			folder = oFolders.item();
-			// Add new node
-			if (folder.Attributes == 16 || folder.Attributes == 17 || folder.Attributes == 2064) {
-				const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
-				node.addChild(folder.Name, folder.Path, { size });
+		if (this.smpFileMethods) {
+			const folders = findRecursiveDirs(path, 0).map((subFolder) => path + subFolder);
+			node.childChecked = true;
+			for (const folder of folders) {
+				// Add new node
+				const size = '?';
+				const folderName = folder.endsWith('\\') ? folder.split('\\').at(-2) : folder.split('\\').at(-1);
+				node.addChild(folderName, folder, { size });
 				if (recursive) {
-					this.fillTreeLevel(folder.Path, node.child[node.child.length - 1], true);
+					this.fillTreeLevel(folder, node.child[node.child.length - 1], true);
 				}
 			}
-		}
-		// sort folders on label
-		if (this.sort && !recursive) node.child = this.sortTab(node.child);
-		// checking for files in the current folder
-		for (; !oFiles.atEnd(); oFiles.moveNext()) {
-			file = oFiles.item();
-			fileSuffix2 = file.Name.substring(file.Name.length - 2, file.Name.length);
-			fileSuffix3 = file.Name.substring(file.Name.length - 3, file.Name.length);
-			fileSuffix4 = file.Name.substring(file.Name.length - 4, file.Name.length);
-			if (this.fileFilters.length > 0) {
-				for (i = 0; i < this.fileFilters.length; i++) {
-					if (fileSuffix2.toUpperCase() == this.fileFilters[i].toUpperCase() || fileSuffix3.toUpperCase() == this.fileFilters[i].toUpperCase() || fileSuffix4.toUpperCase() == this.fileFilters[i].toUpperCase()) {
-						const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
-						node.addItem(file.Name, file.Path, { size });
-						break;
+			// sort folders on label
+			if (this.sort && !recursive) node.child = this.sortTab(node.child);
+			// checking for files in the current folder
+			const files = findRecursiveFile('*.*', [path], 0);
+			const bFilter = this.fileFilters.length > 0;
+			for (const file of files) {
+				const [, fileName, ext] = utils.SplitFilePath(file);
+				if (bFilter) {
+					if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
+						const size = this.calcSize ? utils.FormatFileSize(utils.GetFileSize(file)) : '?';
+						node.addItem(fileName + ext, file, { size });
 					}
+				} else {
+					const size = this.calcSize ? utils.FormatFileSize(utils.GetFileSize(file)) : '?';
+					node.addItem(fileName + ext, file, { size });
 				}
-			} else {
-				const size = utils.FormatFileSize(tryGetter('Size', folder, '0')());
-				node.addItem(file.Name, file.Path, { size });
 			}
+		} else {
+			const oFolder = fso.GetFolder(path);
+			node.childChecked = true;
+			try {
+				for (const folder of oFolder.SubFolders) {
+					try {
+						const attribute = new Flag(folder.Attributes);
+						// Add new node
+						if (attribute.has(2) || attribute.has(4)) { continue; }
+						const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
+						node.addChild(folder.Name, folder.Path, { size });
+						if (recursive) {
+							this.fillTreeLevel(folder.Path, node.child[node.child.length - 1], true);
+						}
+					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
+				}
+			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
+			// sort folders on label
+			if (this.sort && !recursive) node.child = this.sortTab(node.child);
+			// checking for files in the current folder
+			const bFilter = this.fileFilters.length > 0;
+			try {
+				for (const file of oFolder.Files) {
+					try {
+						const [, fileName, ext] = utils.SplitFilePath(file);
+						const attribute = new Flag(file.Attributes);
+						// Add new node
+						if (attribute.has(2) || attribute.has(4)) { continue; }
+						if (bFilter) {
+							if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
+								const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', file, '0')()) : '?';
+								node.addItem(fileName + ext, file.Path, { size });
+							}
+						} else {
+							const size = utils.FormatFileSize(tryGetter('Size', file, '0')());
+							node.addItem(fileName + ext, file.Path, { size });
+						}
+					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
+				}
+			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 		}
 		// sort files on label
 		if (this.sort && !recursive) node.item = this.sortTab(node.item);
@@ -434,7 +467,7 @@ class FileExplorer {
 		// check drives
 		if (this.showFilesystem) this.refreshDrives();
 		// end.
-		this.scanCheckAll(this.root, 'right', x, y);
+		return this.scanCheckAll(this.root, 'right', x, y);
 	}
 
 	on_mouse_move(x, y) {
@@ -735,65 +768,72 @@ class FileExplorer {
 		// Menu
 		switch (node.type) {
 			case 'root':
+				menu.newEntry({ entryText: 'Settings:', flags: MF_GRAYED });
+				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Auto Collapse', func: () => {
 						ppt.toggle('autoCollapse');
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
+						this.resetTree();
 					}, checkFunc: () => ppt.autoCollapse
 				});
 				menu.newEntry({
 					entryText: 'Sort Folders', func: () => {
 						this.sort = !this.sort;
 						window.SetProperty('File Explorer: Sort Items', this.sort);
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
+						this.resetTree();
 					}, checkFunc: () => this.sort
 				});
 				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Edit file types filter', func: () => {
-						const newFilter = Input.string('string', this.fileFilters.join(';'), 'ex: mp3;ogg (empty=no filter)', 'Change file types to filter', 'mp3;ogg');
-						if (newFilter === null) { return; }
-						this.fileFilters = (newFilter || '').split(';');
-						window.SetProperty('File Explorer: File Type Filter', newFilter);
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
-						window.Repaint();
-					}
-				});
+				{
+					const menuName = menu.newMenu('Show');
+					menu.newEntry({
+						menuName,
+						entryText: 'Favorites', func: () => {
+							this.showFavorites = !this.showFavorites;
+							window.SetProperty('File Explorer: Show Favorites', this.showFavorites);
+							this.resetTree();
+						}, checkFunc: () => this.showFavorites
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'FileSystem', func: () => {
+							this.showFilesystem = !this.showFilesystem;
+							window.SetProperty('File Explorer: Show Filesystem', this.showFilesystem);
+							this.resetTree();
+						}, checkFunc: () => this.showFilesystem
+					});
+				}
 				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Show Favorites', func: () => {
-						this.showFavorites = !this.showFavorites;
-						window.SetProperty('File Explorer: Show Favorites', this.showFavorites);
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
-					}, checkFunc: () => this.showFavorites
-				});
-				menu.newEntry({
-					entryText: 'Show FileSystem', func: () => {
-						this.showFilesystem = !this.showFilesystem;
-						window.SetProperty('File Explorer: Show Filesystem', this.showFilesystem);
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
-					}, checkFunc: () => this.showFilesystem
-				});
-				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Calculate file/folder size', func: () => {
-						this.calcSize = !this.calcSize;
-						window.SetProperty('File Explorer: Calculate file/folder size', this.calcSize);
-						this.root.child.splice(0, this.root.child.length);
-						this.reset = true;
-						on_size();
-					}, checkFunc: () => this.calcSize
-				});
+				{
+					const menuName = menu.newMenu('File parsing');
+					menu.newEntry({
+						menuName,
+						entryText: 'Edit file types filter...', func: () => {
+							const input = Input.string('string', this.fileFilters.join(';'), 'ex: mp3;ogg (empty=no filter)', 'Change file types to filter', 'mp3;ogg');
+							if (input === null) { return; }
+							this.fileFilters = (input || '').split(';');
+							window.SetProperty('File Explorer: File Type Filter', input);
+							this.resetTree();
+						}
+					});
+					menu.newSeparator(menuName);
+					menu.newEntry({
+						menuName,
+						entryText: 'Calculate file/folder size', func: () => {
+							this.calcSize = !this.calcSize;
+							window.SetProperty('File Explorer: Calculate file/folder size', this.calcSize);
+							this.resetTree();
+						}, checkFunc: () => this.calcSize
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'JS-Host parsing methods', func: () => {
+							this.smpFileMethods = !this.smpFileMethods;
+							window.SetProperty('File Explorer: JS-Host file parsing methods', this.smpFileMethods);
+							this.resetTree();
+						}, checkFunc: () => this.smpFileMethods
+					});
+				}
 				break;
 			case 'playlists':
 				break;
@@ -885,6 +925,34 @@ class FileExplorer {
 				});
 				break;
 			case 'favorites':
+				menu.newEntry({ entryText: 'Favorites:', flags: MF_GRAYED });
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Edit paths', func: () => {
+						const input = Input.string('string', this.favPaths.join(';'), 'Edit paths:\n(separated by ;)', 'Favorite paths', 'B:\\MP3;B:\\FLAC');
+						if (input === null) { return; }
+						this.favPaths = (input || '').split(';');
+						window.SetProperty('File Explorer: Fav Paths', input);
+						this.resetTree();
+					}
+				});
+				menu.newEntry({
+					entryText: 'Edit labels', func: () => {
+						const input = Input.string('string', this.favLabels.join(';'), 'Edit labels:\n(separated by ;)', 'Favorite labels', 'MP3;FLAC');
+						if (input === null) { return; }
+						this.favPaths = (input || '').split(';');
+						window.SetProperty('File Explorer: Fav Labels', input);
+						this.resetTree();
+					}
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Show Favorites', func: () => {
+						this.showFavorites = !this.showFavorites;
+						window.SetProperty('File Explorer: Show Favorites', this.showFavorites);
+						this.resetTree();
+					}, checkFunc: () => this.showFavorites
+				});
 				break;
 			case 'favorite':
 				if (node.enabled) {
@@ -931,8 +999,10 @@ class FileExplorer {
 				}
 				break;
 			case 'computer':
+				menu.newEntry({ entryText: 'Filesystem:', flags: MF_GRAYED });
+				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Refresh Computer content...', func: () => {
+					entryText: 'Refresh content...', func: () => {
 						if (node.child.length > 0) node.child.splice(0, node.child.length);
 						if (node.item.length > 0) node.item.splice(0, node.item.length);
 						this.fillDrives(this.root.child[this.fileNodeIdx]);
@@ -940,6 +1010,14 @@ class FileExplorer {
 						this.refreshDrives();
 						window.Repaint();
 					}
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Show Filesystem', func: () => {
+						this.showFilesystem = !this.showFilesystem;
+						window.SetProperty('File Explorer: Show Filesystem', this.showFilesystem);
+						this.resetTree();
+					}, checkFunc: () => this.showFilesystem
 				});
 				break;
 			case 'drive':
@@ -1055,8 +1133,8 @@ class FileExplorer {
 				if (!window.Width || !window.Height) { return; }
 				ui.draw(gr);
 				ui.drawLine(gr);
-				// search.draw(gr);
 				sbar.draw(gr);
+				but.setHide(['search', 'scroll', 'filter']);
 				but.draw(gr);
 				find.draw(gr);
 				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter
@@ -1110,6 +1188,13 @@ class FileExplorer {
 		addEventListener('on_mouse_leave', () => {
 			if (panel.isFileExplorerSource()) { this.on_mouse_leave(); }
 		});
+	}
+
+	resetTree() {
+		this.root.child.splice(0, this.root.child.length);
+		this.reset = true;
+		on_size();
+		window.Repaint();
 	}
 }
 
@@ -1358,11 +1443,25 @@ class FileNode {
 			case 'move':
 				if (!this.enabled) return true;
 				if (this.hover && !this.markerHover) {
-					const ttText = this.label +
-						'\n' +
-						'\nPath:\t' + (this.path || '-') +
-						'\nType:\t' + capitalize(this.type) + (this.fType !== 'unknown' ? ' (' + this.fType + ')' : '') +
-						'\nSize:\t' + (this.data.size || '?');
+					let ttText;
+					switch (this.type) {
+						case 'root':
+							ttText = 'R. Click to open settings menu';
+							break;
+						case 'favorite':
+						case 'favorites':
+							ttText = 'R. Click to open favorites menu';
+							break;
+						case 'computer':
+							ttText = 'R. Click to open Filesystem menu';
+							break;
+						default:
+							ttText = this.label +
+								'\n' +
+								'\nPath:\t' + (this.path || '-') +
+								'\nType:\t' + capitalize(this.type) + (this.fType === 'unknown' ? '' : ' (' + this.fType + ')') +
+								'\nSize:\t' + (this.data.size || '?');
+					}
 					if (tooltip.Text != ttText) {
 						tooltip.Deactivate();
 						tooltip.Text = ttText;
@@ -1426,7 +1525,7 @@ class FileNode {
 							break;
 					}
 				}
-				break;
+				return true;
 		}
 	}
 	getParent(node) {

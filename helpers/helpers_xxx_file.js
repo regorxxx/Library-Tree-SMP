@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/08/26
+//01/09/26
 
 /* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath, _getClipboardData, _setClipboardData, _deleteFilesByMask, sortFiles, imgAllowedExt */
 
@@ -912,37 +912,39 @@ function checkCodePage(originalText, extension, bAdvancedCheck = false) {
 	return codepage || -1;
 }
 
-function findRecursivePaths(path = fb.ProfilePath) {
+function findRecursivePaths(path = fb.ProfilePath, level = Infinity) {
 	path = _resolvePath(path);
 	let arr = [], pathArr = [];
 	const bLongPath = _isLongPath(path);
+	if (!path.endsWith('\\')) { path += '\\'; }
 	arr = utils.Glob((bLongPath ? _longPath(path) : path) + '*.*', 0x00000020) // Directory
 		.map((path) => path.replace(/^\\\\\?\\/, ''));
 	arr.forEach((subPath) => {
 		if (subPath.includes('\\..') || subPath.includes('\\.')) { return; }
 		if (_comparePaths(subPath, path)) { return; }
 		pathArr.push(subPath);
-		pathArr = pathArr.concat(findRecursivePaths(subPath + '\\'));
+		if (level === Infinity || level > subPath.replace(path, '').count('\\')) {
+			pathArr = pathArr.concat(findRecursivePaths(subPath + '\\'));
+		}
 	});
 	return pathArr;
 }
 
-function findRecursiveDirs(path = fb.ProfilePath) {
-	return findRecursivePaths(path).map((dir) => dir.replace(_resolvePath(path), ''));
+function findRecursiveDirs(path = fb.ProfilePath, level = Infinity) {
+	return findRecursivePaths(path, level).map((dir) => dir.replace(_resolvePath(path), ''));
 }
 
-function findRecursiveFile(fileMask, inPaths = [fb.ProfilePath, fb.ComponentPath]) {
+function findRecursiveFile(fileMask, inPaths = [fb.ProfilePath, fb.ComponentPath], level = Infinity) {
 	let fileArr = [];
-	if (isArrayStrings(inPaths)) {
-		inPaths = inPaths.map((path) => _resolvePath(path));
-		let pathArr = inPaths; // Add itself
-		inPaths.forEach((path) => { pathArr = pathArr.concat(findRecursivePaths(path)); });
-		pathArr.forEach((path) => {
-			const bLongPath = _isLongPath(path);
-			fileArr = fileArr.concat(utils.Glob((bLongPath ? _longPath(path) : path) + (path.endsWith('\\') ? '' : '\\') + fileMask))
-				.map((path) => path.replace(/^\\\\\?\\/, ''));;
-		});
-	}
+	if (!isArrayStrings(inPaths)) { inPaths = [inPaths]; }
+	inPaths = inPaths.map((path) => _resolvePath(path));
+	let pathArr = inPaths; // Add itself
+	if (level > 0) { inPaths.forEach((path) => { pathArr = pathArr.concat(findRecursivePaths(path, level - 1)); }); }
+	pathArr.forEach((path) => {
+		const bLongPath = _isLongPath(path);
+		fileArr = fileArr.concat(utils.Glob((bLongPath ? _longPath(path) : path) + (path.endsWith('\\') ? '' : '\\') + fileMask))
+			.map((path) => path.replace(/^\\\\\?\\/, ''));;
+	});
 	return fileArr;
 }
 

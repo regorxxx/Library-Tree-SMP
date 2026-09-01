@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/08/26
+//01/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
@@ -284,6 +284,21 @@ class Buttons {
 		const o2 = this.btns.cross2;
 		if (o2) o2.hide = noShow || !searching;
 	}
+
+	// Regorxxx <- File explorer mode
+	setHide(keys, state = true) {
+		keys.map((k) => {
+			return k === 'search'
+				? ['s_img', 'cross2']
+				: k === 'scroll'
+					? ['scrollUp', 'scrollDn']
+					: k;
+		})
+			.flat(Infinity)
+			.filter((k) => Object.hasOwn(this.btns, k))
+			.forEach((k) => this.btns[k].hide = state);
+	}
+	// Regorxxx ->
 
 	refresh(upd) {
 		if (upd) {
