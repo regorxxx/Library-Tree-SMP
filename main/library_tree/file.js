@@ -309,25 +309,26 @@ class FileExplorer {
 	}
 
 	fillDrives(node) {
-		let drv;
-		let e = new Enumerator(fso.Drives);
-		for (; !e.atEnd(); e.moveNext()) {
-			drv = e.item();
-			if ((drv.IsReady || drv.DriveType == 4) && (drv.DriveType != 5)) {
-				const letter = drv.DriveLetter.toUpperCase();
-				if (!drv.IsReady && drv.DriveType == 4) {
-					node.addChild('N/A' + ' (' + letter + ':) ', letter + ':\\');
-					node.child[node.child.length - 1].ready = false;
-				} else if (drv.IsReady) {
-					const free = utils.FormatFileSize(drv.FreeSpace);
-					const total = utils.FormatFileSize(drv.TotalSize);
-					node.addChild((drv.VolumeName ? drv.VolumeName + ' ' : '') + '(' + letter + ':) ' + free + ' / ' + total, drv.Path + '\\', { size: total });
-					node.child[node.child.length - 1].ready = true;
-				}
-				node.child[node.child.length - 1].type = 'drive';
-				node.child[node.child.length - 1].sType = drv.DriveType;
+		try {
+			for (const drv of fso.Drives) {
+				try {
+					if ((drv.IsReady || drv.DriveType == 4) && (drv.DriveType != 5)) {
+						const letter = drv.DriveLetter.toUpperCase();
+						if (!drv.IsReady && drv.DriveType == 4) {
+							node.addChild('N/A' + ' (' + letter + ':) ', letter + ':\\');
+							node.child[node.child.length - 1].ready = false;
+						} else if (drv.IsReady) {
+							const free = utils.FormatFileSize(drv.FreeSpace);
+							const total = utils.FormatFileSize(drv.TotalSize);
+							node.addChild((drv.VolumeName ? drv.VolumeName + ' ' : '') + '(' + letter + ':) ' + free + ' / ' + total, drv.Path + '\\', { size: total });
+							node.child[node.child.length - 1].ready = true;
+						}
+						node.child[node.child.length - 1].type = 'drive';
+						node.child[node.child.length - 1].sType = drv.DriveType;
+					}
+				} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 			}
-		}
+		} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 	}
 
 	getPos(y) {
