@@ -1,10 +1,11 @@
 'use strict';
-//01/09/26
+//02/09/26
 
 /* exported FileExplorer */
 
-/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable */
+/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable */
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable */
+/* global folders:readable */
 /* global tryGetter:readable */
 /* global capitalize:readable */
 /* global Flag:readable */
@@ -93,19 +94,22 @@ class FileExplorer {
 		this.smpFileMethods = window.GetProperty('File Explorer: JS-Host file parsing methods', false);
 		this.font = {
 			main: ui.font.main,
-			hover: gdi.Font(ui.font.main.Name, ui.font.main.Size, 4)
+			hover: gdi.Font(ui.font.main.Name, ui.font.main.Size, 4),
+			title: ui.font.search
 		};
 		this.col = {
 			bgSelBottom: opaqueColor(ui.col.bgSel, 50),
 			bgSelTop: opaqueColor(ui.col.bgSel, 25),
 			bgSelFrame: ui.col.bgSelFrame,
-			text: ui.col.text
+			text: ui.col.text,
+			title: ui.col.txt_box
+
 		};
 		this.y = panel.tree.y;
 		this.xOffset = 0;
 		this.yOffset = 0;
-		this.g_drag = false;
-		this.c_drag = false;
+		this.gDrag = false;
+		this.cDrag = false;
 		this.reset = false;
 		this.redrawDrives = false;
 		this.root = new FileNode();
@@ -120,7 +124,7 @@ class FileExplorer {
 		this.favPaths = [];
 		this.maxDeltaH = 0;
 		this.vCursorW = this.scrollbarW;
-		this.vCursorH = 20;;
+		this.vCursorH = 20;
 		this.favNodeIdx = -1;
 		this.fileNodeIdx = -1;
 	}
@@ -291,6 +295,9 @@ class FileExplorer {
 		this.favPaths.forEach((path, i) => {
 			node.addChild(this.favLabels[i], path);
 			node.child[i].type = 'favorite';
+			node.child[i].data.size = _isFolder(path) && this.calcSize
+				? utils.FormatFileSize(tryGetter('Size', fso.GetFolder(path), '0')())
+				: '?';
 		});
 	}
 
@@ -414,7 +421,7 @@ class FileExplorer {
 	on_paint(gr) {
 		if (!window.ID) { return; }
 		if (!window.Width || !window.Height) { return; }
-		if (this.cLineCounter == 0 && !this.c_drag) {
+		if (this.cLineCounter == 0 && !this.cDrag) {
 			this.scanExpanded(null, this.root, false);
 		}
 		this.cLineCounter = 0;
@@ -423,18 +430,18 @@ class FileExplorer {
 		// vscrollbar
 		if (this.lineCounter * this.treeLineH > ui.h) {
 			gr.DrawLine(ui.w, 0, ui.w, ui.h, 1, $.RGBA(100, 100, 100, 50));
-			gr.DrawImage(this.img.vCursor, ui.w, this.getPos(this.yOffset), this.img.vCursor.Width, this.img.vCursor.Height, 0, 0, this.img.vCursor.Width, this.img.vCursor.Height, 0, this.c_drag ? 255 : 130);
+			gr.DrawImage(this.img.vCursor, ui.w, this.getPos(this.yOffset), this.img.vCursor.Width, this.img.vCursor.Height, 0, 0, this.img.vCursor.Width, this.img.vCursor.Height, 0, this.cDrag ? 255 : 130);
 		}
 	}
 
 	on_mouse_lbtn_down(x, y) {
 		if (this.showFilesystem) this.refreshDrives();
 		if (x < ui.w) {
-			this.g_drag = true;
+			this.gDrag = true;
 			this.scanCheckAll(this.root, 'down', x, y);
 		} else {
 			if (this.lineCounter * this.treeLineH > ui.h) {
-				this.c_drag = true;
+				this.cDrag = true;
 				if (y > this.getPos(this.yOffset) && y < this.getPos(this.yOffset) + this.vCursorH) {
 					window.RepaintRect(ui.w, this.getPos(this.yOffset), this.vCursorW, this.vCursorH);
 				} else {
@@ -444,7 +451,7 @@ class FileExplorer {
 					window.Repaint();
 				}
 			} else {
-				this.c_drag = false;
+				this.cDrag = false;
 				this.yOffset = this.y;
 				window.Repaint();
 			}
@@ -456,10 +463,10 @@ class FileExplorer {
 	};
 
 	on_mouse_lbtn_up(x, y) {
-		this.g_drag = false;
+		this.gDrag = false;
 		this.scanCheckAll(this.root, 'up', x, y);
-		if (this.c_drag) {
-			this.c_drag = false;
+		if (this.cDrag) {
+			this.cDrag = false;
 			window.RepaintRect(ui.w, this.getPos(this.yOffset), this.vCursorW, this.vCursorH);
 		}
 	};
@@ -472,30 +479,23 @@ class FileExplorer {
 	}
 
 	on_mouse_move(x, y) {
-
 		this.scanCheckAll(this.root, 'move', x, y);
-
-		if (this.g_drag) {
+		if (this.gDrag && x != panel.m.x) {
 			if (x > panel.m.x) {
 				this.xOffset += this.treeIndentW;
-				if (this.xOffset > 0) this.xOffset = 0;
-				window.Repaint();
+				if (this.xOffset > 0) { this.xOffset = 0; }
 			} else if (x < panel.m.x) {
 				this.xOffset -= this.treeIndentW;
-				if (this.xOffset < this.maxDeltaH * -1) {
-					this.xOffset = this.maxDeltaH * -1;
-				}
-				window.Repaint();
+				if (this.xOffset < this.maxDeltaH * -1) { this.xOffset = this.maxDeltaH * -1; }
 			}
+			window.Repaint();
 		}
-
-		if (this.c_drag) {
+		if (this.cDrag) {
 			this.yOffset = this.y + this.getYoffset(y - this.vCursorH / 2);
 			if (this.yOffset > this.y) this.yOffset = this.y;
 			if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;
 			window.Repaint();
 		}
-
 		if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) {
 			this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;
 			if (this.yOffset > this.y) this.yOffset = this.y;
@@ -809,11 +809,12 @@ class FileExplorer {
 					const menuName = menu.newMenu('File parsing');
 					menu.newEntry({
 						menuName,
-						entryText: 'Edit file types filter...', func: () => {
-							const input = Input.string('string', this.fileFilters.join(';'), 'ex: mp3;ogg (empty=no filter)', 'Change file types to filter', 'mp3;ogg');
+						entryText: 'File types filter...', func: () => {
+							const defVal = Object.keys(this.fileType).join(';');
+							const input = Input.string('string', this.fileFilters.join(';'), 'Add file extensions:\n(empty=no filter)\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File types filter', 'mp3;ogg');
 							if (input === null) { return; }
-							this.fileFilters = (input || '').split(';');
-							window.SetProperty('File Explorer: File Type Filter', input);
+							this.fileFilters = (input || '').replace('DEFAULT', defVal).split(';');
+							window.SetProperty('File Explorer: File Type Filter', this.fileFilters.join(';'));
 							this.resetTree();
 						}
 					});
@@ -835,6 +836,22 @@ class FileExplorer {
 						}, checkFunc: () => this.smpFileMethods
 					});
 				}
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Help',
+					func: () => {
+						fb.ShowPopupMessage(
+							$.open(folders.xxx + 'helpers\\readme\\library_tree_file_explorer.txt'),
+							window.PanelName + ': File Explorer'
+						);
+					}
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Exit file explorer...',
+					func: () => men.setCachedSource(0, void (0), 'Prev. Source', { bOmitMsg: true, bSkipPresets: true }), // Regorxxx <- Internal cache of views | Preset rules ->
+					flags: MF_STRING
+				});
 				break;
 			case 'playlists':
 				break;
@@ -991,7 +1008,7 @@ class FileExplorer {
 					});
 				} else {
 					menu.newEntry({
-						entryText: 'Dead Link > Remove it from Favorites', func: () => {
+						entryText: 'Remove from Favorites (dead link)', func: () => {
 							this.root.child[this.favNodeIdx].child.splice(node.idx, 1);
 							this.refreshFavorites();
 							window.Repaint();
@@ -1145,6 +1162,7 @@ class FileExplorer {
 				}
 				// Regorxxx ->
 				this.on_paint(gr);
+				if (ui.style.topBarShow) { gr.DrawText('File Explorer', this.font.title, this.col.title, this.treePadX * 2, 0, panel.search.w, panel.tree.y, panel.l); }
 			}
 		});
 
@@ -1155,7 +1173,7 @@ class FileExplorer {
 		addEventListener('on_mouse_lbtn_dblclk', (x, y) => {
 			if (panel.isFileExplorerSource()) {
 				but.lbtn_dn(x, y);
-				if (ppt.searchShow) search.lbtn_dblclk(x, y);
+				if (ppt.searchShow) { search.lbtn_dblclk(x, y); }
 				this.on_mouse_lbtn_dblclk(x, y);
 			}
 		});
@@ -1176,9 +1194,9 @@ class FileExplorer {
 				if (ppt.searchShow) search.move(x, y);
 				sbar.move(x, y);
 				ui.zoomDrag(x, y);
+				this.on_mouse_move(x, y);
 				panel.m.x = x;
 				panel.m.y = y;
-				this.on_mouse_move(x, y);
 			}
 		});
 
@@ -1207,6 +1225,7 @@ class FileNode {
 		this.level = 0;
 		this.idx = -1;
 		this.pIdx = -1;
+		/** @type {'root'|'computer'|'folder'|'file'|'favorite'|'favorites'|'drive'} */
 		this.type = '';
 		this.enabled = true;
 		this.ready = true;
@@ -1219,6 +1238,7 @@ class FileNode {
 		this.markerHover = false;
 		this.pathSum = [];
 		this.data = {};
+		/** @type {'unknown'|'music'|'text'|'image'|'archive'} */
 		this.fType = 'unknown';
 		this.init({ label, path, level, idx, pIdx, type, collapsed, pathSum, data });
 	}
@@ -1348,7 +1368,7 @@ class FileNode {
 		if (this.labelWidth > ui.w - this.x) {
 			focusW = ui.w - this.x - 4;
 			// width of the max offset truncated part of label (used to stop horizontal scrolling in mouse.move)
-			this.maxDeltaH = Math.max(this.labelWidth - focusW + 4, explorer.maxDeltaH);
+			explorer.maxDeltaH = Math.max(this.labelWidth - focusW + 4, explorer.maxDeltaH);
 		} else {
 			focusW = this.labelWidth;
 		}
@@ -1449,7 +1469,6 @@ class FileNode {
 						case 'root':
 							ttText = 'R. Click to open settings menu';
 							break;
-						case 'favorite':
 						case 'favorites':
 							ttText = 'R. Click to open favorites menu';
 							break;
@@ -1480,7 +1499,7 @@ class FileNode {
 				}
 				break;
 			case 'dblclick':
-				if (!this.enabled) return true;
+				if (!this.enabled) { return true; }
 				if (this.hover) {
 					if (this.type == 'file') {
 						switch (this.fType) {
@@ -1502,7 +1521,7 @@ class FileNode {
 							default:
 								_runCmd('CMD /C START ' + fso.GetFile(this.path).ShortPath, false, 0);
 						}
-					} else {
+					} else if (!['root', 'favorites', 'computer'].includes(this.type)) {
 						plman.AddLocations(plman.ActivePlaylist, [this.path], false);
 					}
 				}

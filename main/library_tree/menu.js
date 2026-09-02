@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/09/26
+//02/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1142,6 +1142,17 @@ class MenuItems {
 					);
 				}
 			});
+			menu.newItem({ menuName: 'Help', separator: true });
+			menu.newItem({
+				menuName: 'Help',
+				str: 'File Explorer',
+				func: () => {
+					fb.ShowPopupMessage(
+						$.open(folders.xxx + 'helpers\\readme\\library_tree_file_explorer.txt'),
+						window.PanelName + ': File Explorer'
+					);
+				}
+			});
 		}
 		// Regorxxx ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
@@ -1380,7 +1391,7 @@ class MenuItems {
 			str: v,
 			func: () => {
 				// Regorxxx <- Internal cache of views
-				const queueCache = new Set([3, 4]);
+				const queueCache = new Set([3, 4, 5]);
 				if (queueCache.has(i) && !queueCache.has(ppt.libSource)) {
 					this.setCachedSource(i, 'Prev. Source', void (0));
 				} else if (!queueCache.has(i) && queueCache.has(ppt.libSource)) {

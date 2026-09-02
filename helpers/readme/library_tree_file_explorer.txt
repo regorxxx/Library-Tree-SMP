@@ -1,0 +1,33 @@
+﻿Library-Tre-SMP panel can be used as a File Explorer by setting the
+appropriate source at Settings\Source submenu.
+
+Shortcuts:
+------------
+• R. Click on Root, Favorites or Computer to open associated menus.
+
+• Dbl. L. Click on Favorite, Folder or Drive nodes to send all nested
+  files to current playlist.
+
+• L. Click Horizontal dragging for horizontal scrolling.
+
+• Mouse Wheel for vertical scrolling.
+
+
+General notes:
+--------------
+• File parsing can be done with ActiveX or JS-Host methods. Unix users
+  will surely prefer JS-Host methods to avoid errors on Wine.
+
+• Long paths (> 256 chars) are not supported and will show as empty
+  folders. This is a Windows limitation.
+
+• Shortcut folders, or mounted drives as folders may not work
+  in some cases. This is a Windows limitation.
+
+• Files added to foobar2000 on Dbl. L. Click are managed by foobar2000
+  itself and configured at preferences ('Shell integration'). File
+  Explorer filter settings is ignored in this case.
+
+• Actions via menus which send [found] tracks to playlist will respect
+  filter settings and send tracks found only on parent folder,
+  without nesting or recursion (contrary to Dbl. L. Click).
