@@ -3,15 +3,27 @@ appropriate source at Settings\Source submenu.
 
 Shortcuts:
 ------------
-• R. Click on Root, Favorites or Computer to open associated menus.
+• Enter: Send to current playlist.
+• Shift + Enter: Add to current playlist.
+• Ctrl + Enter: Send to new playlist.
+• Home|End: Scroll to top|Scroll to bottom.
+• Up|Down: Navigate tree.
+• Left|Right: Collapse|Expand node.
+• Alt + Up: Jump to first node within same level.
+• Alt + Down: Jump to last node within same level.
+• Num *: Expand current node.
+• Num -: Collapse all node.
 
+Menus:
+------------
+• R. Click on Root, Favorites or Computer to open associated menus.
 • Dbl. L. Click on Favorite, Folder or Drive nodes to send all nested
   files to current playlist.
 
+UI:
+------------
 • L. Click Horizontal dragging for horizontal scrolling.
-
 • Mouse Wheel for vertical scrolling.
-
 
 General notes:
 --------------

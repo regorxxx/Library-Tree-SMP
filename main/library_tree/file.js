@@ -1,15 +1,15 @@
 'use strict';
-//02/09/26
+//03/09/26
 
 /* exported FileExplorer */
 
-/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable */
+/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable */
 /* global folders:readable */
-/* global tryGetter:readable */
+/* global tryGetter:readable, tryMethod:readable */
 /* global capitalize:readable */
 /* global Flag:readable */
-/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable */
+/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable, _isFolder:readable */
 /* global opaqueColor:readable, _gr:readable */
 /* global _menu:readable */
 /* global Input:readable */
@@ -39,11 +39,6 @@ class FileExplorer {
 			archiveFile: null,
 			vCursor: null
 		};
-		// Properties
-		this.scrollbarW = 16;
-		this.sort = true; // Property
-		this.showFavorites = true; // Property
-		this.showFilesystem = true; // Property
 		this.fileType = {
 			'mp2': 'music',
 			'mp3': 'music',
@@ -89,9 +84,27 @@ class FileExplorer {
 			'jpg': 'image',
 			'png': 'image'
 		};
-		this.fileFilters = window.GetProperty('File Explorer: File Type Filter', Object.keys(this.fileType).join(';')).split(';');
-		this.calcSize = window.GetProperty('File Explorer: Calculate file/folder size', false);
-		this.smpFileMethods = window.GetProperty('File Explorer: JS-Host file parsing methods', false);
+		// Properties
+		const properties = [
+			['File Explorer: File Type Filter', Object.keys(this.fileType).join(';'), 'explFileFilters'],
+			['File Explorer: Calculate file/folder size', false, 'explCalcSize'],
+			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
+			['File Explorer: Sort Items', true, 'explSort'],
+			['File Explorer: Show Favorites', true, 'explShowFavorites'],
+			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
+			['File Explorer: Fav Paths', '', 'explFavPaths'],
+			['File Explorer: Fav Labels', '', 'explFavLabels']
+		];
+		ppt.init('auto', properties);
+		this.scrollbarW = 16;
+		this.sort = ppt.explSort;
+		this.showFavorites = ppt.explShowFavorites;
+		this.showFilesystem = ppt.explShowFilesystem;
+		this.fileFilters = ppt.explFileFilters.split(';');
+		this.calcSize = ppt.explCalcSize;
+		this.smpFileMethods = ppt.explSmpFileMethods;
+		this.favLabels = [];
+		this.favPaths = [];
 		this.font = {
 			main: ui.font.main,
 			hover: gdi.Font(ui.font.main.Name, ui.font.main.Size, 4),
@@ -127,6 +140,7 @@ class FileExplorer {
 		this.vCursorH = 20;
 		this.favNodeIdx = -1;
 		this.fileNodeIdx = -1;
+		this.tree = [];
 	}
 
 	// main Tools
@@ -155,6 +169,7 @@ class FileExplorer {
 	// Tree Tools
 	scanExpanded(gr, node, draw) {
 		let i, j;
+		if (node === this.root) { this.tree = []; }
 		if (node !== this.root || ppt.rootNode > 0) {
 			if (draw) {
 				node.draw(gr, this.yOffset + this.lineCounter * this.treeLineH);
@@ -163,6 +178,7 @@ class FileExplorer {
 				node.checkPos(this.yOffset + this.cLineCounter * this.treeLineH);
 				this.cLineCounter++;
 			}
+			this.tree.push(node);
 		}
 		if (!node.collapsed) {
 			for (i = 0; i < node.child.length; i++) {
@@ -176,6 +192,7 @@ class FileExplorer {
 					node.item[j].checkPos(this.yOffset + this.cLineCounter * this.treeLineH);
 					this.cLineCounter++;
 				}
+				this.tree.push(node.item[j]);
 			}
 		}
 	}
@@ -196,21 +213,78 @@ class FileExplorer {
 	}
 
 	resetNodeFocus(node) {
-		let i, j;
 		node.focus = false;
-		for (i = 0; i < node.child.length; i++) {
-			this.resetNodeFocus(node.child[i]);
+		for (const subNode of node.child) {
+			this.resetNodeFocus(subNode);
 		}
-		for (j = 0; j < node.item.length; j++) {
-			node.item[j].focus = false;
+		for (const subNode of node.item) {
+			subNode.focus = false;
 		}
 	}
 
 	collapseAll(node) {
-		let i;
 		if (node.level > 1) node.collapsed = true;
-		for (i = 0; i < node.child.length; i++) {
-			this.collapseAll(node.child[i]);
+		for (const subNode of node.child) {
+			this.collapseAll(subNode);
+		}
+	}
+
+	findNodeFocus(node) {
+		if (node.focus) { return node; }
+		for (const subNode of node.child) {
+			const found = this.findNodeFocus(subNode);
+			if (found) { return found; }
+		}
+	}
+
+	findNodeTopParent(node, parent = this.root) {
+		if (parent.child.includes(node)) { return parent; }
+		for (const subNode of parent.child) {
+			const found = this.findNodeParent(node, subNode);
+			if (found) { return subNode; }
+		}
+	}
+
+	findNodeParent(node, parent = this.root) {
+		if (parent.child.includes(node)) { return parent; }
+		for (const subNode of parent.child) {
+			const found = this.findNodeParent(node, subNode);
+			if (found) { return found; }
+		}
+	}
+
+	findLastShownChild(node) {
+		if (node.collapsed || node.child.length === 0) { return node; }
+		let i = node.child.length - 1;
+		while (i >= 0) {
+			const subNode = node.child[i];
+			const found = this.findLastShownChild(subNode);
+			if (found) { return subNode; }
+			i--;
+		}
+	}
+
+	findFirstShownChild(node) {
+		if (node.collapsed || node.child.length === 0) { return node; }
+		return node.child[0];
+	}
+
+	findNextNode(node, bCheckChild = true) {
+		if (bCheckChild && !node.collapsed && node.child.length) { return node.child[0]; }
+		const parent = this.findNodeParent(node);
+		if (parent) {
+			const idx = parent.child.indexOf(node) + 1;
+			if (idx >= parent.child.length) { return this.findNextNode(parent, false); }
+			else { return parent.child[idx]; }
+		}
+	}
+
+	findPrevNode(node) {
+		const parent = this.findNodeParent(node);
+		if (parent) {
+			const idx = parent.child.indexOf(node) + -1;
+			if (idx === -1) { return parent; }
+			else { return this.findLastShownChild(parent.child[idx]); }
 		}
 	}
 
@@ -220,7 +294,7 @@ class FileExplorer {
 			node.childChecked = true;
 			for (const folder of folders) {
 				// Add new node
-				const size = '?';
+				const size = this.calcSize ? this.getFolderSize(folder) : '?';
 				const folderName = folder.endsWith('\\') ? folder.split('\\').at(-2) : folder.split('\\').at(-1);
 				node.addChild(folderName, folder, { size });
 				if (recursive) {
@@ -236,11 +310,11 @@ class FileExplorer {
 				const [, fileName, ext] = utils.SplitFilePath(file);
 				if (bFilter) {
 					if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
-						const size = this.calcSize ? utils.FormatFileSize(utils.GetFileSize(file)) : '?';
+						const size = this.calcSize ? this.getFileSize(file) : '?';
 						node.addItem(fileName + ext, file, { size });
 					}
 				} else {
-					const size = this.calcSize ? utils.FormatFileSize(utils.GetFileSize(file)) : '?';
+					const size = this.calcSize ? this.getFileSize(file) : '?';
 					node.addItem(fileName + ext, file, { size });
 				}
 			}
@@ -253,7 +327,7 @@ class FileExplorer {
 						const attribute = new Flag(folder.Attributes);
 						// Add new node
 						if (attribute.has(2) || attribute.has(4)) { continue; }
-						const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
+						const size = this.calcSize ? this.getFolderSize(folder.Path) : '?';
 						node.addChild(folder.Name, folder.Path, { size });
 						if (recursive) {
 							this.fillTreeLevel(folder.Path, node.child[node.child.length - 1], true);
@@ -274,11 +348,11 @@ class FileExplorer {
 						if (attribute.has(2) || attribute.has(4)) { continue; }
 						if (bFilter) {
 							if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
-								const size = this.calcSize ? utils.FormatFileSize(tryGetter('Size', file, '0')()) : '?';
+								const size = this.calcSize ? this.getFileSize(file.Path) : '?';
 								node.addItem(fileName + ext, file.Path, { size });
 							}
 						} else {
-							const size = utils.FormatFileSize(tryGetter('Size', file, '0')());
+							const size = this.calcSize ? this.getFileSize(file.Path) : '?';
 							node.addItem(fileName + ext, file.Path, { size });
 						}
 					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
@@ -290,8 +364,8 @@ class FileExplorer {
 	}
 
 	fillFavorites(node) {
-		this.favLabels = window.GetProperty('File Explorer: Fav Labels', '').split(';');
-		this.favPaths = window.GetProperty('File Explorer: Fav Paths', '').split(';');
+		this.favLabels = ppt.explFavLabels.split(';');
+		this.favPaths = ppt.explFavPaths.split(';');
 		this.favPaths.forEach((path, i) => {
 			node.addChild(this.favLabels[i], path);
 			node.child[i].type = 'favorite';
@@ -311,8 +385,8 @@ class FileExplorer {
 			this.favPaths.push(item.path);
 			i++;
 		}
-		window.SetProperty('File Explorer: Fav Paths', this.favPaths.join(';'));
-		window.SetProperty('File Explorer: Fav Labels', this.favLabels.join(';'));
+		ppt.explFavPaths = this.favPaths.join(';');
+		ppt.explFavLabels = this.favLabels.join(';');
 	}
 
 	fillDrives(node) {
@@ -340,6 +414,19 @@ class FileExplorer {
 
 	getPos(y) {
 		return (y * -1) / (this.lineCounter * this.treeLineH - ui.h) * (ui.h - this.vCursorH);
+	}
+
+	getFileSize(path) {
+		return utils.FormatFileSize(utils.GetFileSize(path));
+	}
+
+	getFolderSize(path) {
+		if (utils.GetFolderSize) {
+			return utils.FormatFileSize(utils.GetFolderSize(path));
+		} else {
+			const folder = tryMethod('GetFolder', fso, '')(path);
+			return folder ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
+		}
 	}
 
 	getYoffset(y) {
@@ -377,22 +464,7 @@ class FileExplorer {
 		}
 	}
 
-	on_size() {
-		this.y = panel.tree.y;
-		this.favNodeIdx = -1;
-		this.fileNodeIdx = -1;
-
-		if (this.showFavorites) {
-			this.favNodeIdx = 0;
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 1;
-			}
-		} else {
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 0;
-			}
-		}
-
+	init() {
 		// build of all images
 		this.setImages();
 
@@ -416,6 +488,25 @@ class FileExplorer {
 			//
 			this.reset = false;
 		}
+	}
+
+	on_size() {
+		this.y = panel.tree.y;
+		this.favNodeIdx = -1;
+		this.fileNodeIdx = -1;
+
+		if (this.showFavorites) {
+			this.favNodeIdx = 0;
+			if (this.showFilesystem) {
+				this.fileNodeIdx = 1;
+			}
+		} else {
+			if (this.showFilesystem) {
+				this.fileNodeIdx = 0;
+			}
+		}
+
+		this.init();
 	}
 
 	on_paint(gr) {
@@ -472,9 +563,7 @@ class FileExplorer {
 	};
 
 	on_mouse_rbtn_down(x, y) {
-		// check drives
-		if (this.showFilesystem) this.refreshDrives();
-		// end.
+		if (this.showFilesystem) { this.refreshDrives(); }
 		return this.scanCheckAll(this.root, 'right', x, y);
 	}
 
@@ -519,246 +608,371 @@ class FileExplorer {
 		window.Repaint();
 	}
 
+	on_key_down(vkey) {
+		if (vkey == vk.collapseAll) { this.collapseAll(this.root); }
+		if (vk.k('enter')) {
+			const node = this.findNodeFocus(this.root);
+			if (node) {
+				if (vk.k('shift')) { this.addtoPls(plman.ActivePlaylist, node); }
+				else if (vk.k('ctrl')) { this.addtoPls(plman.ActivePlaylist, node, { clear: true, create: true }); }
+				else { this.addtoPls(plman.ActivePlaylist, node, { clear: true }); }
+			}
+		}
+		switch (vkey) {
+			case vk.left: {
+				const node = this.findNodeFocus(this.root);
+				if (node) {
+					if (node.collapsed) {
+						const next = this.findNodeParent(node);
+						if (next) {
+							node.focus = false;
+							this.setFocus(next);
+						}
+					} else {
+						node.collapsed = true;
+						window.Repaint(true);
+					}
+				}
+				break;
+			}
+			case vk.expand:
+			case vk.right: {
+				const node = this.findNodeFocus(this.root);
+				if (node) {
+					if (node.collapsed) {
+						node.collapsed = false;
+						if (!node.childChecked) {
+							window.SetCursor(IDC_APPSTARTING);
+							explorer.fillTreeLevel(node.path, node, false);
+							window.SetCursor(IDC_ARROW);
+							window.Repaint(true);
+						}
+					} else {
+						const next = this.findFirstShownChild(node);
+						if (next) {
+							node.focus = false;
+							this.setFocus(next);
+						}
+					}
+				}
+				break;
+			}
+			case vk.home:
+			case vk.end: {
+				const node = this.findNodeFocus(this.root);
+				if (node) {
+					const next = vkey === vk.home
+						? this.findNodeParent(node)
+						: this.findLastShownChild(node);
+					if (next) {
+						node.focus = false;
+						this.setFocus(next);
+					}
+				}
+				break;
+			}
+			case vk.dn:
+			case vk.up: {
+				const node = this.findNodeFocus(this.root);
+				if (node) {
+					let next;
+					if (vk.k('alt')) {
+						const parent = this.findNodeParent(node);
+						if (parent) {
+							next = vkey === vk.dn
+								? this.findLastShownChild(parent)
+								: this.findFirstShownChild(parent);
+						}
+					} else {
+						next = vkey === vk.dn
+							? this.findNextNode(node)
+							: this.findPrevNode(node);
+					};
+					if (next) {
+						node.focus = false;
+						this.setFocus(next);
+					}
+				}
+				break;
+			}
+		}
+	}
+
+
 	setImages() {
 		let gb;
 
-		this.img.plus = gdi.CreateImage(11, 11);
-		gb = this.img.plus.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(0, 0, 8, 8, 90, $.RGB(240, 240, 240), $.RGB(160, 170, 180));
-		gb.DrawRoundRect(0, 0, 8, 8, 1, 1, 1, $.RGB(160, 160, 160));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(4, 2, 1, 5, $.RGB(0, 0, 0));
-		gb.FillSolidRect(2, 4, 5, 1, $.RGB(0, 0, 0));
-		this.img.plus.ReleaseGraphics(gb);
+		if (!this.img.plus) {
+			this.img.plus = gdi.CreateImage(11, 11);
+			gb = this.img.plus.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(0, 0, 8, 8, 90, $.RGB(240, 240, 240), $.RGB(160, 170, 180));
+			gb.DrawRoundRect(0, 0, 8, 8, 1, 1, 1, $.RGB(160, 160, 160));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(4, 2, 1, 5, $.RGB(0, 0, 0));
+			gb.FillSolidRect(2, 4, 5, 1, $.RGB(0, 0, 0));
+			this.img.plus.ReleaseGraphics(gb);
+		}
 
-		this.img.minus = gdi.CreateImage(11, 11);
-		gb = this.img.minus.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(0, 0, 8, 8, 90, $.RGB(240, 240, 240), $.RGB(160, 170, 180));
-		gb.DrawRoundRect(0, 0, 8, 8, 1, 1, 1, $.RGB(160, 160, 160));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(2, 4, 5, 1, $.RGB(0, 0, 0));
-		this.img.minus.ReleaseGraphics(gb);
+		if (!this.img.minus) {
+			this.img.minus = gdi.CreateImage(11, 11);
+			gb = this.img.minus.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(0, 0, 8, 8, 90, $.RGB(240, 240, 240), $.RGB(160, 170, 180));
+			gb.DrawRoundRect(0, 0, 8, 8, 1, 1, 1, $.RGB(160, 160, 160));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(2, 4, 5, 1, $.RGB(0, 0, 0));
+			this.img.minus.ReleaseGraphics(gb);
+		}
 
-		this.img.favorites = gdi.CreateImage(25, 21);
-		gb = this.img.favorites.GetGraphics();
-		gb.SetSmoothingMode(2);
-		let star_points = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
-		gb.FillPolygon($.RGB(240, 240, 120), 0, star_points);
-		gb.DrawPolygon($.RGB(150, 150, 80), 0, star_points);
-		this.img.favorites.ReleaseGraphics(gb);
+		if (!this.img.favorites) {
+			this.img.favorites = gdi.CreateImage(25, 21);
+			gb = this.img.favorites.GetGraphics();
+			gb.SetSmoothingMode(2);
+			let star_points = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
+			gb.FillPolygon($.RGB(240, 240, 120), 0, star_points);
+			gb.DrawPolygon($.RGB(150, 150, 80), 0, star_points);
+			this.img.favorites.ReleaseGraphics(gb);
+		}
 
-		this.img.folder = gdi.CreateImage(20, 16);
-		gb = this.img.folder.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
-		gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(200, 200, 80));
-		gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
-		gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		gb.SetSmoothingMode(0);
-		gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		this.img.folder.ReleaseGraphics(gb);
+		if (!this.img.folder) {
+			this.img.folder = gdi.CreateImage(20, 16);
+			gb = this.img.folder.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+			gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
+			gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(200, 200, 80));
+			gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
+			gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+			gb.SetSmoothingMode(0);
+			gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+			this.img.folder.ReleaseGraphics(gb);
+		}
 
-		this.img.folderOpen = gdi.CreateImage(20, 16);
-		gb = this.img.folderOpen.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(160, 160, 110), $.RGB(200, 200, 80));
-		gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
-		gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(160, 160, 90));
-		gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
-		gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
-		gb.SetSmoothingMode(0);
-		gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
-		this.img.folderOpen.ReleaseGraphics(gb);
+		if (!this.img.folderOpen) {
+			this.img.folderOpen = gdi.CreateImage(20, 16);
+			gb = this.img.folderOpen.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(160, 160, 110), $.RGB(200, 200, 80));
+			gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
+			gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(160, 160, 90));
+			gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
+			gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
+			gb.SetSmoothingMode(0);
+			gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
+			this.img.folderOpen.ReleaseGraphics(gb);
+		}
 
-		const star = gdi.CreateImage(25, 21);
-		gb = star.GetGraphics();
-		gb.SetSmoothingMode(2);
-		const starPoints = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
-		gb.FillPolygon($.RGB(170, 170, 80), 0, starPoints);
-		gb.DrawPolygon($.RGB(140, 140, 70), 0, starPoints);
-		star.ReleaseGraphics(gb);
+		if (!this.img.folderFav || this.img.folderFavOpen) {
+			const star = gdi.CreateImage(25, 21);
+			gb = star.GetGraphics();
+			gb.SetSmoothingMode(2);
+			const starPoints = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
+			gb.FillPolygon($.RGB(170, 170, 80), 0, starPoints);
+			gb.DrawPolygon($.RGB(140, 140, 70), 0, starPoints);
+			star.ReleaseGraphics(gb);
 
-		this.img.folderFav = gdi.CreateImage(20, 16);
-		gb = this.img.folderFav.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
-		gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(240, 240, 80));
-		gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
-		gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		gb.SetSmoothingMode(0);
-		gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
-		gb.DrawImage(star, 4, 3, star.Width - 11, star.Height - 10, 0, 0, star.Width, star.Height, 0, 255);
-		this.img.folderFav.ReleaseGraphics(gb);
+			if (!this.img.folderFav) {
+				this.img.folderFav = gdi.CreateImage(20, 16);
+				gb = this.img.folderFav.GetGraphics();
+				gb.SetSmoothingMode(2);
+				gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+				gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
+				gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(240, 240, 80));
+				gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
+				gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+				gb.SetSmoothingMode(0);
+				gb.FillGradRect(2, 2, 13, 9, 90, $.RGB(240, 240, 110), $.RGB(200, 200, 80));
+				gb.DrawImage(star, 4, 3, star.Width - 11, star.Height - 10, 0, 0, star.Width, star.Height, 0, 255);
+				this.img.folderFav.ReleaseGraphics(gb);
+			}
 
-		this.img.folderFavOpen = gdi.CreateImage(20, 16);
-		gb = this.img.folderFavOpen.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(160, 160, 110), $.RGB(200, 200, 80));
-		gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
-		gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(160, 160, 90));
-		gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
-		gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
-		gb.SetSmoothingMode(0);
-		gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
-		gb.DrawImage(star, 5, 5, star.Width - 12, star.Height - 13, 0, 0, star.Width, star.Height, 0, 255);
-		this.img.folderFavOpen.ReleaseGraphics(gb);
+			if (!this.img.folderFavOpen) {
+				this.img.folderFavOpen = gdi.CreateImage(20, 16);
+				gb = this.img.folderFavOpen.GetGraphics();
+				gb.SetSmoothingMode(2);
+				gb.FillGradRect(1, 1, 15, 11, 90, $.RGB(160, 160, 110), $.RGB(200, 200, 80));
+				gb.DrawRoundRect(1, 1, 15, 11, 1, 1, 1, $.RGB(160, 160, 70));
+				gb.FillRoundRect(1, 0, 5, 4, 1, 1, $.RGB(160, 160, 90));
+				gb.DrawRoundRect(1, 0, 5, 4, 1, 1, 1, $.RGB(160, 160, 60));
+				gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
+				gb.SetSmoothingMode(0);
+				gb.FillGradRect(4, 4, 13, 6, 90, $.RGB(240, 240, 110), $.RGB(190, 190, 80));
+				gb.DrawImage(star, 5, 5, star.Width - 12, star.Height - 13, 0, 0, star.Width, star.Height, 0, 255);
+				this.img.folderFavOpen.ReleaseGraphics(gb);
+			}
+		}
 
-		this.img.file = gdi.CreateImage(20, 16);
-		gb = this.img.file.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
-		this.img.file.ReleaseGraphics(gb);
+		if (!this.img.file) {
+			this.img.file = gdi.CreateImage(20, 16);
+			gb = this.img.file.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
+			this.img.file.ReleaseGraphics(gb);
+		}
 
-		this.img.archiveFile = gdi.CreateImage(20, 16);
-		gb = this.img.archiveFile.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 1, 5, 5, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(3, 1, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.FillRoundRect(10, 1, 5, 5, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(10, 1, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.FillRoundRect(3, 8, 5, 5, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(3, 8, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.FillRoundRect(10, 8, 5, 5, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(10, 8, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
-		this.img.archiveFile.ReleaseGraphics(gb);
+		if (!this.img.archiveFile) {
+			this.img.archiveFile = gdi.CreateImage(20, 16);
+			gb = this.img.archiveFile.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 1, 5, 5, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(3, 1, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillRoundRect(10, 1, 5, 5, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(10, 1, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillRoundRect(3, 8, 5, 5, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(3, 8, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillRoundRect(10, 8, 5, 5, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(10, 8, 5, 5, 1, 1, 1, $.RGB(150, 180, 220));
+			this.img.archiveFile.ReleaseGraphics(gb);
+		}
 
-		this.img.musicFile = gdi.CreateImage(20, 16);
-		gb = this.img.musicFile.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(220, 240, 250));
-		gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.FillEllipse(5, 7, 6, 5, $.RGB(150, 180, 220));
-		gb.DrawLine(10, 2, 11, 10, 1, $.RGB(150, 180, 220));
-		gb.DrawLine(10, 2, 12, 3, 1, $.RGB(150, 180, 220));
-		this.img.musicFile.ReleaseGraphics(gb);
+		if (!this.img.musicFile) {
+			this.img.musicFile = gdi.CreateImage(20, 16);
+			gb = this.img.musicFile.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(220, 240, 250));
+			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillEllipse(5, 7, 6, 5, $.RGB(150, 180, 220));
+			gb.DrawLine(10, 2, 11, 10, 1, $.RGB(150, 180, 220));
+			gb.DrawLine(10, 2, 12, 3, 1, $.RGB(150, 180, 220));
+			this.img.musicFile.ReleaseGraphics(gb);
+		}
 
-		this.img.textFile = gdi.CreateImage(20, 16);
-		gb = this.img.textFile.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(6, 4, 7, 1, $.RGB(150, 150, 150));
-		gb.FillSolidRect(6, 6, 7, 1, $.RGB(150, 150, 150));
-		gb.FillSolidRect(6, 8, 7, 1, $.RGB(150, 150, 150));
-		gb.FillSolidRect(6, 10, 7, 1, $.RGB(150, 150, 150));
-		this.img.textFile.ReleaseGraphics(gb);
+		if (!this.img.textFile) {
+			this.img.textFile = gdi.CreateImage(20, 16);
+			gb = this.img.textFile.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(6, 4, 7, 1, $.RGB(150, 150, 150));
+			gb.FillSolidRect(6, 6, 7, 1, $.RGB(150, 150, 150));
+			gb.FillSolidRect(6, 8, 7, 1, $.RGB(150, 150, 150));
+			gb.FillSolidRect(6, 10, 7, 1, $.RGB(150, 150, 150));
+			this.img.textFile.ReleaseGraphics(gb);
+		}
 
-		this.img.imageFile = gdi.CreateImage(20, 16);
-		gb = this.img.imageFile.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(6, 4, 7, 7, $.RGB(250, 250, 250));
-		gb.FillSolidRect(7, 5, 5, 5, $.RGB(150, 220, 150));
-		this.img.imageFile.ReleaseGraphics(gb);
+		if (!this.img.imageFile) {
+			this.img.imageFile = gdi.CreateImage(20, 16);
+			gb = this.img.imageFile.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(6, 4, 7, 7, $.RGB(250, 250, 250));
+			gb.FillSolidRect(7, 5, 5, 5, $.RGB(150, 220, 150));
+			this.img.imageFile.ReleaseGraphics(gb);
+		}
 
-		this.img.root = gdi.CreateImage(20, 16);
-		gb = this.img.root.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(2, 3, 14, 10, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(2, 3, 14, 10, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.FillEllipse(2, 1, 14, 5, $.RGB(190, 220, 250));
-		gb.FillEllipse(2, 10, 14, 5, $.RGB(190, 220, 250));
-		gb.DrawEllipse(2, 1, 14, 5, 1, $.RGB(150, 180, 220));
-		gb.DrawEllipse(2, 10, 14, 5, 1, $.RGB(150, 180, 220));
-		gb.FillEllipse(2, 9, 14, 5, $.RGB(190, 220, 250));
-		this.img.root.ReleaseGraphics(gb);
+		if (!this.img.root) {
+			this.img.root = gdi.CreateImage(20, 16);
+			gb = this.img.root.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(2, 3, 14, 10, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(2, 3, 14, 10, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillEllipse(2, 1, 14, 5, $.RGB(190, 220, 250));
+			gb.FillEllipse(2, 10, 14, 5, $.RGB(190, 220, 250));
+			gb.DrawEllipse(2, 1, 14, 5, 1, $.RGB(150, 180, 220));
+			gb.DrawEllipse(2, 10, 14, 5, 1, $.RGB(150, 180, 220));
+			gb.FillEllipse(2, 9, 14, 5, $.RGB(190, 220, 250));
+			this.img.root.ReleaseGraphics(gb);
+		}
 
-		this.img.computer = gdi.CreateImage(20, 16);
-		gb = this.img.computer.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(2, 1, 14, 12, 1, 1, $.RGB(190, 220, 250));
-		gb.DrawRoundRect(2, 1, 14, 12, 1, 1, 1, $.RGB(150, 180, 220));
-		gb.SetSmoothingMode(0);
-		gb.FillRoundRect(4, 3, 10, 6, 1, 1, $.RGB(130, 170, 200));
-		gb.DrawRect(4, 3, 10, 6, 1, $.RGB(120, 140, 180));
-		this.img.computer.ReleaseGraphics(gb);
+		if (!this.img.computer) {
+			this.img.computer = gdi.CreateImage(20, 16);
+			gb = this.img.computer.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(2, 1, 14, 12, 1, 1, $.RGB(190, 220, 250));
+			gb.DrawRoundRect(2, 1, 14, 12, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.SetSmoothingMode(0);
+			gb.FillRoundRect(4, 3, 10, 6, 1, 1, $.RGB(130, 170, 200));
+			gb.DrawRect(4, 3, 10, 6, 1, $.RGB(120, 140, 180));
+			this.img.computer.ReleaseGraphics(gb);
+		}
 
-		this.img.drive = gdi.CreateImage(20, 16);
-		gb = this.img.drive.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
-		gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(4, 7, 4, 2, $.RGB(100, 225, 100));
-		gb.DrawRect(4, 7, 4, 2, 1, $.RGB(50, 125, 50));
-		gb.FillSolidRect(12, 7, 4, 1, $.RGB(130, 130, 130));
-		gb.FillSolidRect(12, 9, 4, 1, $.RGB(130, 130, 130));
-		this.img.drive.ReleaseGraphics(gb);
+		if (!this.img.drive) {
+			this.img.drive = gdi.CreateImage(20, 16);
+			gb = this.img.drive.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
+			gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(4, 7, 4, 2, $.RGB(100, 225, 100));
+			gb.DrawRect(4, 7, 4, 2, 1, $.RGB(50, 125, 50));
+			gb.FillSolidRect(12, 7, 4, 1, $.RGB(130, 130, 130));
+			gb.FillSolidRect(12, 9, 4, 1, $.RGB(130, 130, 130));
+			this.img.drive.ReleaseGraphics(gb);
+		}
 
-		this.img.ramDiskDrive = gdi.CreateImage(20, 16);
-		gb = this.img.ramDiskDrive.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
-		gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
-		this.img.ramDiskDrive.ReleaseGraphics(gb);
+		if (!this.img.ramDiskDrive) {
+			this.img.ramDiskDrive = gdi.CreateImage(20, 16);
+			gb = this.img.ramDiskDrive.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
+			gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
+			this.img.ramDiskDrive.ReleaseGraphics(gb);
+		}
 
-		this.img.removableDrive = gdi.CreateImage(20, 16);
-		gb = this.img.removableDrive.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
-		gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(7, 6, 1, 6, $.RGB(200, 200, 200));
-		gb.FillSolidRect(6, 6, 1, 6, $.RGB(130, 130, 130));
-		this.img.removableDrive.ReleaseGraphics(gb);
+		if (!this.img.removableDrive) {
+			this.img.removableDrive = gdi.CreateImage(20, 16);
+			gb = this.img.removableDrive.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
+			gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(7, 6, 1, 6, $.RGB(200, 200, 200));
+			gb.FillSolidRect(6, 6, 1, 6, $.RGB(130, 130, 130));
+			this.img.removableDrive.ReleaseGraphics(gb);
+		}
 
-		this.img.cdRomDrive = gdi.CreateImage(20, 16);
-		gb = this.img.cdRomDrive.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
-		gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
-		gb.FillEllipse(4, 1, 12, 12, $.RGBA(0, 0, 0, 120));
-		gb.FillEllipse(5, 0, 12, 12, $.RGB(200, 230, 250));
-		gb.DrawEllipse(5, 0, 12, 12, 1, $.RGB(130, 130, 130));
-		gb.DrawEllipse(8, 3, 6, 6, 1, $.RGB(160, 160, 160));
-		gb.FillEllipse(10, 5, 2, 2, $.RGB(20, 20, 20));
-		this.img.cdRomDrive.ReleaseGraphics(gb);
+		if (!this.img.cdRomDrive) {
+			this.img.cdRomDrive = gdi.CreateImage(20, 16);
+			gb = this.img.cdRomDrive.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
+			gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
+			gb.FillEllipse(4, 1, 12, 12, $.RGBA(0, 0, 0, 120));
+			gb.FillEllipse(5, 0, 12, 12, $.RGB(200, 230, 250));
+			gb.DrawEllipse(5, 0, 12, 12, 1, $.RGB(130, 130, 130));
+			gb.DrawEllipse(8, 3, 6, 6, 1, $.RGB(160, 160, 160));
+			gb.FillEllipse(10, 5, 2, 2, $.RGB(20, 20, 20));
+			this.img.cdRomDrive.ReleaseGraphics(gb);
+		}
 
-		this.img.networkDrive = gdi.CreateImage(20, 16);
-		gb = this.img.networkDrive.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
-		gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
-		gb.SetSmoothingMode(0);
-		gb.FillSolidRect(4, 7, 4, 2, $.RGB(100, 225, 100));
-		gb.DrawRect(4, 7, 4, 2, 1, $.RGB(50, 125, 50));
-		gb.FillSolidRect(12, 7, 4, 1, $.RGB(130, 130, 130));
-		gb.FillSolidRect(12, 9, 4, 1, $.RGB(130, 130, 130));
-		gb.SetSmoothingMode(2);
-		gb.FillEllipse(4, 2, 10, 8, $.RGBA(0, 0, 0, 120));
-		gb.FillEllipse(5, 0, 8, 8, $.RGB(190, 220, 250));
-		gb.DrawEllipse(5, 0, 8, 8, 1, $.RGB(130, 170, 200));
-		gb.FillEllipse(4, 3, 4, 4, $.RGB(170, 200, 220));
-		gb.FillEllipse(8, 2, 4, 4, $.RGB(240, 250, 255));
-		this.img.networkDrive.ReleaseGraphics(gb);
+		if (!this.img.networkDrive) {
+			this.img.networkDrive = gdi.CreateImage(20, 16);
+			gb = this.img.networkDrive.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillGradRect(2, 5, 14, 7, 45, $.RGB(200, 200, 200), $.RGB(150, 150, 150));
+			gb.DrawRoundRect(2, 5, 14, 7, 1, 1, 1, $.RGB(130, 130, 130));
+			gb.SetSmoothingMode(0);
+			gb.FillSolidRect(4, 7, 4, 2, $.RGB(100, 225, 100));
+			gb.DrawRect(4, 7, 4, 2, 1, $.RGB(50, 125, 50));
+			gb.FillSolidRect(12, 7, 4, 1, $.RGB(130, 130, 130));
+			gb.FillSolidRect(12, 9, 4, 1, $.RGB(130, 130, 130));
+			gb.SetSmoothingMode(2);
+			gb.FillEllipse(4, 2, 10, 8, $.RGBA(0, 0, 0, 120));
+			gb.FillEllipse(5, 0, 8, 8, $.RGB(190, 220, 250));
+			gb.DrawEllipse(5, 0, 8, 8, 1, $.RGB(130, 170, 200));
+			gb.FillEllipse(4, 3, 4, 4, $.RGB(170, 200, 220));
+			gb.FillEllipse(8, 2, 4, 4, $.RGB(240, 250, 255));
+			this.img.networkDrive.ReleaseGraphics(gb);
+		}
 
-		this.img.vCursor = gdi.CreateImage(this.vCursorW, this.vCursorH);
-		gb = this.img.vCursor.GetGraphics();
-		gb.SetSmoothingMode(2);
-		gb.FillRoundRect(3, 2, this.scrollbarW - 6, 15, 2, 2, $.RGB(160, 190, 220));
-		gb.DrawRoundRect(3, 2, this.scrollbarW - 6, 15, 2, 2, 1, $.RGB(120, 150, 190));
-		this.img.vCursor.ReleaseGraphics(gb);
+		if (!this.img.vCursor) {
+			this.img.vCursor = gdi.CreateImage(this.vCursorW, this.vCursorH);
+			gb = this.img.vCursor.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 2, this.scrollbarW - 6, 15, 2, 2, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(3, 2, this.scrollbarW - 6, 15, 2, 2, 1, $.RGB(120, 150, 190));
+			this.img.vCursor.ReleaseGraphics(gb);
+		}
 	}
 
 	showContextMenu(node, x, y) {
 		const menu = new _menu();
 		// Helpers
-		const sendToPlsAndPlay = (plsIdx, paths) => {
-			plman.ClearPlaylist(plsIdx);
-			fb.AddLocationsAsyncV2(paths)
-				.then((handleList) => {
-					plman.InsertPlaylistItems(plsIdx, 0, handleList);
-					plman.ExecutePlaylistDefaultAction(plsIdx, 0);
-				});
-		};
 		const refreshPlsNodes = () => {
 			if (this.root.child[0].child.length > 0) { this.root.child[0].child.splice(0, this.root.child[0].child.length); }
 			this.FillPlaylists(this.root.child[0]);
@@ -779,8 +993,7 @@ class FileExplorer {
 				});
 				menu.newEntry({
 					entryText: 'Sort Folders', func: () => {
-						this.sort = !this.sort;
-						window.SetProperty('File Explorer: Sort Items', this.sort);
+						this.sort = ppt.toggle('explSort');
 						this.resetTree();
 					}, checkFunc: () => this.sort
 				});
@@ -790,16 +1003,14 @@ class FileExplorer {
 					menu.newEntry({
 						menuName,
 						entryText: 'Favorites', func: () => {
-							this.showFavorites = !this.showFavorites;
-							window.SetProperty('File Explorer: Show Favorites', this.showFavorites);
+							this.showFavorites = ppt.toggle('explShowFavorites');
 							this.resetTree();
 						}, checkFunc: () => this.showFavorites
 					});
 					menu.newEntry({
 						menuName,
 						entryText: 'FileSystem', func: () => {
-							this.showFilesystem = !this.showFilesystem;
-							window.SetProperty('File Explorer: Show Filesystem', this.showFilesystem);
+							this.showFilesystem = ppt.toggle('explShowFilesystem');
 							this.resetTree();
 						}, checkFunc: () => this.showFilesystem
 					});
@@ -813,8 +1024,7 @@ class FileExplorer {
 							const defVal = Object.keys(this.fileType).join(';');
 							const input = Input.string('string', this.fileFilters.join(';'), 'Add file extensions:\n(empty=no filter)\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File types filter', 'mp3;ogg');
 							if (input === null) { return; }
-							this.fileFilters = (input || '').replace('DEFAULT', defVal).split(';');
-							window.SetProperty('File Explorer: File Type Filter', this.fileFilters.join(';'));
+							this.fileFilters = ppt.explFileFilters = (input || '').replace('DEFAULT', defVal).split(';');
 							this.resetTree();
 						}
 					});
@@ -822,16 +1032,14 @@ class FileExplorer {
 					menu.newEntry({
 						menuName,
 						entryText: 'Calculate file/folder size', func: () => {
-							this.calcSize = !this.calcSize;
-							window.SetProperty('File Explorer: Calculate file/folder size', this.calcSize);
+							this.calcSize = ppt.toggle('explCalcSize');
 							this.resetTree();
 						}, checkFunc: () => this.calcSize
 					});
 					menu.newEntry({
 						menuName,
 						entryText: 'JS-Host parsing methods', func: () => {
-							this.smpFileMethods = !this.smpFileMethods;
-							window.SetProperty('File Explorer: JS-Host file parsing methods', this.smpFileMethods);
+							this.smpFileMethods = ppt.toggle('explSmpFileMethods');
 							this.resetTree();
 						}, checkFunc: () => this.smpFileMethods
 					});
@@ -950,7 +1158,7 @@ class FileExplorer {
 						const input = Input.string('string', this.favPaths.join(';'), 'Edit paths:\n(separated by ;)', 'Favorite paths', 'B:\\MP3;B:\\FLAC');
 						if (input === null) { return; }
 						this.favPaths = (input || '').split(';');
-						window.SetProperty('File Explorer: Fav Paths', input);
+						ppt.explFavPaths = input;
 						this.resetTree();
 					}
 				});
@@ -959,15 +1167,14 @@ class FileExplorer {
 						const input = Input.string('string', this.favLabels.join(';'), 'Edit labels:\n(separated by ;)', 'Favorite labels', 'MP3;FLAC');
 						if (input === null) { return; }
 						this.favPaths = (input || '').split(';');
-						window.SetProperty('File Explorer: Fav Labels', input);
+						ppt.explFavLabels = input;
 						this.resetTree();
 					}
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Show Favorites', func: () => {
-						this.showFavorites = !this.showFavorites;
-						window.SetProperty('File Explorer: Show Favorites', this.showFavorites);
+					entryText: 'Favorites', func: () => {
+						this.showFavorites = ppt.toggle('explShowFavorites');
 						this.resetTree();
 					}, checkFunc: () => this.showFavorites
 				});
@@ -993,17 +1200,19 @@ class FileExplorer {
 					});
 					menu.newSeparator();
 					menu.newEntry({
-						entryText: 'Add tracks to playlist', func: () => {
-							const paths = node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
-								.map((item) => item.path);
-							plman.AddLocations(plman.ActivePlaylist, paths);
+						entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
+							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newEntry({
-						entryText: 'Send tracks to playlist and Play', func: () => {
-							const paths = node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
-								.map((item) => item.path);
-							sendToPlsAndPlay(plman.ActivePlaylist, paths);
+						entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
+							this.addtoPls(plman.ActivePlaylist, node);
+						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+					});
+					menu.newSeparator();
+					menu.newEntry({
+						entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
+							this.addtoPls(-1, node, { create: true });
 						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 				} else {
@@ -1031,9 +1240,8 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Show Filesystem', func: () => {
-						this.showFilesystem = !this.showFilesystem;
-						window.SetProperty('File Explorer: Show Filesystem', this.showFilesystem);
+					entryText: 'FileSystem', func: () => {
+						this.showFilesystem = ppt.toggle('explShowFilesystem');
 						this.resetTree();
 					}, checkFunc: () => this.showFilesystem
 				});
@@ -1068,34 +1276,42 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Add found tracks to playlist', func: () => {
-						const paths = node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
-							.map((item) => item.path);
-						plman.AddLocations(plman.ActivePlaylist, paths);
+					entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
+						this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
-					entryText: 'Send found tracks to playlist and Play', func: () => {
-						const paths = node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
-							.map((item) => item.path);
-						sendToPlsAndPlay(plman.ActivePlaylist, paths);
+					entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
+						this.addtoPls(plman.ActivePlaylist, node);
+					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
+						this.addtoPls(-1, node, { create: true });
 					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				break;
 			case 'file':
 				if (node.fType == 'music' || node.fType == 'archive') {
 					menu.newEntry({
-						entryText: 'Add to playlist', func: () => {
-							plman.AddLocations(plman.ActivePlaylist, [node.path]);
+						entryText: 'Send to current playlist' + '\tEnter', func: () => {
+							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 						}
 					});
 					menu.newEntry({
-						entryText: 'Send to playlist and Play', func: () => {
-							sendToPlsAndPlay(plman.ActivePlaylist, [node.path]);
+						entryText: 'Add to current playlist' + '\tShift+Enter', func: () => {
+							this.addtoPls(plman.ActivePlaylist, node);
 						}
 					});
 					menu.newSeparator();
+					menu.newEntry({
+						entryText: 'Send to new playlist' + '\tCtrl+Enter', func: () => {
+							this.addtoPls(-1, node, { create: true });
+						}
+					});
 				}
+				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Rename file', func: () => {
 						let newname = utils.InputBox(0, 'Actual filename: ' + node.label, 'Rename a file', node.label);
@@ -1138,6 +1354,46 @@ class FileExplorer {
 				break;
 		}
 		return menu.btn_up(x, y);
+	}
+
+	createPls(node) {
+		return plman.CreatePlaylist(plman.PlaylistCount, node.label);
+	}
+
+	getNodePath(node) {
+		return node.type === 'file'
+			? node.fType === 'music' || node.fType === 'archive'
+				? [node.path]
+				: []
+			: node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
+				.map((item) => item.path);
+	}
+
+	addtoPls(plsIdx, node, { play = false, clear = false, create = false } = {}) {
+		const paths = this.getNodePaths(node);
+		if (!paths.length) { return; }
+		if (plsIdx === -1 || create) { plsIdx = plman.ActivePlaylist = this.createPls(node); }
+		else if (clear) { plman.ClearPlaylist(plsIdx); }
+		if (play) {
+			fb.AddLocationsAsyncV2(paths)
+				.then((handleList) => {
+					plman.InsertPlaylistItems(plsIdx, 0, handleList);
+					plman.ExecutePlaylistDefaultAction(plsIdx, 0);
+				});
+		} else {
+			plman.AddLocations(plman.ActivePlaylist, paths);
+		}
+	};
+
+	setFocus(node) {
+		node.focus = true;
+		if (this.y + this.treeLineH * this.lineCounter > ui.h) {
+			const idx = this.tree.indexOf(node);
+			this.yOffset = this.y + this.getYoffset(this.treePadY + idx * this.treeLineH - this.vCursorH / 2) + ui.h / 2;
+			if (this.yOffset > this.y) { this.yOffset = this.y; }
+			if (this.yOffset < - (this.y + this.treeLineH * this.lineCounter - ui.h)) { this.yOffset = - (this.y + this.treeLineH * this.lineCounter + ui.h); }
+			window.Repaint(true);
+		}
 	}
 
 	attachCallbacks() {
@@ -1206,6 +1462,10 @@ class FileExplorer {
 
 		addEventListener('on_mouse_leave', () => {
 			if (panel.isFileExplorerSource()) { this.on_mouse_leave(); }
+		});
+
+		addEventListener('on_key_down', (vKey) => {
+			if (panel.isFileExplorerSource()) { this.on_key_down(vKey); }
 		});
 	}
 
@@ -1325,7 +1585,7 @@ class FileNode {
 				break;
 			case 'favorite':
 				icon = this.collapsed ? explorer.img.folderFav : explorer.img.folderFavOpen;
-				if (fso.FolderExists(this.path)) {
+				if (_isFolder(this.path)) {
 					this.enabled = true;
 					labelCol = explorer.col.text;
 				} else {
@@ -1533,7 +1793,7 @@ class FileNode {
 			case 'right':
 				if (this.hover) {
 					explorer.resetNodeFocus(explorer.root);
-					explorer.focus = true;
+					this.focus = true;
 				}
 				if (this.hover) {
 					switch (this.type) {
