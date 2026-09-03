@@ -1,10 +1,10 @@
 'use strict';
-//26/08/26
+//03/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
 /* global isArrayEqual:readable */
-/* global getFiles:readable, _deleteFolder:readable, _foldPath:readable, imgAllowedExt:readable */
+/* global getFiles:readable, _deleteFolder:readable, _foldPath:readable, imgAllowedExt:readable, _isFile:readable, _createFolder:readable */
 /* global applyMask:readable, applyAsMask:readable, applyEffect:readable, applyEffectAsMaskEffect:readable, Effects:readable, BorderMode:readable, BlendMode:readable, BrushType:readable, BrushWrapMode: readable */
 /* global getStarPoints:readable, getHeartPoints:readable */
 /* global InterpolationMode:readable, SmoothingMode:readable, RotateFlipType:readable */
@@ -339,7 +339,7 @@ class Images {
 			const files = getFiles(path, new Set(imgAllowedExt)); // Pass the pattern as is to avoid performance impact
 			if (ppt.logLibProfiler) { this.artProfiler.CheckPointStep('getFiles'); }
 			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
-			if (files[0] && $.file(files[0])) {
+			if (files[0] && _isFile(files[0])) {
 				result.path = files[0];
 				result.image = await gdi.LoadImageAsyncV2(0, files[0]);
 				result.ext = this.getCacheFileExt(files[0]); // Regorxxx <- Allow images with transparencies ->
@@ -466,7 +466,7 @@ class Images {
 			}
 			if (image) {
 				if (this.albumArtDiskCache && saveName) {
-					if (!this.database[key] && $.file(this.cacheFolder + saveName)) {
+					if (!this.database[key] && _isFile(this.cacheFolder + saveName)) {
 						this.toSave.unshift({
 							key,
 							image: null,
@@ -475,7 +475,7 @@ class Images {
 							setKeyOnly: true
 						});
 					}
-					if (!this.database[key] || !$.file(this.cacheFolder + saveName)) {
+					if (!this.database[key] || !_isFile(this.cacheFolder + saveName)) {
 						image = this.format(image, { trim: true }, this.getStyleByType('default'), this.saveSize, this.saveSize, false, 'save');
 						this.toSave.unshift({
 							key,
@@ -1898,7 +1898,7 @@ class Images {
 			preLoad: this.saveSize == 250 ? (this.labels.fade ? 15 : 7) : this.saveSize == 500 ? 20 : 45
 		};
 		this.cacheFolder = this.getArtCachePath(ppt.artId, panel.folderView) + (this.saveSize == 250 ? '' : this.saveSize) + '\\'; // Regorxxx <- Code cleanup ->
-		$.create(this.cacheFolder);
+		_createFolder(this.cacheFolder);
 		this.database = $.jsonParse(this.cacheFolder + 'database.dat', this.newDatabase(), 'file');
 		if (this.cacheFolder != cacheFolder) {
 			this.preLoadItems = [];
@@ -2007,7 +2007,7 @@ class Images {
 								const subKey = v.keyArr[i];
 								if (!keys.has(subKey)) {
 									keys.add(subKey);
-									if (this.albumArtDiskCache && this.database[subKey] && $.file(this.cacheFolder + this.database[subKey])) {
+									if (this.albumArtDiskCache && this.database[subKey] && _isFile(this.cacheFolder + this.database[subKey])) {
 										promises.push(this.load_image_async(subKey, this.cacheFolder + this.database[subKey], v.ix));
 									} else {
 										this.cache[subKey] = {
@@ -2026,7 +2026,7 @@ class Images {
 									this.cacheIt(results[0].image, key, v.ix);
 								}
 							});
-						} else if (this.albumArtDiskCache && $.file(this.cacheFolder + this.database[key])) {
+						} else if (this.albumArtDiskCache && _isFile(this.cacheFolder + this.database[key])) {
 							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
 						} else if (v.handle) {
 							this.get_album_art_async(v.handle, art, key, v.ix);
@@ -2058,7 +2058,7 @@ class Images {
 		}
 		const key = pop.tree[i].key;
 		if (!this.cache[key] && this.database[key] && this.database[key] != 'noAlbumArt') {
-			if ($.file(this.cacheFolder + this.database[key])) { // cacheItPreload if file exists
+			if (_isFile(this.cacheFolder + this.database[key])) { // cacheItPreload if file exists
 				return {
 					ix: i,
 					key
@@ -2685,7 +2685,7 @@ class Images {
 			if (!ppt.albumArtDiskCache) return;
 			this.database = this.newDatabase(); // full clear of databases for current image type
 			databases.forEach(v => {
-				if ($.file(v)) $.save(v, JSON.stringify(this.newDatabase(), null, 3), true);
+				if (_isFile(v)) $.save(v, JSON.stringify(this.newDatabase(), null, 3), true);
 			});
 			return;
 		}
@@ -2705,12 +2705,12 @@ class Images {
 		let imgsToRemove = itemsToRemove.map(v => this.database[v]);
 		imgsToRemove = [...new Set(imgsToRemove)];
 		databases.forEach(v => {
-			if ($.file(v)) {
+			if (_isFile(v)) {
 				const cur_db = v == this.cacheFolder + 'database.dat';
 				const imgDatabase = $.jsonParse(v, this.newDatabase(), 'file');
 				Object.entries(imgDatabase).forEach(w => { // clear working cache & database of all keys that reference a particular image: this should always work even if images in use
 					if (w[0] != '-----------group key------------') {
-						if (imgsToRemove.includes(w[1]) || !$.file(this.cacheFolder + w[1])) { // images are refreshed as loaded, overwriting existing
+						if (imgsToRemove.includes(w[1]) || !_isFile(this.cacheFolder + w[1])) { // images are refreshed as loaded, overwriting existing
 							if (cur_db) this.trimCache(w[0]);
 							delete imgDatabase[w[0]];
 						}
@@ -2718,7 +2718,7 @@ class Images {
 				});
 				Object.entries(imgDatabase).forEach(w => {
 					if (w[0] != '-----------group key------------') {
-						if (w[1] != 'noAlbumArt' && !$.file(this.cacheFolder + w[1])) delete imgDatabase[w[0]];
+						if (w[1] != 'noAlbumArt' && !_isFile(this.cacheFolder + w[1])) delete imgDatabase[w[0]];
 					}
 				}); // remove any user deleted images from database
 				$.save(v, JSON.stringify(imgDatabase, null, 3), true);

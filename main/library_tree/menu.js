@@ -1,9 +1,10 @@
 ﻿'use strict';
-//02/09/26
+//03/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
+/* global _isFile:readable, _isFolder:readable */
 /* global _explorer:readable */
 /* global isArrayEqual:readable, _p:readable, _b:readable */
 /* global createAutoPlaylistPresets:readable */
@@ -194,7 +195,7 @@ class MenuItems {
 		this.pl = [];
 		this.r_up = false;
 		this.show_context = false;
-		this.treeExpandLimit = $.file('C:\\check_local\\1450343922.txt') ? 6000 : $.clamp(ppt.treeExpandLimit, 10, 6000);
+		this.treeExpandLimit = _isFile('C:\\check_local\\1450343922.txt') ? 6000 : $.clamp(ppt.treeExpandLimit, 10, 6000);
 		this.playlists_changed(true);
 		this.settingsBtnDn = false;
 		this.validItem = false;
@@ -265,7 +266,7 @@ class MenuItems {
 				// Regorxxx <- Code cleanup | Hide irrelevant entries for playlist sources
 				if (this.items.Count) {
 					if (!panel.isActivePlaylistSource() && !isArrayEqual(pop.getPlaylistParentIdx(pop.tree[this.ix]), [plman.ActivePlaylist])) {
-						['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+enter']
+						['Send to current playlist' + '\tEnter', 'Add to current playlist' + '\tShift+Enter']
 							.forEach((v, i) => menu.newItem({
 								str: v,
 								func: () => this.setPlaylist(i),
@@ -273,7 +274,7 @@ class MenuItems {
 							}));
 					}
 					menu.newItem({
-						str: 'Send to new playlist' + '\tCtrl+enter',
+						str: 'Send to new playlist' + '\tCtrl+Enter',
 						func: () => this.setPlaylist(2),
 						flags: this.getPaylistFlag(2),
 						separator: true
@@ -795,7 +796,7 @@ class MenuItems {
 				str: 'Open cache',
 				flags: ppt.albumArtDiskCache ? MF_STRING : MF_GRAYED,
 				func: () => {
-					if ($.folder(img.cachePath)) { _explorer(img.cachePath); }
+					if (_isFolder(img.cachePath)) { _explorer(img.cachePath); }
 					else { $.buildPth(img.cachePath); }
 				}
 			});
@@ -1034,7 +1035,7 @@ class MenuItems {
 							{ key: 'Left|Right', action: 'Collapse|Expand nodes.' },
 							{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
 							{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
-							{ key: 'Num *', action: 'Expand current nodes' },
+							{ key: 'Num *', action: 'Expand current nodes.' },
 							{ key: 'Num -', action: 'Collapse all nodes.' }
 						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
 						'\n' +
@@ -1888,7 +1889,7 @@ class MenuItems {
 		switch (true) {
 			case !i: {
 				let fn = fb.FoobarPath + 'doc\\Query Syntax Help.html';
-				if (!$.file(fn)) fn = fb.FoobarPath + 'Query Syntax Help.html';
+				if (!_isFile(fn)) fn = fb.FoobarPath + 'Query Syntax Help.html';
 				$.browser('"' + fn);
 				break;
 			}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//01/09/26
+//03/09/26
 
 /* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath, _getClipboardData, _setClipboardData, _deleteFilesByMask, sortFiles, imgAllowedExt */
 
@@ -1156,7 +1156,7 @@ function getPathMeta(path, sizeUnit = 'GB', bSkipFolderSize = true) {
 }
 
 function parseWinApiError(message, bAddLink = true) {
-	const code = (/\((\w*)\)/gi.exec(message)[1] || 'UNKNOWN').toUpperCase().replace('0X', '0x');
+	const code = ((/\((\w*)\)/gi.exec(message) || [])[1] || 'UNKNOWN').toUpperCase().replace('0X', '0x');
 	return 'WinAPI error: ' + code + ' - ' + WinApiError[code] +
 		(bAddLink ? '\n\t Check: https://www.hresult.info/FACILITY_CONTROL' + (code === 'UNKNOWN' ? '' : '/' + code) : '');
 }

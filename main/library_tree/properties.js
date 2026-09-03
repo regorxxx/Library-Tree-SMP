@@ -1,11 +1,12 @@
 ﻿'use strict';
-//24/08/26
+//03/09/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
 /* global globQuery:readable, globTags:readable, globSettings:readable */ // helpers\helpers_xxx_global.js
 /* global _b:readable, _t:readable */ // helpers\helpers_xxx_prototypes.js
 /* global queryJoin:readable */ // helpers\helpers_xxx_tags.js
+/* global _isFile:readable */ // helpers\helpers_xxx_file.js
 
 /* exported PanelProperties */
 
@@ -51,7 +52,7 @@ class PanelProperties {
 	}
 
 	validate(item) {
-		if (!$.isArray(item) || item.length !== 3 || typeof item[2] !== 'string') {
+		if (!Array.isArray(item) || item.length !== 3 || typeof item[2] !== 'string') {
 			throw new Error('invalid property: requires array: [string, any, string]');
 		}
 
@@ -92,6 +93,7 @@ class PanelProperties {
 
 	toggle(name) {
 		this[name] = !this[name];
+		return this[name];
 	}
 }
 
@@ -590,7 +592,7 @@ let properties = [
 
 const ppt = new PanelProperties;
 ppt.init('auto', properties);
-if (!$.file('C:\\check_local\\1450343922.txt')) ppt.themed = false;
+if (!_isFile('C:\\check_local\\1450343922.txt')) { ppt.themed = false; }
 
 if (ppt.get('Tree List View')) {
 	ppt.facetView = ppt.get('Tree List View');

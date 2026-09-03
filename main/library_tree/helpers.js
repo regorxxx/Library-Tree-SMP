@@ -1,9 +1,10 @@
 ﻿'use strict';
-//24/08/26
+//03/09/26
 
 /* global fso:readable, WshShell:readable, folders:readable, popup:readable */
-
 /* global Language:readable, popUpBox:readable, ppt:readable */
+/* global isArrayStrings:readable, _t:readable, _b:readable */
+/* global _isFile:readable, _createFolder:readable */
 
 /* exported tooltip, $, ease */
 
@@ -36,7 +37,7 @@ class Helpers {
 				tmpFileLoc = `\\\\${tmpFileLoc}`;
 				UNC = false;
 			}
-			this.create(tmpFileLoc);
+			_createFolder(tmpFileLoc);
 		}
 	}
 
@@ -44,18 +45,12 @@ class Helpers {
 		return Math.max(Math.min(num, max), min);
 	}
 
-	create(fo) {
-		try {
-			if (!this.folder(fo)) fso.CreateFolder(fo);
-		} catch (e) { /* empty */ } // eslint-disable-line no-unused-vars
-	}
-
 	debounce(e, r, i) {
 		var o, u, a, c, v, f, d = 0, m = !1, j = !1, n = !0; if ('function' != typeof e) throw new TypeError('debounce: invalid function'); function T(i) { var n = o, t = u; return o = u = void 0, d = i, c = e.apply(t, n); } function b(i) { var n = i - f; return void 0 === f || r <= n || n < 0 || j && a <= i - d; } function l() { var i, n, t = Date.now(); if (b(t)) return w(t); v = setTimeout(l, (n = r - ((i = t) - f), j ? Math.min(n, a - (i - d)) : n)); } function w(i) { return v = void 0, n && o ? T(i) : (o = u = void 0, c); } function t() { var i, n = Date.now(), t = b(n); if (o = arguments, u = this, f = n, t) { if (void 0 === v) return d = i = f, v = setTimeout(l, r), m ? T(i) : c; if (j) return v = setTimeout(l, r), T(f); } return void 0 === v && (v = setTimeout(l, r)), c; } return r = Number.parseFloat(r) || 0, this.isObject(i) && (m = !!i.leading, a = ((j = 'maxWait' in i)) ? Math.max(Number.parseFloat(i.maxWait) || 0, r) : a, n = 'trailing' in i ? !!i.trailing : n), t.cancel = function () { void 0 !== v && clearTimeout(v), o = f = u = v = void (d = 0); }, t.flush = function () { return void 0 === v ? c : w(Date.now()); }, t; // NOSONAR
 	}
 
 	equal(arr1, arr2) {
-		if (!this.isArray(arr1) || !this.isArray(arr2)) return false;
+		if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
 		let i = arr1.length;
 		if (i != arr2.length) return false;
 		while (i--)
@@ -64,16 +59,12 @@ class Helpers {
 	}
 
 	equalHandles(arr1, arr2) {
-		if (!this.isArray(arr1) || !this.isArray(arr2)) return false;
+		if (!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
 		let i = arr1.length;
 		if (i != arr2.length) return false;
 		while (i--)
 			if (!arr1[i].Compare(arr2[i])) return false;
 		return true;
-	}
-
-	file(f) {
-		return typeof f === 'string' && fso.FileExists(f);
 	}
 
 	folder(fo) {
@@ -112,10 +103,6 @@ class Helpers {
 		else i = null;
 	}
 
-	isArray(arr) {
-		return Array.isArray(arr);
-	}
-
 	isObject(t) {
 		const e = typeof t;
 		return null != t && ('object' == e || 'function' == e);
@@ -140,7 +127,7 @@ class Helpers {
 
 	open(f) {
 		try { // handle locked files
-			return this.file(f) ? utils.ReadTextFile(f) : '';
+			return _isFile(f) ? utils.ReadTextFile(f) : '';
 		} catch (e) { // eslint-disable-line no-unused-vars
 			return '';
 		}
@@ -339,33 +326,8 @@ class Helpers {
 		);
 	}
 
-	isArrayStrings(checkKeys, bAllowEmpty = false) {
-		if (checkKeys === null || Object.prototype.toString.call(checkKeys) !== '[object Array]' || checkKeys.length === null || checkKeys.length === 0) {
-			return false; //Array was null or not an array
-		} else {
-			let i = checkKeys.length;
-			while (i--) {
-				if (Object.prototype.toString.call(checkKeys[i]) !== '[object String]') {
-					return false; //values were null or not strings
-				}
-				if (!bAllowEmpty && checkKeys[i] === '') {
-					return false; //values were empty
-				}
-			}
-		}
-		return true;
-	}
-
-	_b(value) {
-		return '[' + value + ']';
-	}
-
-	_t(tag) {
-		return (tag.includes('%') || tag.includes('$') ? tag : '%' + tag + '%');
-	}
-
 	getHandleListTags(handleList, tagsArray, { bMerged = false } = {}) {
-		if (!this.isArrayStrings(tagsArray)) { return null; }
+		if (!isArrayStrings(tagsArray)) { return null; }
 		if (!handleList) { return null; }
 		const tagArray_length = tagsArray.length;
 		/** @type {any[]|any[][]} */
@@ -380,8 +342,8 @@ class Helpers {
 				: tagsArray[i].includes('%')
 					? tagsArray[i]
 					: '%' + tagsArray[i] + '%';
-			if (bMerged) { tagString += this._b((i === 0 ? '' : ', ') + tagStr); } // We have all values separated by comma
-			else { tagString += (i === 0 ? '' : sep) + this._b(tagStr); } // We have tag values separated by comma and different tags by 'sep'
+			if (bMerged) { tagString += _b((i === 0 ? '' : ', ') + tagStr); } // We have all values separated by comma
+			else { tagString += (i === 0 ? '' : sep) + _b(tagStr); } // We have tag values separated by comma and different tags by 'sep'
 			i++;
 		}
 		let tfo = fb.TitleFormat(tagString);
@@ -409,7 +371,7 @@ class Helpers {
 		return [...(new Set(tf.match(/%.+?%|\$meta\(.+?,.+?\)/gi)
 			.map((tag) => tag.replace(/[<>]|\$meta\(|,\d\)/gi, ''))
 			.filter(Boolean)
-			.map((tag) => this._t(tag.toUpperCase()))
+			.map((tag) => _t(tag.toUpperCase()))
 		).difference(
 			new Set(exclude || [])
 		)
@@ -448,7 +410,7 @@ class Helpers {
 		tagsArrayLogic = (tagsArrayLogic || '').toUpperCase();
 		subTagsArrayLogic = (subTagsArrayLogic || '').toUpperCase();
 		match = (match || '').toUpperCase();
-		if (this.isArrayStrings(queryKey)) {
+		if (isArrayStrings(queryKey)) {
 			let queryKeyLength = queryKey.length;
 			let i = 0;
 			let queryArray = [];

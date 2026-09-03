@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/08/26
+//03/09/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -7,8 +7,8 @@
 /* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
-/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable */
-/* global _resolvePath:readable */
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable, toFbDateString:readable */
+/* global _resolvePath:readable, _isFile:readable */
 
 /* exported Panel */
 
@@ -1802,7 +1802,7 @@ class Panel {
 		if (ui.col.counts) this.colMarker = true;
 		if (ppt.themed && ppt.theme) {
 			const themed_image = `${fb.ProfilePath}settings\\themed\\themed_image.bmp`;
-			if ($.file(themed_image)) sync.image(gdi.Image(themed_image));
+			if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
 		}
 		this.setRootName();
 		but.setSbarIcon();

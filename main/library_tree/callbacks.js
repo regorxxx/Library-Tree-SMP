@@ -1,11 +1,13 @@
 'use strict';
-//02/09/26
+//03/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
+/* global _isFile:readable */
 /* global getLocks:readable, movePlaylistSelection:readable, getPlaylistSelectedIndexes:readable */
 /* global dropEffect:readable */
 /* global dropMask:readable, VK_SHIFT:readable, VK_CONTROL:readable */
+/* global globSettings:readable */
 /* global extendGR:readable */
 
 addEventListener('on_colours_changed', (keepCache) => {
@@ -755,7 +757,7 @@ addEventListener('on_size', () => {
 
 	if (ppt.themed && ppt.theme) {
 		const themed_image = `${fb.ProfilePath}settings\\themed\\themed_image.bmp`;
-		if ($.file(themed_image)) sync.image(gdi.Image(themed_image));
+		if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
 	}
 
 	panel.on_size();
