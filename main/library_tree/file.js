@@ -88,6 +88,7 @@ class FileExplorer {
 		const properties = [
 			['File Explorer: File Type Filter', Object.keys(this.fileType).join(';'), 'explFileFilters'],
 			['File Explorer: Calculate file/folder size', false, 'explCalcSize'],
+			['File Explorer: Calculate file/folder size async', true, 'explCalcSizeAsync'],
 			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
 			['File Explorer: Sort Items', true, 'explSort'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
@@ -102,6 +103,7 @@ class FileExplorer {
 		this.showFilesystem = ppt.explShowFilesystem;
 		this.fileFilters = ppt.explFileFilters.split(';');
 		this.calcSize = ppt.explCalcSize;
+		this.calcSizeAsync = ppt.explCalcSizeAsync && utils.GetFolderSizeAsyncV2;
 		this.smpFileMethods = ppt.explSmpFileMethods;
 		this.favLabels = [];
 		this.favPaths = [];
@@ -294,12 +296,10 @@ class FileExplorer {
 			node.childChecked = true;
 			for (const folder of folders) {
 				// Add new node
-				const size = this.calcSize ? this.getFolderSize(folder) : '?';
 				const folderName = folder.endsWith('\\') ? folder.split('\\').at(-2) : folder.split('\\').at(-1);
-				node.addChild(folderName, folder, { size });
-				if (recursive) {
-					this.fillTreeLevel(folder, node.child[node.child.length - 1], true);
-				}
+				const child = node.addChild(folderName, folder);
+				if (this.calcSize) { this.addFolderSizeData(child); }
+				if (recursive) { this.fillTreeLevel(folder, child, true); }
 			}
 			// sort folders on label
 			if (this.sort && !recursive) node.child = this.sortTab(node.child);
@@ -308,15 +308,13 @@ class FileExplorer {
 			const bFilter = this.fileFilters.length > 0;
 			for (const file of files) {
 				const [, fileName, ext] = utils.SplitFilePath(file);
+				let child;
 				if (bFilter) {
 					if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
-						const size = this.calcSize ? this.getFileSize(file) : '?';
-						node.addItem(fileName + ext, file, { size });
+						child = node.addItem(fileName + ext, file);
 					}
-				} else {
-					const size = this.calcSize ? this.getFileSize(file) : '?';
-					node.addItem(fileName + ext, file, { size });
-				}
+				} else { child = node.addItem(fileName + ext, file); }
+				if (this.calcSize) { this.addFileSizeData(child); }
 			}
 		} else {
 			const oFolder = fso.GetFolder(path);
@@ -327,11 +325,9 @@ class FileExplorer {
 						const attribute = new Flag(folder.Attributes);
 						// Add new node
 						if (attribute.has(2) || attribute.has(4)) { continue; }
-						const size = this.calcSize ? this.getFolderSize(folder.Path) : '?';
-						node.addChild(folder.Name, folder.Path, { size });
-						if (recursive) {
-							this.fillTreeLevel(folder.Path, node.child[node.child.length - 1], true);
-						}
+						const child = node.addChild(folder.Name, folder.Path);
+						if (this.calcSize) { this.addFolderSizeData(child); }
+						if (recursive) { this.fillTreeLevel(folder.Path, child, true); }
 					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
 				}
 			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
@@ -346,15 +342,13 @@ class FileExplorer {
 						const attribute = new Flag(file.Attributes);
 						// Add new node
 						if (attribute.has(2) || attribute.has(4)) { continue; }
+						let child;
 						if (bFilter) {
 							if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
-								const size = this.calcSize ? this.getFileSize(file.Path) : '?';
-								node.addItem(fileName + ext, file.Path, { size });
+								child = node.addItem(fileName + ext, file.Path);
 							}
-						} else {
-							const size = this.calcSize ? this.getFileSize(file.Path) : '?';
-							node.addItem(fileName + ext, file.Path, { size });
-						}
+						} else { child = node.addItem(fileName + ext, file.Path); }
+						if (child && this.calcSize) { this.addFileSizeData(child); }
 					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
 				}
 			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
@@ -428,6 +422,29 @@ class FileExplorer {
 			return folder ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
 		}
 	}
+
+	getFolderSizeAsync(path) {
+		return utils.GetFolderSizeAsyncV2
+			? utils.GetFolderSizeAsyncV2(path).then((size) => utils.FormatFileSize(size))
+			: Promise.resolve('?');
+	}
+
+	addFolderSizeData(node) {
+		if (this.calcSizeAsync) {
+			this.getFolderSizeAsync(node.path)
+				.then((size) => node.addData({ size }))
+				.catch(() => node.addData({ size: '?' }));
+		} else {
+			const size = this.getFolderSize(node.path);
+			node.addData({ size });
+		}
+	}
+
+	addFileSizeData(node) {
+		const size = this.getFileSize(node.path);
+		node.addData({ size });
+	}
+
 
 	getYoffset(y) {
 		return (y * -1) / (ui.h - this.vCursorH) * (this.lineCounter * this.treeLineH - ui.h);
@@ -1519,14 +1536,20 @@ class FileNode {
 	}
 	addChild(label, path, data = {}) {
 		this.totalChildren++;
-		this.child.push(
-			new FileNode({
-				label, path, level: this.level + 1,
-				idx: this.child.length, pIdx: this.idx, type: 'folder',
-				collapsed: true, pathSum: this.pathSum,
-				data
-			})
-		);
+		const node = new FileNode({
+			label, path, level: this.level + 1,
+			idx: this.child.length, pIdx: this.idx, type: 'folder',
+			collapsed: true, pathSum: this.pathSum,
+			data
+		});
+		this.child.push(node);
+		return node;
+	};
+	addData(data = {}) {
+		for (let key in data) {
+			this.data[key] = data[key];
+		}
+		return this;
 	};
 	addItem(label, path, data = {}) {
 		this.totalItems++;
