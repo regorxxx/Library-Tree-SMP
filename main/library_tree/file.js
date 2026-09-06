@@ -297,7 +297,7 @@ class FileExplorer {
 			node.childChecked = true;
 			for (const folder of folders) {
 				// Add new node
-				const folderName = folder.endsWith('\\') ? folder.split('\\').at(-2) : folder.split('\\').at(-1);
+				const folderName = folder.split('\\').findLast(Boolean);
 				const child = node.addChild(folderName, folder);
 				if (this.calcSize) { this.addFolderSizeData(child); }
 				if (recursive) { this.fillTreeLevel(folder, child, true); }
@@ -318,7 +318,8 @@ class FileExplorer {
 				if (this.calcSize) { this.addFileSizeData(child); }
 			}
 		} else {
-			const oFolder = fso.GetFolder(path);
+			const oFolder = tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
+			if (!oFolder) { return; }
 			node.childChecked = true;
 			try {
 				for (const folder of oFolder.SubFolders) {
@@ -364,9 +365,7 @@ class FileExplorer {
 		this.favPaths.forEach((path, i) => {
 			node.addChild(this.favLabels[i], path);
 			node.child[i].type = 'favorite';
-			node.child[i].data.size = _isFolder(path) && this.calcSize
-				? utils.FormatFileSize(tryGetter('Size', fso.GetFolder(path), '0')())
-				: '?';
+			if (this.calcSize) { this.addFolderSizeData(node.child[i]); }
 		});
 	}
 
@@ -419,7 +418,7 @@ class FileExplorer {
 		if (utils.GetFolderSize) {
 			return utils.FormatFileSize(utils.GetFolderSize(path));
 		} else {
-			const folder = tryMethod('GetFolder', fso, '')(path);
+			const folder = tryMethod(fso, 'GetFolder', '')(path);
 			return folder ? utils.FormatFileSize(tryGetter('Size', folder, '0')()) : '?';
 		}
 	}
@@ -1331,25 +1330,22 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Rename file', func: () => {
-						let newname = utils.InputBox(0, 'Actual filename: ' + node.label, 'Rename a file', node.label);
-						if (typeof (newname) == 'undefined' || !newname || newname == '') {
-							newname = node.label;
-						} else {
-							if (newname.length > 1 || (newname.length == 1 && (newname >= 'a' && newname <= 'z') || (newname >= 'A' && newname <= 'Z') || (newname >= '0' && newname <= '9'))) {
+						let newName = utils.InputBox(0, 'Actual filename: ' + node.label, 'Rename a file', node.label);
+						if (newName) {
+							if (newName.length > 1 || (newName.length == 1 && (newName >= 'a' && newName <= 'z') || (newName >= 'A' && newName <= 'Z') || (newName >= '0' && newName <= '9'))) {
 								let i = node.path.length;
 								while (i >= 0) {
 									if (node.path.charAt(i) == '\\') { break; }
 									i--;
 								}
-								try {
-									const newpath = node.path.substring(0, i + 1) + newname;
-									fso.MoveFile(node.path, newpath);
+								const newpath = node.path.substring(0, i + 1) + newName;
+								if (_moveFile(node.path, newpath)) {
 									node.path = newpath;
-									node.label = newname;
-									window.Repaint();
-								} catch (e) { // eslint-disable-line no-unused-vars
-									$.okCancelPopup('Rename Error', 'Check privileges on this folder or Check string entered: ' + newname, void (0), 'ok'); // Regorxxx <- Native themed popups | Code cleanup ->
+									node.label = newName;
+								} else {
+									$.okCancelPopup('Rename Error', 'Check privileges on this folder or Check string entered: ' + newName, void (0), 'ok'); // Regorxxx <- Native themed popups | Code cleanup ->
 								}
+								window.Repaint();
 							}
 						}
 					}
@@ -1700,7 +1696,7 @@ class FileNode {
 						case 'computer':
 							// check if drive ready before resuming
 							if (this.type == 'drive') {
-								if (!fso.FolderExists(this.path)) {
+								if (!_isFolder(this.path)) {
 									window.Repaint();
 									return true;
 								}
