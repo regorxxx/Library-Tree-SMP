@@ -2633,7 +2633,7 @@ class Populate {
 	}
 
 	on_key_down(vkey) {
-		if (vkey == vk.collapseAll && !panel.imgView) this.collapseAll();
+		if (vkey == vk.collapseAll && !panel.imgView) { this.collapseAll(); }
 		if (vkey == vk.expand && !panel.imgView) {
 			const isSel = this.tree.some(v => v.sel);
 			this.expand();
