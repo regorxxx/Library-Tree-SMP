@@ -1958,7 +1958,7 @@ class MenuItems {
 			// Regorxxx <- File explorer mode
 			case 5: {
 				ppt.libSource = 5;
-				explorer.on_size();
+				explorer.init();
 				break;
 			}
 			// Regorxxx ->

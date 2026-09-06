@@ -1,5 +1,5 @@
 'use strict';
-//03/09/26
+//06/09/26
 
 /* exported FileExplorer */
 
@@ -94,7 +94,8 @@ class FileExplorer {
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
 			['File Explorer: Fav Paths', '', 'explFavPaths'],
-			['File Explorer: Fav Labels', '', 'explFavLabels']
+			['File Explorer: Fav Labels', '', 'explFavLabels'],
+			['File Explorer: Initial load', true, 'explInit'],
 		];
 		ppt.init('auto', properties);
 		this.scrollbarW = 16;
@@ -125,7 +126,6 @@ class FileExplorer {
 		this.yOffset = 0;
 		this.gDrag = false;
 		this.cDrag = false;
-		this.reset = false;
 		this.redrawDrives = false;
 		this.root = new FileNode();
 		this.treeIndentW = 20;
@@ -143,6 +143,7 @@ class FileExplorer {
 		this.favNodeIdx = -1;
 		this.fileNodeIdx = -1;
 		this.tree = [];
+		if (panel.isFileExplorerSource()) { this.init(); }
 	}
 
 	// main Tools
@@ -481,11 +482,21 @@ class FileExplorer {
 		}
 	}
 
-	init() {
+	init(bReset) {
 		// build of all images
+		this.on_size();
 		this.setImages();
-
-		if (typeof this.root.label === 'undefined' || this.reset) {
+		if (this.showFavorites) {
+			this.favNodeIdx = 0;
+			if (this.showFilesystem) {
+				this.fileNodeIdx = 1;
+			}
+		} else {
+			if (this.showFilesystem) {
+				this.fileNodeIdx = 0;
+			}
+		}
+		if (typeof this.root.label === 'undefined' || bReset) {
 			this.root.init({ label: 'Root', level: 0, idx: 0, type: 'root' });
 			this.root.childChecked = true;
 			// favorites
@@ -502,28 +513,17 @@ class FileExplorer {
 				this.root.child[this.fileNodeIdx].type = 'computer';
 				this.fillDrives(this.root.child[this.fileNodeIdx]);
 			}
-			//
-			this.reset = false;
 		}
+		if (ppt.explInit && fb.GetLibraryRoots) {
+			const paths = fb.GetLibraryRoots();
+			ppt.explFavPaths = paths.join(';');
+			ppt.explFavLabels = paths.map((p) => p.split('\\').findLast(Boolean)).join(';');
+		}
+		ppt.explInit = false;
 	}
 
 	on_size() {
 		this.y = panel.tree.y;
-		this.favNodeIdx = -1;
-		this.fileNodeIdx = -1;
-
-		if (this.showFavorites) {
-			this.favNodeIdx = 0;
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 1;
-			}
-		} else {
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 0;
-			}
-		}
-
-		this.init();
 	}
 
 	on_paint(gr) {
@@ -1488,8 +1488,7 @@ class FileExplorer {
 
 	resetTree() {
 		this.root.child.splice(0, this.root.child.length);
-		this.reset = true;
-		on_size();
+		this.init(true);
 		window.Repaint();
 	}
 }
