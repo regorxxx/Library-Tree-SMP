@@ -1,7 +1,7 @@
 ﻿'use strict';
-//03/09/26
+//06/09/26
 
-/* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath, _getClipboardData, _setClipboardData, _deleteFilesByMask, sortFiles, imgAllowedExt */
+/* exported _getNameSpacePath, _deleteFolder, _copyFile, _recycleFile, _restoreFile, _saveFSO, _saveSplitJson, _jsonParseFileSplit, _jsonParseFileCheck, _parseAttrFile, _explorer, getFiles, _run, _runHidden, _exec, editTextFile, findRecursiveFile, findRelPathInAbsPath, sanitizePath, sanitize, UUID, created, getFileMeta, popup, getPathMeta, testPath, youTubeRegExp, _isNetwork, findRecursiveDirs, _copyFolder, _renameFolder, _copyDependencies, _moveFile, _foldPath, _getClipboardData, _setClipboardData, _deleteFilesByMask, sortFiles, imgAllowedExt, getDrives, getDrive, getShortPath */
 
 include(fb.ComponentPath + 'docs\\Codepages.js');
 /* global convertCharsetToCodepage:readable */
@@ -620,7 +620,7 @@ function _open(file, codePage = 0) {
 	file = _resolvePath(file);
 	if (_isFile(file)) {
 		const bLongPath = _isLongPath(file);
-		return tryMethod('ReadTextFile', utils)(bLongPath ? _longPath(file) : file, codePage) || '';  // Bypasses crash on file locked by other process
+		return tryMethod(utils, 'ReadTextFile', '')(bLongPath ? _longPath(file) : file, codePage);  // Bypasses crash on file locked by other process
 	} else {
 		return '';
 	}
@@ -1104,6 +1104,26 @@ function formatFileSize(val) {
 		val = val.replace(regexTwoDecs, round(Number.parseFloat(val.match(regexTwoDecs)[0]), 1));
 	}
 	return val;
+}
+
+function getDrives(bBuiltIn = true) {
+	return bBuiltIn && utils.GetDriveInfo && utils.GetDrives // NOSONAR
+		? utils.GetDrives()
+			.map((root) => utils.GetDriveInfo(root))
+			.filter((info) => !!info)
+		: fso.Drives;
+}
+
+function getDrive(path, bBuiltIn = true) {
+	return bBuiltIn && utils.GetDriveInfo // NOSONAR
+		? utils.GetDriveInfo(path)
+		: fso.GetDrive(fso.GetDriveName(path));
+}
+
+function getShortPath(path, bBuiltIn = true) {
+	return bBuiltIn && utils.getShortPath
+		? utils.getShortPath(path)
+		: fso.GetFile(path).ShortPath || '';
 }
 
 function getPathMeta(path, sizeUnit = 'GB', bSkipFolderSize = true) {

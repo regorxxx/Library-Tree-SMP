@@ -9,7 +9,7 @@
 /* global tryGetter:readable, tryMethod:readable */
 /* global capitalize:readable */
 /* global Flag:readable */
-/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable, _isFolder:readable */
+/* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable, _isFolder:readable, _moveFile:readable, getDrive:readable, getDrives:readable, getShortPath:readable */
 /* global opaqueColor:readable, _gr:readable */
 /* global _menu:readable */
 /* global Input:readable */
@@ -385,21 +385,22 @@ class FileExplorer {
 
 	fillDrives(node) {
 		try {
-			for (const drv of fso.Drives) {
+			const drives = getDrives(this.smpFileMethods);
+			for (const drive of drives) {
 				try {
-					if ((drv.IsReady || drv.DriveType == 4) && (drv.DriveType != 5)) {
-						const letter = drv.DriveLetter.toUpperCase();
-						if (!drv.IsReady && drv.DriveType == 4) {
+					if ((drive.IsReady || drive.DriveType == 4) && (drive.DriveType != 5)) {
+						const letter = drive.DriveLetter.toUpperCase();
+						if (!drive.IsReady && drive.DriveType == 4) {
 							node.addChild('N/A' + ' (' + letter + ':) ', letter + ':\\');
 							node.child[node.child.length - 1].ready = false;
-						} else if (drv.IsReady) {
-							const free = utils.FormatFileSize(drv.FreeSpace);
-							const total = utils.FormatFileSize(drv.TotalSize);
-							node.addChild((drv.VolumeName ? drv.VolumeName + ' ' : '') + '(' + letter + ':) ' + free + ' / ' + total, drv.Path + '\\', { size: total });
+						} else if (drive.IsReady) {
+							const free = utils.FormatFileSize(drive.FreeSpace);
+							const total = utils.FormatFileSize(drive.TotalSize);
+							node.addChild((drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':) ' + free + ' / ' + total, (drive.Path || drive.Root || '').replace('\\', '') + '\\', { size: total });
 							node.child[node.child.length - 1].ready = true;
 						}
 						node.child[node.child.length - 1].type = 'drive';
-						node.child[node.child.length - 1].sType = drv.DriveType;
+						node.child[node.child.length - 1].sType = drive.DriveType;
 					}
 				} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 			}
@@ -458,13 +459,13 @@ class FileExplorer {
 			// check if drive ready before resuming
 			if (node.type == 'drive') {
 				try {
-					const drive = fso.GetDrive(fso.GetDriveName(node.path));
+					const drive = getDrive(node.path, this.smpFileMethods);
 					if (drive.IsReady) {
 						if (!node.ready) this.redrawDrives = true;
 						node.ready = true;
 						const free = utils.FormatFileSize(drive.FreeSpace);
 						const total = utils.FormatFileSize(drive.TotalSize);
-						node.label = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + drive.Path + ') ' + free + '/' + total;
+						node.label = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + (drive.Path || drive.Root || '').replace('\\', '') + ') ' + free + '/' + total;
 						node.data.size = total;
 					} else {
 						if (node.ready) this.redrawDrives = true;
@@ -1797,7 +1798,7 @@ class FileNode {
 								}
 								break;
 							default:
-								_runCmd('CMD /C START ' + fso.GetFile(this.path).ShortPath, false, 0);
+								_runCmd('CMD /C START ' + getShortPath(this.path, true), false, 0);
 						}
 					} else if (!['root', 'favorites', 'computer'].includes(this.type)) {
 						plman.AddLocations(plman.ActivePlaylist, [this.path], false);
