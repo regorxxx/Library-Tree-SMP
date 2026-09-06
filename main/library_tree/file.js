@@ -1374,7 +1374,7 @@ class FileExplorer {
 		return plman.CreatePlaylist(plman.PlaylistCount, node.label);
 	}
 
-	getNodePath(node) {
+	getNodePaths(node) {
 		return node.type === 'file'
 			? node.fType === 'music' || node.fType === 'archive'
 				? [node.path]
