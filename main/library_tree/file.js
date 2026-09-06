@@ -1190,7 +1190,7 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Favorites', func: () => {
+					entryText: 'Show Favorites node', func: () => {
 						this.showFavorites = ppt.toggle('explShowFavorites');
 						this.resetTree();
 					}, checkFunc: () => this.showFavorites
@@ -1257,7 +1257,7 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'FileSystem', func: () => {
+					entryText: 'Show FileSystem node', func: () => {
 						this.showFilesystem = ppt.toggle('explShowFilesystem');
 						this.resetTree();
 					}, checkFunc: () => this.showFilesystem
