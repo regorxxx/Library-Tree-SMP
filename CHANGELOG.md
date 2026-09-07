@@ -13,6 +13,7 @@
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 ### Changed
 - UI: moved sorting features to its own submenu within settings menu.
+- UI: mouse actions at 'Behaviour' tab (HTML options panel) now reflect when an action is forced by mode or source being used.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
