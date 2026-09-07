@@ -1,10 +1,10 @@
 'use strict';
-//06/09/26
+//07/09/26
 
 /* exported FileExplorer */
 
 /* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
-/* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable */
+/* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable, VK_ALT:readable */
 /* global folders:readable */
 /* global tryGetter:readable, tryMethod:readable */
 /* global capitalize:readable */
@@ -17,7 +17,7 @@
 /* exported Panel */
 
 class FileExplorer {
-	constructor() {
+	constructor(enabled, onInit) {
 		this.img = {
 			folder: null,
 			folderOpen: null,
@@ -143,7 +143,19 @@ class FileExplorer {
 		this.favNodeIdx = -1;
 		this.fileNodeIdx = -1;
 		this.tree = [];
-		if (panel.isFileExplorerSource()) { this.init(); }
+		this.m = {
+			x: -1,
+			y: -1
+		};
+		this.mbtnClickAction = 0;
+		this.altClickAction = 0;
+		this.dblClickAction = 0;
+		this.libPlaylistName = 'Library View';
+		this.enabled = !!enabled;
+		if (this.enabled) {
+			if (onInit) { onInit.call(this, this); }
+			this.init();
+		}
 	}
 
 	// main Tools
@@ -200,16 +212,16 @@ class FileExplorer {
 		}
 	}
 
-	scanCheckAll(node, event, x, y) {
+	scanCheckAll(node, event, x, y, mask) {
 		let i, j;
 		// node action below
-		let temp = node.checkMouse(event, x, y);
+		let temp = node.checkMouse(event, x, y, mask);
 		if (!node.collapsed) {
 			for (i = 0; i < node.child.length; i++) {
-				this.scanCheckAll(node.child[i], event, x, y);
+				this.scanCheckAll(node.child[i], event, x, y, mask);
 			}
 			for (j = 0; j < node.item.length; j++) {
-				node.item[j].checkMouse(event, x, y);
+				node.item[j].checkMouse(event, x, y, mask);
 			}
 		}
 		return temp;
@@ -483,6 +495,7 @@ class FileExplorer {
 	}
 
 	init(bReset) {
+		this.enabled = true;
 		// build of all images
 		this.on_size();
 		this.setImages();
@@ -522,6 +535,10 @@ class FileExplorer {
 		ppt.explInit = false;
 	}
 
+	exit() {
+		this.enabled = false;
+	}
+
 	on_size() {
 		this.y = panel.tree.y;
 	}
@@ -542,11 +559,11 @@ class FileExplorer {
 		}
 	}
 
-	on_mouse_lbtn_down(x, y) {
+	on_mouse_lbtn_down(x, y, mask) {
 		if (this.showFilesystem) this.refreshDrives();
 		if (x < ui.w) {
 			this.gDrag = true;
-			this.scanCheckAll(this.root, 'down', x, y);
+			this.scanCheckAll(this.root, 'down', x, y, mask);
 		} else {
 			if (this.lineCounter * this.treeLineH > ui.h) {
 				this.cDrag = true;
@@ -566,31 +583,31 @@ class FileExplorer {
 		}
 	};
 
-	on_mouse_lbtn_dblclk(x, y) {
-		this.scanCheckAll(this.root, 'dblclick', x, y);
+	on_mouse_lbtn_dblclk(x, y, mask) {
+		this.scanCheckAll(this.root, 'dblclick', x, y, mask);
 	};
 
-	on_mouse_lbtn_up(x, y) {
+	on_mouse_lbtn_up(x, y, mask) {
 		this.gDrag = false;
-		this.scanCheckAll(this.root, 'up', x, y);
+		this.scanCheckAll(this.root, 'up', x, y, mask);
 		if (this.cDrag) {
 			this.cDrag = false;
 			window.RepaintRect(ui.w, this.getPos(this.yOffset), this.vCursorW, this.vCursorH);
 		}
 	};
 
-	on_mouse_rbtn_down(x, y) {
+	on_mouse_rbtn_down(x, y, mask) {
 		if (this.showFilesystem) { this.refreshDrives(); }
-		return this.scanCheckAll(this.root, 'right', x, y);
+		return this.scanCheckAll(this.root, 'right', x, y, mask);
 	}
 
-	on_mouse_move(x, y) {
-		this.scanCheckAll(this.root, 'move', x, y);
-		if (this.gDrag && x != panel.m.x) {
-			if (x > panel.m.x) {
+	on_mouse_move(x, y, mask) {
+		this.scanCheckAll(this.root, 'move', x, y, mask);
+		if (this.gDrag && x != this.m.x) {
+			if (x > this.m.x) {
 				this.xOffset += this.treeIndentW;
 				if (this.xOffset > 0) { this.xOffset = 0; }
-			} else if (x < panel.m.x) {
+			} else if (x < this.m.x) {
 				this.xOffset -= this.treeIndentW;
 				if (this.xOffset < this.maxDeltaH * -1) { this.xOffset = this.maxDeltaH * -1; }
 			}
@@ -607,6 +624,8 @@ class FileExplorer {
 			if (this.yOffset > this.y) this.yOffset = this.y;
 			window.Repaint();
 		}
+		this.m.x = x;
+		this.m.y = y;
 	}
 
 	on_mouse_wheel(step) {
@@ -1395,9 +1414,39 @@ class FileExplorer {
 					plman.ExecutePlaylistDefaultAction(plsIdx, 0);
 				});
 		} else {
-			plman.AddLocations(plman.ActivePlaylist, paths);
+			plman.AddLocations(plsIdx, paths);
 		}
 	};
+
+	addToQueue(node, { play = false, clear = false } = {}) {
+		const paths = this.getNodePaths(node);
+		if (!paths.length) { return; }
+		if (clear) { plman.FlushPlaybackQueue(); }
+		fb.AddLocationsAsyncV2(paths)
+			.then((handleList) => {
+				handleList.Convert().forEach((handle) => plman.AddItemToPlaybackQueue(handle));
+				if (play) { fb.Play(); }
+			});
+	}
+
+	removeFromQueue(node) {
+		const paths = this.getNodePaths(node);
+		if (!paths.length) { return; }
+		fb.AddLocationsAsyncV2(paths)
+			.then((handleList) => {
+				const queueHandles = plman.GetPlaybackQueueHandles();
+				let remove = [];
+				for (let i = 0; i < handleList.Count; i++) {
+					for (let k = 0; k < queueHandles.Count; k++) {
+						if (handleList[i].Compare(queueHandles[k])) {
+							remove.push(k);
+						}
+					}
+				}
+				remove = [...new Set(remove)];
+				plman.RemoveItemsFromPlaybackQueue(remove);
+			});
+	}
 
 	setFocus(node) {
 		node.focus = true;
@@ -1412,11 +1461,11 @@ class FileExplorer {
 
 	attachCallbacks() {
 		addEventListener('on_size', () => {
-			if (panel.isFileExplorerSource()) { this.on_size(); }
+			if (this.enabled) { this.on_size(); }
 		});
 
 		addEventListener('on_paint', (gr) => {
-			if (panel.isFileExplorerSource()) {
+			if (this.enabled) {
 				if (!window.ID) { return; }
 				if (!window.Width || !window.Height) { return; }
 				ui.draw(gr);
@@ -1436,50 +1485,49 @@ class FileExplorer {
 			}
 		});
 
-		addEventListener('on_mouse_lbtn_down', (x, y) => {
-			if (panel.isFileExplorerSource()) { this.on_mouse_lbtn_down(x, y); }
+		addEventListener('on_mouse_lbtn_down', (x, y, mask) => {
+			if (this.enabled) { this.on_mouse_lbtn_down(x, y, mask); }
 		});
 
-		addEventListener('on_mouse_lbtn_dblclk', (x, y) => {
-			if (panel.isFileExplorerSource()) {
+		addEventListener('on_mouse_lbtn_dblclk', (x, y, mask) => {
+			if (this.enabled) {
 				but.lbtn_dn(x, y);
 				if (ppt.searchShow) { search.lbtn_dblclk(x, y); }
-				this.on_mouse_lbtn_dblclk(x, y);
+				this.on_mouse_lbtn_dblclk(x, y, mask);
 			}
 		});
 
-		addEventListener('on_mouse_lbtn_up', (x, y) => {
-			if (panel.isFileExplorerSource()) { this.on_mouse_lbtn_up(x, y); }
+		addEventListener('on_mouse_lbtn_up', (x, y, mask) => {
+			if (this.enabled) { this.on_mouse_lbtn_up(x, y, mask); }
 		});
 
-		addEventListener('on_mouse_rbtn_down', (x, y) => {
-			if (panel.isFileExplorerSource()) { this.on_mouse_rbtn_down(x, y); }
+		addEventListener('on_mouse_rbtn_down', (x, y, mask) => {
+			if (this.enabled) { this.on_mouse_rbtn_down(x, y, mask); }
 		});
 
-		addEventListener('on_mouse_move', (x, y) => {
-			if (panel.isFileExplorerSource()) {
-				if (panel.m.x == x && panel.m.y == y) { return; }
+		addEventListener('on_mouse_move', (x, y, mask) => {
+			if (this.enabled) {
+				if (this.m.x == x && this.m.y == y) { return; }
 				pop.hand = false;
 				if (ui.style.topBarShow || ppt.sbarShow) but.move(x, y);
-				if (ppt.searchShow) search.move(x, y);
 				sbar.move(x, y);
 				ui.zoomDrag(x, y);
-				this.on_mouse_move(x, y);
+				this.on_mouse_move(x, y, mask);
 				panel.m.x = x;
 				panel.m.y = y;
 			}
 		});
 
 		addEventListener('on_mouse_wheel', (step) => {
-			if (panel.isFileExplorerSource()) { this.on_mouse_wheel(step); }
+			if (this.enabled) { this.on_mouse_wheel(step); }
 		});
 
 		addEventListener('on_mouse_leave', () => {
-			if (panel.isFileExplorerSource()) { this.on_mouse_leave(); }
+			if (this.enabled) { this.on_mouse_leave(); }
 		});
 
 		addEventListener('on_key_down', (vKey) => {
-			if (panel.isFileExplorerSource()) { this.on_key_down(vKey); }
+			if (this.enabled) { this.on_key_down(vKey); }
 		});
 	}
 
@@ -1509,6 +1557,7 @@ class FileNode {
 		this.totalItems = 0;
 		this.hover = false;
 		this.markerHover = false;
+		this.iconHover = false;
 		this.pathSum = [];
 		this.data = {};
 		/** @type {'unknown'|'music'|'text'|'image'|'archive'} */
@@ -1660,9 +1709,10 @@ class FileNode {
 		// Draw label
 		gr.GdiDrawText(this.label, (this.hover && !this.markerHover && this.type != 'root' ? explorer.font.hover : explorer.font.main), labelCol, this.x, this.y - explorer.treeLineH / 8, ui.w - this.x - 3, explorer.treeLineH, DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 	}
-	checkMouse(event, x, y) {
+	checkMouse(event, x, y, mask) {
 		let tmpRetroIndentW = this.retroIndentW - explorer.treeIndentW;
 		this.markerHover = x <= this.x - this.retroIndentW + tmpRetroIndentW;
+		this.iconHover = x <= this.x;
 		let textAreaW;
 		if (this.labelWidth > ui.w - this.x) {
 			textAreaW = ui.w - this.x;
@@ -1689,48 +1739,56 @@ class FileNode {
 				}
 				if (this.hover) {
 					this.held = true;
-					switch (this.type) {
-						case 'drive':
-						case 'folder':
-						case 'favorite':
-						case 'favorites':
-						case 'computer':
-							// check if drive ready before resuming
-							if (this.type == 'drive') {
-								if (!_isFolder(this.path)) {
-									window.Repaint();
-									return true;
-								}
-							}
-							// ex node cloning: tmp_item = new objClone(this,true);
-							if (this.collapsed && !this.childChecked) {
-								window.SetCursor(IDC_APPSTARTING);
-								explorer.fillTreeLevel(this.path, this, false);
-								window.SetCursor(IDC_ARROW);
-							}
-							this.collapsed = !this.collapsed;
-
-							if (!this.markerHover) {
-								if (ppt.autoCollapse) explorer.yOffset = 0;
-								explorer.lineCounter = 0;
-								explorer.scanExpanded(null, explorer.root, false);
-								if (ppt.autoCollapse) {
-									if (this.Cy > ui.h - explorer.treeLineH) {
-										explorer.yOffset = explorer.yOffset - this.Cy + ui.h / 2;
-										if (explorer.yOffset > 0) explorer.yOffset = 0;
+					if (utils.IsKeyPressed(VK_ALT)) {
+						switch (this.type) {
+							case 'drive':
+							case 'folder':
+							case 'favorite':
+							case 'file':
+								switch (explorer.altClickAction) {
+									case 1: explorer.addtoPls(plman.ActivePlaylist, this); break;
+									case 2: explorer.addToQueue(this); break;
+									case 0:
+									default: {
+										const idx = plman.FindOrCreatePlaylist(explorer.libPlaylistName, true);
+										explorer.addtoPls(idx, this);
+										break;
 									}
 								}
-							}
-							explorer.maxDeltaH = 0;
-							window.Repaint();
-							break;
-						case 'file':
-							window.Repaint();
-							break;
-						case 'root':
-							window.Repaint();
-							break;
-						default:
+								break;
+						}
+					} else {
+						switch (this.type) {
+							case 'drive':
+							case 'folder':
+							case 'favorite':
+							case 'favorites':
+							case 'computer':
+								// check if drive ready before resuming
+								if (this.type == 'drive') {
+									if (!_isFolder(this.path)) {
+										window.Repaint();
+										return true;
+									}
+								}
+								if (this.markerHover || this.iconHover) {
+									if (this.collapsed && !this.childChecked) {
+										window.SetCursor(IDC_APPSTARTING);
+										explorer.fillTreeLevel(this.path, this, false);
+										window.SetCursor(IDC_ARROW);
+									}
+									this.collapsed = !this.collapsed;
+									explorer.maxDeltaH = 0;
+								}
+								window.Repaint();
+								break;
+							case 'file':
+								window.Repaint();
+								break;
+							case 'root':
+								window.Repaint();
+								break;
+						}
 					}
 				} else {
 					if (this.redrawDrives) window.Repaint();
@@ -1784,7 +1842,15 @@ class FileNode {
 						switch (this.fType) {
 							case 'archive':
 							case 'music': {
-								plman.AddLocations(plman.ActivePlaylist, [this.path], false);
+								if (utils.IsKeyPressed(VK_ALT)) { explorer.removeFromQueue(this); break; }
+								switch (explorer.dblClickAction) {
+									case 1:
+									case 2: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
+									case 3: explorer.addToQueue(this, { play: true });
+										break;
+									case 0:
+									default: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
+								}
 								break;
 							}
 							case 'text':
@@ -1800,8 +1866,18 @@ class FileNode {
 							default:
 								_runCmd('CMD /C START ' + getShortPath(this.path, true), false, 0);
 						}
-					} else if (!['root', 'favorites', 'computer'].includes(this.type)) {
-						plman.AddLocations(plman.ActivePlaylist, [this.path], false);
+					} else if (['root', 'favorites', 'computer'].includes(this.type)) {
+						this.checkMouse('down', this.x, y, mask);
+					} else {
+						if (utils.IsKeyPressed(VK_ALT)) { explorer.removeFromQueue(this); break; }
+						switch (explorer.dblClickAction) {
+							case 1: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
+							case 2: this.checkMouse('down', this.x, y, mask); break;
+							case 3: explorer.addToQueue(this, { play: true });
+								break;
+							case 0:
+							default: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
+						}
 					}
 				}
 				break;

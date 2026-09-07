@@ -17,13 +17,13 @@ Shortcuts:
 Menus:
 ------------
 • R. Click on Root, Favorites or Computer to open associated menus.
-• Dbl. L. Click on Favorite, Folder or Drive nodes to send all nested
-  files to current playlist.
 
 UI:
 ------------
 • L. Click Horizontal dragging for horizontal scrolling.
 • Mouse Wheel for vertical scrolling.
+• L. Click on + marker or node icon to Collapse|Expand node.
+• Same mouse actions than any other source (check Behaviour tab).
 
 General notes:
 --------------

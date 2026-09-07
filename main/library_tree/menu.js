@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//07/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1923,7 +1923,7 @@ class MenuItems {
 
 	// Regorxxx <- External integration | Internal cache of views | Preset rules
 	setSource(i, { bOmitMsg = false, bProcessTree = true, bSkipPresets = false } = {}) {
-		if (ppt.libSource === 5) { but.refresh(); } // Regorxxx <- File explorer mode ->
+		if (panel.isFileExplorerSource() && i !== 5) { explorer.exit(); but.refresh(); } // Regorxxx <- File explorer mode ->
 		switch (i) {
 			case 0: // Library
 				ppt.libSource = 1;
