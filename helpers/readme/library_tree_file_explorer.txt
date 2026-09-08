@@ -12,7 +12,7 @@ Shortcuts:
 • Alt + Up: Jump to first node within same level.
 • Alt + Down: Jump to last node within same level.
 • Num *: Expand current node.
-• Num -: Collapse all node.
+• Num -: Collapse all nodes.
 
 Menus:
 ------------
@@ -43,3 +43,19 @@ General notes:
 • Actions via menus which send [found] tracks to playlist will respect
   filter settings and send tracks found only on parent folder,
   without nesting or recursion (contrary to Dbl. L. Click).
+
+Differences with WSH Tree Explorer:
+------------------------------------------
+• Performance improvements, code cleanup and a lot of fixes.
+
+• Async file/folder size calculation.
+
+• Support on Unix systems with native JS-host methods.
+
+• Configurable mouse actions.
+
+• Icon effects on open/close.
+
+• Configurable mouse actions and expanded context menus.
+
+• Folders's contents can be loaded without first opening them.

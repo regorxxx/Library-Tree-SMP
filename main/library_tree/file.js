@@ -1,12 +1,12 @@
 'use strict';
-//07/09/26
+//08/09/26
 
 /* exported FileExplorer */
 
 /* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable, VK_ALT:readable */
 /* global folders:readable */
-/* global tryGetter:readable, tryMethod:readable */
+/* global tryGetter:readable, tryMethod:readable, strNumCollator:readable */
 /* global capitalize:readable */
 /* global Flag:readable */
 /* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable, _isFolder:readable, _moveFile:readable, getDrive:readable, getDrives:readable, getShortPath:readable */
@@ -91,6 +91,7 @@ class FileExplorer {
 			['File Explorer: Calculate file/folder size async', true, 'explCalcSizeAsync'],
 			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
 			['File Explorer: Sort Items', true, 'explSort'],
+			['File Explorer: Show Playlists', false, 'explShowPlaylists'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
 			['File Explorer: Fav Paths', '', 'explFavPaths'],
@@ -100,6 +101,7 @@ class FileExplorer {
 		ppt.init('auto', properties);
 		this.scrollbarW = 16;
 		this.sort = ppt.explSort;
+		this.showPlaylists = ppt.explShowPlaylists;
 		this.showFavorites = ppt.explShowFavorites;
 		this.showFilesystem = ppt.explShowFilesystem;
 		this.fileFilters = ppt.explFileFilters.split(';');
@@ -140,6 +142,7 @@ class FileExplorer {
 		this.maxDeltaH = 0;
 		this.vCursorW = this.scrollbarW;
 		this.vCursorH = 20;
+		this.plsNodeIdx = -1;
 		this.favNodeIdx = -1;
 		this.fileNodeIdx = -1;
 		this.tree = [];
@@ -303,7 +306,7 @@ class FileExplorer {
 		}
 	}
 
-	fillTreeLevel(path, node, recursive) {
+	fillDirLevel(path, node, recursive) {
 		if (this.smpFileMethods) {
 			const folders = findRecursiveDirs(path, 0).map((subFolder) => path + subFolder);
 			node.childChecked = true;
@@ -316,19 +319,7 @@ class FileExplorer {
 			}
 			// sort folders on label
 			if (this.sort && !recursive) node.child = this.sortTab(node.child);
-			// checking for files in the current folder
-			const files = findRecursiveFile('*.*', [path], 0);
-			const bFilter = this.fileFilters.length > 0;
-			for (const file of files) {
-				const [, fileName, ext] = utils.SplitFilePath(file);
-				let child;
-				if (bFilter) {
-					if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
-						child = node.addItem(fileName + ext, file);
-					}
-				} else { child = node.addItem(fileName + ext, file); }
-				if (this.calcSize) { this.addFileSizeData(child); }
-			}
+			return path;
 		} else {
 			const oFolder = tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
 			if (!oFolder) { return; }
@@ -347,6 +338,30 @@ class FileExplorer {
 			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 			// sort folders on label
 			if (this.sort && !recursive) node.child = this.sortTab(node.child);
+			return oFolder;
+		}
+	}
+
+	fillFileLevel(path, node, recursive) {
+		if (this.smpFileMethods) {
+			// checking for files in the current folder
+			const files = findRecursiveFile('*.*', [path], 0);
+			const bFilter = this.fileFilters.length > 0;
+			for (const file of files) {
+				const [, fileName, ext] = utils.SplitFilePath(file);
+				let child;
+				if (bFilter) {
+					if (this.fileFilters.some((f) => ('.' + f.toLowerCase()) === ext.toLowerCase())) {
+						child = node.addItem(fileName + ext, file);
+					}
+				} else { child = node.addItem(fileName + ext, file); }
+				if (this.calcSize) { this.addFileSizeData(child); }
+			}
+		} else {
+			const oFolder = typeof path === 'object'
+				? path
+				: tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
+			if (!oFolder) { return; }
 			// checking for files in the current folder
 			const bFilter = this.fileFilters.length > 0;
 			try {
@@ -371,6 +386,18 @@ class FileExplorer {
 		if (this.sort && !recursive) node.item = this.sortTab(node.item);
 	}
 
+	fillTreeLevel(path, node, recursive) {
+		const oFolder = this.fillDirLevel(path, node, recursive);
+		this.fillFileLevel(oFolder, node, recursive);
+	}
+
+	fillPlaylists(node) {
+		for (let i = 0; i < plman.PlaylistCount; i++) {
+			node.addChild(plman.GetPlaylistName(i), i, { guid: plman.GetGUID(i), size: plman.PlaylistItemCount(i), type: plman.IsAutoPlaylist(i) ? 'AutoPlaylist' : 'Playlist' });
+			node.child[node.child.length - 1].type = 'playlist';
+		}
+	}
+
 	fillFavorites(node) {
 		this.favLabels = ppt.explFavLabels.split(';');
 		this.favPaths = ppt.explFavPaths.split(';');
@@ -385,7 +412,8 @@ class FileExplorer {
 		let i = 0;
 		this.favLabels = [];
 		this.favPaths = [];
-		for (const item of this.root.child[this.favNodeIdx].child) {
+		const favRoot = this.root.child[this.favNodeIdx];
+		for (const item of favRoot.child) {
 			item.idx = i;
 			this.favLabels.push(item.label);
 			this.favPaths.push(item.path);
@@ -466,8 +494,9 @@ class FileExplorer {
 	refreshDrives() {
 		let i, node;
 		this.redrawDrives = false;
-		for (i = 0; i < this.root.child[this.fileNodeIdx].child.length; i++) {
-			node = this.root.child[this.fileNodeIdx].child[i];
+		const fileRoot = this.root.child[this.fileNodeIdx];
+		for (i = 0; i < fileRoot.child.length; i++) {
+			node = fileRoot.child[i];
 			// check if drive ready before resuming
 			if (node.type == 'drive') {
 				try {
@@ -488,7 +517,7 @@ class FileExplorer {
 						node.childChecked = true;
 					}
 				} catch (e) { // eslint-disable-line no-unused-vars
-					this.root.child[this.fileNodeIdx].child.splice(i, 1);
+					fileRoot.child.splice(i, 1);
 				}
 			}
 		}
@@ -499,32 +528,33 @@ class FileExplorer {
 		// build of all images
 		this.on_size();
 		this.setImages();
-		if (this.showFavorites) {
-			this.favNodeIdx = 0;
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 1;
-			}
-		} else {
-			if (this.showFilesystem) {
-				this.fileNodeIdx = 0;
-			}
-		}
+		let idx = 0;
+		if (this.showPlaylists) { this.plsNodeIdx = idx++; }
+		if (this.showFavorites) { this.favNodeIdx = idx++; }
+		if (this.showFilesystem) { this.fileNodeIdx = idx++; }
 		if (typeof this.root.label === 'undefined' || bReset) {
 			this.root.init({ label: 'Root', level: 0, idx: 0, type: 'root' });
 			this.root.childChecked = true;
-			// favorites
+			if (this.showPlaylists) {
+				this.root.addChild('Playlists', '');
+				const plsRoot = this.root.child[this.plsNodeIdx];
+				plsRoot.childChecked = true;
+				plsRoot.type = 'playlists';
+				this.fillPlaylists(plsRoot);
+			}
 			if (this.showFavorites) {
 				this.root.addChild('Favorites', '');
-				this.root.child[this.favNodeIdx].childChecked = true;
-				this.root.child[this.favNodeIdx].type = 'favorites';
-				this.fillFavorites(this.root.child[this.favNodeIdx]);
+				const favRoot = this.root.child[this.favNodeIdx];
+				favRoot.childChecked = true;
+				favRoot.type = 'favorites';
+				this.fillFavorites(favRoot);
 			}
-			// drives
 			if (this.showFilesystem) {
 				this.root.addChild('Computer', '');
-				this.root.child[this.fileNodeIdx].childChecked = true;
-				this.root.child[this.fileNodeIdx].type = 'computer';
-				this.fillDrives(this.root.child[this.fileNodeIdx]);
+				const fileRoot = this.root.child[this.fileNodeIdx];
+				fileRoot.childChecked = true;
+				fileRoot.type = 'computer';
+				this.fillDrives(fileRoot);
 			}
 		}
 		if (ppt.explInit && fb.GetLibraryRoots) {
@@ -996,6 +1026,57 @@ class FileExplorer {
 			this.img.networkDrive.ReleaseGraphics(gb);
 		}
 
+		if (!this.img.playlists) {
+			this.img.playlists = gdi.CreateImage(20, 16);
+			gb = this.img.playlists.GetGraphics();
+			gb.SetSmoothingMode(0);
+			let pl_points = new Array(3, 5, 7, 1, 14, 1, 14, 14, 3, 14);
+			gb.FillPolygon($.RGB(170, 210, 240), 0, pl_points);
+			gb.DrawPolygon($.RGB(140, 170, 210), 0, pl_points);
+			gb.FillSolidRect(6, 5, 6, 1, $.RGB(240, 240, 240));
+			gb.FillSolidRect(6, 8, 6, 1, $.RGB(240, 240, 240));
+			gb.FillSolidRect(6, 11, 6, 1, $.RGB(240, 240, 240));
+			this.img.playlists.ReleaseGraphics(gb);
+		}
+
+		if (!this.img.playlist) {
+			this.img.playlist = gdi.CreateImage(20, 16);
+			gb = this.img.playlist.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(2, 2 + 0, 3, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(2, 2 + 0, 3, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			gb.FillRoundRect(7, 2 + 0, 9, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(7, 2 + 0, 9, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			gb.FillRoundRect(2, 2 + 4, 3, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(2, 2 + 4, 3, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			gb.FillRoundRect(7, 2 + 4, 9, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(7, 2 + 4, 9, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			gb.FillRoundRect(2, 2 + 8, 3, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(2, 2 + 8, 3, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			gb.FillRoundRect(7, 2 + 8, 9, 2, 1, 1, $.RGB(160, 190, 220));
+			gb.DrawRoundRect(7, 2 + 8, 9, 2, 1, 1, 1, $.RGB(120, 150, 190));
+			this.img.playlist.ReleaseGraphics(gb);
+		}
+
+		if (!this.img.autoplaylist) {
+			this.img.autoplaylist = gdi.CreateImage(20, 16);
+			gb = this.img.autoplaylist.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(2, 2 + 0, 3, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(2, 2 + 0, 3, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			gb.FillRoundRect(7, 2 + 0, 9, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(7, 2 + 0, 9, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			gb.FillRoundRect(2, 2 + 4, 3, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(2, 2 + 4, 3, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			gb.FillRoundRect(7, 2 + 4, 9, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(7, 2 + 4, 9, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			gb.FillRoundRect(2, 2 + 8, 3, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(2, 2 + 8, 3, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			gb.FillRoundRect(7, 2 + 8, 9, 2, 1, 1, $.RGB(220, 190, 160));
+			gb.DrawRoundRect(7, 2 + 8, 9, 2, 1, 1, 1, $.RGB(190, 150, 120));
+			this.img.autoplaylist.ReleaseGraphics(gb);
+		}
+
 		if (!this.img.vCursor) {
 			this.img.vCursor = gdi.CreateImage(this.vCursorW, this.vCursorH);
 			gb = this.img.vCursor.GetGraphics();
@@ -1008,12 +1089,15 @@ class FileExplorer {
 
 	showContextMenu(node, x, y) {
 		const menu = new _menu();
+		const plsRoot = this.root.child[this.plsNodeIdx];
+		const favRoot = this.root.child[this.favNodeIdx];
+		const fileRoot = this.root.child[this.fileNodeIdx];
 		// Helpers
 		const refreshPlsNodes = () => {
-			if (this.root.child[0].child.length > 0) { this.root.child[0].child.splice(0, this.root.child[0].child.length); }
-			this.FillPlaylists(this.root.child[0]);
-			this.root.child[0].childChecked = true;
-			this.root.child[0].collapsed = false;
+			if (plsRoot.child.length > 0) { plsRoot.child.splice(0, plsRoot.child.length); }
+			this.fillPlaylists(plsRoot);
+			plsRoot.childChecked = true;
+			plsRoot.collapsed = false;
 			window.Repaint();
 		};
 		// Menu
@@ -1036,6 +1120,13 @@ class FileExplorer {
 				menu.newSeparator();
 				{
 					const menuName = menu.newMenu('Show');
+					menu.newEntry({
+						menuName,
+						entryText: 'Playlists', func: () => {
+							this.showPlaylists = ppt.toggle('explShowPlaylists');
+							this.resetTree();
+						}, checkFunc: () => this.showPlaylists
+					});
 					menu.newEntry({
 						menuName,
 						entryText: 'Favorites', func: () => {
@@ -1098,6 +1189,40 @@ class FileExplorer {
 				});
 				break;
 			case 'playlists':
+				menu.newEntry({ entryText: 'Playlists:', flags: MF_GRAYED });
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'New AutoPlaylist...', func: () => {
+						const new_idx = plman.PlaylistCount;
+						plman.CreateAutoPlaylist(new_idx, '', '');
+						plman.MovePlaylist(new_idx, node.path + 1);
+						plman.ActivePlaylist = node.path + 1;
+						plman.ShowAutoPlaylistUI(node.path + 1);
+						refreshPlsNodes();
+					}
+				});
+				menu.newEntry({
+					entryText: 'New playlist', func: () => {
+						const new_idx = plman.PlaylistCount;
+						plman.CreatePlaylist(new_idx, '');
+						plman.MovePlaylist(new_idx, node.path + 1);
+						plman.ActivePlaylist = node.path + 1;
+						refreshPlsNodes();
+					}
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Load...', func: () => {
+						fb.LoadPlaylist();
+					}
+				});
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Show Playlists node', func: () => {
+						this.showPlaylists = ppt.toggle('explShowPlaylists');
+						this.resetTree();
+					}, checkFunc: () => this.showPlaylists
+				});
 				break;
 			case 'playlist':
 				menu.newEntry({
@@ -1116,53 +1241,33 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Rename this playlist...', func: () => {
-						let newname = utils.InputBox(0, 'Actual Playlist name: ' + node.label, 'Rename a Playlist', node.label);
-						if (typeof newname === 'undefined' || !newname || newname == '') newname = node.label;
-						if (newname.length > 1 || (newname.length == 1 && (newname >= 'a' && newname <= 'z') || (newname >= 'A' && newname <= 'Z') || (newname >= '0' && newname <= '9'))) {
-							plman.RenamePlaylist(node.path, newname);
-							node.label = newname;
+					entryText: 'Rename...', func: () => {
+						const input = Input.string('string', node.label, 'New playlist name:', 'Rename Playlist: ' + node.label, 'My Playlist');
+						if (input === null) { return; }
+						if (input.length > 1 || Input.is.latinAlphabet()) {
+							plman.RenamePlaylist(node.path, input);
+							node.label = input;
 							window.Repaint();
 						}
 					}
 				});
 				menu.newEntry({
-					entryText: 'Delete this playlist...', func: () => {
-						plman.RemovePlaylist(node.idx);
-						refreshPlsNodes();
-					}
-				});
-				menu.newEntry({
-					entryText: 'Save this playlist...', func: () => {
-						fb.SavePlaylist();
-					}
-				});
-				menu.newEntry({
-					entryText: 'Duplicate this playlist', func: () => {
+					entryText: 'Duplicate', func: () => {
 						plman.DuplicatePlaylist(node.path, 'Copy of ' + node.label);
 						plman.ActivePlaylist = node.path + 1;
 						refreshPlsNodes();
 					}
 				});
-				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Insert a new AutoPlaylist...', func: () => {
-						const new_idx = plman.PlaylistCount;
-						plman.CreateAutoPlaylist(new_idx, '', '');
-						plman.MovePlaylist(new_idx, node.path + 1);
-						plman.ActivePlaylist = node.path + 1;
-						plman.ShowAutoPlaylistUI(node.path + 1);
-						refreshPlsNodes();
-					}
-				});
+
 				if (plman.IsAutoPlaylist(node.path)) {
+					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'AutoPlaylist Properties...', func: () => {
 							plman.ShowAutoPlaylistUI(node.path);
 						}
 					});
 					menu.newEntry({
-						entryText: 'Convert to a normal Playlist', func: () => {
+						entryText: 'Convert to Playlist', func: () => {
 							plman.DuplicatePlaylist(node.path, node.label);
 							plman.RemovePlaylist(node.path);
 							plman.ActivePlaylist = node.path;
@@ -1172,22 +1277,26 @@ class FileExplorer {
 				}
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Insert a new playlist', func: () => {
-						const new_idx = plman.PlaylistCount;
-						plman.CreatePlaylist(new_idx, '');
-						plman.MovePlaylist(new_idx, node.path + 1);
-						plman.ActivePlaylist = node.path + 1;
+					entryText: 'Delete', func: () => {
+						plman.RemovePlaylist(node.path);
 						refreshPlsNodes();
 					}
 				});
 				menu.newEntry({
-					entryText: 'Load a playlist...', func: () => {
-						fb.LoadPlaylist();
+					entryText: 'Save...', func: () => {
+						fb.SavePlaylist();
 					}
 				});
 				break;
 			case 'favorites':
 				menu.newEntry({ entryText: 'Favorites:', flags: MF_GRAYED });
+				menu.newSeparator();
+				menu.newEntry({
+					entryText: 'Alphabetically sort', func: () => {
+						favRoot.child.sort((a, b) => strNumCollator.compare(a.label, b.label));
+						this.refreshFavorites();
+					}
+				});
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Edit paths', func: () => {
@@ -1218,14 +1327,27 @@ class FileExplorer {
 			case 'favorite':
 				if (node.enabled) {
 					menu.newEntry({
-						entryText: 'Remove from Favorites', func: () => {
-							this.root.child[this.favNodeIdx].child.splice(node.idx, 1);
+						entryText: 'Move Up', func: () => {
+							favRoot.child.swap(node.idx, node.idx - 1);
+							this.refreshFavorites();
+						}, flags: node.idx > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+					});
+					menu.newEntry({
+						entryText: 'Move Down', func: () => {
+							favRoot.child.swap(node.idx, node.idx + 1);
+							this.refreshFavorites();
+						}, flags: node.idx < favRoot.child.length ? MF_STRING : MF_GRAYED | MF_DISABLED
+					});
+					menu.newSeparator();
+					menu.newEntry({
+						entryText: 'Remove', func: () => {
+							favRoot.child.splice(node.idx, 1);
 							this.refreshFavorites();
 							window.Repaint();
 						}
 					});
 					menu.newEntry({
-						entryText: 'Refresh folder content...', func: () => {
+						entryText: 'Refresh contents', func: () => {
 							if (node.child.length > 0) node.child.splice(0, node.child.length);
 							if (node.item.length > 0) node.item.splice(0, node.item.length);
 							this.fillTreeLevel(node.path, node, false);
@@ -1237,24 +1359,27 @@ class FileExplorer {
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
+							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
-						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newEntry({
 						entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
+							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node);
-						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
+							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(-1, node, { create: true });
-						}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 				} else {
 					menu.newEntry({
 						entryText: 'Remove from Favorites (dead link)', func: () => {
-							this.root.child[this.favNodeIdx].child.splice(node.idx, 1);
+							favRoot.child.splice(node.idx, 1);
 							this.refreshFavorites();
 							window.Repaint();
 						}
@@ -1268,8 +1393,8 @@ class FileExplorer {
 					entryText: 'Refresh content...', func: () => {
 						if (node.child.length > 0) node.child.splice(0, node.child.length);
 						if (node.item.length > 0) node.item.splice(0, node.item.length);
-						this.fillDrives(this.root.child[this.fileNodeIdx]);
-						this.root.child[this.fileNodeIdx].childChecked = false;
+						this.fillDrives(fileRoot);
+						fileRoot.childChecked = false;
 						this.refreshDrives();
 						window.Repaint();
 					}
@@ -1287,9 +1412,9 @@ class FileExplorer {
 				if (node.type == 'folder' && this.showFavorites) {
 					menu.newEntry({
 						entryText: 'Add folder to Favorites', func: () => {
-							this.root.child[this.favNodeIdx].addChild(node.label, node.path);
-							this.root.child[this.favNodeIdx].child[this.root.child[this.favNodeIdx].child.length - 1].type = 'favorite';
-							this.root.child[this.favNodeIdx].collapsed = false;
+							favRoot.addChild(node.label, node.path);
+							favRoot.child[favRoot.child.length - 1].type = 'favorite';
+							favRoot.collapsed = false;
 							this.refreshFavorites();
 							window.Repaint();
 						}
@@ -1313,19 +1438,22 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
+						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node, { clear: true });
-					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
 					entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
+						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node);
-					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
+						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(-1, node, { create: true });
-					}, flags: node.item.length > 0 ? MF_STRING : MF_GRAYED | MF_DISABLED
+					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				break;
 			case 'file':
@@ -1546,7 +1674,7 @@ class FileNode {
 		this.level = 0;
 		this.idx = -1;
 		this.pIdx = -1;
-		/** @type {'root'|'computer'|'folder'|'file'|'favorite'|'favorites'|'drive'} */
+		/** @type {'root'|'computer'|'folder'|'file'|'favorite'|'favorites'|'drive'|'playlist'|'playlists'} */
 		this.type = '';
 		this.enabled = true;
 		this.ready = true;
@@ -1591,21 +1719,20 @@ class FileNode {
 		return node;
 	};
 	addData(data = {}) {
-		for (let key in data) {
-			this.data[key] = data[key];
-		}
+		for (let key in data) { this.data[key] = data[key]; }
 		return this;
 	};
 	addItem(label, path, data = {}) {
 		this.totalItems++;
-		this.item.push(
-			new FileNode({
-				label, path, level: this.level + 1,
-				idx: this.item.length, pIdx: this.idx, type: 'file',
-				collapsed: true, pathSum: this.pathSum,
-				data
-			})
-		);
+		const node = new FileNode({
+			label, path, level: this.level + 1,
+			idx: this.item.length, pIdx: this.idx, type: 'file',
+			collapsed: true, pathSum: this.pathSum,
+			data
+		});
+		node.fType = explorer.getType(node.label.split('.').at(-1));
+		this.item.push(node);
+		return node;
 	}
 	checkPos(y) {
 		this.Cx = Math.floor(explorer.treePadX + explorer.xOffset + explorer.treeIndentW * (this.level + 1));
@@ -1614,26 +1741,18 @@ class FileNode {
 	draw(gr, y) {
 		let iconAlpha = 255;
 		let labelCol = explorer.col.text;
-
 		this.x = Math.floor(explorer.treePadX + explorer.xOffset + explorer.treeIndentW * (this.level + 1));
 		this.y = Math.floor(explorer.treePadY + y);
 		this.retroIndentW = explorer.treeIndentW;
-
-		// we don't draw lines not visible
+		// Skip not visible lines
 		if (this.y + explorer.treeLineH < 0 || this.y > ui.h) return true;
 		if (this.y < explorer.y) { return true; }
-		// end.
 		let icon;
 		switch (this.type) {
 			case 'folder':
 				icon = this.collapsed ? explorer.img.folder : explorer.img.folderOpen;
 				break;
 			case 'file': {
-				let i;
-				for (i = this.label.length; i >= 0; i--) {
-					if (this.label.charAt(i) == '.') break;
-				}
-				this.fType = explorer.getType(this.label.substring(i + 1, this.label.length));
 				switch (this.fType) {
 					case 'music':
 						icon = explorer.img.musicFile; break;
@@ -1648,6 +1767,14 @@ class FileNode {
 				}
 				break;
 			}
+			case 'playlists':
+				icon = explorer.img.playlists;
+				break;
+			case 'playlist':
+				icon = plman.IsAutoPlaylist(this.path)
+					? explorer.img.autoplaylist
+					: explorer.img.playlist;
+				break;
 			case 'favorites':
 				icon = explorer.img.favorites;
 				break;
@@ -1680,7 +1807,7 @@ class FileNode {
 		}
 		if (icon) {
 			// collapse/expand icon
-			if (this.type != 'root' && this.type != 'file') {
+			if (this.type != 'root' && this.type != 'file' && this.type != 'playlist') {
 				this.retroIndentW += explorer.markerIndentW;
 				const marker = this.collapsed ? explorer.img.plus : explorer.img.minus;
 				if (!(this.childChecked && this.child.length == 0 && this.item.length == 0)) {
@@ -1741,9 +1868,10 @@ class FileNode {
 					this.held = true;
 					if (utils.IsKeyPressed(VK_ALT)) {
 						switch (this.type) {
-							case 'drive':
 							case 'folder':
-							case 'favorite':
+							case 'drive': // NOSONAR[fallthrough]
+								if (!this.childChecked) { explorer.fillTreeLevel(this.path, this, false); }
+							case 'favorite': // eslint-disable-line no-fallthrough
 							case 'file':
 								switch (explorer.altClickAction) {
 									case 1: explorer.addtoPls(plman.ActivePlaylist, this); break;
@@ -1764,6 +1892,7 @@ class FileNode {
 							case 'favorite':
 							case 'favorites':
 							case 'computer':
+							case 'playlists':
 								// check if drive ready before resuming
 								if (this.type == 'drive') {
 									if (!_isFolder(this.path)) {
@@ -1780,6 +1909,10 @@ class FileNode {
 									this.collapsed = !this.collapsed;
 									explorer.maxDeltaH = 0;
 								}
+								window.Repaint();
+								break;
+							case 'playlist':
+								plman.ActivePlaylist = this.idx;
 								window.Repaint();
 								break;
 							case 'file':
@@ -1812,12 +1945,19 @@ class FileNode {
 						case 'computer':
 							ttText = 'R. Click to open Filesystem menu';
 							break;
+						case 'playlist':
+							ttText = this.label +
+								'\n' +
+								'\nIdx:\t' + this.path +
+								'\nType:\t' + (this.data.type || '?') +
+								'\nTracks:\t' + (Object.hasOwn(this.data, 'size') ? this.data.size : '?');
+							break;
 						default:
 							ttText = this.label +
 								'\n' +
 								'\nPath:\t' + (this.path || '-') +
 								'\nType:\t' + capitalize(this.type) + (this.fType === 'unknown' ? '' : ' (' + this.fType + ')') +
-								'\nSize:\t' + (this.data.size || '?');
+								'\nSize:\t' + (Object.hasOwn(this.data, 'size') ? this.data.size : '?');
 					}
 					if (tooltip.Text != ttText) {
 						tooltip.Deactivate();
@@ -1866,10 +2006,11 @@ class FileNode {
 							default:
 								_runCmd('CMD /C START ' + getShortPath(this.path, true), false, 0);
 						}
-					} else if (['root', 'favorites', 'computer'].includes(this.type)) {
+					} else if (['root', 'favorites', 'computer', 'playlists'].includes(this.type)) {
 						this.checkMouse('down', this.x, y, mask);
 					} else {
 						if (utils.IsKeyPressed(VK_ALT)) { explorer.removeFromQueue(this); break; }
+						if (!this.childChecked) { explorer.fillTreeLevel(this.path, this, false); }
 						switch (explorer.dblClickAction) {
 							case 1: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
 							case 2: this.checkMouse('down', this.x, y, mask); break;
