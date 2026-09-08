@@ -1,5 +1,5 @@
 'use strict';
-//10/08/26
+//08/09/26
 
 /* exported Input */
 
@@ -218,7 +218,7 @@ const Input = Object.freeze({
 	 * @name string
 	 * @kind method
 	 * @memberof Input
-	 * @param {'string'|'trimmed string'|'unicode'|'path'|'file'|'url'|'file|url'} type
+	 * @param {'string'|'trimmed string'|'unicode'|'path'|'file'|'url'|'file|url'|'ascii printable'} type
 	 * @param {String} oldVal
 	 * @param {String} message
 	 * @param {String} title
@@ -228,7 +228,7 @@ const Input = Object.freeze({
 	 * @returns {null|String}
 	 */
 	string: function (type, oldVal, message, title, example, checks = [], bFilterEmpty = false) {
-		const types = new Set(['string', 'trimmed string', 'unicode', 'path', 'file', 'url', 'file|url']);
+		const types = new Set(['string', 'trimmed string', 'unicode', 'path', 'file', 'url', 'file|url', 'ascii printable']);
 		this.data.last = oldVal; this.data.lastInput = null;
 		if (!types.has(type)) { throw new Error('Invalid type: ' + type); }
 		let input, newVal;
@@ -269,6 +269,20 @@ const Input = Object.freeze({
 						if (bFilterEmpty) { throw new Error('Empty'); }
 					} else if (type === 'path' && !newVal.endsWith('\\')) { newVal += '\\'; }
 					newVal = this.sanitizePath(newVal);
+					break;
+				}
+				case 'ascii printable': {
+					if (!newVal.length) {
+						if (bFilterEmpty) { throw new Error('Empty'); }
+					}
+					newVal = newVal.replace(/[^\x20-\x7E]/g, '');
+					break;
+				}
+				case 'latin alphabet': {
+					if (!newVal.length) {
+						if (bFilterEmpty) { throw new Error('Empty'); }
+					}
+					newVal = newVal.replace(/([\x30-\x39]|[\x41-\x5A]|[\x61-\x7A])|./g, '$1');
 					break;
 				}
 			}
@@ -338,5 +352,17 @@ const Input = Object.freeze({
 		if (!value || !value.length) { return ''; }
 		const disk = (value.match(/^\w:\\/g) || [''])[0];
 		return disk + (disk && disk.length ? value.replace(disk, '') : value).replace(/\//g, '\\').replace(/[|–‐—-]/g, '-').replace(/\*/g, 'x').replace(/"/g, '\'\'').replace(/[<>]/g, '_').replace(/[?:]/g, '').replace(/(?! )\s/g, '');
+	},
+	is: {
+		latinAlphabet: function (val = Input.data.lastInput) {
+			return typeof val === 'string'
+				? /(?:[\x30-\x39]|[\x41-\x5A]|[\x61-\x7A])+/.test(val)
+				: false;
+		},
+		asciiPrintable: function (val = Input.data.lastInput) {
+			return  typeof val === 'string'
+				? /(?:[\x20-\x7E])+/.test(val)
+				: false;
+		}
 	}
 });
