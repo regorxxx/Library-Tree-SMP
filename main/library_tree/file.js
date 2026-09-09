@@ -1,9 +1,9 @@
 'use strict';
-//08/09/26
+//09/09/26
 
 /* exported FileExplorer */
 
-/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, explorer:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
+/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable, VK_ALT:readable */
 /* global folders:readable */
 /* global tryGetter:readable, tryMethod:readable, strNumCollator:readable */
@@ -96,6 +96,8 @@ class FileExplorer {
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
 			['File Explorer: Fav Paths', '', 'explFavPaths'],
 			['File Explorer: Fav Labels', '', 'explFavLabels'],
+			['File Explorer: Last state', '', 'explLastState'],
+			['File Explorer: Remember tree', true, 'explRememberTree'],
 			['File Explorer: Initial load', true, 'explInit'],
 		];
 		ppt.init('auto', properties);
@@ -129,7 +131,7 @@ class FileExplorer {
 		this.gDrag = false;
 		this.cDrag = false;
 		this.redrawDrives = false;
-		this.root = new FileNode();
+		this.root = new FileNode({ parentTree: this });
 		this.treeIndentW = 20;
 		this.markerIndentW = 14;
 		this.treeLineH = _gr.CalcTextHeight('tfg', this.font.main);
@@ -168,10 +170,9 @@ class FileExplorer {
 
 	sortTab(tab2sort) {
 		let tab = [];
-		let i, j;
-		let tmp = new FileNode();
-		for (i = 0; i < tab2sort.length; i++) {
-			for (j = i; j < tab2sort.length; j++) {
+		let tmp = new FileNode({ parentTree: this });
+		for (let i = 0; i < tab2sort.length; i++) {
+			for (let j = i; j < tab2sort.length; j++) {
 				if (tab2sort[i].label.toUpperCase() > tab2sort[j].label.toUpperCase()) {
 					tmp = tab2sort[i];
 					tab2sort[i] = tab2sort[j];
@@ -186,7 +187,6 @@ class FileExplorer {
 
 	// Tree Tools
 	scanExpanded(gr, node, draw) {
-		let i, j;
 		if (node === this.root) { this.tree = []; }
 		if (node !== this.root || ppt.rootNode > 0) {
 			if (draw) {
@@ -199,35 +199,83 @@ class FileExplorer {
 			this.tree.push(node);
 		}
 		if (!node.collapsed) {
-			for (i = 0; i < node.child.length; i++) {
-				this.scanExpanded(gr, node.child[i], draw);
+			for (const child of node.child) {
+				this.scanExpanded(gr, child, draw);
 			}
-			for (j = 0; j < node.item.length; j++) {
+			for (const item of node.item) {
 				if (draw) {
-					node.item[j].draw(gr, this.yOffset + this.lineCounter * this.treeLineH);
+					item.draw(gr, this.yOffset + this.lineCounter * this.treeLineH);
 					this.lineCounter++;
 				} else {
-					node.item[j].checkPos(this.yOffset + this.cLineCounter * this.treeLineH);
+					item.checkPos(this.yOffset + this.cLineCounter * this.treeLineH);
 					this.cLineCounter++;
 				}
-				this.tree.push(node.item[j]);
+				this.tree.push(item);
 			}
 		}
 	}
 
 	scanCheckAll(node, event, x, y, mask) {
-		let i, j;
-		// node action below
 		let temp = node.checkMouse(event, x, y, mask);
 		if (!node.collapsed) {
-			for (i = 0; i < node.child.length; i++) {
-				this.scanCheckAll(node.child[i], event, x, y, mask);
+			for (const child of node.child) {
+				this.scanCheckAll(child, event, x, y, mask);
 			}
-			for (j = 0; j < node.item.length; j++) {
-				node.item[j].checkMouse(event, x, y, mask);
+			for (const item of node.item) {
+				item.checkMouse(event, x, y, mask);
 			}
 		}
+		if (ppt.explRememberTree && !['move', 'leave'].includes(event)) { this.saveLastState(); }
 		return temp;
+	}
+
+	forEachNode(node, callback) {
+		if (node.collapsed) {
+			return callback(node) || false;
+		} else {
+			let bDone = false;
+			for (const child of node.child) {
+				if (this.forEachNode(child, callback)) { bDone = true; break; }
+			}
+			if (!bDone) {
+				for (const item of node.item) {
+					if (this.forEachNode(item, callback)) { bDone = true; break; };
+				}
+			}
+			return bDone;
+		}
+	}
+
+	forEachChild(node, callback) {
+		if (node.collapsed) {
+			return node.hierarchy === 'child'
+				? callback(node) || false
+				: false;
+		} else {
+			for (const child of node.child) {
+				if (this.forEachChild(child, callback)) { return true; }
+			}
+		}
+		return false;
+	}
+
+	forEachItem(node, callback) {
+		if (node.collapsed) {
+			return node.hierarchy === 'item'
+				? callback(node) || false
+				: false;
+		} else {
+			let bDone = false;
+			for (const child of node.child) {
+				if (this.forEachItem(child, callback)) { bDone = true; break; }
+			}
+			if (!bDone) {
+				for (const item of node.item) {
+					if (this.forEachItem(item, callback)) { bDone = true; break; };
+				}
+			}
+			return bDone;
+		}
 	}
 
 	resetNodeFocus(node) {
@@ -322,7 +370,7 @@ class FileExplorer {
 			return path;
 		} else {
 			const oFolder = tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
-			if (!oFolder) { return; }
+			if (!oFolder) { return path; }
 			node.childChecked = true;
 			try {
 				for (const folder of oFolder.SubFolders) {
@@ -393,7 +441,15 @@ class FileExplorer {
 
 	fillPlaylists(node) {
 		for (let i = 0; i < plman.PlaylistCount; i++) {
-			node.addChild(plman.GetPlaylistName(i), i, { guid: plman.GetGUID(i), size: plman.PlaylistItemCount(i), type: plman.IsAutoPlaylist(i) ? 'AutoPlaylist' : 'Playlist' });
+			node.addChild(
+				plman.GetPlaylistName(i), i,
+				{
+					guid: plman.GetGUID(i),
+					size: plman.PlaylistItemCount(i),
+					type: plman.IsAutoPlaylist(i) ? 'AutoPlaylist' : 'Playlist',
+					lock: plman.GetPlaylistLockName(i) || ''
+				}
+			);
 			node.child[node.child.length - 1].type = 'playlist';
 		}
 	}
@@ -492,10 +548,9 @@ class FileExplorer {
 	}
 
 	refreshDrives() {
-		let i, node;
 		this.redrawDrives = false;
 		const fileRoot = this.root.child[this.fileNodeIdx];
-		for (i = 0; i < fileRoot.child.length; i++) {
+		for (let i = 0, node; i < fileRoot.child.length; i++) {
 			node = fileRoot.child[i];
 			// check if drive ready before resuming
 			if (node.type == 'drive') {
@@ -506,7 +561,7 @@ class FileExplorer {
 						node.ready = true;
 						const free = utils.FormatFileSize(drive.FreeSpace);
 						const total = utils.FormatFileSize(drive.TotalSize);
-						node.label = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + (drive.Path || drive.Root || '').replace('\\', '') + ') ' + free + '/' + total;
+						node.label = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + (drive.Path || drive.Root || '').replace('\\', '') + ') ' + free + ' / ' + total;
 						node.data.size = total;
 					} else {
 						if (node.ready) this.redrawDrives = true;
@@ -522,6 +577,15 @@ class FileExplorer {
 			}
 		}
 	}
+
+	refreshPlaylists() {
+		const plsRoot = this.root.child[this.plsNodeIdx];
+		plsRoot.child.length = 0;
+		this.fillPlaylists(plsRoot);
+		plsRoot.childChecked = true;
+		plsRoot.collapsed = false;
+		window.Repaint();
+	};
 
 	init(bReset) {
 		this.enabled = true;
@@ -562,11 +626,37 @@ class FileExplorer {
 			ppt.explFavPaths = paths.join(';');
 			ppt.explFavLabels = paths.map((p) => p.split('\\').findLast(Boolean)).join(';');
 		}
+		if (ppt.explRememberTree) { this.restoreLastState(); }
 		ppt.explInit = false;
 	}
 
 	exit() {
 		this.enabled = false;
+	}
+
+	restoreLastState() {
+		this.tree = [];
+		const lastState = $.jsonParse(ppt.explLastState, []);
+		if (lastState.length) {
+			lastState.forEach((lastNode) => {
+				this.forEachChild(this.root, (node) => {
+					if (node.path === lastNode.path && lastNode.type === node.type && (node.label === lastNode.label || node.type === 'drive')) {
+						if (node.collapsed) {
+							node.collapsed = false;
+							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
+							return true;
+						}
+					}
+				});
+			});
+		}
+	}
+
+	saveLastState() {
+		ppt.explLastState = JSON.stringify(
+			this.tree.filter((node) => !node.collapsed && node.hierarchy !== 'item')
+				.map((node) => { return { path: node.path, label: node.label, type: node.type }; })
+		);
 	}
 
 	on_size() {
@@ -709,7 +799,7 @@ class FileExplorer {
 						node.collapsed = false;
 						if (!node.childChecked) {
 							window.SetCursor(IDC_APPSTARTING);
-							explorer.fillTreeLevel(node.path, node, false);
+							this.parentTree.fillTreeLevel(node.path, node, false);
 							window.SetCursor(IDC_ARROW);
 							window.Repaint(true);
 						}
@@ -1089,34 +1179,37 @@ class FileExplorer {
 
 	showContextMenu(node, x, y) {
 		const menu = new _menu();
-		const plsRoot = this.root.child[this.plsNodeIdx];
 		const favRoot = this.root.child[this.favNodeIdx];
 		const fileRoot = this.root.child[this.fileNodeIdx];
 		// Helpers
-		const refreshPlsNodes = () => {
-			if (plsRoot.child.length > 0) { plsRoot.child.splice(0, plsRoot.child.length); }
-			this.fillPlaylists(plsRoot);
-			plsRoot.childChecked = true;
-			plsRoot.collapsed = false;
-			window.Repaint();
-		};
 		// Menu
 		switch (node.type) {
 			case 'root':
 				menu.newEntry({ entryText: 'Settings:', flags: MF_GRAYED });
 				menu.newSeparator();
-				menu.newEntry({
-					entryText: 'Auto Collapse', func: () => {
-						ppt.toggle('autoCollapse');
-						this.resetTree();
-					}, checkFunc: () => ppt.autoCollapse
-				});
-				menu.newEntry({
-					entryText: 'Sort Folders', func: () => {
-						this.sort = ppt.toggle('explSort');
-						this.resetTree();
-					}, checkFunc: () => this.sort
-				});
+				{
+					const menuName = menu.newMenu('Behaviour');
+					menu.newEntry({
+						menuName,
+						entryText: 'Auto Collapse', func: () => {
+							ppt.toggle('autoCollapse');
+							this.resetTree();
+						}, checkFunc: () => ppt.autoCollapse
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Sort Folders', func: () => {
+							this.sort = ppt.toggle('explSort');
+							this.resetTree();
+						}, checkFunc: () => this.sort
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Remember tree', func: () => {
+							this.sort = ppt.toggle('explRememberTree');
+						}, checkFunc: () => ppt.explRememberTree
+					});
+				}
 				menu.newSeparator();
 				{
 					const menuName = menu.newMenu('Show');
@@ -1183,7 +1276,7 @@ class FileExplorer {
 				});
 				menu.newSeparator();
 				menu.newEntry({
-					entryText: 'Exit file explorer...',
+					entryText: 'Exit File Explorer...',
 					func: () => men.setCachedSource(0, void (0), 'Prev. Source', { bOmitMsg: true, bSkipPresets: true }), // Regorxxx <- Internal cache of views | Preset rules ->
 					flags: MF_STRING
 				});
@@ -1198,7 +1291,7 @@ class FileExplorer {
 						plman.MovePlaylist(new_idx, node.path + 1);
 						plman.ActivePlaylist = node.path + 1;
 						plman.ShowAutoPlaylistUI(node.path + 1);
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}
 				});
 				menu.newEntry({
@@ -1207,7 +1300,7 @@ class FileExplorer {
 						plman.CreatePlaylist(new_idx, '');
 						plman.MovePlaylist(new_idx, node.path + 1);
 						plman.ActivePlaylist = node.path + 1;
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}
 				});
 				menu.newSeparator();
@@ -1229,14 +1322,14 @@ class FileExplorer {
 					entryText: 'Move Up', func: () => {
 						plman.MovePlaylist(node.path, node.path - 1);
 						plman.ActivePlaylist = node.path - 1;
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}, flags: (node.path > 0) ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
 					entryText: 'Move Down', func: () => {
 						plman.MovePlaylist(node.path, node.path + 1);
 						plman.ActivePlaylist = node.path + 1;
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}, flags: (node.path < plman.PlaylistCount - 1) ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newSeparator();
@@ -1255,11 +1348,11 @@ class FileExplorer {
 					entryText: 'Duplicate', func: () => {
 						plman.DuplicatePlaylist(node.path, 'Copy of ' + node.label);
 						plman.ActivePlaylist = node.path + 1;
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}
 				});
 
-				if (plman.IsAutoPlaylist(node.path)) {
+				if (node.data.type === 'AutoPlaylist') {
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'AutoPlaylist Properties...', func: () => {
@@ -1279,7 +1372,7 @@ class FileExplorer {
 				menu.newEntry({
 					entryText: 'Delete', func: () => {
 						plman.RemovePlaylist(node.path);
-						refreshPlsNodes();
+						this.refreshPlaylists();
 					}
 				});
 				menu.newEntry({
@@ -1359,20 +1452,20 @@ class FileExplorer {
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newEntry({
 						entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node);
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-							if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 							this.addtoPls(-1, node, { create: true });
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
@@ -1438,20 +1531,20 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
 					entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node);
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-						if (!node.childChecked) { explorer.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.parentTreefillTreeLevel(node.path, node, false); }
 						this.addtoPls(-1, node, { create: true });
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
@@ -1562,13 +1655,13 @@ class FileExplorer {
 		if (!paths.length) { return; }
 		fb.AddLocationsAsyncV2(paths)
 			.then((handleList) => {
-				const queueHandles = plman.GetPlaybackQueueHandles();
+				const queueHandles = plman.GetPlaybackQueueHandles().Convert();
+				const queueSize = queueHandles.length;
+				const handleArr = handleList.Convert();
 				let remove = [];
-				for (let i = 0; i < handleList.Count; i++) {
-					for (let k = 0; k < queueHandles.Count; k++) {
-						if (handleList[i].Compare(queueHandles[k])) {
-							remove.push(k);
-						}
+				for (const handle of handleArr) {
+					for (let k = 0; k < queueSize; k++) {
+						if (handle.Compare(queueHandles[k])) { remove.push(k); }
 					}
 				}
 				remove = [...new Set(remove)];
@@ -1657,6 +1750,21 @@ class FileExplorer {
 		addEventListener('on_key_down', (vKey) => {
 			if (this.enabled) { this.on_key_down(vKey); }
 		});
+
+		['on_playlist_items_added', 'on_playlist_items_removed', 'on_playlists_changed'].forEach((key) => {
+			addEventListener(key, (idx) => {
+				if (typeof idx === 'undefined') { this.refreshPlaylists(); }
+				else {
+					const plsRoot = this.root.child[this.plsNodeIdx];
+					const node = plsRoot.find((node) => node.path = idx);
+					node.addData({
+						size: plman.PlaylistItemCount(idx),
+						type: plman.IsAutoPlaylist(idx) ? 'AutoPlaylist' : 'Playlist',
+						lock: plman.GetPlaylistLockName(idx) || ''
+					});
+				}
+			});
+		});
 	}
 
 	resetTree() {
@@ -1667,7 +1775,9 @@ class FileExplorer {
 }
 
 class FileNode {
-	constructor({ label, path, level, idx, pIdx, type, collapsed, pathSum, data = {} } = {}) {
+	constructor({ parentTree, label, path, level, idx, pIdx, type, collapsed, pathSum, hierarchy, data = {} } = {}) {
+		this.parentTree = parentTree;
+		if (!parentTree) { throw new Error('FileNode: parentTree not defined'); }
 		this.childChecked = false;
 		this.label = void (0);
 		this.path = '';
@@ -1690,9 +1800,10 @@ class FileNode {
 		this.data = {};
 		/** @type {'unknown'|'music'|'text'|'image'|'archive'} */
 		this.fType = 'unknown';
-		this.init({ label, path, level, idx, pIdx, type, collapsed, pathSum, data });
+		this.hierarchy = 'child';
+		this.init({ label, path, level, idx, pIdx, type, collapsed, pathSum, hierarchy, data });
 	}
-	init({ label, path = '', level = 0, idx = -1, pIdx = -1, type = '', collapsed = false, pathSum = [], data = {} } = {}) {
+	init({ label, path = '', level = 0, idx = -1, pIdx = -1, type = '', collapsed = false, pathSum = [], hierarchy = 'child', data = {} } = {}) {
 		this.label = label;
 		this.path = path;
 		this.level = level;
@@ -1701,6 +1812,7 @@ class FileNode {
 		this.type = type;
 		this.collapsed = collapsed;
 		this.pathSum.length = 0;
+		this.hierarchy = hierarchy;
 		this.data = data || {};
 		if (this.level > 0) {
 			for (const element of pathSum) { this.pathSum.push(element); }
@@ -1710,79 +1822,83 @@ class FileNode {
 	addChild(label, path, data = {}) {
 		this.totalChildren++;
 		const node = new FileNode({
+			parentTree: this.parentTree,
 			label, path, level: this.level + 1,
 			idx: this.child.length, pIdx: this.idx, type: 'folder',
 			collapsed: true, pathSum: this.pathSum,
+			hierarchy: 'child',
 			data
 		});
 		this.child.push(node);
 		return node;
 	};
 	addData(data = {}) {
-		for (let key in data) { this.data[key] = data[key]; }
+		for (const key in data) { this.data[key] = data[key]; }
 		return this;
 	};
 	addItem(label, path, data = {}) {
 		this.totalItems++;
 		const node = new FileNode({
+			parentTree: this.parentTree,
 			label, path, level: this.level + 1,
 			idx: this.item.length, pIdx: this.idx, type: 'file',
 			collapsed: true, pathSum: this.pathSum,
+			hierarchy: 'item',
 			data
 		});
-		node.fType = explorer.getType(node.label.split('.').at(-1));
+		node.fType = this.parentTree.getType(node.label.split('.').at(-1));
 		this.item.push(node);
 		return node;
 	}
 	checkPos(y) {
-		this.Cx = Math.floor(explorer.treePadX + explorer.xOffset + explorer.treeIndentW * (this.level + 1));
-		this.Cy = Math.floor(explorer.treePadY + y);
+		this.Cx = Math.floor(this.parentTree.treePadX + this.parentTree.xOffset + this.parentTree.treeIndentW * (this.level + 1));
+		this.Cy = Math.floor(this.parentTree.treePadY + y);
 	}
 	draw(gr, y) {
 		let iconAlpha = 255;
-		let labelCol = explorer.col.text;
-		this.x = Math.floor(explorer.treePadX + explorer.xOffset + explorer.treeIndentW * (this.level + 1));
-		this.y = Math.floor(explorer.treePadY + y);
-		this.retroIndentW = explorer.treeIndentW;
+		let labelCol = this.parentTree.col.text;
+		this.x = Math.floor(this.parentTree.treePadX + this.parentTree.xOffset + this.parentTree.treeIndentW * (this.level + 1));
+		this.y = Math.floor(this.parentTree.treePadY + y);
+		this.retroIndentW = this.parentTree.treeIndentW;
 		// Skip not visible lines
-		if (this.y + explorer.treeLineH < 0 || this.y > ui.h) return true;
-		if (this.y < explorer.y) { return true; }
+		if (this.y + this.parentTree.treeLineH < 0 || this.y > ui.h) return true;
+		if (this.y < this.parentTree.y) { return true; }
 		let icon;
 		switch (this.type) {
 			case 'folder':
-				icon = this.collapsed ? explorer.img.folder : explorer.img.folderOpen;
+				icon = this.collapsed ? this.parentTree.img.folder : this.parentTree.img.folderOpen;
 				break;
 			case 'file': {
 				switch (this.fType) {
 					case 'music':
-						icon = explorer.img.musicFile; break;
+						icon = this.parentTree.img.musicFile; break;
 					case 'text':
-						icon = explorer.img.textFile; break;
+						icon = this.parentTree.img.textFile; break;
 					case 'image':
-						icon = explorer.img.imageFile; break;
+						icon = this.parentTree.img.imageFile; break;
 					case 'archive':
-						icon = explorer.img.archiveFile; break;
+						icon = this.parentTree.img.archiveFile; break;
 					default:
-						icon = explorer.img.file;
+						icon = this.parentTree.img.file;
 				}
 				break;
 			}
 			case 'playlists':
-				icon = explorer.img.playlists;
+				icon = this.parentTree.img.playlists;
 				break;
 			case 'playlist':
-				icon = plman.IsAutoPlaylist(this.path)
-					? explorer.img.autoplaylist
-					: explorer.img.playlist;
+				icon = this.data.type === 'AutoPlaylist'
+					? this.parentTree.img.autoplaylist
+					: this.parentTree.img.playlist;
 				break;
 			case 'favorites':
-				icon = explorer.img.favorites;
+				icon = this.parentTree.img.favorites;
 				break;
 			case 'favorite':
-				icon = this.collapsed ? explorer.img.folderFav : explorer.img.folderFavOpen;
+				icon = this.collapsed ? this.parentTree.img.folderFav : this.parentTree.img.folderFavOpen;
 				if (_isFolder(this.path)) {
 					this.enabled = true;
-					labelCol = explorer.col.text;
+					labelCol = this.parentTree.col.text;
 				} else {
 					this.enabled = false;
 					iconAlpha = 150;
@@ -1790,54 +1906,54 @@ class FileNode {
 				}
 				break;
 			case 'computer':
-				icon = explorer.img.computer;
+				icon = this.parentTree.img.computer;
 				break;
 			case 'drive':
 				switch (this.sType) {
-					case 0: icon = explorer.img.drive; break; // Unknown drive type
-					case 1: icon = explorer.img.removableDrive; break; // Removable
-					case 2: icon = explorer.img.drive; break; // fixed
-					case 3: icon = explorer.img.networkDrive; break; // Network
-					case 4: icon = explorer.img.cdRomDrive; break; // CD-ROM
-					case 5: icon = explorer.img.drive; break; // RAM Disk
+					case 0: icon = this.parentTree.img.drive; break; // Unknown drive type
+					case 1: icon = this.parentTree.img.removableDrive; break; // Removable
+					case 2: icon = this.parentTree.img.drive; break; // fixed
+					case 3: icon = this.parentTree.img.networkDrive; break; // Network
+					case 4: icon = this.parentTree.img.cdRomDrive; break; // CD-ROM
+					case 5: icon = this.parentTree.img.drive; break; // RAM Disk
 				}
 				break;
 			default:
-				icon = explorer.img.root;
+				icon = this.parentTree.img.root;
 		}
 		if (icon) {
 			// collapse/expand icon
 			if (this.type != 'root' && this.type != 'file' && this.type != 'playlist') {
-				this.retroIndentW += explorer.markerIndentW;
-				const marker = this.collapsed ? explorer.img.plus : explorer.img.minus;
+				this.retroIndentW += this.parentTree.markerIndentW;
+				const marker = this.collapsed ? this.parentTree.img.plus : this.parentTree.img.minus;
 				if (!(this.childChecked && this.child.length == 0 && this.item.length == 0)) {
-					gr.DrawImage(marker, this.x - explorer.treeIndentW - explorer.markerIndentW, this.y + 2, marker.Width, marker.Height, 0, 0, marker.Width, marker.Height, 0, iconAlpha);
+					gr.DrawImage(marker, this.x - this.parentTree.treeIndentW - this.parentTree.markerIndentW, this.y + 2, marker.Width, marker.Height, 0, 0, marker.Width, marker.Height, 0, iconAlpha);
 				}
 			}
 			// type icon
 			gr.DrawImage(icon, this.x - 20, this.y, icon.Width, icon.Height, 0, 0, icon.Width, icon.Height, 0, iconAlpha);
 		}
 		// calc label width and offsets
-		this.labelWidth = gr.CalcTextWidth(this.label, explorer.font.main);
+		this.labelWidth = gr.CalcTextWidth(this.label, this.parentTree.font.main);
 		let focusW;
 		if (this.labelWidth > ui.w - this.x) {
 			focusW = ui.w - this.x - 4;
 			// width of the max offset truncated part of label (used to stop horizontal scrolling in mouse.move)
-			explorer.maxDeltaH = Math.max(this.labelWidth - focusW + 4, explorer.maxDeltaH);
+			this.parentTree.maxDeltaH = Math.max(this.labelWidth - focusW + 4, this.parentTree.maxDeltaH);
 		} else {
 			focusW = this.labelWidth;
 		}
 		// Draw focus rect
 		if (this.focus) {
-			gr.FillGradRect(this.x - 1, this.y - 1, focusW + 2, explorer.treeLineH - 2, 90, explorer.col.bgSelTop, explorer.col.bgSelBottom);
-			gr.DrawRoundRect(this.x, this.y, focusW, explorer.treeLineH - 4, 1, 1, 1, explorer.col.bgSelFrame);
-			gr.DrawRoundRect(this.x - 1, this.y - 1, focusW + 2, explorer.treeLineH - 2, 1, 1, 1, $.RGBA(0, 30, 100, 50));
+			gr.FillGradRect(this.x - 1, this.y - 1, focusW + 2, this.parentTree.treeLineH - 2, 90, this.parentTree.col.bgSelTop, this.parentTree.col.bgSelBottom);
+			gr.DrawRoundRect(this.x, this.y, focusW, this.parentTree.treeLineH - 4, 1, 1, 1, this.parentTree.col.bgSelFrame);
+			gr.DrawRoundRect(this.x - 1, this.y - 1, focusW + 2, this.parentTree.treeLineH - 2, 1, 1, 1, $.RGBA(0, 30, 100, 50));
 		}
 		// Draw label
-		gr.GdiDrawText(this.label, (this.hover && !this.markerHover && this.type != 'root' ? explorer.font.hover : explorer.font.main), labelCol, this.x, this.y - explorer.treeLineH / 8, ui.w - this.x - 3, explorer.treeLineH, DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+		gr.GdiDrawText(this.label, (this.hover && !this.markerHover && this.type != 'root' ? this.parentTree.font.hover : this.parentTree.font.main), labelCol, this.x, this.y - this.parentTree.treeLineH / 8, ui.w - this.x - 3, this.parentTree.treeLineH, DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 	}
 	checkMouse(event, x, y, mask) {
-		let tmpRetroIndentW = this.retroIndentW - explorer.treeIndentW;
+		let tmpRetroIndentW = this.retroIndentW - this.parentTree.treeIndentW;
 		this.markerHover = x <= this.x - this.retroIndentW + tmpRetroIndentW;
 		this.iconHover = x <= this.x;
 		let textAreaW;
@@ -1846,7 +1962,7 @@ class FileNode {
 		} else {
 			textAreaW = this.labelWidth;
 		}
-		this.hover = x > this.x - this.retroIndentW && x < this.x + textAreaW && y > this.y && y < this.y + explorer.treeLineH;
+		this.hover = x > this.x - this.retroIndentW && x < this.x + textAreaW && y > this.y && y < this.y + this.parentTree.treeLineH;
 		switch (event) {
 			case 'down':
 				if (!this.enabled) {
@@ -1854,14 +1970,14 @@ class FileNode {
 					return true;
 				}
 				if (this.hover && !this.markerHover) {
-					explorer.resetNodeFocus(explorer.root);
+					this.parentTree.resetNodeFocus(this.parentTree.root);
 					this.focus = true;
 				}
 
 				if (ppt.autoCollapse) {
 					if (this.hover && !this.markerHover && this.collapsed) {
-						explorer.collapseAll(explorer.root);
-						explorer.root.forEachParent(this, (n) => n.collapsed = false);
+						this.parentTree.collapseAll(this.parentTree.root);
+						this.parentTree.root.forEachParent(this, (n) => n.collapsed = false);
 					}
 				}
 				if (this.hover) {
@@ -1870,16 +1986,16 @@ class FileNode {
 						switch (this.type) {
 							case 'folder':
 							case 'drive': // NOSONAR[fallthrough]
-								if (!this.childChecked) { explorer.fillTreeLevel(this.path, this, false); }
+								if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
 							case 'favorite': // eslint-disable-line no-fallthrough
 							case 'file':
-								switch (explorer.altClickAction) {
-									case 1: explorer.addtoPls(plman.ActivePlaylist, this); break;
-									case 2: explorer.addToQueue(this); break;
+								switch (this.parentTree.altClickAction) {
+									case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this); break;
+									case 2: this.parentTree.addToQueue(this); break;
 									case 0:
 									default: {
-										const idx = plman.FindOrCreatePlaylist(explorer.libPlaylistName, true);
-										explorer.addtoPls(idx, this);
+										const idx = plman.FindOrCreatePlaylist(this.parentTree.libPlaylistName, true);
+										this.parentTree.addtoPls(idx, this);
 										break;
 									}
 								}
@@ -1903,11 +2019,11 @@ class FileNode {
 								if (this.markerHover || this.iconHover) {
 									if (this.collapsed && !this.childChecked) {
 										window.SetCursor(IDC_APPSTARTING);
-										explorer.fillTreeLevel(this.path, this, false);
+										this.parentTree.fillTreeLevel(this.path, this, false);
 										window.SetCursor(IDC_ARROW);
 									}
 									this.collapsed = !this.collapsed;
-									explorer.maxDeltaH = 0;
+									this.parentTree.maxDeltaH = 0;
 								}
 								window.Repaint();
 								break;
@@ -1950,6 +2066,7 @@ class FileNode {
 								'\n' +
 								'\nIdx:\t' + this.path +
 								'\nType:\t' + (this.data.type || '?') +
+								'\nLock:\t' + (this.data.lock || '-none-') +
 								'\nTracks:\t' + (Object.hasOwn(this.data, 'size') ? this.data.size : '?');
 							break;
 						default:
@@ -1964,13 +2081,13 @@ class FileNode {
 						tooltip.Text = ttText;
 					}
 					tooltip.Activate();
-					if (this.y > explorer.treeLineH * -1 && this.y < ui.h) {
-						if (!this.hoverPrec) window.RepaintRect(this.x, Math.floor(this.y), this.labelWidth, explorer.treeLineH);
+					if (this.y > this.parentTree.treeLineH * -1 && this.y < ui.h) {
+						if (!this.hoverPrec) window.RepaintRect(this.x, Math.floor(this.y), this.labelWidth, this.parentTree.treeLineH);
 					}
 					this.hoverPrec = true;
 				} else {
-					if (this.y > explorer.treeLineH * -1 && this.y < ui.h) {
-						if (this.hoverPrec) window.RepaintRect(this.x, Math.floor(this.y), this.labelWidth, explorer.treeLineH);
+					if (this.y > this.parentTree.treeLineH * -1 && this.y < ui.h) {
+						if (this.hoverPrec) window.RepaintRect(this.x, Math.floor(this.y), this.labelWidth, this.parentTree.treeLineH);
 					}
 					this.hoverPrec = false;
 				}
@@ -1982,14 +2099,14 @@ class FileNode {
 						switch (this.fType) {
 							case 'archive':
 							case 'music': {
-								if (utils.IsKeyPressed(VK_ALT)) { explorer.removeFromQueue(this); break; }
-								switch (explorer.dblClickAction) {
+								if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
+								switch (this.parentTree.dblClickAction) {
 									case 1:
-									case 2: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
-									case 3: explorer.addToQueue(this, { play: true });
+									case 2: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
+									case 3: this.parentTree.addToQueue(this, { play: true });
 										break;
 									case 0:
-									default: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
+									default: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
 								}
 								break;
 							}
@@ -2009,15 +2126,15 @@ class FileNode {
 					} else if (['root', 'favorites', 'computer', 'playlists'].includes(this.type)) {
 						this.checkMouse('down', this.x, y, mask);
 					} else {
-						if (utils.IsKeyPressed(VK_ALT)) { explorer.removeFromQueue(this); break; }
-						if (!this.childChecked) { explorer.fillTreeLevel(this.path, this, false); }
-						switch (explorer.dblClickAction) {
-							case 1: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
+						if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
+						if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
+						switch (this.parentTree.dblClickAction) {
+							case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
 							case 2: this.checkMouse('down', this.x, y, mask); break;
-							case 3: explorer.addToQueue(this, { play: true });
+							case 3: this.parentTree.addToQueue(this, { play: true });
 								break;
 							case 0:
-							default: explorer.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
+							default: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
 						}
 					}
 				}
@@ -2028,16 +2145,16 @@ class FileNode {
 				break;
 			case 'right':
 				if (this.hover) {
-					explorer.resetNodeFocus(explorer.root);
+					this.parentTree.resetNodeFocus(this.parentTree.root);
 					this.focus = true;
 				}
 				if (this.hover) {
 					switch (this.type) {
 						case 'drive':
-							if (this.ready) explorer.showContextMenu(this, x, y);
+							if (this.ready) this.parentTree.showContextMenu(this, x, y);
 							break;
 						default:
-							explorer.showContextMenu(this, x, y);
+							this.parentTree.showContextMenu(this, x, y);
 							break;
 					}
 				}
