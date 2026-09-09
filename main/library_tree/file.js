@@ -403,7 +403,7 @@ class FileExplorer {
 						child = node.addItem(fileName + ext, file);
 					}
 				} else { child = node.addItem(fileName + ext, file); }
-				if (this.calcSize) { this.addFileSizeData(child); }
+				if (child && this.calcSize) { this.addFileSizeData(child); }
 			}
 		} else {
 			const oFolder = typeof path === 'object'
