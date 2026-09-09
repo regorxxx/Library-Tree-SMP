@@ -1753,15 +1753,17 @@ class FileExplorer {
 
 		['on_playlist_items_added', 'on_playlist_items_removed', 'on_playlists_changed'].forEach((key) => {
 			addEventListener(key, (idx) => {
-				if (typeof idx === 'undefined') { this.refreshPlaylists(); }
-				else {
-					const plsRoot = this.root.child[this.plsNodeIdx];
-					const node = plsRoot.find((node) => node.path = idx);
-					node.addData({
-						size: plman.PlaylistItemCount(idx),
-						type: plman.IsAutoPlaylist(idx) ? 'AutoPlaylist' : 'Playlist',
-						lock: plman.GetPlaylistLockName(idx) || ''
-					});
+				if (this.showPlaylists) {
+					if (typeof idx === 'undefined') { this.refreshPlaylists(); }
+					else {
+						const plsRoot = this.root.child[this.plsNodeIdx];
+						const node = plsRoot.find((node) => node.path = idx);
+						node.addData({
+							size: plman.PlaylistItemCount(idx),
+							type: plman.IsAutoPlaylist(idx) ? 'AutoPlaylist' : 'Playlist',
+							lock: plman.GetPlaylistLockName(idx) || ''
+						});
+					}
 				}
 			});
 		});
