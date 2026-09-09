@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//09/09/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2257,9 +2257,10 @@ class Panel {
 
 	removeFromQueue(selItems) {
 		const idx = [];
-		const queueHandles = plman.GetPlaybackQueueHandles();
-		for (let handle of selItems) {
-			for (let j = 0; j < queueHandles.Count; j++) {
+		const queueHandles = plman.GetPlaybackQueueHandles().Convert();
+		const queueSize = queueHandles.length;
+		for (const handle of selItems) {
+			for (let j = 0; j < queueSize; j++) {
 				if (handle.Compare(queueHandles[j])) { idx.push(j); }
 			}
 		}
