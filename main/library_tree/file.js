@@ -1,5 +1,5 @@
-'use strict';
-//09/09/26
+﻿'use strict';
+//10/09/26
 
 /* exported FileExplorer */
 
@@ -24,6 +24,7 @@ class FileExplorer {
 			folderFav: null,
 			folderFavOpen: null,
 			file: null,
+			videoFile: null,
 			musicFile: null,
 			textFile: null,
 			root: null,
@@ -58,6 +59,8 @@ class FileExplorer {
 			'ac4': 'music',
 			'aiff': 'music',
 			'dff': 'music',
+			'dsf': 'music',
+			'wsd': 'music',
 			'dts': 'music',
 			'eac3': 'music',
 			'hmi': 'music',
@@ -73,6 +76,18 @@ class FileExplorer {
 			'tak': 'music',
 			'tta': 'music',
 			'vgm': 'music',
+			'alac': 'music',
+			'mkv': 'video',
+			'webm': 'video',
+			'mov': 'video',
+			'avi': 'video',
+			'wmv': 'video',
+			'flv': 'video',
+			'f4v': 'video',
+			'avchd': 'video',
+			'3gp': 'video',
+			'ogv': 'video',
+			'm4v': 'video',
 			'cue': 'archive',
 			'iso': 'archive',
 			'zip': 'archive',
@@ -87,6 +102,8 @@ class FileExplorer {
 		// Properties
 		const properties = [
 			['File Explorer: File Type Filter', Object.keys(this.fileType).join(';'), 'explFileFilters'],
+			['File Explorer: File Types', JSON.stringify(this.fileType), 'explFileType'],
+			['File Explorer: Treat Unknown File Type as music', true, 'explLoadUnknown'],
 			['File Explorer: Calculate file/folder size', false, 'explCalcSize'],
 			['File Explorer: Calculate file/folder size async', true, 'explCalcSizeAsync'],
 			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
@@ -94,6 +111,11 @@ class FileExplorer {
 			['File Explorer: Show Playlists', false, 'explShowPlaylists'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
+			['File Explorer: Playlist Node expression', '%NAME% [#%SIZE%]', 'explShowPlsExpr'],
+			['File Explorer: Favorite Node expression', '%NAME%', 'explShowFavExpr'],
+			['File Explorer: File Node expression', '%NAME%', 'explShowFileExpr'],
+			['File Explorer: Folder Node expression', '[%NAME%]', 'explShowFolderExpr'],
+			['File Explorer: Drive Node expression', '%LABEL%', 'explShowDriveExpr'],
 			['File Explorer: Fav Paths', '', 'explFavPaths'],
 			['File Explorer: Fav Labels', '', 'explFavLabels'],
 			['File Explorer: Last state', '', 'explLastState'],
@@ -101,6 +123,7 @@ class FileExplorer {
 			['File Explorer: Initial load', true, 'explInit'],
 		];
 		ppt.init('auto', properties);
+		this.fileType = $.jsonParse(ppt.explFileType, this.fileType);
 		this.scrollbarW = 16;
 		this.sort = ppt.explSort;
 		this.showPlaylists = ppt.explShowPlaylists;
@@ -885,9 +908,9 @@ class FileExplorer {
 			this.img.favorites = gdi.CreateImage(25, 21);
 			gb = this.img.favorites.GetGraphics();
 			gb.SetSmoothingMode(2);
-			let star_points = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
-			gb.FillPolygon($.RGB(240, 240, 120), 0, star_points);
-			gb.DrawPolygon($.RGB(150, 150, 80), 0, star_points);
+			const starPoints = [2, 5, 7, 5, 9, 0, 11, 5, 16, 5, 12, 8, 14, 13, 9, 10, 4, 13, 6, 8];
+			gb.FillPolygon($.RGB(240, 240, 120), 0, starPoints);
+			gb.DrawPolygon($.RGB(150, 150, 80), 0, starPoints);
 			this.img.favorites.ReleaseGraphics(gb);
 		}
 
@@ -983,13 +1006,25 @@ class FileExplorer {
 			this.img.archiveFile.ReleaseGraphics(gb);
 		}
 
+		if (!this.img.videoFile) {
+			this.img.videoFile = gdi.CreateImage(20, 16);
+			gb = this.img.videoFile.GetGraphics();
+			gb.SetSmoothingMode(2);
+			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(220, 240, 250));
+			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
+			gb.FillEllipse(5.25, 2.5, 7.5, 7.5, $.RGB(150, 180, 220));
+			const trianglePoints = [7.5, 4.5, 12, 6.5, 7.5, 8.5];
+			gb.FillPolygon($.RGB(220, 240, 250), 0, trianglePoints);
+			this.img.videoFile.ReleaseGraphics(gb);
+		}
+
 		if (!this.img.musicFile) {
 			this.img.musicFile = gdi.CreateImage(20, 16);
 			gb = this.img.musicFile.GetGraphics();
 			gb.SetSmoothingMode(2);
 			gb.FillRoundRect(3, 0, 12, 13, 1, 1, $.RGB(220, 240, 250));
 			gb.DrawRoundRect(3, 0, 12, 13, 1, 1, 1, $.RGB(150, 180, 220));
-			gb.FillEllipse(5, 7, 6, 5, $.RGB(150, 180, 220));
+			gb.FillEllipse(5.5, 6.5, 6, 5, $.RGB(150, 180, 220));
 			gb.DrawLine(10, 2, 11, 10, 1, $.RGB(150, 180, 220));
 			gb.DrawLine(10, 2, 12, 3, 1, $.RGB(150, 180, 220));
 			this.img.musicFile.ReleaseGraphics(gb);
@@ -1120,9 +1155,9 @@ class FileExplorer {
 			this.img.playlists = gdi.CreateImage(20, 16);
 			gb = this.img.playlists.GetGraphics();
 			gb.SetSmoothingMode(0);
-			let pl_points = new Array(3, 5, 7, 1, 14, 1, 14, 14, 3, 14);
-			gb.FillPolygon($.RGB(170, 210, 240), 0, pl_points);
-			gb.DrawPolygon($.RGB(140, 170, 210), 0, pl_points);
+			const plPoints = [3, 5, 7, 1, 14, 1, 14, 14, 3, 14];
+			gb.FillPolygon($.RGB(170, 210, 240), 0, plPoints);
+			gb.DrawPolygon($.RGB(140, 170, 210), 0, plPoints);
 			gb.FillSolidRect(6, 5, 6, 1, $.RGB(240, 240, 240));
 			gb.FillSolidRect(6, 8, 6, 1, $.RGB(240, 240, 240));
 			gb.FillSolidRect(6, 11, 6, 1, $.RGB(240, 240, 240));
@@ -1234,6 +1269,57 @@ class FileExplorer {
 							this.resetTree();
 						}, checkFunc: () => this.showFilesystem
 					});
+					menu.newSeparator(menuName);
+					menu.newEntry({
+						menuName,
+						entryText: 'Playlist node format...', func: () => {
+							const defVal = ppt.getDefVal('explShowPlsExpr');
+							const input = Input.string('string', ppt.explShowPlsExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Playlist Node format', defVal, void (0), void (0), defVal);
+							if (input === null) { return; }
+							ppt.explShowPlsExpr = input;
+							this.resetTree();
+						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Favorite node format...', func: () => {
+							const defVal = ppt.getDefVal('explShowFavExpr');
+							const input = Input.string('string', ppt.explShowFavExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Favorite Node format', defVal, void (0), void (0), defVal);
+							if (input === null) { return; }
+							ppt.explShowFavExpr = input;
+							this.resetTree();
+						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'File node format...', func: () => {
+							const defVal = ppt.getDefVal('explShowFileExpr');
+							const input = Input.string('string', ppt.explShowFileExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File Node format', defVal, void (0), void (0), defVal);
+							if (input === null) { return; }
+							ppt.explShowFileExpr = input;
+							this.resetTree();
+						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Folder node format...', func: () => {
+							const defVal = ppt.getDefVal('explShowFolderExpr');
+							const input = Input.string('string', ppt.explShowFolderExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Folder Node format', defVal, void (0), void (0), defVal);
+							if (input === null) { return; }
+							ppt.explShowFolderExpr = input;
+							this.resetTree();
+						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Drive node format...', func: () => {
+							const defVal = ppt.getDefVal('explShowDriveExpr');
+							const input = Input.string('string', ppt.explShowDriveExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Drive Node format', defVal, void (0), void (0), defVal);
+							if (input === null) { return; }
+							ppt.explShowDriveExpr = input;
+							this.resetTree();
+						}
+					});
 				}
 				menu.newSeparator();
 				{
@@ -1242,11 +1328,29 @@ class FileExplorer {
 						menuName,
 						entryText: 'File types filter...', func: () => {
 							const defVal = Object.keys(this.fileType).join(';');
-							const input = Input.string('string', this.fileFilters.join(';'), 'Add file extensions:\n(empty=no filter)\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File types filter', 'mp3;ogg');
+							const input = Input.string('string', this.fileFilters.join(';'), 'Add file extensions:\n(empty=no filter)\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File types filter', 'mp3;ogg', void (0), void (0), ppt.getDefVal('explFileFilters'));
 							if (input === null) { return; }
-							this.fileFilters = ppt.explFileFilters = (input || '').replace('DEFAULT', defVal).split(';');
+							ppt.explFileFilters = input;
+							this.fileFilters = ppt.explFileFilters.split(';');
 							this.resetTree();
 						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'File types...', func: () => {
+							const exVal = JSON.stringify({ mp3: 'music', txt: 'file', avi: 'external' });
+							const input = Input.json('object', this.fileType, 'Add file types: unknown|external|music|video|text|image|archive\n\n• Extensions not added are treated as \'unknown\'.\n• \'external\' forces file to be loaded with OS default program.\n\nFor example:\n' + exVal.cut(80) + '\n\n\'DEFAULT\' applies default expression (as first install).', 'File types', exVal, void (0), void (0), JSON.parse(ppt.getDefVal('explFileType')));
+							if (input === null) { return; }
+							ppt.explFileType = JSON.stringify(input);
+							this.fileType = input;
+							this.resetTree();
+						}
+					});
+					menu.newEntry({
+						menuName,
+						entryText: 'Load Unknown type as music', func: () => {
+							this.calcSize = ppt.toggle('explLoadUnknown');
+						}, checkFunc: () => ppt.explLoadUnknown
 					});
 					menu.newSeparator(menuName);
 					menu.newEntry({
@@ -1550,7 +1654,7 @@ class FileExplorer {
 				});
 				break;
 			case 'file':
-				if (node.fType == 'music' || node.fType == 'archive') {
+				if (this.getLoadableFormats().has(node.fType)) {
 					menu.newEntry({
 						entryText: 'Send to current playlist' + '\tEnter', func: () => {
 							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
@@ -1614,12 +1718,17 @@ class FileExplorer {
 		return plman.CreatePlaylist(plman.PlaylistCount, node.label);
 	}
 
+	getLoadableFormats() {
+		return new Set(['music', 'video', 'archive', ppt.explLoadUnknown ? 'unknown' : ''].filter(Boolean));
+	}
+
 	getNodePaths(node) {
+		const types = this.getLoadableFormats();
 		return node.type === 'file'
-			? node.fType === 'music' || node.fType === 'archive'
+			? types.has(node.fType)
 				? [node.path]
 				: []
-			: node.item.filter((item) => item.fType === 'music' || item.fType === 'archive')
+			: node.item.filter((item) => types.has(item.fType))
 				.map((item) => item.path);
 	}
 
@@ -1753,10 +1862,10 @@ class FileExplorer {
 
 		['on_playlist_items_added', 'on_playlist_items_removed', 'on_playlists_changed'].forEach((key) => {
 			addEventListener(key, (idx) => {
-				if (this.showPlaylists) {
+				if (this.enabled && this.showPlaylists) {
 					if (typeof idx === 'undefined') { this.refreshPlaylists(); }
 					else {
-						const plsRoot = this.root.child[this.plsNodeIdx];
+						const plsRoot = this.root.child[this.plsNodeIdx].child;
 						const node = plsRoot.find((node) => node.path = idx);
 						node.addData({
 							size: plman.PlaylistItemCount(idx),
@@ -1773,6 +1882,10 @@ class FileExplorer {
 		this.root.child.splice(0, this.root.child.length);
 		this.init(true);
 		window.Repaint();
+	}
+
+	toString() {
+		return JSON.stringify(this, (key, val) => key === 'parentTree' ? '-N/A-' : val);
 	}
 }
 
@@ -1800,7 +1913,7 @@ class FileNode {
 		this.iconHover = false;
 		this.pathSum = [];
 		this.data = {};
-		/** @type {'unknown'|'music'|'text'|'image'|'archive'} */
+		/** @type {'unknown'|'external'|'music'|'video'|'text'|'image'|'archive'} */
 		this.fType = 'unknown';
 		this.hierarchy = 'child';
 		this.init({ label, path, level, idx, pIdx, type, collapsed, pathSum, hierarchy, data });
@@ -1856,6 +1969,28 @@ class FileNode {
 		this.Cx = Math.floor(this.parentTree.treePadX + this.parentTree.xOffset + this.parentTree.treeIndentW * (this.level + 1));
 		this.Cy = Math.floor(this.parentTree.treePadY + y);
 	}
+	getNodeLabel() {
+		let val;
+		switch (this.type) {
+			case 'drive':
+				val = ppt.explShowDriveExpr; break;
+			case 'folder':
+				val = ppt.explShowFolderExpr; break;
+			case 'file':
+				val = ppt.explShowFileExpr; break;
+			case 'favorite':
+				val = ppt.explShowFavExpr; break;
+			case 'playlist':
+				val = ppt.explShowPlsExpr; break;
+			default:
+				val = this.label; break;
+		}
+		const mark = '‎';
+		return val.replace(/%LABEL%/gi, this.label)
+			.replace(/%NAME%/gi, this.label)
+			.replace(/%SIZE%/gi, (Object.hasOwn(this.data, 'size') ? this.data.size : '?' + mark))
+			.replace(new RegExp('\\[.*?' + mark + '.*?\\]', 'gi'), '');
+	}
 	draw(gr, y) {
 		let iconAlpha = 255;
 		let labelCol = this.parentTree.col.text;
@@ -1872,6 +2007,8 @@ class FileNode {
 				break;
 			case 'file': {
 				switch (this.fType) {
+					case 'video':
+						icon = this.parentTree.img.videoFile; break;
 					case 'music':
 						icon = this.parentTree.img.musicFile; break;
 					case 'text':
@@ -1880,6 +2017,7 @@ class FileNode {
 						icon = this.parentTree.img.imageFile; break;
 					case 'archive':
 						icon = this.parentTree.img.archiveFile; break;
+					case 'external':
 					default:
 						icon = this.parentTree.img.file;
 				}
@@ -1936,7 +2074,8 @@ class FileNode {
 			gr.DrawImage(icon, this.x - 20, this.y, icon.Width, icon.Height, 0, 0, icon.Width, icon.Height, 0, iconAlpha);
 		}
 		// calc label width and offsets
-		this.labelWidth = gr.CalcTextWidth(this.label, this.parentTree.font.main);
+		const label = this.getNodeLabel();
+		this.labelWidth = gr.CalcTextWidth(label, this.parentTree.font.main);
 		let focusW;
 		if (this.labelWidth > ui.w - this.x) {
 			focusW = ui.w - this.x - 4;
@@ -1952,7 +2091,7 @@ class FileNode {
 			gr.DrawRoundRect(this.x - 1, this.y - 1, focusW + 2, this.parentTree.treeLineH - 2, 1, 1, 1, $.RGBA(0, 30, 100, 50));
 		}
 		// Draw label
-		gr.GdiDrawText(this.label, (this.hover && !this.markerHover && this.type != 'root' ? this.parentTree.font.hover : this.parentTree.font.main), labelCol, this.x, this.y - this.parentTree.treeLineH / 8, ui.w - this.x - 3, this.parentTree.treeLineH, DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
+		gr.GdiDrawText(label, (this.hover && !this.markerHover && this.type != 'root' ? this.parentTree.font.hover : this.parentTree.font.main), labelCol, this.x, this.y - this.parentTree.treeLineH / 8, ui.w - this.x - 3, this.parentTree.treeLineH, DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 	}
 	checkMouse(event, x, y, mask) {
 		let tmpRetroIndentW = this.retroIndentW - this.parentTree.treeIndentW;
@@ -2099,8 +2238,7 @@ class FileNode {
 				if (this.hover) {
 					if (this.type == 'file') {
 						switch (this.fType) {
-							case 'archive':
-							case 'music': {
+							case this.getLoadableFormats().has(this.fType): {
 								if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
 								switch (this.parentTree.dblClickAction) {
 									case 1:
@@ -2122,8 +2260,9 @@ class FileNode {
 									_run('rundll32.exe', '%windir%\\System32\\shimgvw.dll,ImageView_Fullscreen', this.path);
 								}
 								break;
+							case 'external':
 							default:
-								_runCmd('CMD /C START ' + getShortPath(this.path, true), false, 0);
+								_runCmd('CMD /C "' + getShortPath(this.path, true) + '"', false, 0);
 						}
 					} else if (['root', 'favorites', 'computer', 'playlists'].includes(this.type)) {
 						this.checkMouse('down', this.x, y, mask);
@@ -2176,5 +2315,8 @@ class FileNode {
 			parent = parent.child[node.pathSum[i]];
 			callback(parent);
 		}
+	}
+	toString() {
+		return JSON.stringify(this, (key, val) => key === 'parentTree' ? '-N/A-' : val);
 	}
 }

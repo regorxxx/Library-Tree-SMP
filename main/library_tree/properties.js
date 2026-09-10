@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//10/09/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -95,6 +95,12 @@ class PanelProperties {
 		this[name] = !this[name];
 		return this[name];
 	}
+
+	// Regorxxx <- Support default values retrieval
+	getDefVal(name) {
+		return this[name + '_internal'].default_value;
+	}
+	// Regorxxx ->
 }
 
 let properties = [
