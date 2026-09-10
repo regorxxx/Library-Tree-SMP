@@ -1,5 +1,5 @@
 'use strict';
-//03/09/26
+//10/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -2205,7 +2205,6 @@ class Images {
 			let handle;
 			let handleCut = -1;
 			switch (ppt.albumArtPreferHandle) {
-
 				case 1: { // last
 					handle = panel.list[pop.getLastFromRange(v.item)];
 					break;
@@ -2349,11 +2348,13 @@ class Images {
 			const ln1 = pop.tree.length - 1;
 			const ln2 = panel.list.Count;
 			const nm = `${ppt.showSource ? panel.sourceName : 'All'} (` + ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) + ')';
-			if (ppt.rootNode == 3) pop.tree[0].grp = nm;
-			else if (panel.lines == 1) pop.tree[0].grp = panel.rootName + (ppt.nodeCounts ? ' (' + (ppt.nodeCounts == 2 && ppt.rootNode != 3 ? ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) : ln2 + (ln2 > 1 ? ' tracks' : ' track')) + ')' : '');
+			if (ppt.rootNode == 3) { pop.tree[0].grp = nm; }
+			else if (panel.lines == 1) { pop.tree[0].grp = panel.rootName + (ppt.nodeCounts ? ' (' + (ppt.nodeCounts == 2 && ppt.rootNode != 3 ? ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) : ln2 + (ln2 > 1 ? ' tracks' : ' track')) + ')' : ''); }
 			if (panel.lines == 2) {
-				if (ppt.rootNode != 3) pop.tree[0].grp = panel.rootName;
-				pop.tree[0].lot = ppt.nodeCounts == 2 && ppt.rootNode != 3 ? ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`) : ln2 + (ln2 > 1 ? ' tracks' : ' track');
+				if (ppt.rootNode != 3) { pop.tree[0].grp = panel.rootName; }
+				pop.tree[0].lot = ppt.nodeCounts == 2 && ppt.rootNode != 3
+					? ln1 + (ln1 > 1 ? ` ${pluralField}` : ` ${this.groupField}`)
+					: ln2 + (ln2 > 1 ? ' tracks' : ' track');
 			}
 		}
 		this.metrics();
@@ -2795,7 +2796,7 @@ class Images {
 				else if (sbar.scroll === 0) { this.carousel.dir = 1; }
 				sbar.checkScroll((sbar.scroll + this.carousel.dir * offset), 'step');
 			} else if (panel.m.x === -1 && pop.nowp !== -1) {
-				if (pop.m.i !== pop.nowp) {	pop.nowPlayingShowThrottle(true); }
+				if (pop.m.i !== pop.nowp) { pop.nowPlayingShowThrottle(true); }
 			}
 		}, 1000 / fps);
 		return this.carousel.timer;

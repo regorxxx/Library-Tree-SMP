@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/08/26
+//10/09/26
 
 /* global ppt:readable, $:readable, panel:readable, pop:readable, lib:readable, ui:readable, img:readable, sbar:readable, but:readable, men:readable, vk:readable, ease:readable */
 
@@ -229,31 +229,30 @@ class Scrollbar {
 					break;
 			}
 
-			if (!panel.imgView || !img.letter.show || !this.bar.isDragging) return;
+			if (!panel.imgView || !img.letter.show || !this.bar.isDragging) { return; }
 			const ix = img.style.vertical ? (Math.ceil((panel.m.y + sbar.delta - img.panel.y) / img.row.h) - 1) * (ppt.albumArtFlowMode ? 1 : img.columns) : Math.ceil((panel.m.x + sbar.delta - img.panel.x) / img.columnWidth) - 1;
-			if (ix < 0 || ix > pop.tree.length - 1) return;
+			if (ix < 0 || ix > pop.tree.length - 1) { return; }
 			let letter = panel.lines == 1 || !ppt.albumArtFlipLabels ? pop.tree[ix].grp : pop.tree[ix].lot;
 			letter = panel.cleanMarkers(letter); // Regorxxx <- Code cleanup ->
 			if (img.letter.no != 0) {
 				if (img.letter.albumArtYearAuto) {
 					let sub = letter.substring(0, 4);
-					if (/\d{4}/.test(sub)) letter = sub;
+					if (/\d{4}/.test(sub)) { letter = sub; }
 					else {
 						sub = letter.substring(0, 6);
-						if (/(?:[[(])\d{4}(?:[\])])/.test(sub)) letter = sub;
-						else {
-							letter = letter.substring(0, img.letter.no);
-						}
+						letter = /(?:[[(])\d{4}(?:[\])])/.test(sub)
+							? sub
+							: letter.substring(0, img.letter.no);
 					}
-				} else letter = letter.substring(0, img.letter.no);
+				} else { letter = letter.substring(0, img.letter.no); }
 			}
 			const letter_w = gr.CalcTextWidth(letter, ui.font.main) + img.letter.w;
 			const w1 = Math.min(letter_w, ui.w - img.panel.x - img.letter.w);
 			const w2 = Math.min(letter_w, ui.w - img.panel.x) + 1;
-			if (img.style.vertical) gr.FillSolidRect(0, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w2, img.text.h + 2, ui.col.bg6);
-			if (img.style.vertical) gr.FillSolidRect(0, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w2, img.text.h + 2, ui.col.bg3);
-			if (img.style.vertical) gr.GdiDrawText(letter, ui.font.main, ui.col.text, ui.l.w + img.letter.w / 2, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w1, img.text.h, panel.lc);
-			else gr.GdiDrawText(letter, ui.font.main, ui.col.text, this.x + this.bar.x + this.bar.h / 2 - w1 / 2, sbar_y - img.text.h, w1, img.text.h, panel.cce);
+			if (img.style.vertical) { gr.FillSolidRect(0, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w2, img.text.h + 2, ui.col.bg6); }
+			if (img.style.vertical) { gr.FillSolidRect(0, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w2, img.text.h + 2, ui.col.bg3); }
+			if (img.style.vertical) { gr.GdiDrawText(letter, ui.font.main, ui.col.text, ui.l.w + img.letter.w / 2, this.y + this.bar.y + this.bar.h / 2 - img.text.h / 2, w1, img.text.h, panel.lc); }
+			else { gr.GdiDrawText(letter, ui.font.main, ui.col.text, this.x + this.bar.x + this.bar.h / 2 - w1 / 2, sbar_y - img.text.h, w1, img.text.h, panel.cce); }
 		}
 	}
 
@@ -263,11 +262,11 @@ class Scrollbar {
 		let dir;
 		switch (true) {
 			case this.vertical:
-				if (x < 0 || x > this.w || y < 0 || y > this.h || this.row.count <= this.rows_drawn) return;
-				if (y < this.but_h || y > this.h - this.but_h) return;
-				if (y < this.bar.y) dir = 1; // above bar
-				else if (y > this.bar.y + this.bar.h) dir = -1; // below bar
-				if (y < this.bar.y || y > this.bar.y + this.bar.h) this.shiftPage(dir, this.nearestY(y));
+				if (x < 0 || x > this.w || y < 0 || y > this.h || this.row.count <= this.rows_drawn) { return; }
+				if (y < this.but_h || y > this.h - this.but_h) { return; }
+				if (y < this.bar.y) { dir = 1; } // above bar
+				else if (y > this.bar.y + this.bar.h) { dir = -1; } // below bar
+				if (y < this.bar.y || y > this.bar.y + this.bar.h) { this.shiftPage(dir, this.nearestY(y)); }
 				// Regorxxx <- Double click scrollbar
 				else { // on bar
 					if (fb.IsPlaying && this.nowp !== -1) { pop.nowPlayingShow(); }
@@ -276,11 +275,11 @@ class Scrollbar {
 				// Regorxxx ->
 				break;
 			case !this.vertical:
-				if (y < 0 || y > this.h || x < 0 || x > this.w || this.row.count <= this.rows_drawn) return;
-				if (x < this.but_h || x > this.w - this.but_h) return;
-				if (x < this.bar.x) dir = 1; // above bar
-				else if (x > this.bar.x + this.bar.h) dir = -1; // below bar
-				if (x < this.bar.x || x > this.bar.x + this.bar.h) this.shiftPage(dir, this.nearestX(x));
+				if (y < 0 || y > this.h || x < 0 || x > this.w || this.row.count <= this.rows_drawn) { return; }
+				if (x < this.but_h || x > this.w - this.but_h) { return; }
+				if (x < this.bar.x) { dir = 1; } // above bar
+				else if (x > this.bar.x + this.bar.h) { dir = -1; } // below bar
+				if (x < this.bar.x || x > this.bar.x + this.bar.h) { this.shiftPage(dir, this.nearestX(x)); }
 				// Regorxxx <- Double click scrollbar
 				else { // on bar
 					if (fb.IsPlaying && this.nowp !== -1) { pop.nowPlayingShow(); }
@@ -292,21 +291,21 @@ class Scrollbar {
 	}
 
 	lbtn_dn(p_x, p_y) {
-		if (!ppt.sbarShow && ppt.touchControl) return this.tap(p_x, p_y);
+		if (!ppt.sbarShow && ppt.touchControl) { return this.tap(p_x, p_y); }
 		const x = p_x - this.x;
 		const y = p_y - this.y;
 		let dir;
 		switch (true) {
 			case this.vertical:
-				if (x > this.w || y < 0 || y > this.h || this.row.count <= this.rows_drawn) return;
+				if (x > this.w || y < 0 || y > this.h || this.row.count <= this.rows_drawn) { return; }
 				if (x < 0) {
 					if (ppt.touchControl) { return this.tap(p_x, p_y); }
 					else { return; }
 				}
-				if (y < this.but_h || y > this.h - this.but_h) return;
-				if (y < this.bar.y) dir = 1; // above bar
-				else if (y > this.bar.y + this.bar.h) dir = -1; // below bar
-				if (y < this.bar.y || y > this.bar.y + this.bar.h) this.shiftPage(dir, this.nearestY(y));
+				if (y < this.but_h || y > this.h - this.but_h) { return; }
+				if (y < this.bar.y) { dir = 1; } // above bar
+				else if (y > this.bar.y + this.bar.h) { dir = -1; } // below bar
+				if (y < this.bar.y || y > this.bar.y + this.bar.h) { this.shiftPage(dir, this.nearestY(y)); }
 				else { // on bar
 					this.bar.isDragging = true;
 					but.Dn = true;
@@ -315,15 +314,15 @@ class Scrollbar {
 				}
 				break;
 			case !this.vertical:
-				if (y > this.h || x < 0 || x > this.w || this.row.count <= this.rows_drawn) return;
+				if (y > this.h || x < 0 || x > this.w || this.row.count <= this.rows_drawn) { return; }
 				if (y < 0) {
 					if (ppt.touchControl) { return this.tap(p_x, p_y); }
 					else { return; }
 				}
-				if (x < this.but_h || x > this.w - this.but_h) return;
-				if (x < this.bar.x) dir = 1; // above bar
-				else if (x > this.bar.x + this.bar.h) dir = -1; // below bar
-				if (x < this.bar.x || x > this.bar.x + this.bar.h) this.shiftPage(dir, this.nearestX(x));
+				if (x < this.but_h || x > this.w - this.but_h) { return; }
+				if (x < this.bar.x) { dir = 1; } // above bar
+				else if (x > this.bar.x + this.bar.h) { dir = -1; }// below bar
+				if (x < this.bar.x || x > this.bar.x + this.bar.h) { this.shiftPage(dir, this.nearestX(x)); }
 				else { // on bar
 					this.bar.isDragging = true;
 					but.Dn = true;
