@@ -510,12 +510,20 @@ class FileExplorer {
 					if ((drive.IsReady || drive.DriveType == 4) && (drive.DriveType != 5)) {
 						const letter = drive.DriveLetter.toUpperCase();
 						if (!drive.IsReady && drive.DriveType == 4) {
-							node.addChild('N/A' + ' (' + letter + ':) ', letter + ':\\');
+							node.addChild(
+								'N/A' + ' (' + letter + ':) ',
+								letter + ':\\',
+							);
 							node.child[node.child.length - 1].ready = false;
 						} else if (drive.IsReady) {
 							const free = utils.FormatFileSize(drive.FreeSpace);
 							const total = utils.FormatFileSize(drive.TotalSize);
-							node.addChild((drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':) ' + free + ' / ' + total, (drive.Path || drive.Root || '').replace('\\', '') + '\\', { size: total });
+							const name = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':)';
+							node.addChild(
+								name + ' ' + free + ' / ' + total,
+								(drive.Path || drive.Root || '').replace('\\', '') + '\\',
+								{ size: total, volumeName: drive.VolumeName || '', name , letter, freeSize: free }
+							);
 							node.child[node.child.length - 1].ready = true;
 						}
 						node.child[node.child.length - 1].type = 'drive';
@@ -584,8 +592,13 @@ class FileExplorer {
 						node.ready = true;
 						const free = utils.FormatFileSize(drive.FreeSpace);
 						const total = utils.FormatFileSize(drive.TotalSize);
-						node.label = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + (drive.Path || drive.Root || '').replace('\\', '') + ') ' + free + ' / ' + total;
+						const letter = (drive.Path || drive.Root || '').replace('\\', '');
+						node.data.name = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':)';
+						node.label = node.data.name + ' ' + free + ' / ' + total;
 						node.data.size = total;
+						node.data.volumeName = drive.VolumeName || '';
+						node.data.letter = letter;
+						node.data.freeSize = free;
 					} else {
 						if (node.ready) this.redrawDrives = true;
 						node.ready = false;
@@ -1270,56 +1283,61 @@ class FileExplorer {
 						}, checkFunc: () => this.showFilesystem
 					});
 					menu.newSeparator(menuName);
-					menu.newEntry({
-						menuName,
-						entryText: 'Playlist node format...', func: () => {
-							const defVal = ppt.getDefVal('explShowPlsExpr');
-							const input = Input.string('string', ppt.explShowPlsExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Playlist Node format', defVal, void (0), void (0), defVal);
-							if (input === null) { return; }
-							ppt.explShowPlsExpr = input;
-							this.resetTree();
-						}
-					});
-					menu.newEntry({
-						menuName,
-						entryText: 'Favorite node format...', func: () => {
-							const defVal = ppt.getDefVal('explShowFavExpr');
-							const input = Input.string('string', ppt.explShowFavExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Favorite Node format', defVal, void (0), void (0), defVal);
-							if (input === null) { return; }
-							ppt.explShowFavExpr = input;
-							this.resetTree();
-						}
-					});
-					menu.newEntry({
-						menuName,
-						entryText: 'File node format...', func: () => {
-							const defVal = ppt.getDefVal('explShowFileExpr');
-							const input = Input.string('string', ppt.explShowFileExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File Node format', defVal, void (0), void (0), defVal);
-							if (input === null) { return; }
-							ppt.explShowFileExpr = input;
-							this.resetTree();
-						}
-					});
-					menu.newEntry({
-						menuName,
-						entryText: 'Folder node format...', func: () => {
-							const defVal = ppt.getDefVal('explShowFolderExpr');
-							const input = Input.string('string', ppt.explShowFolderExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Folder Node format', defVal, void (0), void (0), defVal);
-							if (input === null) { return; }
-							ppt.explShowFolderExpr = input;
-							this.resetTree();
-						}
-					});
-					menu.newEntry({
-						menuName,
-						entryText: 'Drive node format...', func: () => {
-							const defVal = ppt.getDefVal('explShowDriveExpr');
-							const input = Input.string('string', ppt.explShowDriveExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Drive Node format', defVal, void (0), void (0), defVal);
-							if (input === null) { return; }
-							ppt.explShowDriveExpr = input;
-							this.resetTree();
-						}
-					});
+					{
+						const subMenuName = menu.newMenu('Node format', menuName);
+						menu.newEntry({ menuName: subMenuName, entryText: 'Nodes tree display:', flags: MF_GRAYED });
+						menu.newSeparator(subMenuName);
+						menu.newEntry({
+							menuName: subMenuName,
+							entryText: 'Playlists...', func: () => {
+								const defVal = ppt.getDefVal('explShowPlsExpr');
+								const input = Input.string('string', ppt.explShowPlsExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%, %ISLOCKED%, %ISISAUTOPLS%, %LOCKNAME%, %IDX%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Playlist Node format', defVal, void (0), void (0), defVal);
+								if (input === null) { return; }
+								ppt.explShowPlsExpr = input;
+								this.resetTree();
+							}
+						});
+						menu.newEntry({
+							menuName: subMenuName,
+							entryText: 'Favorites...', func: () => {
+								const defVal = ppt.getDefVal('explShowFavExpr');
+								const input = Input.string('string', ppt.explShowFavExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Favorite Node format', defVal, void (0), void (0), defVal);
+								if (input === null) { return; }
+								ppt.explShowFavExpr = input;
+								this.resetTree();
+							}
+						});
+						menu.newEntry({
+							menuName: subMenuName,
+							entryText: 'Files...', func: () => {
+								const defVal = ppt.getDefVal('explShowFileExpr');
+								const input = Input.string('string', ppt.explShowFileExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'File Node format', defVal, void (0), void (0), defVal);
+								if (input === null) { return; }
+								ppt.explShowFileExpr = input;
+								this.resetTree();
+							}
+						});
+						menu.newEntry({
+							menuName: subMenuName,
+							entryText: 'Folders...', func: () => {
+								const defVal = ppt.getDefVal('explShowFolderExpr');
+								const input = Input.string('string', ppt.explShowFolderExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%, %LETTER%, .\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Folder Node format', defVal, void (0), void (0), defVal);
+								if (input === null) { return; }
+								ppt.explShowFolderExpr = input;
+								this.resetTree();
+							}
+						});
+						menu.newEntry({
+							menuName: subMenuName,
+							entryText: 'Drives...', func: () => {
+								const defVal = ppt.getDefVal('explShowDriveExpr');
+								const input = Input.string('string', ppt.explShowDriveExpr, 'Add expression:\n\nSupports: %NAME%, %LABEL%, %SIZE%, %FREESIZE%, %VOLUMENAME%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Drive Node format', defVal, void (0), void (0), defVal);
+								if (input === null) { return; }
+								ppt.explShowDriveExpr = input;
+								this.resetTree();
+							}
+						});
+					}
 				}
 				menu.newSeparator();
 				{
@@ -1986,10 +2004,24 @@ class FileNode {
 				val = this.label; break;
 		}
 		const mark = '‎';
-		return val.replace(/%LABEL%/gi, this.label)
-			.replace(/%NAME%/gi, this.label)
-			.replace(/%SIZE%/gi, (Object.hasOwn(this.data, 'size') ? this.data.size : '?' + mark))
-			.replace(new RegExp('\\[.*?' + mark + '.*?\\]', 'gi'), '');
+		val = val
+			.replace(/%LABEL%/gi, this.label)
+			.replace(/%NAME%/gi, Object.hasOwn(this.data, 'name') ? this.data.name : this.label)
+			.replace(/%SIZE%/gi, Object.hasOwn(this.data, 'size') ? this.data.size : ('?' + mark));
+		if (this.type === 'playlist') {
+			val = val
+				.replace(/#PLSTRACKS#/gi, Object.hasOwn(this.data, 'size') ? this.data.size : ('?' + mark))
+				.replace(/%ISLOCKED%|#PLSISLOCKED#/gi, Object.hasOwn(this.data, 'lock') ? this.data.lock !== '' : (false + mark))
+				.replace(/%ISISAUTOPLS%|#PLSISAUTOPLS#/gi, Object.hasOwn(this.data, 'type') ? this.data.type === 'AutoPlaylist' : (false + mark))
+				.replace(/%LOCKNAME%|#PLSLOCKNAME#/gi, Object.hasOwn(this.data, 'lock') ? this.data.lock : mark)
+				.replace(/%IDX%|#PLSIDX#/gi, this.path);
+		} else if (this.type === 'drive') {
+			val = val
+				.replace(/%LETTER%/gi, Object.hasOwn(this.data, 'letter') ? this.data.letter : ('?' + mark))
+				.replace(/%VOLUMENAME%/gi, Object.hasOwn(this.data, 'volumeName') ? this.data.volumeName : ('?' + mark))
+				.replace(/%FREESIZE%/gi, Object.hasOwn(this.data, 'freeSize') ? this.data.freeSize : ('?' + mark));
+		}
+		return val.replace(new RegExp('\\[[^[]*?' + mark + '+[^\\]]*?\\]', 'g'), '');;
 	}
 	draw(gr, y) {
 		let iconAlpha = 255;
@@ -2238,7 +2270,7 @@ class FileNode {
 				if (this.hover) {
 					if (this.type == 'file') {
 						switch (this.fType) {
-							case this.getLoadableFormats().has(this.fType): {
+							case this.parentTree.getLoadableFormats().has(this.fType): {
 								if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
 								switch (this.parentTree.dblClickAction) {
 									case 1:
