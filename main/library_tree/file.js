@@ -1321,7 +1321,7 @@ class FileExplorer {
 							menuName: subMenuName,
 							entryText: 'Folders...', func: () => {
 								const defVal = ppt.getDefVal('explShowFolderExpr');
-								const input = Input.string('string', ppt.explShowFolderExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%, %LETTER%, .\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Folder Node format', defVal, void (0), void (0), defVal);
+								const input = Input.string('string', ppt.explShowFolderExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Folder Node format', defVal, void (0), void (0), defVal);
 								if (input === null) { return; }
 								ppt.explShowFolderExpr = input;
 								this.resetTree();
@@ -1331,7 +1331,7 @@ class FileExplorer {
 							menuName: subMenuName,
 							entryText: 'Drives...', func: () => {
 								const defVal = ppt.getDefVal('explShowDriveExpr');
-								const input = Input.string('string', ppt.explShowDriveExpr, 'Add expression:\n\nSupports: %NAME%, %LABEL%, %SIZE%, %FREESIZE%, %VOLUMENAME%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Drive Node format', defVal, void (0), void (0), defVal);
+								const input = Input.string('string', ppt.explShowDriveExpr, 'Add expression:\n\nSupports: %NAME%, %LABEL%, %SIZE%, %FREESIZE%, %VOLUMENAME%, %LETTER%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Drive Node format', defVal, void (0), void (0), defVal);
 								if (input === null) { return; }
 								ppt.explShowDriveExpr = input;
 								this.resetTree();
