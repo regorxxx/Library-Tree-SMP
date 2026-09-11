@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/09/26
+//11/09/26
 
 /* exported FileExplorer */
 
@@ -111,11 +111,11 @@ class FileExplorer {
 			['File Explorer: Show Playlists', false, 'explShowPlaylists'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
-			['File Explorer: Playlist Node expression', '%NAME% [#%SIZE%]', 'explShowPlsExpr'],
-			['File Explorer: Favorite Node expression', '%NAME%', 'explShowFavExpr'],
-			['File Explorer: File Node expression', '%NAME%', 'explShowFileExpr'],
-			['File Explorer: Folder Node expression', '[%NAME%]', 'explShowFolderExpr'],
-			['File Explorer: Drive Node expression', '%LABEL%', 'explShowDriveExpr'],
+			['File Explorer: Playlist Node TF', '%NAME% \'[\'#%SIZE%\']\'', 'explShowPlsExpr'],
+			['File Explorer: Favorite Node TF', '%NAME%', 'explShowFavExpr'],
+			['File Explorer: File Node TF', '%NAME%', 'explShowFileExpr'],
+			['File Explorer: Folder Node TF', '\'[\'%NAME%\']\'', 'explShowFolderExpr'],
+			['File Explorer: Drive Node TF', '%LABEL%', 'explShowDriveExpr'],
 			['File Explorer: Fav Paths', '', 'explFavPaths'],
 			['File Explorer: Fav Labels', '', 'explFavLabels'],
 			['File Explorer: Last state', '', 'explLastState'],
@@ -462,17 +462,24 @@ class FileExplorer {
 		this.fillFileLevel(oFolder, node, recursive);
 	}
 
+	getPlaylistData(idx) {
+		if (idx !== -1 && idx < plman.PlaylistCount) {
+			const handleList = plman.GetPlaylistItems(idx);
+			return {
+				guid: plman.GetGUID(idx),
+				size: plman.PlaylistItemCount(idx),
+				type: plman.IsAutoPlaylist(idx) ? 'AutoPlaylist' : 'Playlist',
+				lock: plman.GetPlaylistLockName(idx) || '',
+				duration: handleList.CalcTotalDuration(),
+				trackSize: handleList.CalcTotalSize()
+			};
+		}
+		return {};
+	}
+
 	fillPlaylists(node) {
 		for (let i = 0; i < plman.PlaylistCount; i++) {
-			node.addChild(
-				plman.GetPlaylistName(i), i,
-				{
-					guid: plman.GetGUID(i),
-					size: plman.PlaylistItemCount(i),
-					type: plman.IsAutoPlaylist(i) ? 'AutoPlaylist' : 'Playlist',
-					lock: plman.GetPlaylistLockName(i) || ''
-				}
-			);
+			node.addChild(plman.GetPlaylistName(i), i, this.getPlaylistData(i));
 			node.child[node.child.length - 1].type = 'playlist';
 		}
 	}
@@ -485,21 +492,6 @@ class FileExplorer {
 			node.child[i].type = 'favorite';
 			if (this.calcSize) { this.addFolderSizeData(node.child[i]); }
 		});
-	}
-
-	refreshFavorites() {
-		let i = 0;
-		this.favLabels = [];
-		this.favPaths = [];
-		const favRoot = this.root.child[this.favNodeIdx];
-		for (const item of favRoot.child) {
-			item.idx = i;
-			this.favLabels.push(item.label);
-			this.favPaths.push(item.path);
-			i++;
-		}
-		ppt.explFavPaths = this.favPaths.join(';');
-		ppt.explFavLabels = this.favLabels.join(';');
 	}
 
 	fillDrives(node) {
@@ -522,7 +514,7 @@ class FileExplorer {
 							node.addChild(
 								name + ' ' + free + ' / ' + total,
 								(drive.Path || drive.Root || '').replace('\\', '') + '\\',
-								{ size: total, volumeName: drive.VolumeName || '', name , letter, freeSize: free }
+								{ size: total, volumeName: drive.VolumeName || '', name, letter, freeSize: free }
 							);
 							node.child[node.child.length - 1].ready = true;
 						}
@@ -532,6 +524,27 @@ class FileExplorer {
 				} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 			}
 		} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
+	}
+
+	refreshFavorites() {
+		let i = 0;
+		this.favLabels = [];
+		this.favPaths = [];
+		const favRoot = this.root.child[this.favNodeIdx];
+		for (const item of favRoot.child) {
+			item.idx = i;
+			this.favLabels.push(item.label);
+			this.favPaths.push(item.path);
+			i++;
+		}
+		ppt.explFavPaths = this.favPaths.join(';');
+		ppt.explFavLabels = this.favLabels.join(';');
+	}
+
+	refreshPlaylist(idx) {
+		const plsRoot = this.root.child[this.plsNodeIdx].child;
+		const node = plsRoot.find((node) => node.path = idx);
+		if (node) { node.addData(this.getPlaylistData(idx)); }
 	}
 
 	getPos(y) {
@@ -1285,13 +1298,13 @@ class FileExplorer {
 					menu.newSeparator(menuName);
 					{
 						const subMenuName = menu.newMenu('Node format', menuName);
-						menu.newEntry({ menuName: subMenuName, entryText: 'Nodes tree display:', flags: MF_GRAYED });
+						menu.newEntry({ menuName: subMenuName, entryText: 'Nodes TF display:', flags: MF_GRAYED });
 						menu.newSeparator(subMenuName);
 						menu.newEntry({
 							menuName: subMenuName,
 							entryText: 'Playlists...', func: () => {
 								const defVal = ppt.getDefVal('explShowPlsExpr');
-								const input = Input.string('string', ppt.explShowPlsExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%, %ISLOCKED%, %ISISAUTOPLS%, %LOCKNAME%, %IDX%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Playlist Node format', defVal, void (0), void (0), defVal);
+								const input = Input.string('string', ppt.explShowPlsExpr, 'Add expression:\n\nSupports: %NAME%, %SIZE%, %DURATION%, %TRACKSIZE%, %ISLOCKED%, %ISAUTOPLS%, %LOCKNAME%, %IDX%.\n\nFor example:\n' + defVal.cut(40) + '\n\n\'DEFAULT\' applies default expression (above).', 'Playlist Node format', defVal, void (0), void (0), defVal);
 								if (input === null) { return; }
 								ppt.explShowPlsExpr = input;
 								this.resetTree();
@@ -1882,15 +1895,7 @@ class FileExplorer {
 			addEventListener(key, (idx) => {
 				if (this.enabled && this.showPlaylists) {
 					if (typeof idx === 'undefined') { this.refreshPlaylists(); }
-					else {
-						const plsRoot = this.root.child[this.plsNodeIdx].child;
-						const node = plsRoot.find((node) => node.path = idx);
-						node.addData({
-							size: plman.PlaylistItemCount(idx),
-							type: plman.IsAutoPlaylist(idx) ? 'AutoPlaylist' : 'Playlist',
-							lock: plman.GetPlaylistLockName(idx) || ''
-						});
-					}
+					else { this.refreshPlaylist(idx); }
 				}
 			});
 		});
@@ -2014,14 +2019,35 @@ class FileNode {
 				.replace(/%ISLOCKED%|#PLSISLOCKED#/gi, Object.hasOwn(this.data, 'lock') ? this.data.lock !== '' : (false + mark))
 				.replace(/%ISISAUTOPLS%|#PLSISAUTOPLS#/gi, Object.hasOwn(this.data, 'type') ? this.data.type === 'AutoPlaylist' : (false + mark))
 				.replace(/%LOCKNAME%|#PLSLOCKNAME#/gi, Object.hasOwn(this.data, 'lock') ? this.data.lock : mark)
-				.replace(/%IDX%|#PLSIDX#/gi, this.path);
+				.replace(/%IDX%|#PLSIDX#/gi, this.path)
+				.replace(/%TRACKSIZE%|#PLSSIZE#/gi, Object.hasOwn(this.data, 'trackSize') ? this.data.trackSize : mark)
+				.replace(/%DURATION%|#PLSDURATION#/gi, Object.hasOwn(this.data, 'duration') ? this.data.duration : mark);
 		} else if (this.type === 'drive') {
 			val = val
 				.replace(/%LETTER%/gi, Object.hasOwn(this.data, 'letter') ? this.data.letter : ('?' + mark))
 				.replace(/%VOLUMENAME%/gi, Object.hasOwn(this.data, 'volumeName') ? this.data.volumeName : ('?' + mark))
 				.replace(/%FREESIZE%/gi, Object.hasOwn(this.data, 'freeSize') ? this.data.freeSize : ('?' + mark));
 		}
-		return val.replace(new RegExp('\\[[^[]*?' + mark + '+[^\\]]*?\\]', 'g'), '');;
+		let left = 0, right = 0, markIdx = -1;
+		while (left !== -1 && left < val.length) {
+			left = val.indexOf('[', left);
+			if (left === -1) { break; }
+			if (val[left - 1] === '\'' && val[left + 1] === '\'') { left++; continue; }
+			right = val.indexOf(']', left);
+			if (right === -1) { break; }
+			while (right !== -1 && val[right - 1] === '\'' && val[right + 1] === '\'') {
+				right = val.indexOf(']', right);
+			}
+			if (right === -1) { break; }
+			markIdx = val.indexOf(mark, left);
+			if (markIdx !== -1 && markIdx < right) {
+				val = val.slice(0, left) + val.slice(right + 1);
+			} else {
+				val = val.slice(0, left) + val.slice(left + 1, right) + val.slice(right + 1);
+			}
+			left = right;
+		}
+		return val.replaceAll('\'[\'', '[').replaceAll('\']\'', ']');
 	}
 	draw(gr, y) {
 		let iconAlpha = 255;

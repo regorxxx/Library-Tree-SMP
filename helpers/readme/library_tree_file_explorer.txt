@@ -25,6 +25,12 @@ UI:
 • L. Click on + marker or node icon to Collapse|Expand node.
 • Same mouse actions than any other source (check Behaviour tab).
 
+TF:
+------------
+• foobar2000 like expressions with custom variables.
+• Values enclosed on brackets ([%VAR%]) are only shown if present.
+• Escape brackets to show them on expressions. i.e. '['%VAR%']'
+
 General notes:
 --------------
 • File parsing can be done with ActiveX or JS-Host methods. Unix users
@@ -52,10 +58,14 @@ Differences with WSH Tree Explorer:
 
 • Support on Unix systems with native JS-host methods.
 
+• Support for video files.
+
 • Configurable mouse actions.
 
-• Icon effects on open/close.
-
 • Configurable mouse actions and expanded context menus.
+
+• Configurable TF to display node labels.
+
+• Icon effects on open/close.
 
 • Folders's contents can be loaded without first opening them.
