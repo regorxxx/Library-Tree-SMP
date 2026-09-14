@@ -18,6 +18,7 @@
 ### Removed
 ### Fixed
 - Statistics: fixed bug, on original script, related to tag updates not triggering a source refresh while using statistics. For ex. rating changes not being reflected on rating stats on real time.
+- Fixed UTF-8 script files without BOM not being properly recognized on windows.
 
 ## [3.0.0] - 2026-08-24
 ### Added
