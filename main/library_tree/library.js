@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 //26/08/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */

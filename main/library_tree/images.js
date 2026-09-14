@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 //10/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
