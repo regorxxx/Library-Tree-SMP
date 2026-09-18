@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/09/26
+//18/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -59,7 +59,7 @@ class Images {
 
 		this.cache = {};
 
-		this.cachesize = {
+		this.cacheSize = {
 			min: 20
 		};
 
@@ -559,7 +559,7 @@ class Images {
 		}
 		this.cache = this.sortCache(this.cache, 'accessed');
 		keys = Object.keys(this.cache);
-		const numToRemove = Math.round((cacheLength - this.cachesize.min) / 2);
+		const numToRemove = Math.round((cacheLength - this.cacheSize.min) / 2);
 		if (numToRemove > 0)
 			for (let i = 0; i < numToRemove; i++) this.trimCache(keys[i]);
 	}
@@ -631,7 +631,7 @@ class Images {
 	clearCache() {
 		this.accessed = 0;
 		this.cache = {};
-		this.cachesize = {
+		this.cacheSize = {
 			min: 20
 		};
 		this.items = [];
@@ -2361,13 +2361,17 @@ class Images {
 		panel.treePaint();
 	}
 
+	// Regorxxx <- Optimize memory limits
 	memoryLimit() {
 		if (!window.JsMemoryStats) { return void (0); }
 		// Check that current memory usage is not over the limit
+		// JSplitter uses external memory and we impose a 1.5 GB limit there
+		// If limit is set by user, then there is no max value allowed
+		const mem = window.JsMemoryStats;
 		const limit = ppt.memoryLimit
-			? Math.min(ppt.memoryLimit * 1048576, window.JsMemoryStats.TotalMemoryLimit * 0.8)
-			: window.JsMemoryStats.TotalMemoryLimit * 0.5;
-		if (window.JsMemoryStats.TotalMemoryUsage > limit) { return true; }
+			? Math.min(ppt.memoryLimit * 1048576, (mem.TotalMemoryLimit || Infinity) * 0.8)
+			: (mem.TotalMemoryLimit || 1048576 * 3 * 1024) * 0.5;
+		if ((mem.TotalMemoryUsage || mem.CurrentPanelExternalUsage) > limit) { return true; }
 		// Or make an estimation of memory usage for possible new images
 		let totalImgSize = 0, maxImgSize = 0, currImgSize;
 		Object.values(this.cache).forEach((cache) => {
@@ -2375,8 +2379,9 @@ class Images {
 			totalImgSize += currImgSize;
 			maxImgSize = Math.max(maxImgSize, currImgSize);
 		});
-		return totalImgSize > limit * 0.65 || window.JsMemoryStats.MemoryUsage + maxImgSize * this.cachesize.min > limit;
+		return totalImgSize > limit * 0.65 || (mem.MemoryUsage || mem.CurrentPanelExternalUsage) + maxImgSize * this.cacheSize.min > limit;
 	}
+	// Regorxxx ->
 
 	metrics() {
 		if (!ui.w || !ui.h) return;
@@ -2548,7 +2553,7 @@ class Images {
 			}
 		}
 
-		this.cachesize.min = panel.rows * this.columns * 3 + (this.albumArtDiskCache ? panel.rows * 2 : panel.rows) * this.columns * 2;
+		this.cacheSize.min = panel.rows * this.columns * 3 + (this.albumArtDiskCache ? panel.rows * 2 : panel.rows) * this.columns * 2;
 		this.createMasks(); // Regorxxx <- Code Cleanup ->
 		this.getCurrentDatabase();
 		if (ppt.albumArtPreLoad && !this.zooming && this.albumArtDiskCache) this.getItemsToDraw(true);

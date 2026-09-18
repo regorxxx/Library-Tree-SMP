@@ -14,6 +14,7 @@
 ### Changed
 - UI: moved sorting features to its own submenu within settings menu.
 - UI: mouse actions at 'Behaviour' tab (HTML options panel) now reflect when an action is forced by mode or source being used.
+- Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Helpers: updated helpers.
 ### Removed
 ### Fixed
