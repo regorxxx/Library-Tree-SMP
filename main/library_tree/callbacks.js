@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//18/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -1013,3 +1013,5 @@ addEventListener('on_mouse_lbtn_tplclk', (x, y, mask) => {
 // Regorxxx ->
 
 explorer.attachCallbacks();
+
+if (window.IsFocused) { on_focus(true); } // Regorxxx <- Fix focus on startup on panel reload ->
