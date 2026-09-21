@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/09/26
+//21/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable */
@@ -2368,9 +2368,16 @@ class Images {
 		// JSplitter uses external memory and we impose a 1.5 GB limit there
 		// If limit is set by user, then there is no max value allowed
 		const mem = window.JsMemoryStats;
+		const availableMemory = Object.hasOwn(mem, 'TotalMemoryLimit')
+			? mem.TotalMemoryLimit
+			: window.Parent === 'foo_uie_jsplitter'
+				? soFeat.x64
+					? utils.SystemInfo.RAM.Available
+					: 1048576 * 3 * 1024 - utils.SystemInfo.RAM.Process
+				: 1048576 * 3 * 1024;
 		const limit = ppt.memoryLimit
-			? Math.min(ppt.memoryLimit * 1048576, (mem.TotalMemoryLimit || Infinity) * 0.8)
-			: (mem.TotalMemoryLimit || 1048576 * 3 * 1024) * 0.5;
+			? Math.min(ppt.memoryLimit * 1048576, availableMemory * 0.8)
+			: availableMemory * 0.5;
 		if ((mem.TotalMemoryUsage || mem.CurrentPanelExternalUsage) > limit) { return true; }
 		// Or make an estimation of memory usage for possible new images
 		let totalImgSize = 0, maxImgSize = 0, currImgSize;
