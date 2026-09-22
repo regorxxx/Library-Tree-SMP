@@ -613,7 +613,7 @@ class Panel {
 			this.samePattern = !this.colMarker && this.curPattern == this.view;
 		}
 		this.curPattern = this.view;
-		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.filter.mode[ppt.filterBy].name.includes(s)); // Regorxxx <- Expand TF support ->
+		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.filter.mode[ppt.filterBy].type.includes(s)); // Regorxxx <- Expand TF support ->
 		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.getArt(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 
 		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
