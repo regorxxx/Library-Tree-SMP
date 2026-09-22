@@ -1,8 +1,8 @@
 ﻿'use strict';
-//01/09/26
+//22/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
-/* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable */
+/* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
 
 /* exported Buttons, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -569,10 +569,15 @@ class Btn {
 		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		gr.FillRoundRect(this.x, but.hoverArea, this.w, but.hot_h, but.arc, but.arc, colRect);
 		gr.SetSmoothingMode();
+		// Regorxxx <- Filter / View / Source button | Limit button size
+		const [x, w, bCut] = gr.CalcTextWidth(but.multiBtn.name, panel.filter.font) > window.Width/3
+			? [this.p1 + 10, this.p3 - 20, true]
+			: [this.p1, this.p3, false];
 		if (ui.img.blurDark) {
 			gr.SetTextRenderingHint(5);
-			gr.DrawString(but.multiBtn.name, panel.filter.font, colText, this.p1 - 1, this.y - 1, this.p3, this.h, $.stringFormat(1, 1)); // Regorxxx <- Filter / View / Source button ->
-		} else { gr.GdiDrawText(but.multiBtn.name, panel.filter.font, colText, this.p1, this.y, this.p3, this.h, this.p2); } // Regorxxx <- Filter / View / Source button ->
+			gr.DrawString(but.multiBtn.name, panel.filter.font, colText, x - 1, this.y - 1, w, this.h, bCut ? $.stringFormat(0, 1) | 0x00001000 : $.stringFormat(1, 1));
+		} else { gr.GdiDrawText(but.multiBtn.name, panel.filter.font, colText, x, this.y, w, this.h, this.p2 | DT_WORD_ELLIPSIS); }
+		// Regorxxx ->
 	}
 
 	drawScrollBtn(gr) {
