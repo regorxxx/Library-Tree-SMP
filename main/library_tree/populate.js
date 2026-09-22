@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/08/26
+//22/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -695,7 +695,7 @@ class Populate {
 	// Regorxxx <- Statistics rework
 	calcStatistics(v) {
 		const key = 'stat' + this.getKey(v);
-		const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+		const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard'; // Regorxxx <- Multiple filters support | Code cleanup ->
 		if (this.cache[type][key]) { return this.cache[type][key]; }
 		let items = [];
 		this.addItems(items, v, true); // Regorxxx <- Preserve tree sorting at selection ->
@@ -1139,7 +1139,7 @@ class Populate {
 
 	draw(gr) {
 		if (lib.empty) return gr.GdiDrawText(lib.empty, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
-		if (!this.tree.length || !panel.draw) return gr.GdiDrawText(this.libItems && !panel.search.txt && !ppt.filterBy && panel.isStandardSource() ? 'Loading...\n\n' : lib.none, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
+		if (!this.tree.length || !panel.draw) return gr.GdiDrawText(this.libItems && !panel.search.txt && !panel.hasFilterActive() && panel.isStandardSource() ? 'Loading...\n\n' : lib.none, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
 		// Regorxxx <- Rectangle selection on art view
 		if (ppt.selRectArt && (this.selRect.down && this.selRect.x !== this.selRect.w && this.selRect.y !== this.selRect.h)) {
 			const [x, y, w, h] = [this.selRect.x, this.selRect.y, this.selRect.w - this.selRect.x, this.selRect.h - this.selRect.y];
@@ -1642,7 +1642,7 @@ class Populate {
 					case 'items':
 					case 'items (#)': {
 						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
-							const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+							const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
 							const key = this.getKey(v);
 							v.count = this.branchCount(v, !!v.root, true, false, key, type);
 							v.count += v.count > 1 ? ' items' : ' item';
@@ -1669,7 +1669,7 @@ class Populate {
 									break;
 								}
 								case 2: {
-									const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+									const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
 									const key = this.getKey(v);
 									v.count = this.branchCount(v, !!v.root, true, false, key, type);
 									v.count += v.count > 1 ? ' items' : ' item';
@@ -1692,7 +1692,7 @@ class Populate {
 				if (v.root && this.label) {
 					if (!this.statisticsShow) v.count = this.label;
 				} else {
-					const type = panel.search.txt ? 'search' : ppt.filterBy ? 'filter' : 'standard';
+					const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
 					const key = this.getKey(v);
 					v.count = !v.track || !this.showTracks ? (v.name ? ' ' : '') + (this.nodeCounts == 1 ? '(' + this.trackCount(v.item) + ')' : this.nodeCounts == 2 ? '(' + this.branchCount(v, !!v.root, true, false, key, type) + ')' : '') : '';
 					if (!this.showTracks && v.count == (v.name ? ' ' : '') + '(0)') v.count = '';
@@ -1918,11 +1918,11 @@ class Populate {
 							return;
 						}
 					} else {
-						// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source
+						// Regorxxx <- Fix Double click while using search on playlist sources | Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Multiple filters support | Code cleanup
 						const plsIdx = this.getPlaylistParentIdx(item);
 						const handleIdx = this.getFirstFromRange(item.item);
 						if (!isArrayEqual(plsIdx, [-1]) && handleIdx !== -1) {
-							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true) || ppt.filterBy || !ppt.plsSorting || lib.filterSort
+							const idx = panel.search.txt.length || panel.isAllPlaylistSource(true) || panel.hasFilterActive() || !ppt.plsSorting || lib.filterSort
 								? plman.GetPlaylistItems(plsIdx[0]).Find(panel.list[handleIdx])
 								: handleIdx;
 							if (idx !== -1) {
@@ -2934,7 +2934,7 @@ class Populate {
 		let firstPls = -1;
 		plsIdxArr.forEach((idx) => {
 			let items = [];
-			if (panel.search.txt || ppt.filterBy || panel.multiProcess) {
+			if (panel.search.txt || panel.hasFilterActive() || panel.multiProcess) { // Regorxxx <- Multiple filters support | Code cleanup ->
 				const hl = this.getHandleList();
 				hl.Convert().forEach(h => {
 					const i = lib.full_list.Find(h);
@@ -3027,7 +3027,7 @@ class Populate {
 			}
 		} else {
 			let items = [];
-			if (panel.search.txt || ppt.filterBy || !ppt.plsSorting || lib.filterSort || selectionFilter) {
+			if (panel.search.txt || panel.hasFilterActive() || !ppt.plsSorting || lib.filterSort || selectionFilter) { // Regorxxx <- Multiple filters support | Code cleanup ->
 				const hl = (selectionFilter ? selectionFilter(this.getHandleList()) : this.getHandleList()).Convert();
 				const list = lib.full_list.Convert();
 				hl.forEach((h) => { // Select duplicates handles

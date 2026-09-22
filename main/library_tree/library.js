@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/08/26
+//22/09/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -396,7 +396,7 @@ class Library {
 		return true;
 	}
 
-	// Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns
+	// Regorxxx <- Improve filter checking based on events | Search text also triggers updates to filtering | Expand TF support on view patterns | Multiple filters support
 	doDynamicFilter(type, callback) {
 		return [
 			...(type === 'playback' || !type ? [/\$nowplaying{(?:.+?)}/] : []),
@@ -404,7 +404,7 @@ class Library {
 			/\$nowplayingorselected{(.+?)}/
 		].filter(Boolean).some((re) => {
 			const bSearch = !ppt.searchEnter && ppt.searchRefreshTf && re.test(panel.search.txt);
-			const bFilter = re.test(panel.filter.mode[ppt.filterBy].type);
+			const bFilter = re.test(panel.getFilterQuery());
 			const bView = !panel.folderView && re.test(panel.grp[ppt.viewBy].type);
 			return callback(bSearch, bFilter, bView);
 		});
@@ -432,7 +432,7 @@ class Library {
 					this.rootNodes(ppt.reset ? 0 : 1, true);
 					if (!pop.notifySelection()) {
 						const list = !panel.search.txt.length || !lib.list.Count ? lib.list : panel.list;
-						window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+						window.NotifyOthers(window.Name, panel.hasFilterActive() ? list : new FbMetadbHandleList());  // Regorxxx <- Multiple filters support | Code cleanup ->
 					}
 					if (ppt.searchSend == 2 && panel.search.txt.length) pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 					pop.checkAutoHeight();
@@ -528,16 +528,16 @@ class Library {
 		node.splice(i, 0, item);
 	}
 
-	// Regorxxx <- Code cleanup | Expose TF formatting for arbitrary input | Support SORT BY query sorting
+	// Regorxxx <- Code cleanup | Expose TF formatting for arbitrary input | Support SORT BY query sorting | Multiple filters support
 	processFilterQuery() {
-		const processed = panel.processCustomTf(panel.filter.mode[ppt.filterBy].type);
+		const processed = panel.processCustomTf(panel.getFilterQuery());
 		this.filterQuery = panel.processCustomTf(stripSort(processed));
 		this.filterSort = getSortObj(processed);
 		this.validFilter = isQuery(this.filterQuery, true);
 	}
 
 	hasFilterQuery() {
-		return ppt.filterBy && this.filterQuery && this.filterQuery.length;
+		return panel.hasFilterActive() && this.filterQuery && this.filterQuery.length;
 	}
 
 	hasFilterQueryNoSearch() {
@@ -717,7 +717,7 @@ class Library {
 		panel.forcePaint();
 		if (profiler) { profiler.Reset(); } // Regorxxx <- Library profiling ->
 		let sort = true;;
-		if (ppt.filterBy) {
+		if (panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 			this.processFilterQuery(); // Regorxxx <- Code cleanup ->
 			this.filterQueryID = this.filterQuery;
 			// Regorxxx <- Code cleanup | Support SORT BY query sorting | Active/Playing/All playlist source | Multiple-playlist flat view
@@ -930,7 +930,7 @@ class Library {
 		ppt.process = true;
 		const key = ppt.rememberView ? panel.viewName : 'def';
 		if (!Object.hasOwn(this.exp, key)) this.exp[key] = {};
-		this.exp[key].filter = panel.filter.menu[ppt.filterBy];
+		this.exp[key].filter = panel.getFilterMenus(); // Regorxxx <- Multiple filters support | Code cleanup ->
 		ppt.set(this.rememberViewProp(), JSON.stringify(this.exp));
 	}
 
@@ -982,7 +982,7 @@ class Library {
 			// Regorxxx ->
 			this.exp[key] = {
 				exp: this.expand,
-				filter: panel.filter.menu[ppt.filterBy],
+				filter: panel.getFilterMenus(), // Regorxxx <- Multiple filters support | Code cleanup ->
 				scr: this.scr,
 				sel: this.sel.length ? this.sel : cur_sel,
 				s_txt: panel.search.txt
@@ -1040,9 +1040,12 @@ class Library {
 			if (this.exp[key]) {
 				this.expand = this.exp[key].exp || [];
 				if (!treeArtToggle) {
-					let tmpFilter = this.exp[key].filter || 'N/A';
-					tmpFilter = panel.filter.menu.indexOf(tmpFilter);
-					ppt.filterBy = tmpFilter == -1 ? 0 : tmpFilter;
+					// Regorxxx <- Multiple filters support | Code cleanup
+					let tmpFilter = this.exp[key].filter || ['N/A'];
+					if (!Array.isArray(tmpFilter)) { tmpFilter = tmpFilter.split('|'); }
+					tmpFilter = tmpFilter.map((i) => panel.filter.menu.indexOf(i));
+					ppt.filterBy = tmpFilter.filter((i) => i !== -1).join('|') || 0;
+					// Regorxxx ->
 				}
 				this.scr = this.exp[key].scr || [];
 				this.sel = this.exp[key].sel || [];
@@ -1086,7 +1089,7 @@ class Library {
 				this.libNode.splice(i, 1);
 			}
 		}
-		if (ppt.filterBy) {
+		if (panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 			j = handleList.Count;
 			if (this.full_list_need_sort) panel.sort(this.full_list);
 			this.full_list_need_sort = false;
@@ -1168,7 +1171,7 @@ class Library {
 					let tfo = FbTitleFormat(panel.view);
 					const splitter = panel.splitter;
 					if (branched && roots.length) {
-						if (panel.search.txt || ppt.filterBy) {
+						if (panel.search.txt || panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 							let i = 0;
 							roots.forEach((root) => {
 								(panel.isStreamSupport() ? tfo.EvalWithMetadbsDynamic(root.handleList) : tfo.EvalWithMetadbs(root.handleList)) // Regorxxx <- Support for stream tag-retrieval ->
@@ -1194,7 +1197,7 @@ class Library {
 				}
 				case 1: {
 					if (branched && roots.length) {
-						if (panel.search.txt || ppt.filterBy) {
+						if (panel.search.txt || panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 							let i = 0;
 							roots.forEach((root) => {
 								root.handleList.GetLibraryRelativePaths().forEach((v) => {
@@ -1616,7 +1619,7 @@ class Library {
 					}
 					origSearch.Sort();
 					newSearchItems.Sort();
-					if (ppt.filterBy) {
+					if (panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 						let newFilt = this.list.Clone();
 						newFilt.Sort();
 						newSearchItems.MakeIntersection(newFilt);

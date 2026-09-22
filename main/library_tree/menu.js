@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/09/26
+//22/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1190,7 +1190,9 @@ class MenuItems {
 
 	filterMenu() {
 		fMenu.newMenu({});
-		// Regorxxx <- Allow separators on filters
+		fMenu.newItem({ str: 'Single (click) / Multiple (Shift + click):', flags: MF_GRAYED});
+		fMenu.newItem({ separator: true });
+		// Regorxxx <- Allow separators on filters | Multiple filters support
 		for (let i = 0; i < panel.filter.menu.length + 1; i++) {
 			const bSeparator = (panel.filter.menu[i] || '').toLowerCase() === 'separator';
 			if (bSeparator) {
@@ -1202,10 +1204,18 @@ class MenuItems {
 					str: i === panel.filter.menu.length ? 'Auto-manage scroll' : (i ? panel.filter.menu[i] : 'No filter'),
 					func: () => {
 						if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
-						panel.set('Filter', i);
+						const curr = new Set(panel.getFilterIdx());
+						if (vk.k('shift') && i !== 0) {
+							if (curr.has(i)) {
+								if (curr.size === 1) { return; }
+								curr.delete(i); panel.set('Filter', [...curr].join('|'));
+							} else { curr.add(i); panel.set('Filter', [...curr].join('|')); }
+						} else {
+							panel.set('Filter', i);
+						}
 					},
 					checkItem: i == panel.filter.menu.length && !ppt.reset,
-					checkRadio: i == ppt.filterBy && i < panel.filter.menu.length,
+					checkRadio: panel.hasFilter(i) && i < panel.filter.menu.length,
 					separator: !i || i == panel.filter.menu.length - 1 || i == panel.filter.menu.length
 				});
 			}

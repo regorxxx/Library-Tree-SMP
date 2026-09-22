@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 //22/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
@@ -58,7 +58,7 @@ class Buttons {
 		this.setSbarIcon();
 		this.createImages();
 
-		this.multiBtnSetName(panel.filter.mode[ppt.filterBy].name, true); // Regorxxx <- Filter / View / Source button ->
+		this.multiBtnSetName(panel.getFilterName(), true); // Regorxxx <- Filter / View / Source button | Multiple filters support ->
 	}
 
 	// Methods
@@ -430,14 +430,14 @@ class Buttons {
 		tooltip.Activate();
 	}
 
-	// Regorxxx <- Filter / View / Source button
+	// Regorxxx <- Filter / View / Source button | Multiple filters support
 	multiBtnKeyDown(vKey) {
 		this.multiBtnSetName(
 			vKey === VK_SHIFT
 				? panel.viewName
 				: vKey === VK_CONTROL
 					? panel.sourceName
-					: panel.filter.mode[ppt.filterBy].name,
+					: panel.getFilterName(),
 			true
 		);
 		this.multiBtnSetTooltip(
@@ -457,7 +457,7 @@ class Buttons {
 	}
 
 	multiBtnKeyUp() {
-		this.multiBtnSetName(panel.filter.mode[ppt.filterBy].name, true);
+		this.multiBtnSetName(panel.getFilterName(), true); // Regorxxx <- Multiple filters support | Code cleanup ->
 		this.multiBtnSetTooltip('Filter');
 		this.multiBtnSetType('filter');
 	}

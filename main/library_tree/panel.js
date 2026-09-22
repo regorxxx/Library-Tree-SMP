@@ -265,7 +265,7 @@ class Panel {
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$sourceplaying/gi, () => fb.IsPlaying && node && sourceParent.some((p) => plman.PlayingPlaylist === p.idx) ? '$not(0)' : '')
 				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
-				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.filter.mode[ppt.filterBy].name || '-N/A-'))
+				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.getFilterNames().join('\', \'') || '-N/A-')) // Regorxxx <- Multiple filters support | Code cleanup ->
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
 				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
 			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
@@ -595,7 +595,7 @@ class Panel {
 		this.grp = this.grp.filter(removeEmpty);
 		this.filter.mode = this.filter.mode.filter(removeEmpty);
 		this.folder_view = this.grp.length - 1;
-		ppt.filterBy = Math.min(ppt.filterBy, this.filter.mode.length - 1);
+		ppt.filterBy = ppt.filterBy.toString().split('|').map((i) => Math.min(i, this.filter.mode.length - 1)).join('|');
 		ppt.viewBy = Math.min(ppt.viewBy, this.grp.length - 1);
 		this.folderView = ppt.viewBy == this.folder_view;
 		if (grpsOnly) { return; }
@@ -613,7 +613,7 @@ class Panel {
 			this.samePattern = !this.colMarker && this.curPattern == this.view;
 		}
 		this.curPattern = this.view;
-		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.filter.mode[ppt.filterBy].type.includes(s)); // Regorxxx <- Expand TF support ->
+		this.condViewFilter = ['$viewname', '$filtername'].some((s) => this.curPattern.includes(s) || this.getFilterTypes().some((f) => f.includes(s))); // Regorxxx <- Expand TF support | Multiple filters support ->
 		this.lines = ppt.albumArtGrpLevel ? ppt.albumArtGrpLevel : img.getArt(ppt.artId).lines; // Regorxxx <- Code cleanup ->
 
 		if (!this.folderView) { this.getView(this.view); } // Regorxxx <- Expand TF support on view patterns ->
@@ -628,11 +628,17 @@ class Panel {
 		this.menu = this.grp.map(name);
 	}
 
-	getFilterIndex(arr, name, type) {
-		let findFilterIndex = arr.findIndex(v => v.name === name && v.type === type);
-		if (findFilterIndex != -1) ppt.filterBy = findFilterIndex;
-		return findFilterIndex;
+	// Regorxxx <- Multiple filters support | Code cleanup
+	getFilterIndexes(arr, nameArr, typeArr) {
+		const idx = [];
+		nameArr.forEach((name, i) => {
+			const findFilterIndex = arr.findIndex(v => v.name === name && v.type === typeArr[i]);
+			if (findFilterIndex != -1) { idx.push(findFilterIndex); }
+		});
+		if (idx.length) { ppt.filterBy = idx.join('|'); }
+		return idx;
 	}
+	// Regorxxx ->
 
 	getFilters() {
 		// Regorxxx <- Default TF for compatibility with all stats components and improved filters
@@ -1007,16 +1013,19 @@ class Panel {
 					const nm = v.type ? v.name + (v.menu ? ' // ' : ' /hide/ ') + v.type : null;
 					ppt.set(v.type == 'Button Name' ? 'Filter 01: Name // Query' : `Filter ${$.padNumber(i + 2, 2)}: Name // Query`, nm);
 				});
-				const view_name = this.grp[ppt.viewBy].name;
-				const view_type = this.grp[ppt.viewBy].type;
-				const filter_name = this.filter.mode[ppt.filterBy].name;
-				const filter_type = this.filter.mode[ppt.filterBy].type;
+				const viewName = this.grp[ppt.viewBy].name;
+				const viewType = this.grp[ppt.viewBy].type;
+				 // Regorxxx <- Multiple filters support
+				const filterNames = this.getFilterNames();
+				const filterTypes = this.getFilterTypes();
+				// Regorxxx ->
 				this.getViews();
 				this.getFilters();
 				this.getFields(ppt.viewBy, ppt.filterBy, true);
-				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter
-				if (this.getViewIndex(this.grp, view_name, view_type) === -1 || this.getFilterIndex(this.filter.mode, filter_name, filter_type) === -1) { return this.reOpen(); }
-				else { this.getFields(ppt.viewBy, ppt.filterBy); }
+				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter | Multiple filters support
+				if (this.getViewIndex(this.grp, viewName, viewType) === -1 || !this.getFilterIndexes(this.filter.mode, filterNames, filterTypes).length) {
+					return this.reOpen();
+				} else { this.getFields(ppt.viewBy, ppt.filterBy); }
 				// Regorxxx ->
 			}
 			const filterDuplBy = ppt.filterDuplBy; // Regorxxx <- Global duplicates filter ->
@@ -1564,7 +1573,7 @@ class Panel {
 					// Regorxxx ->
 					ppt.filterBy = i;
 					if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
-					but.multiBtnSetName(this.filter.mode[ppt.filterBy].name, false); // Regorxxx <- Filter / View / Source button ->
+					but.multiBtnSetName(this.getFilterName(), false); // Regorxxx <- Filter / View / Source button | Multiple filters support | Code cleanup ->
 					this.calcText();
 					if (this.search.txt) lib.upd_search = true;
 					if (!ppt.reset) {
@@ -1588,7 +1597,7 @@ class Panel {
 					this.searchPaint();
 					if (!pop.notifySelection()) {
 						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-						window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+						window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
 					}
 					if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 				}
@@ -1620,7 +1629,7 @@ class Panel {
 					lib.logTree();
 					if (!pop.notifySelection()) {
 						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-						window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+						window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
 					}
 				}
 				this.draw = true;
@@ -2307,7 +2316,7 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Preset rules
+	// Regorxxx <- Preset rules | Multiple filters support
 	getPresetRule({
 		viewBy,
 		filterBy,
@@ -2324,8 +2333,8 @@ class Panel {
 			? this.grp[viewBy].name
 			: this.grp[ppt.viewBy].name;
 		const filterName = bSetFilter
-			? this.filter.mode[filterBy].name
-			: this.filter.mode[ppt.filterBy].name;
+			? this.getFilterName(filterBy)
+			: this.getFilterName();
 		const sourceIdx = bSetSource
 			? this.getSourceIdxFromSettings(sourceBy)
 			: this.getSourceIdxFromSettings();
@@ -2462,7 +2471,7 @@ class Panel {
 			lib.logTree();
 			if (!pop.notifySelection()) {
 				const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-				window.NotifyOthers(window.Name, ppt.filterBy ? list : new FbMetadbHandleList());
+				window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
 			}
 		}
 		this.draw = true;
@@ -2717,6 +2726,45 @@ class Panel {
 		} else { return false; }
 		const expr = (typeof tf === 'string' ? tf : tf.Expression).toUpperCase();
 		return (expr.includes('ARTIST') || expr.includes('TITLE'));
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Multiple filters support | Code cleanup
+	getFilterIdx(filterBy = ppt.filterBy) {
+		return filterBy.toString().split('|').map(Number);
+	}
+
+	hasFilterActive() {
+		return ppt.filterBy.toString() !== '0';
+	}
+
+	hasFilter(filterBy) {
+		const pptIdx = this.getFilterIdx();
+		const idx = this.getFilterIdx(filterBy);
+		return idx.every((i) => pptIdx.includes(i));
+	}
+
+	getFilterNames(filterBy = ppt.filterBy) {
+		const idx = this.getFilterIdx(filterBy);
+		return idx.map((i) => this.filter.mode[i].name);
+	}
+
+	getFilterTypes(filterBy = ppt.filterBy) {
+		const idx = this.getFilterIdx(filterBy);
+		return idx.map((i) => this.filter.mode[i].type);
+	}
+
+	getFilterMenus(filterBy = ppt.filterBy) {
+		const idx = this.getFilterIdx(filterBy);
+		return idx.map((i) => this.filter.menu[i]);
+	}
+
+	getFilterName(filterBy = ppt.filterBy) {
+		return this.getFilterNames(filterBy).join('+');
+	}
+
+	getFilterQuery(filterBy = ppt.filterBy) {
+		return queryJoin(this.getFilterTypes(filterBy));
 	}
 	// Regorxxx ->
 }

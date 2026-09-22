@@ -9,6 +9,7 @@
 
 ## [Unreleased][]
 ### Added
+- Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'.
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 ### Changed
