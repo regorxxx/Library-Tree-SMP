@@ -188,9 +188,10 @@ class Panel {
 		} else if (but) {
 			this.filter.hide = true;
 			this.search.hide = false;
-			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 2 : 0) + (ppt.searchShow ? but.margin * 2 + but.q.h : 0))) {
+			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 4 : 0) + (ppt.searchShow ? but.margin * 4 + but.q.h : 0))) {
 				this.filter.x = ui.w - ui.sz.marginSearch * 2 - this.settings.w + this.settings.offset;
 			} else {
+				this.filter.x = 0;
 				this.search.hide = true;
 			}
 		}
