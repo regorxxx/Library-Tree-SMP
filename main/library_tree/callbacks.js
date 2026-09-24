@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/09/26
+//24/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -402,14 +402,14 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': quicksearch': {
-			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
+			if (!info || !info.search) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			info.search.split('').forEach((s) => on_char(s.codePointAt(0)));
 			break;
 		}
 		case window.ScriptInfo.Name + ': search': {
 			if (!ppt.searchShow) { break; }
-			if (!info || typeof info.viewName === 'undefined' || !info.search.length) { break; }
+			if (!info || !info.search) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			info.search.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
 			search.on_char(vk.enter);

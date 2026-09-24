@@ -9,7 +9,7 @@
 
 ## [Unreleased][]
 ### Added
-- Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case).
+- Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087544.html#msg1087544).
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 ### Changed
@@ -22,7 +22,9 @@
 - Statistics: fixed bug, on original script, related to tag updates not triggering a source refresh while using statistics. For ex. rating changes not being reflected on rating stats on real time.
 - UI: fixed bug, on original script, related to some mouse actions not being available on panel reload unless focus was changed first to another panel. It was a JS-Host limitation, and should be fixed if using JSplitter v4.2.0+ or v3.9.0+.
 - UI: fixed bug, on original script, where filter button could grow indefinitely according to filter name, even over other elements or the total window width. Maximum size is now 1/3 of the window width.
+- UI: fixed bug, on original script, where buttons could overlap if window width was small enough, instead of being adjusted or hidden. Now it first cuts the filter button text, then hides it, then hides the search icon until only the settings button is left. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087556.html#msg1087556).
 - Presets: $viewname and $filtername not triggering rule changes on filters using them.
+- External integration: fixed 'Library-Tree-SMP: quicksearch' and 'Library-Tree-SMP : search' commands not working.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
 
 ## [3.0.0] - 2026-08-24

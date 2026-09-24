@@ -1,5 +1,5 @@
 'use strict';
-//22/09/26
+//24/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
@@ -280,9 +280,9 @@ class Buttons {
 		const noShow = !ppt.searchShow;
 		const searching = (ppt.filterShow || ppt.settingsShow) && panel.search.txt;
 		const o1 = this.btns.s_img;
-		if (o1) o1.hide = noShow || searching;
+		if (o1) { o1.hide = noShow || searching || panel.search.hide; } // Regorxxx <- Limit button size ->
 		const o2 = this.btns.cross2;
-		if (o2) o2.hide = noShow || !searching;
+		if (o2) { o2.hide = noShow || !searching || panel.search.hide; } // Regorxxx <- Limit button size ->
 	}
 
 	// Regorxxx <- File explorer mode
@@ -395,7 +395,7 @@ class Buttons {
 		this.transition = new Transition(this.btns, v => v.state !== 'normal');
 		this.btns.s_img = new Btn(this.q.x - this.margin / 2, this.hoverArea, this.q.h + this.margin, this.hot_h, 4, this.q.x, this.q.y, this.q.h, {
 			normal: this.q.s_img
-		}, false, '', () => sMenu.load(this.q.x - this.margin / 2, panel.search.h), () => 'History and query syntax help. Ctrl+E focuses search', true, 's_img');
+		}, panel.search.hide, '', () => sMenu.load(this.q.x - this.margin / 2, panel.search.h), () => 'History and query syntax help. Ctrl+E focuses search', true, 's_img'); // Regorxxx <- Limit button size ->
 
 		this.btns.cross2 = new Btn(this.q.x - this.margin / 2, this.hoverArea, this.q.h + this.margin, this.hot_h, 5, this.q.x, this.b.y, this.b.h, {
 			normal: this.cross.normal,
@@ -404,7 +404,7 @@ class Buttons {
 		this.btns.filter = new Btn(ppt.searchShow ? panel.filter.x + this.margin / 2 : panel.filter.x - this.margin / 2, 0, ppt.searchShow ? panel.filter.w - this.margin : panel.filter.w + this.margin, panel.search.sp, 6, panel.filter.x, ppt.searchShow ? panel.cc : panel.lc, panel.filter.w, {
 			normal: ui.col.txt_box,
 			hover: ui.img.blurDark ? ui.col.text : ui.col.txt_box_h // Regorxxx <- Code cleanup. Remove ui.id.local references
-		}, !ppt.filterShow, '', () => men.multiBtnMenu().load(panel.filter.x, panel.search.h), () => this.multiBtn.tooltip, true, 'filter'); // Regorxxx <- Filter / View / Source button
+		}, !ppt.filterShow || panel.filter.hide, '', () => men.multiBtnMenu().load(panel.filter.x, panel.search.h), () => this.multiBtn.tooltip, true, 'filter'); // Regorxxx <- Filter / View / Source button | Limit button size
 
 		this.btns.settings = new Btn(this.s.x, panel.settings.offset, this.s.w1, panel.search.sp, 7, this.s.w2, panel.search.sp, panel.settings.y, {
 			normal: ui.col.txt_box,
@@ -570,7 +570,7 @@ class Btn {
 		gr.FillRoundRect(this.x, but.hoverArea, this.w, but.hot_h, but.arc, but.arc, colRect);
 		gr.SetSmoothingMode();
 		// Regorxxx <- Filter / View / Source button | Limit button size
-		const [x, w, bCut] = gr.CalcTextWidth(but.multiBtn.name, panel.filter.font) > window.Width/3
+		const [x, w, bCut] = gr.CalcTextWidth(but.multiBtn.name, panel.filter.font) > window.Width / 3
 			? [this.p1 + 10, this.p3 - 20, true]
 			: [this.p1, this.p3, false];
 		if (ui.img.blurDark) {
