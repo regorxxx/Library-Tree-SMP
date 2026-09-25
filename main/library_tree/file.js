@@ -1587,20 +1587,20 @@ class FileExplorer {
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-							if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newEntry({
 						entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-							if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(plman.ActivePlaylist, node);
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-							if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 							this.addtoPls(-1, node, { create: true });
 						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
@@ -1666,20 +1666,20 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-						if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node, { clear: true });
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
 					entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-						if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(plman.ActivePlaylist, node);
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-						if (!node.childChecked) { this.parentTree.fillTreeLevel(node.path, node, false); }
+						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
 						this.addtoPls(-1, node, { create: true });
 					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
