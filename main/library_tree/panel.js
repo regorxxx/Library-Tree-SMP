@@ -7,7 +7,7 @@
 /* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
-/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable, toFbDateString:readable */
+/* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable, toFbDateString:readable, getSortObj:readable */
 /* global _resolvePath:readable, _isFile:readable */
 
 /* exported Panel */
@@ -1031,7 +1031,7 @@ class Panel {
 				});
 				const viewName = this.grp[ppt.viewBy].name;
 				const viewType = this.grp[ppt.viewBy].type;
-				 // Regorxxx <- Multiple filters support
+				// Regorxxx <- Multiple filters support
 				const filterNames = this.getFilterNames();
 				const filterTypes = this.getFilterTypes();
 				// Regorxxx ->

@@ -358,7 +358,7 @@ class MenuItems {
 
 		if (this.validItem && ppt.albumArtOptionsShow) {
 			menu.newItem({
-				str: panel.imgView ? (ppt.facetView ? 'Show text' : 'Show tree') : 'Show album art',
+				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
 				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED,
 				separator: !panel.imgView //|| this.show_context && !ui.style.topBarShow
@@ -1205,9 +1205,9 @@ class MenuItems {
 					func: () => {
 						if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
 						const curr = new Set(panel.getFilterIdx());
+						if (curr.has(i) && curr.size === 1) { return; }
 						if (vk.k('shift') && i !== 0) {
 							if (curr.has(i)) {
-								if (curr.size === 1) { return; }
 								curr.delete(i); panel.set('Filter', [...curr].join('|'));
 							} else { curr.add(i); panel.set('Filter', [...curr].join('|')); }
 						} else {
