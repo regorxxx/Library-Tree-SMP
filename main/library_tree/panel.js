@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/09/26
+//26/09/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -164,7 +164,7 @@ class Panel {
 		$.gr(1, 1, false, g => {
 			this.settings.w = ppt.settingsShow ? Math.round(g.MeasureString(this.settings.icon, this.settings.font, 0, 0, 500, 500).Width) : 0;
 			this.filter.w = ppt.filterShow && but && but.multiBtn && but.multiBtn.name
-				? window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 2 : 0) + (ppt.searchShow ? but.margin * 2 + but.q.h : 0)) * 2 + but.margin * 2
+				? window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 2 : 0) + (ppt.searchShow ? but.margin * 2 + (but.q.h || 0) : 0)) * 2 + but.margin * 2
 					? Math.min(g.CalcTextWidth(but.multiBtn.name, this.filter.font), window.Width / 3) + (ppt.searchShow ? Math.max(ppt.margin * 2 + (ppt.settingsBtnStyle ? 0 : 2), 12) : 0)
 					: 0
 				: 0;
@@ -188,7 +188,7 @@ class Panel {
 		} else if (but) {
 			this.filter.hide = true;
 			this.search.hide = false;
-			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 4 : 0) + (ppt.searchShow ? but.margin * 4 + but.q.h : 0))) {
+			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 4 : 0) + (ppt.searchShow ? but.margin * 4 + (but.q.h || 0): 0))) {
 				this.filter.x = ui.w - ui.sz.marginSearch * 2 - this.settings.w + this.settings.offset;
 			} else {
 				this.filter.x = 0;
