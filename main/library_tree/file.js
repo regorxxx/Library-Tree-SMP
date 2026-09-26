@@ -1,5 +1,5 @@
 ﻿'use strict';
-//11/09/26
+//26/09/26
 
 /* exported FileExplorer */
 
@@ -96,8 +96,13 @@ class FileExplorer {
 			'ini': 'text',
 			'json': 'text',
 			'nfo': 'text',
+			'pdf': 'text',
 			'jpg': 'image',
-			'png': 'image'
+			'jpeg': 'image',
+			'png': 'image',
+			'webp': 'image',
+			'gif': 'image',
+			'tiff': 'image'
 		};
 		// Properties
 		const properties = [
@@ -2295,6 +2300,7 @@ class FileNode {
 				if (!this.enabled) { return true; }
 				if (this.hover) {
 					if (this.type == 'file') {
+						const ext = utils.SplitFilePath(this.path)[2].toLowerCase();
 						switch (this.fType) {
 							case this.parentTree.getLoadableFormats().has(this.fType): {
 								if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
@@ -2309,7 +2315,8 @@ class FileNode {
 								break;
 							}
 							case 'text':
-								_run('notepad.exe', this.path);
+								if (ext === '.pdf') { _runCmd('CMD /C "' + getShortPath(this.path, true) + '"', false, 0); }
+								else { _run('notepad.exe', this.path); }
 								break;
 							case 'image':
 								if (fb.ShowPictureViewer) {
