@@ -459,7 +459,7 @@ class FileExplorer {
 			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
 		}
 		// sort files on label
-		if (this.sort && !recursive) node.item = this.sortTab(node.item);
+		if (this.sort && !recursive) { node.item = this.sortTab(node.item); }
 	}
 
 	fillTreeLevel(path, node, recursive) {
@@ -621,8 +621,7 @@ class FileExplorer {
 						if (node.ready) this.redrawDrives = true;
 						node.ready = false;
 						node.label = 'N/A' + ' (' + drive.DriveLetter.toUpperCase() + ':) ';
-						node.child.splice(0, node.child.length);
-						node.item.splice(0, node.item.length);
+						node.resetContent();
 						node.childChecked = true;
 					}
 				} catch (e) { // eslint-disable-line no-unused-vars
@@ -1581,8 +1580,7 @@ class FileExplorer {
 					});
 					menu.newEntry({
 						entryText: 'Refresh contents', func: () => {
-							if (node.child.length > 0) node.child.splice(0, node.child.length);
-							if (node.item.length > 0) node.item.splice(0, node.item.length);
+							node.resetContent();
 							this.fillTreeLevel(node.path, node, false);
 							node.childChecked = true;
 							node.collapsed = false;
@@ -1624,8 +1622,7 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Refresh content...', func: () => {
-						if (node.child.length > 0) node.child.splice(0, node.child.length);
-						if (node.item.length > 0) node.item.splice(0, node.item.length);
+						fileRoot.resetContent();
 						this.fillDrives(fileRoot);
 						fileRoot.childChecked = false;
 						this.refreshDrives();
@@ -1655,8 +1652,7 @@ class FileExplorer {
 				}
 				menu.newEntry({
 					entryText: 'Refresh folder content...', func: () => {
-						if (node.child.length > 0) node.child.splice(0, node.child.length);
-						if (node.item.length > 0) node.item.splice(0, node.item.length);
+						node.resetContent();
 						this.fillTreeLevel(node.path, node, false);
 						node.childChecked = true;
 						node.collapsed = false;
@@ -1962,9 +1958,8 @@ class FileNode {
 			this.pathSum.push(pIdx);
 		}
 	}
-	addChild(label, path, data = {}) {
-		this.totalChildren++;
-		const node = new FileNode({
+	createChild(label, path, data = {}) {
+		return new FileNode({
 			parentTree: this.parentTree,
 			label, path, level: this.level + 1,
 			idx: this.child.length, pIdx: this.idx, type: 'folder',
@@ -1972,15 +1967,8 @@ class FileNode {
 			hierarchy: 'child',
 			data
 		});
-		this.child.push(node);
-		return node;
-	};
-	addData(data = {}) {
-		for (const key in data) { this.data[key] = data[key]; }
-		return this;
-	};
-	addItem(label, path, data = {}) {
-		this.totalItems++;
+	}
+	createItem(label, path, data = {}) {
 		const node = new FileNode({
 			parentTree: this.parentTree,
 			label, path, level: this.level + 1,
@@ -1990,8 +1978,33 @@ class FileNode {
 			data
 		});
 		node.fType = this.parentTree.getType(node.label.split('.').at(-1));
+		return node;
+	}
+	addChild(label, path, data = {}) {
+		this.totalChildren++;
+		const node = this.createChild(label, path, data);
+		this.child.push(node);
+		return node;
+	};
+	addData(data = {}) {
+		for (const key in data) { this.data[key] = data[key]; }
+		return this;
+	};
+	addItem(label, path, data = {}) {
+		this.totalItems++;
+		const node = this.createItem(label, path, data);
 		this.item.push(node);
 		return node;
+	}
+	resetItems() {
+		this.item.length = 0;
+		this.totalItems = 0;
+	}
+	resetContent() {
+		this.resetItems();
+		this.child.length = 0;
+		this.totalChildren = 0;
+		this.childChecked = false;
 	}
 	checkPos(y) {
 		this.Cx = Math.floor(this.parentTree.treePadX + this.parentTree.xOffset + this.parentTree.treeIndentW * (this.level + 1));
