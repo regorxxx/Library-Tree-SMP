@@ -356,7 +356,7 @@ class MenuItems {
 			menu.newItem({ separator: true }); // Regorxxx <- Menu cleanup ->
 		}
 
-		if (this.validItem && ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
+		if (this.validItem && ppt.albumArtOptionsShow) {
 			menu.newItem({
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
@@ -1162,7 +1162,7 @@ class MenuItems {
 		// Regorxxx ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx <- Show album art entry at settings
-		if (ppt.albumArtOptionsShow) {
+		if (ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) {
 			menu.newItem({
 				menuName: mainMenu(),
 				str: panel.imgView ? (ppt.facetView ? 'Show text' : 'Show tree') : 'Show album art',
