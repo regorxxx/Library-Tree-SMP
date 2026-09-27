@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/09/26
+//27/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1976,6 +1976,7 @@ class Populate {
 
 	// Regorxxx <- Rectangle selection on art view
 	lbtn_dn(x, y) {
+		if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 		this.lbtnDn = false;
 		this.dbl_clicked = false;
 		if (y < panel.search.h) { return; }
@@ -2035,6 +2036,7 @@ class Populate {
 	}
 
 	lbtn_up(x, y) {
+		if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 		if (lib.empty && panel.isLibrarySource() && y > panel.search.h) { fb.RunMainMenuCommand('Library/Configure'); }
 		if (ppt.selRectArt && panel.imgView) {
 			if (this.selRect.down) {

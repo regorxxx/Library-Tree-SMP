@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/09/26
+//27/09/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -356,7 +356,7 @@ class MenuItems {
 			menu.newItem({ separator: true }); // Regorxxx <- Menu cleanup ->
 		}
 
-		if (this.validItem && ppt.albumArtOptionsShow) {
+		if (this.validItem && ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
 			menu.newItem({
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
@@ -704,12 +704,14 @@ class MenuItems {
 
 		const mainMenu = () => this.show_context ? 'Settings' : 'baseMenu';
 
-		this.addViewsEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
-		this.addSortEntries(menu, mainMenu()); // Regorxxx <- Sorting menu ->
+		if (!panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
+			this.addViewsEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
+			this.addSortEntries(menu, mainMenu()); // Regorxxx <- Sorting menu ->
+		}
 		this.addSourceEntries(menu, mainMenu()); // Regorxxx <- Filter / View / Source button ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
 		// Regorxxx <- New statistics
-		{
+		if (!panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
 			menu.newMenu({ menuName: 'Statistics', appendTo: mainMenu(), separator: true });
 			const statsEntries = pop.getStatisticsEntries();
 			const statsMenus = [...pop.getStatisticsTypes(), 'sep'];
@@ -740,7 +742,7 @@ class MenuItems {
 		}
 		// Regorxxx ->
 		// Regorxxx <- Code cleanup | Art cache folder
-		{
+		if (!panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
 			menu.newMenu({ menuName: 'Album art', appendTo: mainMenu(), separator: true, hide: !panel.imgView });
 			img.getArtNames().forEach((v, i) => menu.newItem({ // Regorxxx <- External integration  ->
 				menuName: 'Album art',
@@ -888,7 +890,7 @@ class MenuItems {
 				separator: v.separator
 			}));
 
-			if (ppt.albumArtOptionsShow) {
+			if (ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
 				menu.newMenu({ menuName: 'Art options', appendTo: 'Quick setup' });
 				[
 					{ name: 'Covers [labels right]', idx: 5 },
@@ -948,7 +950,9 @@ class MenuItems {
 		}
 		// Regorxxx ->
 		// Regorxxx <- Code cleanup | Art cache folder
-		{
+		if (panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
+			menu.newItem({ menuName: mainMenu(), separator: true });
+		} else {
 			menu.newMenu({ menuName: 'Refresh', appendTo: mainMenu(), separator: true });
 			if (panel.imgView) {
 				['Refresh selected images', 'Refresh all images'].forEach((str, i) => {
@@ -1190,7 +1194,7 @@ class MenuItems {
 
 	filterMenu() {
 		fMenu.newMenu({});
-		fMenu.newItem({ str: 'Single (click) / Multiple (Shift + click):', flags: MF_GRAYED});
+		fMenu.newItem({ str: 'Single (click) / Multiple (Shift + click):', flags: MF_GRAYED });
 		fMenu.newItem({ separator: true });
 		// Regorxxx <- Allow separators on filters | Multiple filters support
 		for (let i = 0; i < panel.filter.menu.length + 1; i++) {

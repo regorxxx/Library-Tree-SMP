@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/09/26
+//27/09/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1095,6 +1095,7 @@ class Panel {
 					case 0: {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
+								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
 								ppt.countsRight = false;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 0;
@@ -1126,6 +1127,7 @@ class Panel {
 					case 1: {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
+								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 1;
@@ -1157,6 +1159,7 @@ class Panel {
 					case 2: {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
+								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 1;
 								ppt.nodeStyle = 3;
@@ -1195,6 +1198,7 @@ class Panel {
 					case 3: {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
+								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 5;
@@ -1226,6 +1230,7 @@ class Panel {
 					case 4: {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
+								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 1;
