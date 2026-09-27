@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/09/26
+//27/09/26
 
 /* exported FileExplorer */
 
@@ -1817,8 +1817,8 @@ class FileExplorer {
 			this.yOffset = this.y + this.getYoffset(this.treePadY + idx * this.treeLineH - this.vCursorH / 2) + ui.h / 2;
 			if (this.yOffset > this.y) { this.yOffset = this.y; }
 			if (this.yOffset < - (this.y + this.treeLineH * this.lineCounter - ui.h)) { this.yOffset = - (this.y + this.treeLineH * this.lineCounter + ui.h); }
-			window.Repaint(true);
 		}
+		window.Repaint(true);
 	}
 
 	attachCallbacks() {

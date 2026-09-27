@@ -2570,7 +2570,7 @@ class Populate {
 	}
 
 	on_char(code) {
-		if (panel.search.active) return;
+		if (panel.search.active) { return; }
 		switch (code) {
 			case vk.copy: {
 				const handleList = this.getHandleList('newItems');
