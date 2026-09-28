@@ -1165,7 +1165,7 @@ class MenuItems {
 		if (ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) {
 			menu.newItem({
 				menuName: mainMenu(),
-				str: panel.imgView ? (ppt.facetView ? 'Show text' : 'Show tree') : 'Show album art',
+				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
 				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED,
 			});
