@@ -113,6 +113,7 @@ class FileExplorer {
 			['File Explorer: Calculate file/folder size async', true, 'explCalcSizeAsync'],
 			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
 			['File Explorer: Sort Folders', true, 'explSort'],
+			['File Explorer: Recursive folder load', JSON.stringify({ folder: true, drive: false, favorite: true }), 'explRecurLoad'],
 			['File Explorer: Show Playlists', false, 'explShowPlaylists'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
@@ -129,6 +130,7 @@ class FileExplorer {
 		];
 		ppt.init('auto', properties);
 		this.fileType = $.jsonParse(ppt.explFileType, this.fileType);
+		this.recursiveLoad = $.jsonParse(ppt.explRecurLoad, {});
 		this.scrollbarW = 16;
 		this.sort = ppt.explSort;
 		this.showPlaylists = ppt.explShowPlaylists;
@@ -192,6 +194,10 @@ class FileExplorer {
 	}
 
 	// main Tools
+	isRecursiveLoad(type) {
+		return this.recursiveLoad[type] || false;
+	}
+
 	getType(fType) {
 		return this.fileType[fType.toLowerCase()] || 'unknown';
 	}
@@ -383,38 +389,49 @@ class FileExplorer {
 	}
 
 	fillDirLevel(path, node, recursive) {
-		if (this.smpFileMethods) {
-			const folders = findRecursiveDirs(path, 0).map((subFolder) => path + subFolder);
-			node.childChecked = true;
-			for (const folder of folders) {
-				// Add new node
-				const folderName = folder.split('\\').findLast(Boolean);
-				const child = node.addChild(folderName, folder);
+		if (node.childChecked) {
+			for (const child of node.child) {
 				if (this.calcSize) { this.addFolderSizeData(child); }
-				if (recursive) { this.fillTreeLevel(folder, child, true); }
+				if (recursive) { this.fillTreeLevel(child.path, child, true); }
 			}
-			// sort folders on label
-			if (this.sort && !recursive) node.child = this.sortTab(node.child);
+			if (recursive) { node.childCheckedDeep = true; }
 			return path;
 		} else {
-			const oFolder = tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
-			if (!oFolder) { return path; }
-			node.childChecked = true;
-			try {
-				for (const folder of oFolder.SubFolders) {
-					try {
-						const attribute = new Flag(folder.Attributes);
-						// Add new node
-						if (attribute.has(2) || attribute.has(4)) { continue; }
-						const child = node.addChild(folder.Name, folder.Path);
-						if (this.calcSize) { this.addFolderSizeData(child); }
-						if (recursive) { this.fillTreeLevel(folder.Path, child, true); }
-					} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
+			if (this.smpFileMethods) {
+				const folders = findRecursiveDirs(path, 0).map((subFolder) => path + subFolder);
+				for (const folder of folders) {
+					// Add new node
+					const folderName = folder.split('\\').findLast(Boolean);
+					const child = node.addChild(folderName, folder);
+					if (this.calcSize) { this.addFolderSizeData(child); }
+					if (recursive) { this.fillTreeLevel(folder, child, true); }
 				}
-			} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
-			// sort folders on label
-			if (this.sort && !recursive) node.child = this.sortTab(node.child);
-			return oFolder;
+				if (recursive) { node.childCheckedDeep = true; }
+				node.childChecked = true;
+				// sort folders on label
+				if (this.sort && !recursive) { node.child = this.sortTab(node.child); }
+				return path;
+			} else {
+				const oFolder = tryMethod(fso, 'GetFolder', (e) => console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)))(path);
+				if (!oFolder) { return path; }
+				try {
+					for (const folder of oFolder.SubFolders) {
+						try {
+							const attribute = new Flag(folder.Attributes);
+							// Add new node
+							if (attribute.has(2) || attribute.has(4)) { continue; }
+							const child = node.addChild(folder.Name, folder.Path);
+							if (this.calcSize) { this.addFolderSizeData(child); }
+							if (recursive) { this.fillTreeLevel(folder.Path, child, true); }
+						} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); continue; } // eslint-disable-line no-unused-vars
+					}
+				} catch (e) { console.log(window.ScriptInfo.Name + ': ' + parseWinApiError(e.message)); } // eslint-disable-line no-unused-vars
+				if (recursive) { node.childCheckedDeep = true; }
+				node.childChecked = true;
+				// sort folders on label
+				if (this.sort && !recursive) { node.child = this.sortTab(node.child); }
+				return oFolder;
+			}
 		}
 	}
 
@@ -464,6 +481,7 @@ class FileExplorer {
 
 	fillTreeLevel(path, node, recursive) {
 		const oFolder = this.fillDirLevel(path, node, recursive);
+		node.resetItems();
 		this.fillFileLevel(oFolder, node, recursive);
 	}
 
@@ -1389,6 +1407,21 @@ class FileExplorer {
 						}, checkFunc: () => ppt.explLoadUnknown
 					});
 					menu.newSeparator(menuName);
+					{
+						const subMenuName = menu.newMenu('Recursive folder load', menuName);
+						menu.newEntry({ menuName: subMenuName, entryText: 'On mouse and menu actions:', flags: MF_GRAYED });
+						menu.newSeparator(subMenuName);
+						['drive', 'folder', 'favorite'].forEach((t) => {
+							menu.newEntry({
+								menuName: subMenuName,
+								entryText: capitalize(t), func: () => {
+									this.recursiveLoad[t] = this.recursiveLoad[!t];
+									ppt.explRecurLoad = JSON.stringify(this.recursiveLoad);
+								}, checkFunc: () => this.isRecursiveLoad(t)
+							});
+						});
+					}
+					menu.newSeparator(menuName);
 					menu.newEntry({
 						menuName,
 						entryText: 'Calculate file/folder size', func: () => {
@@ -1591,22 +1624,25 @@ class FileExplorer {
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-							this.addtoPls(plman.ActivePlaylist, node, { clear: true });
-						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+							const recursive = this.isRecursiveLoad(node.type);
+							this.fillTreeLevel(node.path, node, recursive);
+							this.addtoPls(plman.ActivePlaylist, node, { clear: true, recursive });
+						}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newEntry({
 						entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-							this.addtoPls(plman.ActivePlaylist, node);
-						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+							const recursive = this.isRecursiveLoad(node.type);
+							this.fillTreeLevel(node.path, node, recursive);
+							this.addtoPls(plman.ActivePlaylist, node, { recursive });
+						}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 					menu.newSeparator();
 					menu.newEntry({
 						entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-							if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-							this.addtoPls(-1, node, { create: true });
-						}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+							const recursive = this.isRecursiveLoad(node.type);
+							this.fillTreeLevel(node.path, node, recursive);
+							this.addtoPls(-1, node, { create: true, recursive });
+						}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 					});
 				} else {
 					menu.newEntry({
@@ -1668,22 +1704,25 @@ class FileExplorer {
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to current playlist' + '\tEnter', func: () => {
-						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-						this.addtoPls(plman.ActivePlaylist, node, { clear: true });
-					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+						const recursive = this.isRecursiveLoad(node.type);
+						this.fillTreeLevel(node.path, node, recursive);
+						this.addtoPls(plman.ActivePlaylist, node, { clear: true, recursive });
+					}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newEntry({
 					entryText: 'Add tracks to current playlist' + '\tShift+Enter', func: () => {
-						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-						this.addtoPls(plman.ActivePlaylist, node);
-					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+						const recursive = this.isRecursiveLoad(node.type);
+						this.fillTreeLevel(node.path, node, recursive);
+						this.addtoPls(plman.ActivePlaylist, node, { recursive });
+					}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				menu.newSeparator();
 				menu.newEntry({
 					entryText: 'Send tracks to new playlist' + '\tCtrl+Enter', func: () => {
-						if (!node.childChecked) { this.fillTreeLevel(node.path, node, false); }
-						this.addtoPls(-1, node, { create: true });
-					}, flags: node.item.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
+						const recursive = this.isRecursiveLoad(node.type);
+						this.fillTreeLevel(node.path, node, recursive);
+						this.addtoPls(-1, node, { create: true, recursive });
+					}, flags: node.item.length > 0 || node.child.length > 0 || !node.childChecked ? MF_STRING : MF_GRAYED | MF_DISABLED
 				});
 				break;
 			case 'file':
@@ -1755,18 +1794,21 @@ class FileExplorer {
 		return new Set(['music', 'video', 'archive', ppt.explLoadUnknown ? 'unknown' : ''].filter(Boolean));
 	}
 
-	getNodePaths(node) {
+	getNodePaths(node, recursive) {
 		const types = this.getLoadableFormats();
-		return node.type === 'file'
-			? types.has(node.fType)
-				? [node.path]
-				: []
-			: node.item.filter((item) => types.has(item.fType))
-				.map((item) => item.path);
+		const paths = [];
+		if (node.type === 'file') {
+			if (types.has(node.fType)) { paths.push(node.path); }
+		} else {
+			node.item.filter((item) => types.has(item.fType))
+				.forEach((item) => paths.push(item.path));
+			if (recursive && node.childCheckedDeep) { node.child.forEach((item) => this.getNodePaths(item, true).forEach((path) => paths.push(path))); }
+		}
+		return paths;
 	}
 
-	addtoPls(plsIdx, node, { play = false, clear = false, create = false } = {}) {
-		const paths = this.getNodePaths(node);
+	addtoPls(plsIdx, node, { play = false, clear = false, create = false, recursive = false } = {}) {
+		const paths = this.getNodePaths(node, recursive);
 		if (!paths.length) { return; }
 		if (plsIdx === -1 || create) { plsIdx = plman.ActivePlaylist = this.createPls(node); }
 		else if (clear) { plman.ClearPlaylist(plsIdx); }
@@ -1781,8 +1823,8 @@ class FileExplorer {
 		}
 	};
 
-	addToQueue(node, { play = false, clear = false } = {}) {
-		const paths = this.getNodePaths(node);
+	addToQueue(node, { play = false, clear = false, recursive = false } = {}) {
+		const paths = this.getNodePaths(node, recursive);
 		if (!paths.length) { return; }
 		if (clear) { plman.FlushPlaybackQueue(); }
 		fb.AddLocationsAsyncV2(paths)
@@ -1912,6 +1954,7 @@ class FileNode {
 		this.parentTree = parentTree;
 		if (!parentTree) { throw new Error('FileNode: parentTree not defined'); }
 		this.childChecked = false;
+		this.childCheckedDeep = false;
 		this.label = void (0);
 		this.path = '';
 		this.level = 0;
@@ -1998,6 +2041,7 @@ class FileNode {
 		this.resetItems();
 		this.child.length = 0;
 		this.totalChildren = 0;
+		this.childCheckedDeep = false;
 		this.childChecked = false;
 	}
 	checkPos(y) {
@@ -2194,19 +2238,21 @@ class FileNode {
 				if (this.hover) {
 					this.held = true;
 					if (utils.IsKeyPressed(VK_ALT)) {
+						const recursive = this.parentTree.isRecursiveLoad(this.type);
 						switch (this.type) {
 							case 'folder':
 							case 'drive': // NOSONAR[fallthrough]
-								if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
+								if (recursive && this.type !== 'drive') { this.parentTree.fillTreeLevel(this.path, this, true); }
+								else if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
 							case 'favorite': // eslint-disable-line no-fallthrough
 							case 'file':
 								switch (this.parentTree.altClickAction) {
-									case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this); break;
-									case 2: this.parentTree.addToQueue(this); break;
+									case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this, { recursive }); break;
+									case 2: this.parentTree.addToQueue(this, { recursive }); break;
 									case 0:
 									default: {
 										const idx = plman.FindOrCreatePlaylist(this.parentTree.libPlaylistName, true);
-										this.parentTree.addtoPls(idx, this);
+										this.parentTree.addtoPls(idx, this, { recursive });
 										break;
 									}
 								}
@@ -2339,15 +2385,17 @@ class FileNode {
 					} else if (['root', 'favorites', 'computer', 'playlists'].includes(this.type)) {
 						this.checkMouse('down', this.x, y, mask);
 					} else {
+						const recursive = this.parentTree.isRecursiveLoad(this.type);
 						if (utils.IsKeyPressed(VK_ALT)) { this.parentTree.removeFromQueue(this); break; }
-						if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
+						if (recursive) { this.parentTree.fillTreeLevel(this.path, this, true); }
+						else if (!this.childChecked) { this.parentTree.fillTreeLevel(this.path, this, false); }
 						switch (this.parentTree.dblClickAction) {
-							case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true }); break;
+							case 1: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true, play: true, recursive }); break;
 							case 2: this.checkMouse('down', this.x, y, mask); break;
-							case 3: this.parentTree.addToQueue(this, { play: true });
+							case 3: this.parentTree.addToQueue(this, { play: true, recursive });
 								break;
 							case 0:
-							default: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true }); break;
+							default: this.parentTree.addtoPls(plman.ActivePlaylist, this, { clear: true, recursive }); break;
 						}
 					}
 				}
