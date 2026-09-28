@@ -1,9 +1,9 @@
 ﻿'use strict';
-//27/09/26
+//28/09/26
 
 /* exported FileExplorer */
 
-/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, sbar:readable, lib:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
+/* global ui:readable, ppt:readable, $:readable, tooltip:readable, panel:readable, sbar:readable, but:readable, search:readable, pop:readable, men:readable, vk:readable */
 /* global DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, MF_STRING:readable, MF_GRAYED:readable, MF_DISABLED:readable, IDC_ARROW:readable, IDC_APPSTARTING:readable, VK_ALT:readable */
 /* global folders:readable */
 /* global tryGetter:readable, tryMethod:readable, strNumCollator:readable */
@@ -112,7 +112,7 @@ class FileExplorer {
 			['File Explorer: Calculate file/folder size', false, 'explCalcSize'],
 			['File Explorer: Calculate file/folder size async', true, 'explCalcSizeAsync'],
 			['File Explorer: JS-Host file parsing methods', false, 'explSmpFileMethods'],
-			['File Explorer: Sort Items', true, 'explSort'],
+			['File Explorer: Sort Folders', true, 'explSort'],
 			['File Explorer: Show Playlists', false, 'explShowPlaylists'],
 			['File Explorer: Show Favorites', true, 'explShowFavorites'],
 			['File Explorer: Show Filesystem', true, 'explShowFilesystem'],
@@ -518,7 +518,7 @@ class FileExplorer {
 							const name = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':)';
 							node.addChild(
 								name + ' ' + free + ' / ' + total,
-								(drive.Path || drive.Root || '').replace('\\', '') + '\\',
+								(drive.Path || 'N/A') + '\\',
 								{ size: total, volumeName: drive.VolumeName || '', name, letter, freeSize: free }
 							);
 							node.child[node.child.length - 1].ready = true;
@@ -610,7 +610,7 @@ class FileExplorer {
 						node.ready = true;
 						const free = utils.FormatFileSize(drive.FreeSpace);
 						const total = utils.FormatFileSize(drive.TotalSize);
-						const letter = (drive.Path || drive.Root || '').replace('\\', '');
+						const letter = drive.DriveLetter.toUpperCase();
 						node.data.name = (drive.VolumeName ? drive.VolumeName + ' ' : '') + '(' + letter + ':)';
 						node.label = node.data.name + ' ' + free + ' / ' + total;
 						node.data.size = total;
@@ -1381,6 +1381,7 @@ class FileExplorer {
 							this.resetTree();
 						}
 					});
+					menu.newSeparator(menuName);
 					menu.newEntry({
 						menuName,
 						entryText: 'Load Unknown type as music', func: () => {
@@ -1832,16 +1833,9 @@ class FileExplorer {
 				if (!window.Width || !window.Height) { return; }
 				ui.draw(gr);
 				ui.drawLine(gr);
-				sbar.draw(gr);
 				but.setHide(['search', 'scroll', 'filter']);
 				but.draw(gr);
 				find.draw(gr);
-				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter
-				if (lib.initialised && ppt.get('Library Tree Dialog Box Reopen')) {
-					ppt.set('Library Tree Dialog Box Reopen', false);
-					setTimeout(() => panel.open(), 100);
-				}
-				// Regorxxx ->
 				this.on_paint(gr);
 				if (ui.style.topBarShow) { gr.DrawText('File Explorer', this.font.title, this.col.title, this.treePadX * 2, 0, panel.search.w, panel.tree.y, panel.l); }
 			}
