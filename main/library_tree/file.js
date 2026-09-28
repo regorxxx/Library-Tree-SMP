@@ -1879,7 +1879,7 @@ class FileExplorer {
 				but.draw(gr);
 				find.draw(gr);
 				this.on_paint(gr);
-				if (ui.style.topBarShow) { gr.DrawText('File Explorer', this.font.title, this.col.title, this.treePadX * 2, 0, panel.search.w, panel.tree.y, panel.l); }
+				if (ui.style.topBarShow) { gr.GdiDrawText('File Explorer', this.font.title, this.col.title, this.treePadX * 2, 0, panel.search.w, panel.tree.y, panel.l); }
 			}
 		});
 
