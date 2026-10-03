@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/09/26
+//02/10/26
 
 /* exported FileExplorer */
 
@@ -157,7 +157,7 @@ class FileExplorer {
 		};
 		this.y = panel.tree.y;
 		this.xOffset = 0;
-		this.yOffset = 0;
+		this.yOffset = this.y;
 		this.gDrag = false;
 		this.cDrag = false;
 		this.redrawDrives = false;
@@ -571,7 +571,8 @@ class FileExplorer {
 	}
 
 	getPos(y) {
-		return (y * -1) / (this.lineCounter * this.treeLineH - ui.h) * (ui.h - this.vCursorH);
+		// (y * -1) / (line_counter * tree_line_h - wh) * (wh - vcursor_h);
+		return Math.min(- (y - panel.tree.y) / (this.lineCounter * this.treeLineH - (ui.h - panel.tree.y)) * (ui.h - panel.tree.y - this.vCursorH), ui.h - panel.tree.y - this.vCursorH);
 	}
 
 	getFileSize(path) {
@@ -611,7 +612,8 @@ class FileExplorer {
 
 
 	getYoffset(y) {
-		return (y * -1) / (ui.h - this.vCursorH) * (this.lineCounter * this.treeLineH - ui.h);
+		// return (y * -1) / (ui.h - this.vCursorH) * (this.lineCounter * this.treeLineH - ui.h);
+		return - (y - panel.tree.y) / (ui.h - panel.tree.y - this.vCursorH) * (this.lineCounter * this.treeLineH - (ui.h - panel.tree.y));
 	}
 
 	refreshDrives() {
@@ -692,6 +694,7 @@ class FileExplorer {
 				this.fillDrives(fileRoot);
 			}
 		}
+		this.yOffset = this.y;
 		if (ppt.explInit && fb.GetLibraryRoots) {
 			const paths = fb.GetLibraryRoots();
 			ppt.explFavPaths = paths.join(';');
@@ -732,6 +735,7 @@ class FileExplorer {
 
 	on_size() {
 		this.y = panel.tree.y;
+		if (this.yOffset >= 0) { this.yOffset = this.y; }
 	}
 
 	on_paint(gr) {
@@ -745,14 +749,14 @@ class FileExplorer {
 		this.scanExpanded(gr, this.root, true);
 		// vscrollbar
 		if (this.lineCounter * this.treeLineH > ui.h) {
-			gr.DrawLine(ui.w, 0, ui.w, ui.h, 1, $.RGBA(100, 100, 100, 50));
-			gr.DrawImage(this.img.vCursor, ui.w, this.getPos(this.yOffset), this.img.vCursor.Width, this.img.vCursor.Height, 0, 0, this.img.vCursor.Width, this.img.vCursor.Height, 0, this.cDrag ? 255 : 130);
+			gr.DrawLine(ui.w - this.vCursorW, panel.tree.y, ui.w - this.vCursorW, ui.h, 1, $.RGBA(100, 100, 100, 50));
+			gr.DrawImage(this.img.vCursor, ui.w - this.vCursorW, panel.tree.y + this.getPos(this.yOffset), this.vCursorW, this.vCursorH, 0, 0, this.vCursorW, this.vCursorH, 0, this.cDrag ? 255 : 130);
 		}
 	}
 
 	on_mouse_lbtn_down(x, y, mask) {
 		if (this.showFilesystem) this.refreshDrives();
-		if (x < ui.w) {
+		if (x < ui.w - this.vCursorW) {
 			this.gDrag = true;
 			this.scanCheckAll(this.root, 'down', x, y, mask);
 		} else {
@@ -806,13 +810,13 @@ class FileExplorer {
 		}
 		if (this.cDrag) {
 			this.yOffset = this.y + this.getYoffset(y - this.vCursorH / 2);
-			if (this.yOffset > this.y) this.yOffset = this.y;
-			if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;
+			if (this.yOffset > this.y) {this.yOffset = this.y;}
+			if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) {this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;}
 			window.Repaint();
 		}
 		if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) {
 			this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;
-			if (this.yOffset > this.y) this.yOffset = this.y;
+			if (this.yOffset > this.y) { this.yOffset = this.y; }
 			window.Repaint();
 		}
 		this.m.x = x;
@@ -822,10 +826,10 @@ class FileExplorer {
 	on_mouse_wheel(step) {
 		if (step > 0) {
 			this.yOffset += this.treeLineH * 2;
-			if (this.yOffset > this.y) this.yOffset = this.y;
+			if (this.yOffset > this.y) { this.yOffset = this.y; }
 		} else if (this.treeLineH * this.lineCounter > ui.h - this.treePadY) {
 			this.yOffset -= this.treeLineH * 2;
-			if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;
+			if (this.yOffset < (this.y + this.treeLineH * this.lineCounter - ui.h) * -1) {this.yOffset = (this.y + this.treeLineH * this.lineCounter - ui.h) * -1;}
 		}
 		window.Repaint();
 	}
