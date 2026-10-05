@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//05/10/26
 
 /* global fso:readable, WshShell:readable, folders:readable, popup:readable */
 /* global Language:readable, popUpBox:readable, ppt:readable */
@@ -301,7 +301,7 @@ class Helpers {
 		let rgExp, re, flag, bTransliterate;
 		try {
 			[, re, flag] = str.startsWith('/')
-				? str.match(/\/(?:.*)\/([gimsuyt]+)?/)
+				? str.match(/\/(.*)\/([gimsuyt]+)?/)
 				: [];
 			rgExp = re ? new RegExp(re, (flag || '').replace('t', '')) : null;
 			bTransliterate = (flag || '').includes('t');

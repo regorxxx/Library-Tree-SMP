@@ -29,6 +29,7 @@
 - UI: fixed bug, on original script, where buttons could overlap if window width was small enough, instead of being adjusted or hidden. Now it first cuts the filter button text, then hides it, then hides the search icon until only the settings button is left. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087556.html#msg1087556).
 - Presets: $viewname and $filtername not triggering rule changes on filters using them.
 - External integration: fixed 'Library-Tree-SMP: quicksearch' and 'Library-Tree-SMP: search' commands not working.
+- Search: fixed regexp expressions not working due to changes on [3.0.0](#300---2026-08-24).
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
 
 ## [3.0.0] - 2026-08-24
