@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/09/26
+//05/10/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
 
@@ -203,7 +203,7 @@ class Library {
 				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = this.list.Find(h);
-					if (i != -1) this.format(items[j], panel.splitter, i, this.libNode);
+					if (i != -1) this.format(items[j], panel.markers.splitter, i, this.libNode);
 				});
 			}
 			if (this.list.Count) this.empty = '';
@@ -261,7 +261,7 @@ class Library {
 					// Regorxxx ->
 					newSearchItems.Convert().forEach((h, j) => {
 						i = panel.list.Find(h);
-						if (i != -1) this.format(items[j], panel.splitter, i, this.searchNode);
+						if (i != -1) this.format(items[j], panel.markers.splitter, i, this.searchNode);
 					});
 				}
 				if (!panel.list.Count) {
@@ -302,7 +302,7 @@ class Library {
 				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = this.list.Find(h);
-					if (i != -1) this.format(items[j], panel.splitter, i, this.libNode);
+					if (i != -1) this.format(items[j], panel.markers.splitter, i, this.libNode);
 				});
 				if (!this.list.Count) this.none = 'Nothing found';
 			}
@@ -331,7 +331,7 @@ class Library {
 				// Regorxxx ->
 				handleList.Convert().forEach((h, j) => {
 					i = panel.list.Find(h);
-					if (i != -1) this.format(items[j], panel.splitter, i, this.searchNode);
+					if (i != -1) this.format(items[j], panel.markers.splitter, i, this.searchNode);
 				});
 			}
 		}
@@ -363,7 +363,7 @@ class Library {
 				// Regorxxx ->
 				insert.Convert().forEach((h, j) => {
 					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
-					this.format(items[j], panel.splitter, i, n);
+					this.format(items[j], panel.markers.splitter, i, n);
 					li.Insert(i, h);
 				});
 				break;
@@ -810,7 +810,7 @@ class Library {
 							libItem[0] = libItem[0].split('^@^');
 							libItem = libItem.flat();
 						}
-						return !$.equal(libItem, items[j].split(panel.splitter));
+						return !$.equal(libItem, items[j].split(panel.markers.splitter));
 					}
 				});
 				if (ret) return true;
@@ -998,15 +998,19 @@ class Library {
 	}
 
 	prefixes(n) {
-		if (!n.includes('~#!#')) return n;
+		if (!n.includes('~' + panel.markers.multiProcess)) { return n; }
 		let ln = 0;
 		const noPrefix = v => !n.includes(v + ' ');
-		if (panel.prefix.every(noPrefix)) return n.replace(/~~#!#/g, '#!#').replace(/~#!#/g, '#!#'); // Regorxxx <- Code cleanup ->
-		let pr1 = n.split('~~#!#');
+		if (panel.prefix.every(noPrefix)) {
+			const re = [new RegExp('~~' + panel.markers.multiProcess, 'g'), new RegExp('~' + panel.markers.multiProcess, 'g')];
+			return n.replace(re[0], panel.markers.multiProcess)
+				.replace(re[1], panel.markers.multiProcess);
+		}
+		let pr1 = n.split('~~' + panel.markers.multiProcess);
 		let ret1 = '';
 		for (let j = 1; j < pr1.length; j++) {
-			const pr2 = pr1[j].split('#!#');
-			const pr = pr2[0].split('@@');
+			const pr2 = pr1[j].split(panel.markers.multiProcess);
+			const pr = pr2[0].split(panel.markers.metaSep);
 			pr.forEach((v, i) => {
 				panel.prefix.forEach(w => {
 					ln = w.length + 1;
@@ -1014,14 +1018,14 @@ class Library {
 				});
 			});
 			pr2.shift();
-			ret1 += '#!#' + pr.join('@@') + '#!#' + pr2.join('#!#');
+			ret1 += panel.markers.multiProcess + pr.join(panel.markers.metaSep) + panel.markers.multiProcess + pr2.join(panel.markers.multiProcess);
 		}
 		ret1 = pr1[0] + ret1;
-		let pr3 = ret1.split('~#!#');
+		let pr3 = ret1.split('~' + panel.markers.multiProcess);
 		let ret2 = '';
 		for (let j = 1; j < pr3.length; j++) {
-			const pr2 = pr3[j].split('#!#');
-			const pr = pr2[0].split('@@');
+			const pr2 = pr3[j].split(panel.markers.multiProcess);
+			const pr = pr2[0].split(panel.markers.metaSep);
 			pr.forEach((v, i) => {
 				panel.prefix.forEach(w => { // Regorxxx <- Code cleanup ->
 					ln = w.length + 1;
@@ -1029,7 +1033,7 @@ class Library {
 				});
 			});
 			pr2.shift();
-			ret2 += '#!#' + pr.join('@@') + '#!#' + pr2.join('#!#');
+			ret2 += panel.markers.multiProcess + pr.join(panel.markers.metaSep) + panel.markers.multiProcess + pr2.join(panel.markers.multiProcess);
 		}
 		return pr3.length > 1 ? pr3[0] + ret2 : ret1;
 	}
@@ -1169,7 +1173,7 @@ class Library {
 			switch (tree_type) {
 				case 0: {
 					let tfo = FbTitleFormat(panel.view);
-					const splitter = panel.splitter;
+					const splitter = panel.markers.splitter;
 					if (branched && roots.length) {
 						if (panel.search.txt || panel.hasFilterActive()) { // Regorxxx <- Multiple filters support | Code cleanup ->
 							let i = 0;
@@ -1503,7 +1507,7 @@ class Library {
 	}
 
 	sort(name) {
-		name = panel.cleanMarkers(name); // Regorxxx <- Code cleanup ->
+		name = panel.cleanMarkers(name, true); // Regorxxx <- Code cleanup ->
 		return [name, name, name, false];
 	}
 

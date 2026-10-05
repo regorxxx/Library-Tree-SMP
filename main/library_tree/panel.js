@@ -43,8 +43,6 @@ class Panel {
 		this.s_lc = $.stringFormat(0, 1);
 		this.samePattern = true;
 		this.sbar_x = 0;
-		this.softSplitter = '\u00ac';
-		this.splitter = '\u00a6';
 		this.sortBy = '';
 		this.sourceName = '';
 		this.statistics = false;
@@ -69,22 +67,37 @@ class Panel {
 		this.prefix = ppt.prefix.split('|');
 		this.prefixRe = new RegExp('(?:, )(' + this.prefix.map(escapeRegExpV2).join('|') + ')$', 'i');
 		// Regorxxx ->
+		// Regorxxx <- Code cleanup | Language remap
+		this.markers = {
+			multiProcess: '#!#',
+			noDisplay: '#@#',
+			col: '@!#',
+			remap: '#&#',
+			splitter: '\u00a6',
+			softSplitter: '\u00ac',
+			metaSep: '@@',
+			artType: '€€',
+			clean: {
+				multiProcessRe: /#!#/g,
+				noDisplayRe: /#@#/g,
+				imgViewRe: /\^@\^/g,
+				colRe: /@!#.*?@!#/g
+			},
+			group: {
+				noDisplayRe: /#@#(.*?)#@#/gi,
+				remapRe: /#&#(.+?)#&#/gi
+			},
+			combosRe: void (0)
+		};
+		this.markers.combosRe = new RegExp(`(${this.markers.multiProcess}|)${this.markers.softSplitter}(${this.markers.multiProcess}|)`, 'g');
+		// Regorxxx ->
 		// Regorxxx <- Custom TF art
 		this.artVariables = img.art.map((art) => {
 			const idx = art.idx;
-			const id = '@@' + idx + '@@';
+			const id = this.markers.artType + idx + this.markers.artType;
 			return { idx, regExp: new RegExp('\\$' + escapeRegExpV2(art.type), 'gi'), replacer: () => this.imgView ? id : '-N/A-', id };
 		});
 		// Regorxxx ->
-		// Regorxxx <- Code cleanup
-		this.panelMarkers = {
-			multiProcess: /#!#/g,
-			noDisplay: /#@#/g,
-			colMarker: /@!#.*?@!#/g,
-			imgView: /\^@\^/g
-		};
-		// Regorxxx ->
-
 		this.filter = {
 			menu: [],
 			mode: [],
@@ -364,7 +377,7 @@ class Panel {
 			while (s.includes('$meta_branch(')) {
 				const q = s.match(/\$meta_branch\((.+?)?\)/);
 				if (!q) { s = s.replace(/\$meta_branch(\(?.*?\)|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
-				s = s.replace(q[0], () => '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.softSplitter + '),$char(8203))');
+				s = s.replace(q[0], () => '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.markers.softSplitter + '),$char(8203))');
 			}
 			while (s.includes('$nowplaying{')) {
 				const q = s.match(/\$nowplaying{(.+?)}/);
@@ -415,11 +428,11 @@ class Panel {
 	// Regorxxx ->
 
 	// Regorxxx <- Code cleanup
-	cleanMarkers(s) {
-		if (this.multiProcess) { s = s.replace(this.panelMarkers.multiProcess, ''); }
-		if (this.noDisplay) { s = s.replace(this.panelMarkers.noDisplay, ''); }
-		if (this.colMarker) { s = s.replace(this.panelMarkers.colMarker, ''); }
-		if (this.imgView) { s = s.replace(this.panelMarkers.imgView, '  '); }
+	cleanMarkers(s, isSort = false) {
+		if (this.multiProcess) { s = s.replace(this.markers.clean.multiProcessRe, ''); }
+		if (this.noDisplay) { s = s.replace(isSort ? this.markers.clean.noDisplayRe : this.markers.group.noDisplayRe, ''); }
+		if (this.colMarker) { s = s.replace(this.markers.clean.colRe, ''); }
+		if (this.imgView) { s = s.replace(this.markers.clean.imgViewRe, '  '); }
 		return s;
 	}
 	// Regorxxx ->
@@ -483,7 +496,7 @@ class Panel {
 			};
 			this.statistics = /play_?count|(?:auto)?_?rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
 			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
-			if (this.view.includes('%<') || this.view.includes(this.splitter)) this.multiProcess = true;
+			if (this.view.includes('%<') || this.view.includes(this.markers.splitter)) { this.multiProcess = true; }
 			if (this.multiProcess) {
 				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
 				if (ppt.smartSort) { this.playlistSort = this.cleanViewTf(this.view); } // Regorxxx <- Preserve tree sorting at selection | Smart sorting based on view ->
@@ -510,8 +523,8 @@ class Panel {
 				this.sortBy = this.sortBy.replace(/\$swapbranchprefix{/, '$$swapprefix(').replace(/~%/, '%');
 				this.view = this.view.replace(/\$swapbranchprefix{/, '$$swapprefix(');
 			}
-			this.sortBy = this.sortBy.replace(new RegExp(this.splitter, 'g'), '  ');
-			this.view = this.view.replace(new RegExp('\\s*' + this.splitter + '\\s*', 'g'), this.softSplitter);
+			this.sortBy = this.sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
+			this.view = this.view.replace(new RegExp('\\s*' + this.markers.splitter + '\\s*', 'g'), this.markers.softSplitter);
 			if (this.multiProcess) {
 				this.sortBy = this.sortBy.replace(/[<>]/g, '');
 				const baseTag = [];
@@ -533,9 +546,12 @@ class Panel {
 					.replace(/<#/g, '<')
 					.replace(/#>/g, '>');
 			}
-			if (this.multiProcess) { this.view = this.view.replace(/%</g, '#!#$$meta_sep(').replace(/>%/g, ',@@)#!#'); }
-			this.sortBy = this.sortBy.replace(/\|/g, this.splitter);
-			this.view = this.view.replace(/\|/g, this.splitter);
+			if (this.multiProcess) {
+				this.view = this.view.replace(/%</g, this.markers.multiProcess + '$$meta_sep(')
+					.replace(/>%/g, ',' + this.markers.metaSep + ')' + this.markers.multiProcess);
+			}
+			this.sortBy = this.sortBy.replace(/\|/g, this.markers.splitter);
+			this.view = this.view.replace(/\|/g, this.markers.splitter);
 			if (this.view.includes('$nodisplay{')) { this.noDisplay = true; }
 
 			while (this.view.includes('$nodisplay{')) {
@@ -547,21 +563,21 @@ class Panel {
 				this.view = sub1 + sub2.replace(/[\u00a6|]/g, '') + sub3;
 				ix1 = this.view.indexOf('$nodisplay{');
 				ix2 = this.view.indexOf('}', ix1);
-				this.view = $.replaceAt(this.view, ix2, '  #@#');
-				this.view = this.view.replace('$nodisplay{', '#@#');
+				this.view = $.replaceAt(this.view, ix2, '  ' + this.markers.noDisplay);
+				this.view = this.view.replace('$nodisplay{', this.markers.noDisplay);
 			}
 			if (this.colMarker) {
 				while (this.view.includes('$colour{')) {
 					ix1 = this.view.indexOf('$colour{');
 					ix2 = this.view.indexOf('}', ix1);
-					this.view = $.replaceAt(this.view, ix2, '@!#');
-					this.view = this.view.replace('$colour{', '@!#');
+					this.view = $.replaceAt(this.view, ix2, this.markers.col);
+					this.view = this.view.replace('$colour{', this.markers.col);
 				}
-				const colView = this.view.split('@!#');
+				const colView = this.view.split(this.markers.col);
 				colView.forEach((v, i, arr) => {
 					if (i % 2 === 1) {
 						const colSplit = v.split(',');
-						arr[i] = '@!#' + (ui.setMarkerCol(colSplit[0]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240))) + '`' + (ui.setMarkerCol(colSplit[1]) || (ppt.highLightText ? ui.col.text_h : (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240)))) + '`' + (ui.setMarkerCol(colSplit[2]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.textSel : ui.col.text)) + '@!#';
+						arr[i] = this.markers.col + (ui.setMarkerCol(colSplit[0]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240))) + '`' + (ui.setMarkerCol(colSplit[1]) || (ppt.highLightText ? ui.col.text_h : (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240)))) + '`' + (ui.setMarkerCol(colSplit[2]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.textSel : ui.col.text)) + this.markers.col;
 					}
 				});
 				this.view = colView.join('');
@@ -574,7 +590,7 @@ class Panel {
 				this.sortBy = $.replaceAt(this.sortBy, ix2, '  ');
 				this.sortBy = this.sortBy.replace('$nodisplay{', '  ');
 			}
-			this.sortBy = this.sortBy.replace(new RegExp(this.splitter, 'g'), '  ');
+			this.sortBy = this.sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
 		}
 		return this.view;
 	}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/09/26
+//05/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -327,7 +327,7 @@ class Images {
 		if (Object.hasOwn(art, 'tf')) {
 			const item = pop.tree[ix];
 			const path = this.getArtMask(art.tf, handle, item);
-			if (path.includes('@@')) {
+			if (path.includes(panel.markers.artType)) {
 				const idx = (panel.artVariables.find((av) => path.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
 					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->

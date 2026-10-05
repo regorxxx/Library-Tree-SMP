@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/09/26
+//05/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -332,7 +332,7 @@ class Populate {
 			n_o = '#condense#';
 			nU = '';
 			b.forEach((v, i) => {
-				if (v.nm.includes('@@')) {
+				if (v.nm.includes(panel.markers.metaSep)) {
 					multi = this.getAllCombinations(v.nm);
 					multi_rem.push(i);
 					multi.forEach(w => {
@@ -359,7 +359,7 @@ class Populate {
 				}
 			});
 			b.forEach(v => {
-				v.nm = v.nm.replace(/#!#/g, '');
+				v.nm = v.nm.replace(panel.markers.clean.multiProcessRe, '');
 				nm_arr.push(v.nm);
 			});
 			multi_cond.forEach((v, i) => {
@@ -403,10 +403,10 @@ class Populate {
 					let n = '';
 					let n_o = '#condense#';
 					let nU = '';
-					const splitter = panel.softSplitter;
+					const splitter = panel.markers.softSplitter;
 					if (lib.searchSort || lib.filterSort || panel.isPlaylistSource() && ppt.plsSorting) {
 						br.forEach((v, i) => {
-							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
+							if (v.nm.includes(panel.markers.metaSep) || v.nm.includes(splitter)) {
 								multi = this.getAllCombinations(v.nm);
 								multi_rem.push(i);
 								multi.forEach(w => {
@@ -420,7 +420,7 @@ class Populate {
 									multi_pos.set(obj, i);
 								});
 							} else {
-								v.nm = v.nm.replace(/#!#/g, '');
+								v.nm = v.nm.replace(panel.markers.clean.multiProcessRe, '');
 								nm_arr.push(v.nm);
 							}
 						});
@@ -467,7 +467,7 @@ class Populate {
 						});
 					} else {
 						br.forEach((v, i) => {
-							if (v.nm.includes('@@') || v.nm.includes(splitter)) {
+							if (v.nm.includes(panel.markers.metaSep) || v.nm.includes(splitter)) {
 								multi = this.getAllCombinations(v.nm);
 								multi_rem.push(i);
 								multi.forEach(w => {
@@ -479,7 +479,7 @@ class Populate {
 									});
 								});
 							} else {
-								v.nm = v.nm.replace(/#!#/g, '');
+								v.nm = v.nm.replace(panel.markers.clean.multiProcessRe, '');
 								nm_arr.push(v.nm);
 							}
 						});
@@ -554,10 +554,10 @@ class Populate {
 					break;
 			}
 			if (ui.col.counts && (!item.track || !this.showTracks)) {
-				const str = '@!#' + ui.col.counts + '`' + (this.highlight.text ? ui.col.text_h : ui.col.counts) + '`' + ui.col.textSel + '@!#';
+				const str = panel.markers.col + ui.col.counts + '`' + (this.highlight.text ? ui.col.text_h : ui.col.counts) + '`' + ui.col.textSel + panel.markers.col;
 				if (!item.nm.endsWith(str)) { item.nm += str; }
 			}
-			item.name = panel.noDisplay ? item.nm.replace(/#@#.*?#@#/g, '') : item.nm;
+			item.name = panel.noDisplay ? item.nm.replace(panel.markers.group.noDisplayRe, '') : item.nm;
 			if (v.child.length > 0) { this.buildTree(v.child, level + 1, node, !!item.root, true, false); }
 		});
 		if (ui.style.squareNode && ui.col.line) {
@@ -1013,7 +1013,7 @@ class Populate {
 			text = item[cus].txt;
 			w_arr = item[cus].txt_w;
 		} else {
-			text = text.split('@!#');
+			text = text.split(panel.markers.col);
 			text.forEach((v, i) => {
 				if (i % 2 == 0) w_arr[i] = gr.CalcTextWidth(text[i], font);
 			});
@@ -1549,17 +1549,15 @@ class Populate {
 	}
 
 	fixMarkers(n) {
-		while (n.includes('@!##!#')) { // $colour
-			n = n.replace('@!##!#', '<!>');
-			n = n.replace('@!#', '~#~');
-		}
-		n = n.replace(/<!>/g, '@!##!#').replace(/~#~/g, '#!#@!#');
-
-		while (n.includes('#@##!#')) { // $nodisplay
-			n = n.replace('#@##!#', '<!>');
-			n = n.replace('#@#', '~#~');
-		}
-		n = n.replace(/<!>/g, '#@##!#').replace(/~#~/g, '#!##@#');
+		let combined;
+		// $colour, $nodisplay
+		[panel.markers.col, panel.noDisplay.col].forEach((marker) => {
+			combined = marker + panel.markers.multiProcess;
+			while (n.includes(combined)) {
+				n = n.replace(combined, '<!>').replace(marker, '~#~');
+			}
+			n = n.replace(/<!>/g, combined).replace(/~#~/g, panel.markers.multiProcess + marker);
+		});
 		return n;
 	}
 
@@ -1583,19 +1581,20 @@ class Populate {
 
 	getAllCombinations(n) {
 		n = this.fixMarkers(n);
-		if (n.includes('^@^') && n.includes(panel.softSplitter)) return this.imgView(n);
-		else return this.getCombos(n);
+		return n.includes('^@^') && n.includes(panel.markers.softSplitter)
+			? this.imgView(n)
+			: this.getCombos(n);
 	}
 
 	getCombos(n) {
 		const combinations = [];
 		const divisors = [];
 		const arraysToCombine = [];
-		n = n.replace(new RegExp(`(#!#|)${panel.softSplitter}(#!#|)`, 'g'), '@@').split('#!#');
+		n = n.replace(panel.markers.combosRe, panel.markers.metaSep).split(panel.markers.multiProcess);
 		const ln = n.length;
 		let i = 0;
 		for (i = 0; i < ln; i++) {
-			n[i] = n[i].split('@@');
+			n[i] = n[i].split(panel.markers.metaSep);
 			if (n[i] != '') arraysToCombine.push(n[i]);
 		}
 		const arraysToCombineLength = arraysToCombine.length;
