@@ -297,7 +297,7 @@ class Helpers {
 	// Regorxxx ->
 
 	// Regorxxx <- RegExp library search
-	applyRegExp(str, handleList, meta = ['ALBUM ARTIST', 'ALBUM', 'TITLE', 'DATE']) {
+	applyRegExp(str, handleList, meta = ['ALBUM ARTIST', 'ALBUM', 'TITLE', 'DATE'], remap = true) {
 		let rgExp, re, flag, bTransliterate;
 		try {
 			[, re, flag] = str.startsWith('/')
@@ -318,7 +318,7 @@ class Helpers {
 				: rgExp.test(Language.transliterate(val));
 		};
 		return new FbMetadbHandleList(
-			this.getHandleListTags(handleList, meta, { bMerged: true })
+			this.getHandleListTags(handleList, meta, { bMerged: true, remap })
 				.reduce((prev, tagArr, i) => {
 					if (match(tagArr) || bTransliterate && matchTrans(tagArr)) { prev.push(handleList[i]); }
 					return prev;
