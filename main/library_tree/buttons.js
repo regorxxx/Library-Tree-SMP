@@ -1,5 +1,5 @@
-'use strict';
-//24/09/26
+﻿'use strict';
+//05/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
@@ -58,7 +58,7 @@ class Buttons {
 		this.setSbarIcon();
 		this.createImages();
 
-		this.multiBtnSetName(panel.getFilterName(), true); // Regorxxx <- Filter / View / Source button | Multiple filters support ->
+		this.multiBtnSetName(panel.cleanDisplay(panel.getFilterName()), true); // Regorxxx <- Filter / View / Source button | Multiple filters support | Allow hidden display on filters/views ->
 	}
 
 	// Methods
@@ -430,14 +430,16 @@ class Buttons {
 		tooltip.Activate();
 	}
 
-	// Regorxxx <- Filter / View / Source button | Multiple filters support
+	// Regorxxx <- Filter / View / Source button | Multiple filters support | Allow hidden display on filters/views
 	multiBtnKeyDown(vKey) {
 		this.multiBtnSetName(
-			vKey === VK_SHIFT
-				? panel.viewName
-				: vKey === VK_CONTROL
-					? panel.sourceName
-					: panel.getFilterName(),
+			panel.cleanDisplay(
+				vKey === VK_SHIFT
+					? panel.viewName
+					: vKey === VK_CONTROL
+						? panel.sourceName
+						: panel.getFilterName()
+			),
 			true
 		);
 		this.multiBtnSetTooltip(
@@ -457,7 +459,7 @@ class Buttons {
 	}
 
 	multiBtnKeyUp() {
-		this.multiBtnSetName(panel.getFilterName(), true); // Regorxxx <- Multiple filters support | Code cleanup ->
+		this.multiBtnSetName(panel.cleanDisplay(panel.getFilterName()), true); // Regorxxx <- Multiple filters support | Code cleanup | Allow hidden display on filters/views ->
 		this.multiBtnSetTooltip('Filter');
 		this.multiBtnSetType('filter');
 	}
