@@ -326,7 +326,7 @@ class Helpers {
 		);
 	}
 
-	getHandleListTags(handleList, tagsArray, { bMerged = false } = {}) {
+	getHandleListTags(handleList, tagsArray, { bMerged = false, bRemap = true } = {}) {
 		if (!isArrayStrings(tagsArray)) { return null; }
 		if (!handleList) { return null; }
 		const tagArray_length = tagsArray.length;
@@ -336,6 +336,12 @@ class Helpers {
 		let tagString = '';
 		const outputArray_length = handleList.Count;
 		const sep = '|‎|'; // Contains U+200E invisible char
+		// Regorxxx <- Language remap
+		const remap = { // Contains U+200F invisible char
+			language: '‏l‏',
+			languageRe: /‏l‏([^‏]+?)‏l‏/gi
+		};
+		// Regorxxx->
 		while (i < tagArray_length) {
 			const tagStr = tagsArray[i].includes('$')
 				? tagsArray[i]
@@ -346,11 +352,23 @@ class Helpers {
 			else { tagString += (i === 0 ? '' : sep) + _b(tagStr); } // We have tag values separated by comma and different tags by 'sep'
 			i++;
 		}
+		if (bRemap) { tagString = tagString.replace(/(%LANGUAGE%)/gi, remap.language + '$1' + remap.language); } // Regorxxx <- Language remap ->
 		let tfo = fb.TitleFormat(tagString);
 		// Regorxxx <- Support for stream tag-retrieval
 		outputArray = this.isStreamSupport(tfo)
 			? tfo.EvalWithMetadbsDynamic(handleList)
 			: tfo.EvalWithMetadbs(handleList);
+		// Regorxxx <- Language remap ->
+		if (bRemap) {
+			if (tagString.includes(remap.language)) {
+				outputArray = outputArray.map((s) => s.replace(
+					remap.languageRe,
+					(match, p1) => Language.getIsoLanguage(p1)
+				));
+			}
+		}
+		// Regorxxx ->
+		// console.log(outputArray)
 		// Regorxxx ->
 		if (bMerged) { // Just an array of values per track: n x 1
 			for (let i = 0; i < outputArray_length; i++) {
