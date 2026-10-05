@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 14/07/26 -->
+<!DOCTYPE html> <!-- 05/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -33,6 +33,9 @@
 						</li>
 						<li class="level1">
 							<div class="li"><span class="li"><a href="#art_summary" class="toc">Album art custom TF</a></span></div>
+						</li>
+						<li class="level1">
+							<div class="li"><span class="li"><a href="#display_summary" class="toc">Display</a></span></div>
 						</li>
 					</ul>
 				</ul>
@@ -1696,6 +1699,41 @@
 				</ul>
 		</div>
 		<!-- SECTION "Album Art" -->
+		<!-- SECTION "Display elements" -->
+		<h2><a name="display_summary" id="display_summary">Display</a></h2>
+		<div class="level2">
+			<table class="inline" style="width: 99%;">
+				<tr>
+					<th> Function </th>
+					<th> Description </th>
+					<th> Example </th>
+					<th> Comment </th>
+				</tr>
+				<tr>
+					<td> <em>$nodisplay{X}</em> </td>
+					<td> Adds a string to an element which is only shown on menus.</td>
+					<td> <em>View by Dates$nodisplay{&emsp;{Artist | Album}}</em> </td>
+					<td> View name which is displayed as 'View by Dates' on UI, buttons, ... and 'View by Dates&emsp;{Artist | Album}' on menus.</td>
+				</tr>
+			</table>
+		</div>
+		<div class="level2">
+			<h2>Notes:</h3>
+				<ul>
+					<li>
+						<div class="li"> Can be used to hide minor info on filter and view names when displayed on buttons or root node.</div>
+					</li>
+					<img src="../images/syntax/nodisplay_menu2.png" alt="Menu example" style="display: block; margin-left: auto; margin-right: auto; max-width: 90%" />
+					<li>
+						<div class="li"> To show the string as a menu tip, add a tab character instead of using spaces before any text.</div>
+					</li>
+					<img src="../images/syntax/nodisplay_menu.png" alt="Menu example" style="display: block; margin-left: auto; margin-right: auto; max-width: 90%" />
+					<li>
+						<div class="li"> Regarding external integration ('window.NotifyOthers(callback, arg)'), filters and view names can be matched with and without the hidden text. i.e. View by 'Dates&emsp;{Artist | Album}'' or 'View by Dates'.</div>
+					</li>
+				</ul>
+		</div>
+		<!-- SECTION "Display elements" -->
 	</div>
 </body>
 

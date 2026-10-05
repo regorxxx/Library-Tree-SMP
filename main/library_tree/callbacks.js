@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/09/26
+//05/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -430,8 +430,11 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch view': {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
-			if (typeof info.viewName !== 'undefined') { idx = panel.grp.findIndex(v => v.name.toLowerCase() === info.viewName.trim().toLowerCase()); }
-			else if (typeof info.viewIdx !== 'undefined' && info.viewIdx >= -1 && info.viewIdx < panel.grp.length) {
+			if (typeof info.viewName !== 'undefined') {
+				const name = info.viewName.trim().toLowerCase();
+				idx = panel.grp.findIndex((v) => panel.cleanDisplay(v.name.toLowerCase()) === name);
+				if (idx === -1) { panel.menu.findIndex(v => v.name.toLowerCase() === name); } // Regorxxx <- Allow hidden display on filters/views ->
+			} else if (typeof info.viewIdx !== 'undefined' && info.viewIdx >= -1 && info.viewIdx < panel.grp.length) {
 				if (info.viewIdx === -1) { idx = panel.grp.length - 1; }
 				else if (panel.grp[info.viewIdx].name !== 'separator') { idx = info.viewIdx; }
 			}
@@ -441,8 +444,11 @@ addEventListener('on_notify_data', (name, info) => {
 		case window.ScriptInfo.Name + ': switch filter': {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
-			if (typeof info.filterName !== 'undefined') { idx = panel.dialogFiltGrps.findIndex(v => v.name.toLowerCase() === info.filterName.trim().toLowerCase()); }
-			else if (typeof info.filterIdx !== 'undefined' && info.filterIdx >= -1 && info.filterIdx < panel.dialogFiltGrps.length) {
+			if (typeof info.filterName !== 'undefined') {
+				const name = info.viewName.trim().toLowerCase();
+				idx = panel.dialogFiltGrps.findIndex((v) => panel.cleanDisplay(v.name.toLowerCase()) === name);
+				if (idx === -1) { panel.filter.menu.findIndex(v => v.name.toLowerCase() === name); }  // Regorxxx <- Allow hidden display on filters/views ->
+			} else if (typeof info.filterIdx !== 'undefined' && info.filterIdx >= -1 && info.filterIdx < panel.dialogFiltGrps.length) {
 				if (info.filterIdx === -1) { idx = 0; }
 				else if (panel.dialogFiltGrps[info.filterIdx].name !== 'separator') { idx = info.filterIdx; }
 			}

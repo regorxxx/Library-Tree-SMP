@@ -897,7 +897,7 @@ div.dokuwiki h5 {
 
 div.dokuwiki h1 {
 	font-size: 160%;
-	margin-left: 0;
+	margin-left: 10px;
 	font-weight: bold;
 }
 
@@ -965,7 +965,7 @@ div.dokuwiki ol {
 
 div.dokuwiki .li {
 	color: #000;
-	font-weight: normal;
+	font-weight: bold;
 }
 
 div.dokuwiki ol {
@@ -1077,7 +1077,7 @@ div.dokuwiki span.toc_close {
 
 div.dokuwiki #toc__inside {
 	border: 1px solid #8cacbb;
-	background-color: #fff;
+	background-color: #ffffffbf;
 	text-align: left;
 	padding: 0.5em 0 0.7em 0;
 }
@@ -1953,7 +1953,7 @@ div.dokuwiki div.imagemeta img.thumb {
 
 	div.dokuwiki #toc__inside {
 		border: 1px solid #505050;
-		background-color: #0c0c0c;
+		background-color: #0c0c0cbd;
 	}
 
 	div.dokuwiki a.toc:link,

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/09/26
+//05/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -188,7 +188,7 @@ class Panel {
 		} else if (but) {
 			this.filter.hide = true;
 			this.search.hide = false;
-			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 4 : 0) + (ppt.searchShow ? but.margin * 4 + (but.q.h || 0): 0))) {
+			if (window.Width > ((ppt.settingsShow ? this.settings.w + but.margin * 4 : 0) + (ppt.searchShow ? but.margin * 4 + (but.q.h || 0) : 0))) {
 				this.filter.x = ui.w - ui.sz.marginSearch * 2 - this.settings.w + this.settings.offset;
 			} else {
 				this.filter.x = 0;
@@ -280,8 +280,8 @@ class Panel {
 				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$sourceplaying/gi, () => fb.IsPlaying && node && sourceParent.some((p) => plman.PlayingPlaylist === p.idx) ? '$not(0)' : '')
-				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.grp[ppt.viewBy].name || '-N/A-'))
-				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.getFilterNames().join('\', \'') || '-N/A-')) // Regorxxx <- Multiple filters support | Code cleanup ->
+				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.cleanDisplay(this.viewName) || '-N/A-'))
+				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.cleanDisplay(this.getFilterNames().join('\', \'')) || '-N/A-')) // Regorxxx <- Multiple filters support | Code cleanup ->
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
 				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
 			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
@@ -421,6 +421,16 @@ class Panel {
 		if (this.colMarker) { s = s.replace(this.panelMarkers.colMarker, ''); }
 		if (this.imgView) { s = s.replace(this.panelMarkers.imgView, '  '); }
 		return s;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Allow hidden display on filters/views
+	cleanDisplay(s) {
+		return s.replace(/\$nodisplay{.*}/g, '');
+	}
+
+	formatDisplay(s) {
+		return s.replace(/\$nodisplay{(.*)}/g, '$1');
 	}
 	// Regorxxx ->
 
@@ -605,7 +615,6 @@ class Panel {
 			}
 		});
 
-		const name = v => v.name;
 		const removeEmpty = v => v && v.name != '' && v.type != '';
 
 		this.grp = this.grp.filter(removeEmpty);
@@ -640,8 +649,8 @@ class Panel {
 			window.MinHeight = 0;
 		}
 		this.setRootName();
-		this.filter.menu = this.filter.mode.map(name);
-		this.menu = this.grp.map(name);
+		this.filter.menu = this.filter.mode.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
+		this.menu = this.grp.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 	}
 
 	// Regorxxx <- Multiple filters support | Code cleanup
@@ -820,6 +829,9 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Style // %<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Style', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Genre tree // %<GENRE>%|%<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Style', 1],
+			['View XX: Name // Pattern', 'separator // .'],
+			['View XX: Name // Pattern', 'View by View by Language | Artist | Album // %<LANGUAGE>%|$swapbranchprefix{%<ARTIST>%}|%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Language', 'Artist', 1],
+			['View XX: Name // Pattern', 'View by View by Language | Artist // %<LANGUAGE>%|$swapbranchprefix{%<ARTIST>%}| [%TRACK ARTIST% - ]%TITLE%', 'Language', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Year // $year(%DATE%)|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Year', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Decade // $div($year(%DATE%),10)0s|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{%COMMENT%-%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Decade', 'Album', 1],
@@ -1594,7 +1606,7 @@ class Panel {
 					// Regorxxx ->
 					ppt.filterBy = i;
 					if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
-					but.multiBtnSetName(this.getFilterName(), false); // Regorxxx <- Filter / View / Source button | Multiple filters support | Code cleanup ->
+					but.multiBtnSetName(this.cleanDisplay(this.getFilterName()), false); // Regorxxx <- Filter / View / Source button | Multiple filters support | Code cleanup | Allow hidden display on filters/views ->
 					this.calcText();
 					if (this.search.txt) lib.upd_search = true;
 					if (!ppt.reset) {
@@ -1675,10 +1687,10 @@ class Panel {
 				this.rootName = ppt.showSource ? this.sourceName : 'All Music';
 				break;
 			case 2:
-				this.rootName = this.viewName + (ppt.showSource ? ' [' + this.sourceName + ']' : '');
+				this.rootName = this.cleanDisplay(this.viewName) + (ppt.showSource ? ' [' + this.sourceName + ']' : ''); // Regorxxx <- Allow hidden display on filters/views ->
 				break;
 			case 3: {
-				const nm = this.viewName.replace(/view by|^by\b/i, '').trim();
+				const nm =  this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
 				const basename = basenames.join(' ')
 					.replace(/(album|artist|top|track)s\s/gi, '$1 ')
@@ -2353,9 +2365,11 @@ class Panel {
 		const viewName = bSetView
 			? this.grp[viewBy].name
 			: this.grp[ppt.viewBy].name;
-		const filterName = bSetFilter
-			? this.getFilterName(filterBy)
-			: this.getFilterName();
+		const filterName = this.cleanDisplay( // Regorxxx <- Allow hidden display on filters/views ->
+			bSetFilter
+				? this.getFilterName(filterBy)
+				: this.getFilterName()
+		);
 		const sourceIdx = bSetSource
 			? this.getSourceIdxFromSettings(sourceBy)
 			: this.getSourceIdxFromSettings();
