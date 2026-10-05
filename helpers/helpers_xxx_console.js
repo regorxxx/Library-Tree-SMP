@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/09/26
+//05/10/26
 
 include(fb.ComponentPath + 'docs\\Codepages.js');
 /* global convertCharsetToCodepage:readable */
