@@ -155,7 +155,7 @@ class Library {
 						? searchText
 						: 'N/A';
 					newSearchItems = isRegExp
-						? $.applyRegExp(searchText, handleList, tags)
+						? $.applyRegExp(searchText, handleList, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 						: fb.GetQueryItems(
 							handleList,
 							this.hasNoSearchOnFilter()
@@ -232,7 +232,7 @@ class Library {
 						? searchText
 						: 'N/A';
 					newSearchItems = isRegExp
-						? $.applyRegExp(searchText, handleList, tags)
+						? $.applyRegExp(searchText, handleList, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 						: fb.GetQueryItems(
 							handleList,
 							this.hasNoSearchOnFilter()
@@ -1273,7 +1273,7 @@ class Library {
 				if (panel.isBranchedPlaylistSource()) {
 					this.playlistSourceRoot.forEach((root) => {
 						root.handleList = isRegExp
-							? $.applyRegExp(searchText, root.handleList, tags)
+							? $.applyRegExp(searchText, root.handleList, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 							: fb.GetQueryItems(
 								root.handleList,
 								this.hasNoSearchOnFilter()
@@ -1288,7 +1288,7 @@ class Library {
 					}, new FbMetadbHandleList());
 				} else {
 					panel.list = isRegExp
-						? $.applyRegExp(searchText, this.list, tags)
+						? $.applyRegExp(searchText, this.list, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 						: fb.GetQueryItems(
 							this.getSearchList(searchText) || this.list,
 							this.hasNoSearchOnFilter()
@@ -1614,7 +1614,7 @@ class Library {
 							? searchText
 							: 'N/A';
 						newSearchItems = isRegExp
-							? $.applyRegExp(searchText, handleList, tags)
+							? $.applyRegExp(searchText, handleList, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 							: fb.GetQueryItems(
 								handleList,
 								this.hasNoSearchOnFilter()
@@ -1659,7 +1659,7 @@ class Library {
 							? searchText
 							: 'N/A';
 						handlesInSearch = isRegExp
-							? $.applyRegExp(searchText, removeSearchItems, tags)
+							? $.applyRegExp(searchText, removeSearchItems, tags, Object.keys(panel.remap).some((key) => panel.remap[key])) // Regorxxx <- Language remap ->)
 							: fb.GetQueryItems(
 								removeSearchItems,
 								this.hasNoSearchOnFilter()
