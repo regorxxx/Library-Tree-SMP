@@ -9,6 +9,8 @@
 
 ## [Unreleased][]
 ### Added
+- Remap: added a new feature called tag remapping which allows to replace specific tags with custom values. Currently used for LANGUAGE tag, panel is now able to replace ISO 639 codes with the full language name on real time. For ex. when using a View which uses %LANGUAGE%, 'eng' would be replaced with 'English'. See [Issue 16](https://github.com/regorxxx/Library-Tree-SMP/issues/16).
+- Views: added new default view patterns related to LANGUAGE tag.
 - Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087544.html#msg1087544).
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).

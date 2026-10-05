@@ -264,8 +264,10 @@ class Populate {
 		let n = '';
 		let n_o = '#get_branch#';
 		let nU = '';
+		const bRemap = Object.keys(panel.remap).some((key) => panel.remap[key]); // Regorxxx <- Language remap ->
 		this.range(br.item).forEach((v) => {
 			n = lib.node[v][l];
+			if (bRemap) { n = lib.remapNodename(n); } // Regorxxx <- Language remap ->
 			nU = n.toUpperCase();
 			if (n_o == nU) { br.child[i - 1].item.push(v); }
 			else {

@@ -1,10 +1,11 @@
 ﻿'use strict';
 //05/10/26
 
-/* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable */
+/* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
 /* global IDC_WAIT:readable, IDC_ARROW:readable */
 /* global globQuery:readable, globTags:readable */
+/* global memoize:readable */
 /* global isArrayEqual:readable */
 /* global harmonicMixingSort:readable, harmonicMixingCycle:readable */
 /* global removeDuplicates:readable, showDuplicates:readable */
@@ -110,6 +111,8 @@ class Library {
 
 		this.checkView();
 		this.readTreeState(true);
+
+		this.remapNodename = memoize(this.remapNodename); // Regorxxx <- Language remap ->
 	}
 
 	// Methods
@@ -1361,15 +1364,17 @@ class Library {
 				srt: this.sort(panel.rootName)
 			};
 		} else {
+			const bRemap = Object.keys(panel.remap).some((key) => panel.remap[key]); // Regorxxx <- Language remap ->
 			this.node.forEach((v, l) => {
 				n = v[0];
+				if (bRemap) { n = this.remapNodename(n); } // Regorxxx <- Language remap ->
 				nU = n.toUpperCase();
 				if (nU == n_o) { end = l; }
 				else {
 					n_o = nU;
 					if (i > 0) this.root[i - 1].item = this.set(start, end);
 					start = l;
-					if (panel.multiPrefix) n = this.prefixes(n);
+					if (panel.multiPrefix) { n = this.prefixes(n); }
 					this.root[i] = {
 						nm: n,
 						sel: false,
@@ -1778,6 +1783,18 @@ class Library {
 	updateStream() {
 		this.playlist_update(plman.PlayingPlaylist);
 		this.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Language remap
+	remapNodename(name) {
+		if (panel.remap.language) {
+			name = name.replace(
+				panel.markers.group.remapRe,
+				(match, p1, p2, p3) => (p1 || '') + p2.split(panel.markers.metaSep).map((code) => Language.getIsoLanguage(code)).join(panel.markers.metaSep) + (p3 || '')
+			);
+		}
+		return name;
 	}
 	// Regorxxx ->
 }

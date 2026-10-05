@@ -1,12 +1,17 @@
 ﻿'use strict';
-//07/05/26
+//03/10/26
 
 /* exported Language */
+
+include('..\\helpers\\helpers_xxx.js');
+/* global folders:readable */
+include('..\\helpers\\helpers_xxx_file.js');
+/* global utf8:readable, _jsonParseFile:readable, getFiles:readable, _save:readable, _isFile:readable */
 
 // Helpers for language handling
 const Language = Object.freeze({
 	// Data validation
-	data: Object.seal({ lastOutput: null, lastInput: null }),
+	data: Object.seal({ lastOutput: null, lastInput: null, lng: 'en-US', namespace: '', fallbackLng: ['en-US'], locale: {}, engine: null, iso639: null }),
 	helpers: Object.freeze({
 		replacerLangMap: Object.freeze(
 			{
@@ -524,6 +529,7 @@ const Language = Object.freeze({
 	 * @method
 	 * @name (get) isLastEqual
 	 * @kind property
+	 * @private
 	 * @memberof Input
 	 * @returns {boolean}
 	*/
@@ -536,6 +542,7 @@ const Language = Object.freeze({
 	 * @method
 	 * @name (get) lastOutput
 	 * @kind property
+	 * @private
 	 * @memberof Language
 	 * @returns {string}
 	*/
@@ -548,6 +555,7 @@ const Language = Object.freeze({
 	 * @method
 	 * @name (get) lastInput
 	 * @kind property
+	 * @private
 	 * @memberof Language
 	 * @returns {any}
 	*/
@@ -561,6 +569,7 @@ const Language = Object.freeze({
 	 * @property
 	 * @name jpRomanize
 	 * @kind method
+	 * @private
 	 * @memberof Language
 	 * @param {string} string
 	 * @param {object|'traditional hepburn'|'modified hepburn'|'kunrei'|'nihon'} config - Mapping of characters.
@@ -775,6 +784,7 @@ const Language = Object.freeze({
 	 * @property
 	 * @name jRomanize
 	 * @kind method
+	 * @private
 	 * @memberof Language
 	 * @param {string} string
 	 * @param {{ separator: string, lowerCase: boolean }} config - [{ separator: '', lowerCase: false }] Output setting
@@ -797,7 +807,7 @@ const Language = Object.freeze({
 	 * @name transliterate
 	 * @kind method
 	 * @memberof Language
-	 * @param {string} value
+	 * @param {string} string
 	 * @param {{jp: object?, ch: object?, languajes: ('jp'|'ch'|'ru'|'el')[]?}} config - Language dependendant settings. See this.jpRomanize and this.chRomanize. languajes array sets tranformations applied and order of processing. If not provided, all languajes are used as ['el', 'ru', 'ch', 'jp'].
 	 * @returns {string}
 	 */
@@ -809,7 +819,7 @@ const Language = Object.freeze({
 			const replacerLang = ['el', 'ru'].sort((a, b) => idx[a] - idx[b]).filter(Boolean);
 			if (replacerLang.length) {
 				const replacerLangMap = this.helpers.replacerLangMap;
-				string = string.replace(/./gui,  (a) => replacerLang.reduce((prev, curr) => prev || this.helpers[replacerLangMap[curr]].table[a], '') || a);
+				string = string.replace(/./gui, (a) => replacerLang.reduce((prev, curr) => prev || this.helpers[replacerLangMap[curr]].table[a], '') || a);
 			}
 			const romanizeLang = ['ch', 'jp'].sort((a, b) => idx[a] - idx[b]).filter(Boolean);
 			if (romanizeLang.length) {
@@ -830,6 +840,248 @@ const Language = Object.freeze({
 			);
 			return this.data.lastOutput;
 		}
+	},
+	/**
+	 * Gets full name for a given ISO 639-3, 639-2 or 639-1 code. If not found, returns input.
+	 *
+	 * @property
+	 * @name getIsoLanguage
+	 * @kind method
+	 * @memberof Language
+	 * @param {string} isoCode - ISO 639-3, 639-2 or 639-1 code
+	 * @returns {string}
+	 */
+	getIsoLanguage(isoCode) {
+		if (!this.data.iso639) { throw new Error('Language helpers have not been initialized'); }
+		isoCode = isoCode.toLowerCase();
+		const len = isoCode.length;
+		let out;
+		if (len === 3) { out = this.data.iso639.find((l) => l.code3 === isoCode || l.code2 === isoCode); }
+		else if (len === 2) { out = this.data.iso639.find((l) => l.code1 === isoCode); }
+		else if (len === 0 || isoCode === '?') { return 'Missing'; }
+		return out ? out.name : isoCode;
+	},
+	/**
+	 * Gets text for a given key and language (with variables replacement), if not found, uses foo_localize as fallback
+	 *
+	 * @property
+	 * @name getTranslate
+	 * @kind method
+	 * @memberof Language
+	 * @param {string} key
+	 * @param {{lng: string}} config - Language settings.
+	 * @returns {string}
+	 */
+	getTranslate(key, { lng = this.data.lng, variables = {} } = {}) {
+		return this.data.engine
+			? this.data.engine.Translate(this.get(key, { lng, variables }))
+			: this.get(key, { lng, variables });
+	},
+	/**
+	 * Gets text for a given key and language (with variables replacement)
+	 *
+	 * @property
+	 * @name get
+	 * @kind method
+	 * @memberof Language
+	 * @param {string} key
+	 * @param {{lng: string}} config - Language settings.
+	 * @returns {string}
+	 */
+	get(key, { lng = this.data.lng, variables = {} } = {}) {
+		return this.interpolate(this.getEntry(key, lng), variables);
+	},
+	/**
+	 * Gets raw entry for a given key and language + fallbacks
+	 *
+	 * @property
+	 * @name getEntry
+	 * @kind method
+	 * @private
+	 * @memberof Language
+	 * @param {string} key
+	 * @param {{lng: string}} config - Language settings.
+	 * @returns {string}
+	 */
+	getEntry(key, lng = this.data.lng) {
+		if (!Object.hasOwn(this.data.locale, lng)) { throw new Error('Language object has not been initialized.'); }
+		let found = '';
+		if (Array.isArray(key)) {
+			[...new Set([lng, ...this.data.fallbackLng])].some((lng) => {
+				return key.some((k) => {
+					if (Object.hasOwn(this.data.locale[lng], k)) {
+						found = this.data.locale[lng][k];
+						return true;
+					}
+				});
+			});
+		} else {
+			[...new Set([lng, ...this.data.fallbackLng])].some((lng) => {
+				if (Object.hasOwn(this.data.locale[lng], key)) {
+					found = this.data.locale[lng][key];
+					return true;
+				}
+			});
+		}
+		return found;
+	},
+	/**
+	 * Replaces dynamic values into text
+	 *
+	 * @property
+	 * @name interpolate
+	 * @kind method
+	 * @private
+	 * @memberof Language
+	 * @param {string} text
+	 * @param {{[string]: string}} variables
+	 * @returns {string}
+	 */
+	interpolate(text, variables = {}) {
+		for (const v in variables) {
+			text = text.replaceAll('{{' + v + '}}', variables[v]);
+		}
+		text = text.replace(/{{\w+}}/gi, '');
+		if (variables.input) { text += '...'; }
+		if (variables.bracket) { text = '[' + text + ']'; }
+		if (variables.hint) { text = '\t' + text; }
+		return text;
+	},
+	/**
+	 * Initialize language translations
+	 *
+	 * @property
+	 * @name init
+	 * @kind method
+	 * @memberof Language
+	 * @param {{lng: string, fallbackLng: string[], resources: {[string]: string}}} options
+	 * @returns {void}
+	 */
+	init({ lng = 'en-US', fallbackLng = ['en-US'], namespace = '', resources = {}, callback } = {}) {
+		this.data.lng = lng;
+		this.data.fallbackLng = fallbackLng;
+		this.data.namespace = namespace;
+		new Set([lng, ...fallbackLng]).forEach((l) => this.data.locale[l] = {});
+		for (const key in resources) { this.data.locale[lng][key] = resources[key]; }
+		this.loadResources(lng, callback);
+		this.initHelpers();
+		try { this.data.engine = new ActiveXObject('FooLocalize.Engine'); } catch (e) { /* empty */ } // eslint-disable-line no-unused-vars
+		if (this.data.engine) { this.data.engine.SetLanguage(lng); }
+	},
+	/**
+	 * Initialize language helpers
+	 *
+	 * @property
+	 * @name initHelpers
+	 * @kind method
+	 * @memberof Language
+	 * @returns {void}
+	 */
+	initHelpers() {
+		this.initIso();
+	},
+	/**
+	 * Initialize language ISO helpers
+	 *
+	 * @property
+	 * @name initIso
+	 * @kind method
+	 * @memberof Language
+	 * @returns {void}
+	 */
+	initIso() {
+		const iso3Out = folders.xxx + 'helpers\\data\\iso-639.json.out';
+		if (_isFile(iso3Out)) {
+			this.data.iso639 = _jsonParseFile(iso3Out, utf8) || [];
+		} else {
+			const iso3 = folders.xxx + 'helpers\\data\\iso-639.json';
+			if (_isFile(iso3)) {
+				this.data.iso639 = _jsonParseFile(iso3, utf8) || [];
+				this.data.iso639.forEach((j) => {
+					j.name = j.Ref_Name;
+					j.code1 = j.Part1;
+					j.code2 = j.Part2b || j.Part2t || '';
+					j.code3 = j.Id;
+					if (j.code3 === 'zxx') { j.name = 'Instrumental'; }
+					else if (j.code3 === 'mul') { j.name = 'Multiple'; }
+					else if (j.code3 === 'mis') { j.name = 'Missing'; }
+					else if (j.code3 === 'und') { j.name = 'Unknown'; }
+					j.name = j.name.replace('(macrolanguage)', '[#]')
+						.replace(/\([^()]+\)/, '')
+						.replace('[#]', '(macrolanguage)')
+						.trim();
+					delete j.Scope;
+					delete j.Language_Type;
+					delete j.Comment;
+					delete j.Part2b;
+					delete j.Part2t;
+					delete j.Part1;
+					delete j.Id;
+					delete j.Ref_Name;
+				});
+				_save(folders.xxx + 'helpers\\data\\iso-639.json.out', JSON.stringify(this.data.iso639, void (0), '\t'), true);
+			}
+		}
+	},
+	/**
+	 * Initialize language translations
+	 *
+	 * @property
+	 * @name change
+	 * @kind method
+	 * @memberof Language
+	 * @param {string} lng
+	 * @returns {string}
+	 */
+	change(lng = 'en-US', callback = null) {
+		this.data.lng = lng;
+		if (!Object.hasOwn(this.data.locale, lng)) { this.data.local[lng] = {}; }
+		if (this.data.engine) { this.data.engine.SetLanguage(lng); }
+		this.loadResources(lng, callback);
+	},
+	/**
+	 * Initialize language translations
+	 *
+	 * @property
+	 * @name get
+	 * @kind method
+	 * @memberof Language
+	 * @param {string} lng
+	 * @returns {string}
+	 */
+	loadResources(lng = 'en-US', callback = null) {
+		const paths = [
+			fb.ProfilePath + 'locale\\',
+			folders.xxx + 'locale\\',
+			fb.FoobarPath + 'locale\\'
+		];
+		const match = (this.data.namespace || '') + '*.*';
+		let files, locale, err;
+		paths.some((p) => {
+			files = getFiles(p + match, new Set(['.json']));
+			return files.length;
+		});
+		if (files) {
+			locale = files.map((f) => _jsonParseFile(f, utf8));
+			locale.forEach((l, i) => {
+				if (!l) { err = new Error('Non valid locale file -> ' + files[i]); }
+				if (err) { return; }
+			});
+		} else { err = new Error('No locale files found'); }
+		if (!err) {
+			let bDone;
+			new Set([lng, ...this.data.fallbackLng]).forEach((lng) => {
+				locale.forEach((l) => {
+					if (Object.hasOwn(l, lng)) {
+						const resources = l[lng];
+						for (const key in resources) { this.data.locale[lng][key] = resources[key]; }
+						bDone = true;
+					}
+				});
+			});
+			if (!bDone) { err = new Error('Laguage not found on locale files -> ' + lng + '(' + this.data.fallbackLng + ')'); }
+		}
+		if (callback) { callback(err, this.get.bind(this)); }
 	}
 });
 

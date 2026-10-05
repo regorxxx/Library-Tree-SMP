@@ -1,7 +1,7 @@
 ﻿'use strict';
 //07/09/26
 
-/* global UserInterface:readable, Panel:readable, Scrollbar:readable, Vkeys:readable, Library:readable, Populate:readable, Search:readable, Find:readable, Buttons:readable, PopUpBox:readable, MenuItems:readable, Timers:readable, FileExplorer:readable, ppt:readable */
+/* global UserInterface:readable, Panel:readable, Scrollbar:readable, Vkeys:readable, Library:readable, Populate:readable, Search:readable, Find:readable, Buttons:readable, PopUpBox:readable, MenuItems:readable, Timers:readable, FileExplorer:readable, ppt:readable, Language:readable */
 /* global require:readable */
 
 /* exported ui, panel, sbar, vk, lib, pop, search, but, find, popUpBox, men, timer, Chroma, explorer */
@@ -33,3 +33,4 @@ const popUpBox = new PopUpBox;
 const men = new MenuItems;
 const timer = new Timers;
 const Chroma = require('..\\helpers-external\\chroma.js\\chroma.min'); // Relative to helpers folder
+Language.initHelpers();
