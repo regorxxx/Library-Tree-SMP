@@ -593,7 +593,7 @@ let properties = [
 	['Sources|Views|Filters presets use on Notify switch', false, 'presetRulesOnNotifyUse'],
 	// Regorxxx ->
 	// Regorxxx <- Code cleanup | Language remap
-	['Remap: language ISO 693', true, 'remapISO693'],
+	['Remap: %LANGUAGE% tag ISO 693', true, 'remapISO693'],
 	// Regorxxx ->
 	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
 	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'] // Regorxxx <- Drag n' Drop minimum distance ->
