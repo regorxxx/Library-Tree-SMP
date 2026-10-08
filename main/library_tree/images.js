@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//07/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -2018,7 +2018,7 @@ class Images {
 									}
 								}
 							}
-							Promise.all(promises).then((results) => {
+							void Promise.all(promises).then((results) => {
 								if (results.length > 1) {
 									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
 									this.cacheIt(img, key, v.ix);
@@ -2027,7 +2027,7 @@ class Images {
 								}
 							});
 						} else if (this.albumArtDiskCache && _isFile(this.cacheFolder + this.database[key])) {
-							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
 						} else if (v.handle) {
 							this.get_album_art_async(v.handle, art, key, v.ix);
 						} else if (Object.hasOwn(art, 'tf') && panel.isNoHandleCustomTf(art.tf)) { // Regorxxx <- Multiple-playlist flat view ->
@@ -2621,7 +2621,7 @@ class Images {
 						img: 'called',
 						accessed: ++this.accessed
 					};
-					this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+					void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
 				}
 			}
 		}
@@ -2647,7 +2647,7 @@ class Images {
 								img: 'called',
 								accessed: 0
 							};
-							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
 						}
 					}
 
@@ -2659,7 +2659,7 @@ class Images {
 								img: 'called',
 								accessed: 0
 							};
-							this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
 						}
 					}
 				} else {
