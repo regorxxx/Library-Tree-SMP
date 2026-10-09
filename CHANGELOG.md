@@ -34,7 +34,7 @@
 - UI: fixed bug, on original script, related to some mouse actions not being available on panel reload unless focus was changed first to another panel. It was a JS-Host limitation, and should be fixed if using JSplitter v4.2.0+ or v3.9.0+.
 - UI: fixed bug, on original script, where filter button could grow indefinitely according to filter name, even over other elements or the total window width. Maximum size is now 1/3 of the window width.
 - UI: fixed bug, on original script, where buttons could overlap if window width was small enough, instead of being adjusted or hidden. Now it first cuts the filter button text, then hides it, then hides the search icon until only the settings button is left. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087556.html#msg1087556).
-- UI: fixed bug, on original script, related to node text not being updated on repaint in some cases (for ex. to show the now playing icon) if the view TF used $colour{} functions.
+- UI: fixed bug, on original script, related to node text not being updated on repaint in some cases (for ex. to show the now playing icon) if the view TF used $colour{} functions. Only way to force an update was to collapse the parent node and reopen it. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088559.html#msg1088559).
 - Presets: $viewname and $filtername not triggering rule changes on filters using them.
 - External integration: fixed 'Library-Tree-SMP: quicksearch' and 'Library-Tree-SMP: search' commands not working.
 - Search: fixed regexp expressions not working due to changes on [3.0.0](#300---2026-08-24).

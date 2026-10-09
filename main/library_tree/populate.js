@@ -1350,8 +1350,7 @@ class Populate {
 				if (panel.colMarker) {
 					// Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon | Fix display bug when using custom colors on TF
 					if (item.text) {
-						if (item.np && this.highlight.nowPlayingIndicatorIconDiff && !item.text.txt[0].startsWith(item.np)) { item.text = void (0); }
-						else if (!item.np && !item.text.txt[0].startsWith(this.highlight.nowPlayingIndicatorIcon) || !item.text.txt[0].startsWith(this.highlight.nowPlayingIndicatorPausedIcon)) { item.text = void (0); }
+						if (item.np && this.highlight.nowPlayingIndicatorIconDiff && !item.text.txt[0].startsWith(item.np) || !item.np && !item.text.txt[0].startsWith(this.highlight.nowPlayingIndicatorIcon) || !item.text.txt[0].startsWith(this.highlight.nowPlayingIndicatorPausedIcon)) { item.text = void (0); }
 					}
 					// Regorxxx ->
 					this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text');
