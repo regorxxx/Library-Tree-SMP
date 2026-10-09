@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//09/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -419,6 +419,7 @@ let properties = [
 	['Nowplaying Sidemarker', false, 'nowPlayingSidemarker'],
 	['Nowplaying Sidemarker Last', false, 'nowPlayingSidemarkerLast'],
 	['Nowplaying Indicator icon', '\u2BC8', 'nowPlayingIndicatorIcon'], // Regorxxx <- Configurable now playing icon ->
+	['Nowplaying Indicator icon (paused)', '\u275A\u275A', 'nowPlayingIndicatorPauseIcon'], // Regorxxx <- Configurable now playing (paused) icon ->
 	['Nowplaying Indicator Full tree', true, 'nowPlayingIndicatorTree'], // Regorxxx <- Show now playing icon on tree ->
 	['Active Playlist Sidemarker', true, 'activePlaylistIndicator'], // Regorxxx <- Highlight active playlist ->
 	['Active Playlist Highlight', false, 'highLightActivePlaylist'], // Regorxxx <- Highlight active playlist ->

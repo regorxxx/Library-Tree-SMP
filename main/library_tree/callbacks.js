@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//09/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -596,6 +596,15 @@ addEventListener('on_playback_starting', () => {
 	} else if (panel.isAllPlaylistSource(true)) {
 		lib.playlist_update();
 		lib.flushViewCache([0]); // Regorxxx <- Internal cache of views ->
+	}
+});
+// Regorxxx ->
+
+// Regorxxx <- Configurable now playing (paused) icon
+addEventListener('on_playback_pause', () => {
+	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
+	if (!panel.imgView && pop.highlight.nowPlayingIndicator && pop.highlight.nowPlayingIndicatorPauseIcon !== pop.highlight.nowPlayingIndicatorIcon) {
+		window.Repaint();
 	}
 });
 // Regorxxx ->

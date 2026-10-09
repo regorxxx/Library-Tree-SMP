@@ -1161,7 +1161,6 @@ class Populate {
 		const plsBranch = panel.isBranchedPlaylistSource();
 		let isAp = false;
 		// Regorxxx  ->
-		const bNowpFullTree = ppt.nowPlayingIndicatorTree;
 		let i = 0;
 		let item_x = 0;
 		let item_y = 0;
@@ -1182,7 +1181,11 @@ class Populate {
 			nm[i] = item.name + (i || this.rootNode != 3 || this.nodeCounts == 1 && (this.countsRight || this.statisticsShow) ? (!this.countsRight || this.statisticsShow ? item.count : '') : '');
 			const counts = this.statisticsShow ? item.statistics : item.count;
 			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) { nowp_c.push(i); }
-			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i ? (ppt.nowPlayingIndicatorIcon + '  ') : ''; // Regorxxx <- Configurable now playing icon ->
+			// Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon
+			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i
+				? (fb.IsPaused ? this.highlight.nowPlayingIndicatorPauseIcon : this.highlight.nowPlayingIndicatorIcon) + '  '
+				: '';
+			// Regorxxx ->
 			if (item.np && item.id != this.id) this.row.note_w = gr.CalcTextWidth(item.np, ui.font.main);
 			if (item.id != this.id || item.np) {
 				let note_w = !item.np || item.track ? 0 : this.row.note_w;
@@ -1324,7 +1327,7 @@ class Populate {
 					}
 				}
 				// Regorxxx ->
-				if (item.np && this.highlight.nowPlayingIndicator && (bNowpFullTree || item.track)) { nm[i] = item.np + nm[i]; }  // Regorxxx <- Show now playing icon on tree ->
+				if (item.np && this.highlight.nowPlayingIndicator && (this.highlight.nowPlayingIndicatorTree || item.track)) { nm[i] = item.np + nm[i]; }  // Regorxxx <- Show now playing icon on tree ->
 				const type = item.sel ? (this.highlight.row || !this.fullLineSelection ? 2 : 0) : this.m.i == i && this.highlight.text ? 1 : 0;
 				const np = item.np && this.highlight.nowPlaying;
 				// Regorxxx <- Highlight active playlist
@@ -3127,6 +3130,9 @@ class Populate {
 			nowPlayingIndicator: ppt.nowPlayingIndicator,
 			nowPlayingSidemarker: ppt.nowPlayingSidemarker,
 			nowPlayingShow: ppt.highLightNowplaying || ppt.nowPlayingIndicator || ppt.nowPlayingSidemarker,
+			nowPlayingIndicatorTree: ppt.nowPlayingIndicatorTree, // Regorxxx <- Show now playing icon on tree ->
+			nowPlayingIndicatorIcon: ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing icon ->
+			nowPlayingIndicatorPauseIcon: ppt.nowPlayingIndicatorPauseIcon, // Regorxxx <- Configurable now playing (paused) icon ->
 			row: ppt.highLightRow,
 			text: ppt.highLightText,
 			activePlaylistSidemarker: ppt.activePlaylistIndicator, // Regorxxx <- Highlight active playlist ->
