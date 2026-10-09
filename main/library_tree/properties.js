@@ -418,6 +418,8 @@ let properties = [
 	['Nowplaying Indicator Last', false, 'nowPlayingIndicatorLast'],
 	['Nowplaying Sidemarker', false, 'nowPlayingSidemarker'],
 	['Nowplaying Sidemarker Last', false, 'nowPlayingSidemarkerLast'],
+	['Nowplaying Indicator icon', '\u2BC8', 'nowPlayingIndicatorIcon'], // Regorxxx <- Configurable now playing icon ->
+	['Nowplaying Indicator Full tree', true, 'nowPlayingIndicatorTree'], // Regorxxx <- Show now playing icon on tree ->
 	['Active Playlist Sidemarker', true, 'activePlaylistIndicator'], // Regorxxx <- Highlight active playlist ->
 	['Active Playlist Highlight', false, 'highLightActivePlaylist'], // Regorxxx <- Highlight active playlist ->
 

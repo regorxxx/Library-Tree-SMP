@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//09/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1161,6 +1161,7 @@ class Populate {
 		const plsBranch = panel.isBranchedPlaylistSource();
 		let isAp = false;
 		// Regorxxx  ->
+		const bNowpFullTree = ppt.nowPlayingIndicatorTree;
 		let i = 0;
 		let item_x = 0;
 		let item_y = 0;
@@ -1180,8 +1181,8 @@ class Populate {
 			this.getItemCount(item);
 			nm[i] = item.name + (i || this.rootNode != 3 || this.nodeCounts == 1 && (this.countsRight || this.statisticsShow) ? (!this.countsRight || this.statisticsShow ? item.count : '') : '');
 			const counts = this.statisticsShow ? item.statistics : item.count;
-			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) nowp_c.push(i);
-			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i ? '\u266B  ' : '';
+			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) { nowp_c.push(i); }
+			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i ? (ppt.nowPlayingIndicatorIcon + '  ') : ''; // Regorxxx <- Configurable now playing icon ->
 			if (item.np && item.id != this.id) this.row.note_w = gr.CalcTextWidth(item.np, ui.font.main);
 			if (item.id != this.id || item.np) {
 				let note_w = !item.np || item.track ? 0 : this.row.note_w;
@@ -1323,7 +1324,7 @@ class Populate {
 					}
 				}
 				// Regorxxx ->
-				if (item.np && this.highlight.nowPlayingIndicator && item.track) { nm[i] = item.np + nm[i]; }
+				if (item.np && this.highlight.nowPlayingIndicator && (bNowpFullTree || item.track)) { nm[i] = item.np + nm[i]; }  // Regorxxx <- Show now playing icon on tree ->
 				const type = item.sel ? (this.highlight.row || !this.fullLineSelection ? 2 : 0) : this.m.i == i && this.highlight.text ? 1 : 0;
 				const np = item.np && this.highlight.nowPlaying;
 				// Regorxxx <- Highlight active playlist

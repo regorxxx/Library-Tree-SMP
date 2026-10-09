@@ -9,7 +9,8 @@
 
 ## [Unreleased][]
 ### Added
-- HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings.
+- HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088499.html#msg1088499).
+- UI: added new setting to tweak the now playing icon (tree/text) found at 'Nowplaying Indicator icon' (properties panel).
 - Remap: added a new feature called tag remapping which allows to replace specific tags with custom values. Currently used for LANGUAGE tag, panel is now able to replace ISO 639 codes with the full language name on real time. For ex. when using a View which uses %LANGUAGE%, 'eng' would be replaced with 'English'. When tag is not found, value is replaced with 'Missing'; it also has special remaps like instrumental tracks (zxx), etc. Note remapping only works at search when using RegExps (i.e. '/arabic/gi', instead of looking for 'ara'), otherwise queries are directly managed by foobar2000 (and original values used). See 'Remap: %LANGUAGE% tag ISO 693' (properties panel). See [Issue 16](https://github.com/regorxxx/Library-Tree-SMP/issues/16) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088245.html#msg1088245).
 - Views: added new default view patterns related to LANGUAGE tag; meant to be used with remap feature above. Tag is generally available when tagging files with [MusicBrainz Picard](https://picard.musicbrainz.org/).
 - Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087544.html#msg1087544).
@@ -17,6 +18,8 @@
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 - Syntax: added $nodisplay{} support at filter and view names to hide part of the names at different UI places. Check syntax help for more info.
 ### Changed
+- UI: default now playing icon is now '⯈' (previously '♫').
+- UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
 - UI: mouse actions at 'Behaviour' tab (HTML options panel) now reflect when an action is forced by mode or source being used.
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
