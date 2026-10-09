@@ -603,7 +603,7 @@ addEventListener('on_playback_starting', () => {
 // Regorxxx <- Configurable now playing (paused) icon
 addEventListener('on_playback_pause', () => {
 	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
-	if (!panel.imgView && pop.highlight.nowPlayingIndicator && pop.highlight.nowPlayingIndicatorPauseIcon !== pop.highlight.nowPlayingIndicatorIcon) {
+	if (!panel.imgView && pop.highlight.nowPlayingIndicator && pop.highlight.nowPlayingIndicatorIconDiff) {
 		window.Repaint();
 	}
 });

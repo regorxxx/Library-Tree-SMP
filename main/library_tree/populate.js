@@ -1347,7 +1347,10 @@ class Populate {
 						? ui.col.apls
 						: ui.col.txtArr[type];
 				// Regorxxx ->
-				if (panel.colMarker) { this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text'); }
+				if (panel.colMarker) {
+					if (item.np && this.highlight.nowPlayingIndicatorIconDiff && item.text && !item.text.txt[0].startsWith(item.np)) { item.text = void(0); } // Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon ->
+					this.cusCol(gr, nm[i], item, item_x, item_y, w, ui.row.h, type, np, ui.font.main, ui.font.mainEllipsisSpace, 'text');
+				}
 				else { gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc); }
 				if (this.countsRight || this.statisticsShow) {
 					gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc); // Regorxxx <- Improve statistics labels ->
@@ -3133,6 +3136,7 @@ class Populate {
 			nowPlayingIndicatorTree: ppt.nowPlayingIndicatorTree, // Regorxxx <- Show now playing icon on tree ->
 			nowPlayingIndicatorIcon: ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing icon ->
 			nowPlayingIndicatorPauseIcon: ppt.nowPlayingIndicatorPauseIcon, // Regorxxx <- Configurable now playing (paused) icon ->
+			nowPlayingIndicatorIconDiff: ppt.nowPlayingIndicatorPauseIcon !== ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing (paused) icon ->
 			row: ppt.highLightRow,
 			text: ppt.highLightText,
 			activePlaylistSidemarker: ppt.activePlaylistIndicator, // Regorxxx <- Highlight active playlist ->
