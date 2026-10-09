@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 07/09/26 -->
+﻿<!DOCTYPE html> <!-- 09/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -30,7 +30,8 @@
 			outline: none;
 			cursor: pointer;
 			padding: 0.31em 2px;
-			min-width: 10%;
+			min-width: 9.0909%;
+			/* 100 / 11 tabs */
 			max-width: 13%;
 		}
 
@@ -708,11 +709,12 @@
 <body>
 	<div style="clear:both;"></div>
 	<div id="tablink" class="tablink">
-		<!-- Regorxxx New Tabs | New statistics | Presets tab | Add colors -->
+		<!-- Regorxxx New Tabs | New statistics | Presets tab | Add colors | New TF remap tab -->
 		<button onclick="openPage('views', this, 'red')" id="viewsCfg">Views</button>
 		<button onclick="openPage('filters', this, 'green')" id="filtersCfg">Filters</button>
 		<button onclick="openPage('presets', this, 'blue')" id="presetsCfg">Presets</button>
 		<button onclick="openPage('behaviour', this, 'orange')" id="behaviourCfg">Behaviour</button>
+		<button onclick="openPage('remap', this, 'darkseagreen')" id="remapCfg">TF & Remap</button>
 		<button onclick="openPage('search', this, 'purple')" id="searchCfg">Search</button>
 		<button onclick="openPage('display', this, 'olive')" id="displayCfg">Display</button>
 		<button onclick="openPage('statistics', this, 'coral')" id="statisticsCfg">Statistics</button>
@@ -739,19 +741,19 @@
 				<div class="info5"><i>Set up</i>
 					<ul style="white-space: normal;">
 						<li>Insert 3 Spider Monkey/JSplitter panels into the layout and add library tree to each</li>
-						<li>For each panel, use quicksetup and select 'Facet'</li>
+						<li>For each panel, use 'Settings > Quick setup > Facets'</li>
 						<li>Set the view of the first panel to Genre, the second to Artist and the third to Album*</li>
-						<li>For each panel press Shift + Windows key, choose 'Configure panel...'.At 'Script' tab set the panel name of the first panel to 'Genre', second to 'Artist' and third to 'Album'</li>
-						<li>For the second panel set Settings > Source to Panel, then choose select panel source and enter 'Genre' (it's case-sensitive)</li>
+						<li>For each panel press R. Click + Shift + Windows key, choose 'Configure panel...'. At 'Script' tab set the panel name of the first panel to 'Genre', second to 'Artist' and third to 'Album'</li>
+						<li>For the second panel set 'Settings > Source' to Panel, then choose select panel source and enter 'Genre' (it's case-sensitive)</li>
 						<li>For the third panel set the source to panel, then choose select panel source and enter 'Artist' (it's case-sensitive)"</li>
 						<li>Check <button class="internalLink" onclick="openPage('advanced', 'advancedCfg', 'maroon')">Advanced tab</button> for more info about chained source notifications. If using legacy behaviour, then third panel should use 'Genre|Artist' instead</li>
 					</ul><i>Options</i>
 					<ul style="white-space: normal;">
-						<li>Optionally change the second panel at Context menu > Show album art if preferred and set the type to artist & may be circular style images</li>
-						<li>Optionally change the third panel at Context menu > Show album art if preferred and set the type to front</li>
-						<li>Adjust Settings > Album art > Group level if required</li>
-						<li>Optionally hide the top bar search, filter button & settings button for the second and third panels</li>
-						<li>It's recommended to leave enabled: remember state on exit and before search; filters auto-manage scroll</li>
+						<li>Optionally change the second panel at 'Settings > Show album art' if preferred, and set the type to 'Settings > Album art > Artist' and circular style images ('Album art (tab)')</li>
+						<li>Optionally change the third panel at 'Settings > Show album art' if preferred and set the type to 'Settings > Album art > Front'</li>
+						<li>Adjust 'Settings > Album art > Group:...' if required</li>
+						<li>Optionally hide the top bar search, filter button and settings button for the second and third panels</li>
+						<li>It's recommended to leave enabled: 'Behaviour (tab) > Remember state > On exit' and 'Behaviour (tab) > Remember state > Before search' and 'Filter (button) > Auto-manage scroll'</li>
 					</ul>
 					<br>* The default album view works best as a tree view; for a facet view, the following is better:<br><input class="input99" value="View by Albums // $if2(%ALBUM%,εXtra)|%ALBUM ARTIST%|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%" />
 					<br><b><i>Extra view patterns, compatible with both facet and tree styles</i></b>
@@ -769,14 +771,14 @@
 					</colgroup>
 				</table>
 				<div class="info8" style="color:#0066cc;"><b>$colour{normal,hover,selected}</b></div>
-				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour code until either another $colour code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
+				<div class="info7">Set different colours for parts of a line of text. All colours are optional: any undefined are set to default. Colours apply after the $colour{...} code until either another $colour{...} code is encountered or a splitter is reached (| or &#166 in the view pattern) or a reset code is reached: $colour{}<br><br>Normal, hover & selected can either be r-g-b or a highlight or dim indicator, e.g.<br>$colour{r-g-b,r-g-b,r-g-b} or $colour{-,++,+++}</div>
 				<div class="info7" style="color:#0066cc;"><i>Hover effect requires "Hover effect (foreground): Highlight text" to be enabled (at <button class="internalLink" onclick="openPage('display', 'displayCfg', 'olive')">Display tab</button>).</i></div>
-				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
+				<div class="info7"><i>Highlight & dim indicators:</i><br>- dim text<br>-- dimmer text<br>--- dimmest text<br>+ bright text<br>++ brighter text<br>+++ brightest text<br><br>Format, r-g-b & -/+ style, can be mixed in same $colour{...} function.<br><br><i>Syntax examples:</i><br>$colour{} reset all colours to defaults.<br>$colour{255-0-0} set normal text colour to red; set hover & selected text colours to defaults since undefined.<br>$colour{,,+++} set selected text colour to brightest; set normal & hover text colours to defaults since undefined.<br>$colour{0-255-0,++} set normal text colour to green & hover text colour to brighter; set selected text colour to default since undefined.<br>$colour{255-0-0,0-255-0,0-255-255} set normal, hover and selected text colours to red, green & cyan, respectively.<br><br><i>Example pattern:</i></div>
 				<div class="input_cnt3"><input class="input99" style="font:0.87em Segoe UI, serif;" value="$colour{-}%ARTIST%[$colour{+} - %ALBUM%][$colour{96-127-127} - '['%DATE%']'][$colour{111-132-138} - %GENRE%]$colour{--}|[$colour{--,++,0-192-192}%TRACKNUMBER%. ]$colour{-,++,0-228-228}%TITLE%" />
 				</div>
 				<div class="info7">Item counts are a special case. They don't form part of the view pattern.<br>Align right: drawn separately; not controlled by $colour codes; already dimmed.<br>End of text: effected by $colour codes. Use $colour{} at the end of the line to reset or set to a different colour if desired ($colour{--} is used in the example above).</div>
 				<div class="info7" style="color:#0066cc;"><b>String limitation</b></div>
-				<div class="info7">$nodisplay & $colour are generally unsafe inside string manipulation functions that remove a part of a string or insert a substring by position. Instead, they should be put before the string function, e.g.<br>Use $colour{255-0-0}$substr(str,from,to). Don't use $substr($colour{255-0-0}str,from,to).<br>Use $colour{0-255-0}$swapbranchprefix{%&ltARTIST&gt%}. Don't use $swapbranchprefix{$colour{0-255-0}%&ltARTIST&gt%}.</div>
+				<div class="info7">$nodisplay{...} and $colour{...} are generally unsafe inside string manipulation functions that remove a part of a string or insert a substring by position. Instead, they should be put before the string function, e.g.<br>Don't use: $substr($colour{255-0-0}str,from,to)&emsp;--->&emsp;Use: $colour{255-0-0}$substr(str,from,to)<br>Don't use: $swapbranchprefix{$colour{0-255-0}%&ltARTIST&gt%}&emsp;--->&emsp;Use: $colour{0-255-0}$swapbranchprefix{%&ltARTIST&gt%}</div>
 				<div><br></div>
 			</div>
 			<div><br></div>
@@ -1004,6 +1006,28 @@
 			<br>
 			<!-- Regorxxx -->
 		</div>
+
+
+		<!-- Regorxxx New TF remap tab -->
+		<div id="remap" class="tabcontent">
+			<div class="row">
+				<div class="column50">
+					<div class="div_text2">Tag remapping</div>
+					<div id="tagRemap"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="tagRemap_help" onclick="showHelp('tagRemap_text');return false;">Tag remapping help</button></div>
+					<div id="tagRemap_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4"><b><u>Language tag:</u></b><br><br>&#x2022; ISO 693 values like 'EN' (693-1 & 693-2) or 'ENG' (693-3) will be replaced with their full ISO name ('English').<br>&#x2022; Multi-value tags and branching are also supported.<br>&#x2022; Values which don't match any ISO value will be displayed 'as is'.<br>&#x2022; Missing values will be displayed as 'Missing'.<br>&#x2022; 'ZXX' value will be displayed as 'Instrumental'.<br>&#x2022; Performance impact is &lt;70 ms for 100K tracks and thus negligible.</div>
+					</div>
+				</div>
+
+				<div class="column50">
+					<div class="div_text2">Feature summary:</div>
+					<div style="padding-right:10%;" class="info4"><i>When enabled, associated tags are automatically replaced on real-time and handled by panel, like foobar2000 does for %ARTIST% (with fallbacks to COMPOSER, ALBUM ARTIST, ...).<br><br>Note queries are still processed by foobar2000 and will use the original tag values in any case. When using the search box, you may use RegExp instead of queries to look for the remapped values (as displayed on panel).</i></div>
+				</div>
+			</div>
+			<br>
+		</div>
+		<!-- Regorxxx -->
 
 		<!-- Regorxxx Drag n' drop to search box. Search settings to search tab -->
 		<div id="search" class="tabcontent">
@@ -1421,7 +1445,7 @@
 					</span>
 					<div style="display:inline-block; padding-top:0.7em;"><button id="autodjPick_help" onclick="showHelp('autodjPick_text');return false;">Track picking help</button></div>
 					<div id="autodjPick_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4"><b><u>Auto-DJ track picking:</b></u><br><br>&#x2022; Auto-DJ wil choose tracks randomly or based on tags<br>&#x2022; On tag-based mode, compares next track against playing track's tags<br>&#x2022; Genre matching looks for genre and style tags<br>&#x2022; Mood matching looks for both mood tag<br>&#x2022; Tags used are based on '[FB2K_PROFILE]\js_data\presets\global\globTags.json'
+						<div class="info4"><b><u>Auto-DJ track picking:</b></u><br><br>&#x2022; Auto-DJ wil choose tracks randomly or based on tags<br>&#x2022; On tag-based mode, compares next track against playing track's tags<br>&#x2022; Genre matching looks for genre and style tags<br>&#x2022; Mood matching looks for mood tag<br>&#x2022; Genre-Mood matching looks for all above tags<br>&#x2022; Tags used are based on '[FB2K_PROFILE]\js_data\presets\global\globTags.json'
 						</div>
 						<div><br></div>
 					</div>
@@ -1471,6 +1495,23 @@
 				return !!~this.indexOf(el);
 			};
 		}
+		if (!('flat' in Array.prototype)) {
+			Array.prototype.flat = function (depth) {
+				if (typeof depth === 'undefined') { depth = 1; }
+				var flattened = [];
+				function flatten(arr, currentDepth) {
+					for (var i = 0; i < arr.length; i++) {
+						if (Array.isArray(arr[i]) && currentDepth < depth) {
+							flatten(arr[i], currentDepth + 1);
+						} else {
+							flattened.push(arr[i]);
+						}
+					}
+				}
+				flatten(this, 0);
+				return flattened;
+			};
+		}
 		if (!('isArray' in Array)) {
 			Array.isArray = function (obj) {
 				return Object.prototype.toString.call(obj) === '[object Array]';
@@ -1503,6 +1544,15 @@
 		}
 		if (!('MAX_SMP_INT' in Number)) {
 			Number.MAX_SMP_INT = 4294967295;
+		}
+		if (!('values' in Object)) {
+			Object.values = function (obj) {
+				var vals = [];
+				for (var key in obj) {
+					if (obj.propertyIsEnumerable(key)) { vals.push(obj[key]); }
+				}
+				return vals;
+			}
 		}
 		// Expand alert popup with automatic type parsing
 		var formatArg = function (arg) {
@@ -1866,6 +1916,7 @@
 			var albumArtOverlayVAlignLabels = ['Default', 'Top (frame)', 'Top (img box)', 'Top (img)', 'Bottom (frame)', 'Bottom (img box)', 'Bottom (img)', 'Center']; // Regorxxx <- Item overlay vertical alignment ->
 			var albumArtOverlayHAlignLabels = ['Default', 'Right (frame)', 'Right (img box)', 'Right (img)', 'Left (frame)', 'Left (img box)', 'Left (img)', 'Center']; // Regorxxx <- Item overlay horizontal alignment ->
 			var albumArtPreferHandleLabels = ['First track (default)', 'Last track', 'Random track', 'Playing track']; // Regorxxx <- Track preference art ->
+			var tagRemapLabels = ['Remap %LANGUAGE% tag ISO 693']; // Regorxxx <- Language remap ->
 			var barLabels = ['Search', 'Filter Button', 'Multi-button: Filter | View (Shift) | Source (Ctrl)', 'Settings button*']; // Regorxxx <- Filter / View / Source button ->
 			// Regorxxx <- Mouse actions on playlist sources | Top tracks
 			clickLabels = ppt['actionMode_internal'].value == 1
@@ -2049,6 +2100,7 @@
 			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources ->
+				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistIndicator', 'albumArtOptionsShow', 'facetView', 'showTracks', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
@@ -2056,15 +2108,14 @@
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'logArtCustomTf', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'streamSupport', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
-			// Regorxxx <- New search tab
-			box.all = box.presets.concat(box.behaviour, box.search, box.display, box.statistics, box.albumArt, box.custom, box.advanced);
-			// Regorxxx ->
+			box.all = Object.values(box).flat(Infinity); // Regorxxx <- New search tab | New TF remap tab | New statistics tab | Code cleanup ->
 
 			radio = {
 				views: [],
 				filters: [],
 				presets: [], // Regorxxx <- Presets tab ->
 				behaviour: ['actionMode', 'sendToCur'],
+				remap: [], // Regorxxx <- New TF remap tab ->
 				search: [], // Regorxxx <- Drag n' drop to search box ->
 				display: [],
 				statistics: ['itemShowStatistics'], // Regorxxx <- New statistics tab ->
@@ -2072,7 +2123,7 @@
 				custom: [],
 				advanced: []
 			}
-			radio.all = radio.behaviour.concat(radio.statistics, radio.albumArt);
+			radio.all = Object.values(radio).flat(Infinity); // Regorxxx <- Code cleanup ->
 			callback = parsed_args[3];
 			props_callback = parsed_args[4];
 			rootPath = parsed_args[5]; // Regorxxx <- Root path ->
@@ -3101,6 +3152,14 @@
 				// Regorxxx ->
 			}
 
+			// Regorxxx <- New TF remap tab
+			function setRemap() {
+				// Regorxxx <- Language remap
+				for (i = 0; i < 1; i++) { window.tagRemap.insertAdjacentHTML('beforeend', '<div><input id="tagRemap_checkbox' + i + '" name="remap_checkbox" style="' + cbox + '" type="checkbox" /><label for="tagRemap_checkbox' + i + '" class="checkbox_label">' + tagRemapLabels[i] + '</label></div>'); }
+				// Regorxxx ->
+			}
+			// Regorxxx ->
+
 			// Regorxxx <- Drag n' drop to search box
 			function setSearch() {
 				window.searchSend_dropdown.innerHTML = searchLabels[ppt['searchSend_internal'].value];
@@ -3397,6 +3456,7 @@
 			setFilters();
 			setPresets(); // Regorxxx <- Presets tab ->
 			setBehaviour();
+			setRemap() // Regorxxx <- New TF remap tab ->
 			setSearch(); // Regorxxx <- Drag n' drop to search box ->
 			setDisplay();
 			setStatistcs(); // Regorxxx <- Statistics tab ->
@@ -3961,6 +4021,11 @@
 				setContextMenu(ppt['contextMenuShow_internal'].default_value); // Regorxxx <- Contextual menu options ->
 			}
 			// Regorxxx ->
+			// Regorxxx <- New TF remap tab.
+			if (cur.page == 'remap') {
+				// setItemCounts(ppt['nodeCounts_internal'].default_value);
+			}
+			// Regorxxx ->
 			// Regorxxx <- New search tab | Drag n' drop to search box
 			if (cur.page == 'search') {
 				setDragValOpDefault(['', 'OR', 'AND'].indexOf(ppt['searchDragValOp_internal'].default_value.toUpperCase()));
@@ -4110,7 +4175,7 @@
 		}
 
 		// Regorxxx <- Drag n' drop to search box | Send to playlist & select | Add help to filter tab
-		function showHelp(id) { // plsSel_text, drag_text, mode_text, topTracks_text
+		function showHelp(id) { // plsSel_text, drag_text, mode_text, topTracks_text, tagRemap_text
 			var divToggleMode = document.getElementById(id);
 			if (divToggleMode.style.display === 'none') {
 				divToggleMode.style.display = 'block';
