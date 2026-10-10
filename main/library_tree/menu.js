@@ -356,7 +356,7 @@ class MenuItems {
 			menu.newItem({ separator: true }); // Regorxxx <- Menu cleanup ->
 		}
 
-		if (this.validItem && ppt.albumArtOptionsShow) {
+		if (this.validItem && (ppt.albumArtOptionsShowContext || panel.imgView)) { // Regorxxx <- Art options at context menu / settings ->
 			menu.newItem({
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
@@ -700,6 +700,8 @@ class MenuItems {
 		}
 		// Regorxxx ->
 
+		if (panel.imgView && this.show_context && (!ui.style.topBarShow || this.shift)) { menu.newItem({ separator: true }); }
+
 		menu.newMenu({ menuName: 'Settings', hide: !this.show_context || ui.style.topBarShow && !this.shift });
 
 		const mainMenu = () => this.show_context ? 'Settings' : 'baseMenu';
@@ -890,7 +892,7 @@ class MenuItems {
 				separator: v.separator
 			}));
 
-			if (ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
+			if ((ppt.albumArtOptionsShowSettings || panel.imgView) && !panel.isFileExplorerSource()) { // Regorxxx <- File explorer mode ->
 				menu.newMenu({ menuName: 'Art options', appendTo: 'Quick setup' });
 				[
 					{ name: 'Covers [labels right]', idx: 5 },
@@ -1161,8 +1163,8 @@ class MenuItems {
 		}
 		// Regorxxx ->
 		menu.newItem({ menuName: mainMenu(), separator: true });
-		// Regorxxx <- Show album art entry at settings
-		if (ppt.albumArtOptionsShow && !panel.isFileExplorerSource()) {
+		// Regorxxx <- Show album art entry at settings | Art options at context menu / settings
+		if ((ppt.albumArtOptionsShowSettings && (!this.show_context || !ppt.albumArtOptionsShowContext) || panel.imgView) && !panel.isFileExplorerSource()) {
 			menu.newItem({
 				menuName: mainMenu(),
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',

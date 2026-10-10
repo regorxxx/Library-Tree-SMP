@@ -233,7 +233,8 @@ let properties = [
 	['Image Show Index Letter', true, 'albumArtLetter'],
 	['Image Show Index Number', 0, 'albumArtLetterNo'],
 	['Image Show Index Year Auto', true, 'albumArtYearAuto'],
-	['Image Show Options', true, 'albumArtOptionsShow'],
+	['Image Show Options (context menu)', true, 'albumArtOptionsShowContext'], // Regorxxx <- Art options at context menu / settings ->
+	['Image Show Options (settings)', true, 'albumArtOptionsShowSettings'], // Regorxxx <- Art options at context menu / settings ->
 	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
 	['Image Item Track Preference', 0, 'albumArtPreferHandle'], // Regorxxx <- Track preference art ->
 	['Image Style [Front]', 1, 'imgStyleFront'],

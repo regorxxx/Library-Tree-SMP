@@ -10,6 +10,7 @@
 ## [Unreleased][]
 ### Added
 - HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088499.html#msg1088499).
+- UI: split 'Show album art options' into context menu and setting entries so they can be independently hidden without completely disabling album art feature.
 - UI: added new setting to tweak the now playing icon (tree/text) found at 'Nowplaying Indicator icon' (properties panel).
 - UI: added new setting to tweak the now playing (paused) icon (tree/text) found at 'Nowplaying Indicator icon (paused)' (properties panel). By default is '❚❚'. Note previous versions of script did not have a separate icon when playback was paused. If different icons are not desired, just set the same text to playing and paused settings. 
 - Remap: added a new feature called tag remapping which allows to replace specific tags with custom values. Currently used for LANGUAGE tag, panel is now able to replace ISO 639 codes with the full language name on real time. For ex. when using a View which uses %LANGUAGE%, 'eng' would be replaced with 'English'. When tag is not found, value is replaced with 'Missing'; it also has special remaps like instrumental tracks (zxx), etc. Note remapping only works at search when using RegExps (i.e. '/arabic/gi', instead of looking for 'ara'), otherwise queries are directly managed by foobar2000 (and original values used). See 'Remap: %LANGUAGE% tag ISO 693' (properties panel). See [Issue 16](https://github.com/regorxxx/Library-Tree-SMP/issues/16) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088245.html#msg1088245).
@@ -24,6 +25,7 @@
 - UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
 - UI: mouse actions at 'Behaviour' tab (HTML options panel) now reflect when an action is forced by mode or source being used.
+- HTML: cleanup of 'Display' tab, with some options moved to its own sub-section.
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.

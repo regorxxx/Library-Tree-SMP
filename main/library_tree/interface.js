@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/09/26
+//10/10/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -18,7 +18,7 @@ class UserInterface {
 		this.h = 0;
 		this.w = 0;
 		ppt.sbarCol = $.clamp(ppt.sbarCol, 0, 1);
-		if (!ppt.albumArtOptionsShow) ppt.albumArtShow = false;
+		if (!ppt.albumArtOptionsShowContext && !ppt.albumArtOptionsShowSettings) { ppt.albumArtShow = false; } // Regorxxx <- Art options at context menu / settings ->
 
 		this.col = {
 			bg1: 0x04ffffff,
