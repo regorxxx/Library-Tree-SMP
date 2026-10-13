@@ -41,6 +41,7 @@
 - Presets: $viewname and $filtername not triggering rule changes on filters using them.
 - External integration: fixed 'Library-Tree-SMP: quicksearch' and 'Library-Tree-SMP: search' commands not working.
 - Search: fixed regexp expressions not working due to changes on [3.0.0](#300---2026-08-24).
+- Debug: fixed album art performance  logging not respecting related setting in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
 
 ## [3.0.0] - 2026-08-24

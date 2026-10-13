@@ -1,5 +1,5 @@
 ﻿'use strict';
-//07/10/26
+//13/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -331,7 +331,7 @@ class Images {
 				const idx = (panel.artVariables.find((av) => path.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
 					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
-					if (ppt.logLibProfiler) { this.artProfiler.CheckPointStep('get_album_art_async'); }
+					if (ppt.logArtCustomTf) { this.artProfiler.CheckPointStep('get_album_art_async'); }
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
