@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 10/10/26 -->
+﻿<!DOCTYPE html> <!-- 13/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -877,7 +877,7 @@
 						<div class="info4600"><b><u>Browser</b></u></div>
 						<div class="info4">&#x2022; Keeps playing playlist<br>&#x2022; Easy to browse track lists, e.g. in album art or facet modes<br>&#x2022; Works best with playback follows cursor OFF & playlist visible<br>&#x2022; Double-click status bar etc to view playing playlist<br>&#x2022; Presets shown in red are set if enabled</div>
 						<div class="info4600"><b><u>Player</b></u></div>
-						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & nowplaying indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are set if enabled</div>
+						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & now playing indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are set if enabled</div>
 					</div>
 					<div class="info5600">Single-click:</div>
 					<span class="dropdown" style="margin-top:0"><a id="click_dropdown" class="dropbtn" href="#" onclick="return toggle('click');"></a>
@@ -1138,22 +1138,22 @@
 						<span id="root" class="dropdown-content"></span>
 					</span>
 					<div id="rootStyle" style="padding-top:0.5em;"></div>
-				</div>
-
-				<!-- Regorxxx New Statistics. Adjust column width -->
-				<div class="column29">
-					<div class="div_text2">Node style</div>
+					<div class="div_text2">Node and Line styles</div>
 					<span class="dropdown"><a id="node_dropdown" class="dropbtn" href="#" onclick="return toggle('node');"></a>
 						<span id="node" class="dropdown-content"></span>
 					</span>
 					<div id="nodeLines" style="padding-top:0.5em;"></div>
-					<div class="div_text2">Line style</div>
 					<div id="lines"></div>
+				</div>
+
+				<!-- Regorxxx New Statistics. Adjust column width -->
+				<div class="column29">
 					<div class="div_text2">Show</div>
 					<div id="show"></div>
-					<div class="div_text2">Now playing indicator</div>
+					<div class="div_text2">Now playing item</div>
 					<div id="showNowPlaying"></div>
-					<div class="div_text2">Playlist indicator (playlists sources)</div>
+					<div id="customNowPlaying"></div>
+					<div class="div_text2">Playlist item (playlists sources)</div>
 					<div id="showPlaylist"></div>
 				</div>
 
@@ -1968,7 +1968,7 @@
 					: ['Select', 'Send to playlist'];
 			// Regorxxx ->
 			// Regorxxx <- Code cleanup | Highlight active playlist
-			var colourLabelsRGB = ['Text', 'Text highlight', 'Text selection', 'Nowplaying text / sidemarker highlight', 'Active Playlist sidemarker highlight', 'Text search', 'Buttons'];
+			var colourLabelsRGB = ['Text', 'Text highlight', 'Text selection', 'Now playing text / sidemarker highlight', 'Active Playlist sidemarker highlight', 'Text search', 'Buttons'];
 			var colourLabelsRGBA = ['Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
 			// Regorxxx ->
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
@@ -2010,7 +2010,10 @@
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
 			var showLabels = ['Row stripes', 'Album art options (context menu)', 'Album art options (settings)', 'Facet view', 'Tracks (tree)']; // Regorxxx <- Art options at context menu / settings ->
 			var showPlaylistLabels = ['Active pls. in highlight', 'Active pls. sidemarker (tree / text)']; // Regorxxx <- Highlight active playlist ->
-			var showNowPlayingLabels = ['Nowplaying in highlight', 'Nowplaying sidemarker (tree / text)', 'Nowplaying indicator (tree / text)']; // Regorxxx <- Now playing options ->
+			// Regorxxx <- Now playing options ->
+			var showNowPlayingLabels = ['Now playing in highlight', 'Now playing sidemarker (tree / text)', 'Now playing indicator (tree / text)'];
+			var customNowPlayingLabels = ['Now playing icon', 'Now playing (paused) icon'];
+			// Regorxxx ->
 			// Regorxxx <- New statistics
 			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips'];
 			var statisticsDecimalsLabels = ['Number of decimals shown'];
@@ -2067,10 +2070,12 @@
 				},
 				// Regorxxx ->
 				// Regorxxx <- New statistics
+				// Regorxxx <- Configurable now playing icon | Configurable now playing (paused)
 				display: {
-					name: ['covAlpha', 'margin', 'treeIndent', 'verticalPad', 'verticalAlbumArtPad', 'marginTopBottom', 'sideMarkerWidth'],
-					type: ['float', 'int', 'int', 'int', 'int', 'int', 'int']
+					name: ['covAlpha', 'nowPlayingIndicatorIcon', 'nowPlayingIndicatorPauseIcon', 'margin', 'treeIndent', 'verticalPad', 'verticalAlbumArtPad', 'marginTopBottom', 'sideMarkerWidth'],
+					type: ['float', 'text', 'text', 'int', 'int', 'int', 'int', 'int', 'int']
 				},
+				// Regorxxx ->
 				statistics: {
 					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomDisplayVal', 'tfCustomDisplayArt', 'tfCustomDisplayTree', 'tfCustomTooltip', 'ratingDecimals'],
 					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'text', 'text', 'text', 'int']
@@ -2724,8 +2729,8 @@
 							['$sourceid', 'Views|Filters\nSearch|Sorting', 'Returns current source GUID, when source is \'Active playlist\'. Special characters are already escaped. e.g.<br>"$stricmp($sourceid,732E018A-5E04-4B26-80D7-9D7A531987FE)" MISSING OR %RATING% PRESENT<br>Displays only rated tracks if active playlist\'s GUID matches, all tracks otherwise.', 'Filters'],
 							['$viewname', 'Views|Filters\nSearch|Sorting', 'Returns current view name. Special characters are already escaped. e.g.<br> "$stricmp($viewname,test)" MISSING OR MOOD PRESENT<br>Displays only tracks with MOOD present if view matches \'test\', all tracks otherwise.', 'Filters'],
 							['$filtername', 'Views|Filters\nSearch|Sorting', 'Returns current filter name. Special characters are already escaped. e.g.<br>	"$stricmp($filtername,lossless)" MISSING OR ARTIST IS ABBA<br>Displays only ABBA\'s tracks if filter matches \'lossless\', all tracks otherwise.', 'Filters'],
-							['$nowplaying{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays nowplaying artist in red.', 'Views'],
-							['$nowplaying{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by nowplaying artist.', 'Filters'],
+							['$nowplaying{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track, e.g.<br>$if($stricmp(%ARTIST%,$nowplaying{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays now playing artist in red.', 'Views'],
+							['$nowplaying{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track, e.g.<br>ARTIST IS $nowplaying{$meta(ARTIST,0)}<br>Displays tracks by now playing artist.', 'Filters'],
 							['$selected{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the selected track, e.g.<br>$if($stricmp(%ARTIST%,$selected{%ARTIST%}),$colour{255-0-0},)%ARTIST%<br>Displays selected (focused) artist in red.', 'Views'],
 							['$selected{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the selected track, e.g.<br>ARTIST IS $selected{$meta(ARTIST,0)}<br>Displays tracks by selected (focused) artist.', 'Filters'],
 							['$nowplayingorselected{X}', 'Views|Filters\nSearch|Sorting', 'Returns value of X for the playing track or selected track as fallback, i.e. behaves as $nowplaying while playing and $selected otherwise.', 'Views'],
@@ -3228,7 +3233,7 @@
 				// Regorxxx <- Add setting to follow/skip selection image
 				i = 8; window.panelStyle.insertAdjacentHTML('beforeend', '<div><input id="theme_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="theme_checkbox' + i + '" class="checkbox_label">' + themeLabels[i] + '</label></div>');
 				// Regorxxx ->
-				window.lines.insertAdjacentHTML('beforeend', '<div><input id="lines_checkbox" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="lines_checkbox" class="checkbox_label">Dark</label></div>');
+				window.lines.insertAdjacentHTML('beforeend', '<div><input id="lines_checkbox" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="lines_checkbox" class="checkbox_label">Dark lines</label></div>');
 
 				for (i = 0; i < 2; i++) { window.metrics1.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="metrics_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="metrics_container' + i + '" class="inp_label2">' + metricsLabels[i] + '</label></div>'); }
 				for (i = 2; i < 4; i++) { window.metrics2.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="metrics_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="metrics_container' + i + '" class="inp_label2">' + metricsLabels[i] + '</label></div>'); }
@@ -3254,7 +3259,10 @@
 				// Regorxxx ->
 				for (i = 4; i < 7; i++) { window.showH2.insertAdjacentHTML('beforeend', '<div><input id="showH2_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showH2_checkbox' + i + '" class="checkbox_label">' + highLightLabels[i] + '</label></div>'); }
 				for (i = 0; i < showLabels.length; i++) { window.show.insertAdjacentHTML('beforeend', '<div><input id="show_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="show_checkbox' + i + '" class="checkbox_label">' + showLabels[i] + '</label></div>'); }
-				for (i = 0; i < showNowPlayingLabels.length; i++) { window.showNowPlaying.insertAdjacentHTML('beforeend', '<div><input id="showNowPlaying_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showNowPlaying_checkbox' + i + '" class="checkbox_label">' + showNowPlayingLabels[i] + '</label></div>'); } // Regorxxx <- Now playing options ->
+				// Regorxxx <- Now playing options ->
+				for (i = 0; i < showNowPlayingLabels.length; i++) { window.showNowPlaying.insertAdjacentHTML('beforeend', '<div><input id="showNowPlaying_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showNowPlaying_checkbox' + i + '" class="checkbox_label">' + showNowPlayingLabels[i] + '</label></div>'); }
+				for (i = 0; i < customNowPlayingLabels.length; i++)  { window.customNowPlaying.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="customNowPlaying_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="customNowPlaying_container' + i + '" class="inp_label2">' + customNowPlayingLabels[i] + '</label></div>') };
+				// Regorxxx ->
 				for (i = 0; i < showPlaylistLabels.length; i++) { window.showPlaylist.insertAdjacentHTML('beforeend', '<div><input id="showPlaylist_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showPlaylist_checkbox' + i + '" class="checkbox_label">' + showPlaylistLabels[i] + '</label></div>'); } // Regorxxx <- Highlight active playlist ->
 			}
 
@@ -3541,6 +3549,7 @@
 			if (window.search_checkbox3.checked) { window.search_checkbox4.checked = false; }
 			window.search_checkbox4.parentNode.disabled = window.search_checkbox3.checked;
 			// Regorxxx ->
+			window.customNowPlaying_container0.parentNode.disabled = window.customNowPlaying_container1.parentNode.disabled = !ppt['nowPlayingIndicator_internal'].value; // Regorxxx <- Now playing options ->
 			window.theme_checkbox7.parentNode.disabled = ppt['theme_internal'].value == 1 || ppt['theme_internal'].value == 4;
 			window.coverFormat_checkbox0.parentNode.disabled = ppt['theme_internal'].value != 5;
 			window.coverFormat_container1.parentNode.disabled = ppt['theme_internal'].value != 5;
@@ -3823,7 +3832,7 @@
 			if (new_cfg || new_ppt || new_cur) {
 				callback && callback(new_cfg, new_ppt, 'ok', new_cur);
 			} else {
-				if (new_cur) callback && callback('', '', 'ok', new_cur);
+				if (new_cur) { callback && callback('', '', 'ok', new_cur); }
 			}
 			close_window();
 		}
@@ -3991,7 +4000,8 @@
 				// Regorxxx ->
 			}
 
-			window.coverFormat_container1.parentNode.disabled = ppt['theme_internal'].value != 4;
+			window.coverFormat_container1.parentNode.disabled = ppt['theme_internal'].value != 5;
+			window.customNowPlaying_container0.parentNode.disabled = window.customNowPlaying_container1.parentNode.disabled = !ppt['nowPlayingIndicator_internal'].value; // Regorxxx <- Now playing options ->
 		}
 
 		window.btn_resetPage.onclick = function () {
