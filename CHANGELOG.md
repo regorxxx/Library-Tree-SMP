@@ -19,6 +19,9 @@
 - Filters: added new default filter query expressions like: 'Recently Modified', ...
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
+- Sorting: reverse sorting now works for any view and along any other sorting method.
+- Sorting: folder view can now be sorted using sorting submenu.
+- Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter and view names to hide part of the names at different UI places. Check syntax help for more info.
 ### Changed
 - UI: default now playing icon is now '⯈' (previously '♫').
@@ -41,7 +44,7 @@
 - Presets: $viewname and $filtername not triggering rule changes on filters using them.
 - External integration: fixed 'Library-Tree-SMP: quicksearch' and 'Library-Tree-SMP: search' commands not working.
 - Search: fixed regexp expressions not working due to changes on [3.0.0](#300---2026-08-24).
-- Debug: fixed album art performance  logging not respecting related setting in some cases.
+- Debug: fixed album art performance logging not respecting related setting in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
 
 ## [3.0.0] - 2026-08-24

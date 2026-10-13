@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/09/26
+//13/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -323,7 +323,7 @@ class MenuItems {
 				}
 				// Regorxxx <- Code cleanup
 				menu.newItem({
-					str: 'Show nowplaying',
+					str: 'Show now playing',
 					func: () => this.setPlaylist(3),
 					flags: this.getPaylistFlag(3),
 				});
@@ -1315,40 +1315,44 @@ class MenuItems {
 		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
 		const isPlsLike = panel.isPlaylistSource();
 		const isQueueLike = panel.isQueueLikeSource();
-		menu.newItem({
-			menuName: appendTo ? 'Sorting' : void (0),
-			str: 'By Queue idx',
-			func: () => {
-				ppt.toggle('queueSorting');
-				ppt.statsSorting = false;
-				lib.treeState(false, 2);
-			},
-			flags: !isQueueLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
-			checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
-		});
-		menu.newItem({
-			menuName: appendTo ? 'Sorting' : void (0),
-			str: 'By Playlist idx',
-			func: () => {
-				ppt.toggle('plsSorting');
-				ppt.statsSorting = false;
-				lib.treeState(false, 2);
-			},
-			flags: !isPlsLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
-			checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
-		});
-		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
+		if (isQueueLike) {
+			menu.newItem({
+				menuName: appendTo ? 'Sorting' : void (0),
+				str: 'By Queue idx',
+				func: () => {
+					ppt.toggle('queueSorting');
+					ppt.statsSorting = false;
+					lib.treeState(false, 2);
+				},
+				flags: !isQueueLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
+			});
+		}
+		if (isPlsLike) {
+			menu.newItem({
+				menuName: appendTo ? 'Sorting' : void (0),
+				str: 'By Playlist idx',
+				func: () => {
+					ppt.toggle('plsSorting');
+					ppt.statsSorting = false;
+					lib.treeState(false, 2);
+				},
+				flags: !isPlsLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
+			});
+		}
+		if (isQueueLike || isPlsLike) { menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true }); }
 		// Regorxxx <- Sort by Stats
 		menu.newItem({
 			menuName: appendTo ? 'Sorting' : void (0),
-			str: 'By Stats',
+			str: 'By Statistics' + (!pop.statisticsShow && !pop.nodeCounts ? '\t[-N/A-]' : ''),
 			func: () => {
 				ppt.toggle('statsSorting');
 				ppt.queueSorting = ppt.plsSorting = false;
 				lib.treeState(false, 2);
 			},
-			checkItem: ppt.statsSorting && pop.statisticsShow && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting),
-			flags: pop.statisticsShow ? MF_STRING : MF_GRAYED
+			checkItem: ppt.statsSorting && (pop.statisticsShow || pop.nodeCounts) && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting),
+			flags: pop.statisticsShow || pop.nodeCounts ? MF_STRING : MF_GRAYED
 		});
 		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
 		menu.newItem({
@@ -1361,31 +1365,33 @@ class MenuItems {
 			checkItem: ppt.reverseSorting
 		});
 		// Regorxxx ->
-		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
-		const d = {};
-		this.getSortData(d);
-		menu.newMenu({
-			menuName: d.menuName,
-			appendTo: appendTo ? 'Sorting' : void (0),
-			flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
-		});
-		// Regorxxx ->
-		if (d.sortType) {
-			menu.newItem({
+		if (!panel.folderView) {
+			menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
+			const d = {};
+			this.getSortData(d);
+			menu.newMenu({
 				menuName: d.menuName,
-				str: ['', 'By year', 'Albums by year'][d.sortType],
-				flags: MF_GRAYED,
-				separator: true
+				appendTo: appendTo ? 'Sorting' : void (0),
+				flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
 			});
-			const menuSort = [[], ['Default', 'Ascending', 'Descending'], ['Default', 'Ascending (hide year)', 'Ascending (show year)', 'Descending (hide year)', 'Descending (show year)', 'Action: year after album', 'Action: year before album']][d.sortType];
-			menuSort.forEach((v, i) => menu.newItem({
-				menuName: d.menuName,
-				str: v,
-				func: () => this.sortByDate(i, d),
-				flags: i > 4 && (d.sortIX == 1 || d.sortIX == 3) ? MF_GRAYED : MF_STRING,
-				checkRadio: d.sortIX == -1 && !i || i == d.sortIX || d.sortType == 2 && i == 5 && !ppt.yearBeforeAlbum || i == 6 && ppt.yearBeforeAlbum,
-				separator: i == 0 || d.sortType == 2 && (i == 2 || i == 4)
-			}));
+			// Regorxxx ->
+			if (d.sortType) {
+				menu.newItem({
+					menuName: d.menuName,
+					str: ['', 'By year', 'Albums by year'][d.sortType],
+					flags: MF_GRAYED,
+					separator: true
+				});
+				const menuSort = [[], ['Default', 'Ascending', 'Descending'], ['Default', 'Ascending (hide year)', 'Ascending (show year)', 'Descending (hide year)', 'Descending (show year)', 'Action: year after album', 'Action: year before album']][d.sortType];
+				menuSort.forEach((v, i) => menu.newItem({
+					menuName: d.menuName,
+					str: v,
+					func: () => this.sortByDate(i, d),
+					flags: i > 4 && (d.sortIX == 1 || d.sortIX == 3) ? MF_GRAYED : MF_STRING,
+					checkRadio: d.sortIX == -1 && !i || i == d.sortIX || d.sortType == 2 && i == 5 && !ppt.yearBeforeAlbum || i == 6 && ppt.yearBeforeAlbum,
+					separator: i == 0 || d.sortType == 2 && (i == 2 || i == 4)
+				}));
+			}
 		}
 	}
 	// Regorxxx ->

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/10/26
+//13/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -703,7 +703,7 @@ class Populate {
 		this.addItems(items, v, true); // Regorxxx <- Preserve tree sorting at selection ->
 		items = [...new Set(items)].sort(this.numSort);
 		const handleList = this.getHandleList(void (0), items);
-		const { value, rawValue, valueFormat } = this.statistics[ppt.itemShowStatistics].evalFunc(handleList);
+		const { value, rawValue, valueFormat } = this.getCurrentStatistic().evalFunc(handleList, v);
 		return typeof value === 'undefined'
 			? { value: '', rawValue: void (0), valueFormat: void (0), items }
 			: (this.cache[type][key] = { value, rawValue, valueFormat, items }); // NOSONAR
@@ -769,9 +769,9 @@ class Populate {
 				const trace2 = item.stats_tt && item.stats_tt.needed && x >= item.stats_tt.x + item.stats_tt.w && x <= ui.w - ui.sz.marginRight && y >= item.stats_tt.y && y <= item.stats_tt.y + ui.row.h * 0.9;
 				if (trace2) {
 					text = this.statisticsShow
-						? (typeof item.statistics === 'undefined' ? '' : this.statistics[this.statisticsShow].nameTree + ': ' + (item.stats.valueFormat || item.stats.value)) // Regorxxx <- New statistics | Code cleanup ->
+						? (typeof item.statistics === 'undefined' ? '' : this.getCurrentStatistic().nameTree + ': ' + (item.stats.valueFormat || item.stats.value)) // Regorxxx <- New statistics | Code cleanup ->
 						: (item.count ? ['', 'Tracks', 'Items'][this.nodeCounts] + ':' + item.count : '');
-					if (this.statistics[this.statisticsShow].ttFunc) { text = this.statistics[this.statisticsShow].ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
+					if (this.getCurrentStatistic().ttFunc) { text = this.getCurrentStatistic().ttFunc(text); } // Regorxxx <- Improve statistics tooltip ->
 				} else if (trace1) {
 					text = panel.cleanMarkers(item.name) + (!this.countsRight || this.statisticsShow ? item.count : ''); // Regorxxx <- Code cleanup ->
 					text = text.replace(/&/g, '&&');
@@ -827,7 +827,7 @@ class Populate {
 			// Regorxxx <- New statistics | Code cleanup
 			needed: !this.tooltipStatistics || !this.statisticsShow || item.root
 				? false
-				: this.statistics[this.statisticsShow].showTooltip && typeof item.statistics !== 'undefined',
+				: this.getCurrentStatistic().showTooltip && typeof item.statistics !== 'undefined',
 			// Regorxxx ->
 			x: x,
 			y: y + ui.row.h * 0.1,
@@ -1174,10 +1174,10 @@ class Populate {
 			level = this.inlineRoot ? Math.max(this.tree[b].level - 1, 0) : this.tree[b].level;
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
-		const statsExtraStr = this.statistics[ppt.itemShowStatistics].displayVal || ''; // Regorxxx <- Improve statistics labels ->
+		const statsExtraStr = this.getCurrentStatistic().displayVal || ''; // Regorxxx <- Improve statistics labels ->
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
-			this.getItemCount(item);
+			this.getItemStats(item);
 			nm[i] = item.name + (i || this.rootNode != 3 || this.nodeCounts == 1 && (this.countsRight || this.statisticsShow) ? (!this.countsRight || this.statisticsShow ? item.count : '') : '');
 			const counts = this.statisticsShow ? item.statistics : item.count;
 			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) { nowp_c.push(i); }
@@ -1636,7 +1636,7 @@ class Populate {
 		});
 	}
 	// Regorxxx <- Statistics rework
-	getItemCount(v) {
+	getItemStats(v) {
 		let prop = panel.imgView ? '_statistics' : 'statistics';
 		if (this.statisticsShow && v[prop] == null) {
 			if (v.root && this.label && !panel.imgView) { v[prop] = this.label; }
@@ -1646,70 +1646,84 @@ class Populate {
 				v.stats = { value: stats.value, rawValue: stats.rawValue, valueFormat: stats.valueFormat };
 			}
 		}
-		if (v.count === '' && this.nodeCounts) {
-			if (panel.imgView) {
-				// Regorxxx <- New overlay styles | Don't bind track count to other stats
-				const overlay = img.getOverlay(ppt.itemOverlayType);
-				switch (overlay.type) {
-					case 'items':
-					case 'items (#)': {
-						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
-							const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
-							const key = this.getKey(v);
-							v.count = this.branchCount(v, !!v.root, true, false, key, type);
-							v.count += v.count > 1 ? ' items' : ' item';
-						}
-						break;
+		if (!v.count && this.nodeCounts) { this.getItemCount(v); }
+	}
+
+	getItemCount(v) {
+		if (panel.imgView) {
+			// Regorxxx <- New overlay styles | Don't bind track count to other stats
+			const overlay = img.getOverlay(ppt.itemOverlayType);
+			let count;
+			switch (overlay.type) {
+				case 'items':
+				case 'items (#)': {
+					if (ppt.itemOverlayCountForce || this.getCurrentStatistic().showTrackCount) {
+						const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
+						const key = this.getKey(v);
+						count = v.count = this.branchCount(v, !!v.root, true, false, key, type);
+						v.count += v.count > 1 ? ' items' : ' item';
 					}
-					case 'tracks':
-					case 'tracks (#)': {
-						// Regorxxx <- New statistics | Code cleanup
-						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
-							v.count = this.trackCount(v.item);
-							v.count += v.count > 1 ? ' tracks' : ' track';
-						}
-						// Regorxxx ->
-						break;
+					break;
+				}
+				case 'tracks':
+				case 'tracks (#)': {
+					// Regorxxx <- New statistics | Code cleanup
+					if (ppt.itemOverlayCountForce || this.getCurrentStatistic().showTrackCount) {
+						count = v.count = this.trackCount(v.item);
+						v.count += v.count > 1 ? ' tracks' : ' track';
 					}
-					default: {
-						// Regorxxx <- New statistics | Code cleanup
-						if (ppt.itemOverlayCountForce || this.statistics[ppt.itemShowStatistics].showTrackCount) {
-							switch (this.nodeCounts) {
-								case 1: {
-									v.count = this.trackCount(v.item);
-									v.count += v.count > 1 ? ' tracks' : ' track';
-									break;
-								}
-								case 2: {
-									const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
-									const key = this.getKey(v);
-									v.count = this.branchCount(v, !!v.root, true, false, key, type);
-									v.count += v.count > 1 ? ' items' : ' item';
-									break;
-								}
+					// Regorxxx ->
+					break;
+				}
+				default: {
+					// Regorxxx <- New statistics | Code cleanup
+					if (ppt.itemOverlayCountForce || this.getCurrentStatistic().showTrackCount) {
+						switch (this.nodeCounts) {
+							case 1: {
+								count = v.count = this.trackCount(v.item);
+								v.count += v.count > 1 ? ' tracks' : ' track';
+								break;
+							}
+							case 2: {
+								const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
+								const key = this.getKey(v);
+								count = v.count = this.branchCount(v, !!v.root, true, false, key, type);
+								v.count += v.count > 1 ? ' items' : ' item';
+								break;
 							}
 						}
-						// Regorxxx ->
-						break;
 					}
+					// Regorxxx ->
+					break;
 				}
-				// Regorxxx ->
-				const getItemCount = !v.root && !overlay.isCount && ppt.albumArtLabelType == 2 && !ppt.itemShowStatistics && (this.nodeCounts == 1 || this.nodeCounts == 2); // Regorxxx <- New overlay styles ->
-				if (getItemCount) {
-					const count = v.count.replace(/\D/g, '');
-					if (panel.lines == 1 || ppt.albumArtFlipLabels) v.grp += ` (${count})`;
-					else v.lot += ` (${count})`;
-				}
+			}
+			// Regorxxx ->
+			const getItemCount = !v.root && !overlay.isCount && ppt.albumArtLabelType == 2 && !this.statisticsShow && (this.nodeCounts == 1 || this.nodeCounts == 2); // Regorxxx <- New overlay styles ->
+			if (getItemCount) {
+				const count = v.count.replace(/\D/g, '');
+				if (panel.lines == 1 || ppt.albumArtFlipLabels) { v.grp += ` (${count})`; }
+				else { v.lot += ` (${count})`; }
+			}
+			if (!this.statisticsShow) { v.stats = { value: count, rawValue: count, valueFormat: v.count }; }
+		} else {
+			if (v.root && this.label) {
+				if (!this.statisticsShow) { v.count = this.label; }
 			} else {
-				if (v.root && this.label) {
-					if (!this.statisticsShow) v.count = this.label;
-				} else {
-					const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
-					const key = this.getKey(v);
-					v.count = !v.track || !this.showTracks ? (v.name ? ' ' : '') + (this.nodeCounts == 1 ? '(' + this.trackCount(v.item) + ')' : this.nodeCounts == 2 ? '(' + this.branchCount(v, !!v.root, true, false, key, type) + ')' : '') : '';
-					if (!this.showTracks && v.count == (v.name ? ' ' : '') + '(0)') v.count = '';
-					if (this.countsRight && !this.statisticsShow) v.count = v.count.replace(/[()]/g, '');
-				}
+				const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
+				const key = this.getKey(v);
+				const count = !v.track || !this.showTracks
+					? this.nodeCounts == 1
+						? this.trackCount(v.item)
+						: this.nodeCounts == 2
+							? this.branchCount(v, !!v.root, true, false, key, type)
+							: void (0)
+					: void (0);
+				v.count = !v.track || !this.showTracks
+					? (v.name ? ' ' : '') + (this.nodeCounts == 1 || this.nodeCounts == 2 ? '(' + count + ')' : '')
+					: '';
+				if (!this.showTracks && v.count == (v.name ? ' ' : '') + '(0)') { v.count = ''; }
+				if (this.countsRight && !this.statisticsShow) { v.count = v.count.replace(/[()]/g, ''); }
+				if (!this.statisticsShow) { v.stats = { value: count, rawValue: count, valueFormat: v.count }; }
 			}
 		}
 	}
@@ -1727,6 +1741,10 @@ class Populate {
 
 	getStatisticsEntries() {
 		return [{ name: this.getStatisticsCountName(), type: [''] }, ...this.statistics.slice(1).map((s) => { return { name: s.name, type: s.type }; })];
+	}
+
+	getCurrentStatistic() {
+		return this.statistics[this.statisticsShow];
 	}
 	// Regorxxx ->
 
@@ -3633,8 +3651,8 @@ class Populate {
 		this.label = ppt.labelStatistics
 			? this.statisticsShow
 				? panel.imgView
-					? this.statistics[this.statisticsShow].nameArt
-					: this.statistics[this.statisticsShow].nameTree
+					? this.getCurrentStatistic().nameArt
+					: this.getCurrentStatistic().nameTree
 				: ''
 			: '';
 		// Regorxxx ->
@@ -3682,10 +3700,8 @@ class Populate {
 	sort(data) {
 		// Regorxxx <- Support playlist sorting | Multiple-playlist flat view | Sort by Stats
 		if (!panel.isStandardSource() && !panel.multiProcess && !panel.isBranchedPlaylistSource()) {
-			if (ppt.statsSorting) {
-				this.sortByStats(data);
-				if (ppt.reverseSorting) { data.reverse(); }
-			}
+			if (ppt.statsSorting) { this.sortByStats(data); }
+			if (ppt.reverseSorting) { data.reverse(); }
 			return;
 		}
 		// Regorxxx ->
@@ -3693,10 +3709,8 @@ class Populate {
 		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		// Regorxxx <- Support SORT BY query sorting | Sort by Stats
 		if (lib.searchSort || lib.filterSort) {
-			if (ppt.statsSorting) {
-				this.sortByStats(data);
-				if (ppt.reverseSorting) { data.reverse(); }
-			}
+			if (ppt.statsSorting) { this.sortByStats(data); }
+			if (ppt.reverseSorting) { data.reverse(); }
 			return;
 		}
 		// Regorxxx ->
@@ -3716,10 +3730,8 @@ class Populate {
 		}
 		// Regorxxx ->
 		// Regorxxx <- Sort by Stats
-		if (ppt.statsSorting) {
-			this.sortByStats(data);
-			if (ppt.reverseSorting) { data.reverse(); }
-		}
+		if (ppt.statsSorting) { this.sortByStats(data); }
+		if (ppt.reverseSorting && !panel.folderView) { data.reverse(); }
 		// Regorxxx ->
 	}
 
@@ -3966,10 +3978,12 @@ class Populate {
 
 	// Regorxxx <- Sort by Stats
 	sortByStats(data) {
-		data.forEach((v) => this.getItemCount(v));
-		return panel.imgView
-			? data.sort((a, b) => a.root ? 0 : this.collator.compare(a._statistics, b._statistics))
-			: data.sort((a, b) => a.root ? 0 : this.collator.compare(a.statistics, b.statistics));
+		if (this.statisticsShow || this.nodeCounts) {
+			data.forEach((v) => this.getItemStats(v));
+			return data.sort((a, b) => a.root ? 0 : this.collator.compare(a.stats.rawValue, b.stats.rawValue));
+		} else {
+			return data;
+		}
 	}
 	// Regorxxx ->
 

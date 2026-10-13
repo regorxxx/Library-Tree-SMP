@@ -812,7 +812,7 @@ class Images {
 			box_y = this.style.vertical ? Math.floor(this.panel.y + row * this.row.h - sbar.delta) : this.style.y;
 			if (box_y >= 0 - this.row.h && box_y < this.panel.y + this.panel.h) {
 				const item = cell.item;
-				pop.getItemCount(item);
+				pop.getItemStats(item);
 				const grp = item.grp;
 				const lot = item.lot;
 				// Regorxxx <- Improve statistics tooltip | Don't bind track count to other stats ->
@@ -2200,8 +2200,8 @@ class Images {
 		pop.tree.forEach((v, i) => {
 			// Regorxxx <- Track preference art
 			const arr = pop.tree[i].name.split('^@^');
-			v.grp = panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1];
-			v.lot = panel.lines == 2 ? ppt.albumArtFlipLabels ? arr[0] : arr[1] : '';
+			v.grp = (panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1]) || ''; // Regorxxx <- Fix undefined values ->
+			v.lot = (panel.lines == 2 ? (ppt.albumArtFlipLabels ? arr[0] : arr[1]) : '') || ''; // Regorxxx <- Fix undefined values ->
 			let handle;
 			let handleCut = -1;
 			switch (ppt.albumArtPreferHandle) {
