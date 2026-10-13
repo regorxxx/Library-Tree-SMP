@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/10/26
+//13/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1862,6 +1862,7 @@ class Panel {
 		sbar.duration.barFast = sbar.duration.step;
 		if (!ppt.butCustIconFont.length) ppt.butCustIconFont = 'Segoe UI Symbol';
 		ui.setSbar();
+		pop.nodeStyle = ppt.nodeStyle; // Regorxxx <- Fix crash on node change ->
 		on_colours_changed();
 		if (ui.col.counts) this.colMarker = true;
 		if (ppt.themed && ppt.theme) {
