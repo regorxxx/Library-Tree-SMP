@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//14/10/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -127,12 +127,7 @@ class Library {
 				: handleList;
 			panel.sort(lis);
 			this.binaryInsert(panel.folderView, lis, this.list, this.libNode);
-			// Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3
-			if (panel.folderView && panel.isLibrarySource() && ppt.folderSortingFb) {
-				panel.sort(this.list);
-			}
-			// Regorxxx ->
-			if (this.list.Count) this.empty = '';
+			if (this.list.Count) { this.empty = ''; }
 			if (panel.search.txt) {
 				let newSearchItems = new FbMetadbHandleList();
 				this.validSearch = true;
@@ -284,10 +279,10 @@ class Library {
 	addedFilter(handleList) {
 		let i, items;
 		if (handleList.Count < 100) {
-			this.binaryInsert(panel.folderView, handleList, this.list, this.libNode);
+			this.binaryInsert(panel.folderView, handleList, this.list, this.libNode, this.searchSort || this.filterSort); // Regorxxx <- Support SORT BY query sorting ->
 		} else {
 			this.list.InsertRange(this.list.Count, handleList);
-			panel.sort(this.list);
+			panel.sort(this.list, this.searchSort || this.filterSort); // Regorxxx <- Support SORT BY query sorting ->
 			panel.sort(handleList);
 			if (panel.folderView) {
 				items = handleList.GetLibraryRelativePaths();
@@ -340,21 +335,22 @@ class Library {
 		}
 	}
 
-	bInsert(item, sortObj) { // Regorxxx <- Support SORT BY query sorting ->
+	// Regorxxx <- Support SORT BY query sorting | Fix wrong binary inser logic
+	bInsert(item, li, sortObj) {
 		let min = 0;
-		let max = panel.list.Count;
+		let max = li.Count;
 		let index = Math.floor((min + max) / 2);
 		while (max > min) {
-			let tmp = new FbMetadbHandleList([item, panel.list[index]]);
-			panel.sort(tmp, sortObj); // Regorxxx <- Support SORT BY query sorting ->
-			if (item.Compare(tmp[0])) max = index;
-			else min = index + 1;
+			let tmp = new FbMetadbHandleList([item, li[index]]);
+			panel.sort(tmp, sortObj);
+			if (item.Compare(tmp[0])) { max = index; }
+			else { min = index + 1; }
 			index = Math.floor((min + max) / 2);
 		}
 		return index;
 	}
 
-	binaryInsert(folder, insert, li, n, sortObj) { // Regorxxx <- Support SORT BY query sorting ->
+	binaryInsert(folder, insert, li, n, sortObj) {
 		let i, items;
 		switch (true) {
 			case !folder: {
@@ -365,22 +361,23 @@ class Library {
 					: tfo.EvalWithMetadbs(insert);
 				// Regorxxx ->
 				insert.Convert().forEach((h, j) => {
-					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
+					i = this.bInsert(h, li, sortObj);
 					this.format(items[j], panel.markers.splitter, i, n);
 					li.Insert(i, h);
 				});
 				break;
 			}
 			case folder:
-				items = insert.GetLibraryRelativePaths();
+				items = insert.GetLibraryRelativePaths().reverse();
 				insert.Convert().reverse().forEach((h, j) => { // Regorxxx <- Reversed sorting using folder-view | https://github.com/regorxxx/Library-Tree-SMP/issues/3 ->
-					i = this.bInsert(h, sortObj); // Regorxxx <- Support SORT BY query sorting ->
+					i = this.bInsert(h, li, sortObj);
 					this.format(items[j], '\\', i, n);
 					li.Insert(i, h);
 				});
 				break;
 		}
 	}
+	// Regorxxx ->
 
 	checkAutoExpand() {
 		if (panel.imgView) return;
@@ -1300,9 +1297,8 @@ class Library {
 				this.searchCache[searchText] = panel.list;
 				// Regorxxx ->
 			} catch (e) { // eslint-disable-line no-unused-vars
-				this.list = this.list.Clone();
+				panel.list = new FbMetadbHandleList();
 				this.searchSort = null; // Regorxxx <- Support SORT BY query sorting ->
-				panel.list.RemoveAll();
 				this.validSearch = false;
 				// Regorxxx <- Active/Playing/All playlist source | Multiple-playlist flat view
 				this.playlistSourceRoot.forEach((root) => {
