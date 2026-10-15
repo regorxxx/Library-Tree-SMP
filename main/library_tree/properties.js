@@ -548,13 +548,14 @@ let properties = [
 	['View By', 1, 'viewBy'],
 	['View By Album Art', 1, 'albumArtViewBy'],
 	['View By Tree', 1, 'treeViewBy'],
-	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views | Sorting transliteration
+	// Regorxxx <- Fixed Library's "View by Folder Structure" to match Windows Explorer | Custom sorting for standard views | Sorting transliteration | Flag for %COMMENT% usage on default views
 	['View By Sorting', 0, 'viewSorting'],
 	['View By Sorting transliteration', true, 'viewSortingTrans'],
 	['View By Folder Sorting', 3, 'folderSorting'],
 	['View By Folder Sorting from foobar2000', true, 'folderSortingFb'],
 	['View By Folder Sorting transliteration', true, 'folderSortingTrans'],
 	['View By transliteration languages', 'el|ru|jp|ch', 'sortingTransLangs'],
+	['View By Use %COMMENT% on Defaults', false, 'viewByComment'],
 	// Regorxxx ->
 	['Zoom Filter Size (%)', 100, 'zoomFilter'],
 	['Zoom Font Size (%)', 100, 'zoomFont'],

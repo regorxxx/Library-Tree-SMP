@@ -9,7 +9,7 @@
 
 ## [Unreleased][]
 ### Added
-- Booklet: new booklet feature which checks for booklet files at album level, shows some kind of indicator on UI and allows to directly open the PDF file via menus. It works on TF views (dynamically analyzing levels with %ALBUM% tag) and View by Folder structure (folders which contain track files). Look at 'Display' tab (HTML options panel) for more info or 'Booklet [...]' (properties panel). Custom colors can be set at 'Custom' tab (HTML options panel) or 'Custom Colour Text Booklet Highlight' (properties panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089031.html#msg1089031).
+- Booklet: new booklet feature which checks for booklet files at album level, shows some kind of indicator on UI and allows to directly open the PDF file via menus. It works on TF views (dynamically analyzing levels with %ALBUM% tag) and View by Folder structure (folders which contain track files). Look at 'Display' tab (HTML options panel) for more info or 'Booklet [...]' (properties panel). Custom colors can be set at 'Custom' tab (HTML options panel) or 'Custom Colour Text Booklet Highlight' (properties panel). Feature is disabled by default. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089031.html#msg1089031).
 - HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088499.html#msg1088499).
 - UI: split 'Show album art options' into context menu and setting entries so they can be independently hidden without completely disabling album art feature (which now happens if both are disabled). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
 - UI: added new setting to tweak the now playing icon (tree/text) found at 'Nowplaying Indicator icon' (properties panel) or 'Display' tab (HTML options panel). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088877.html#msg1088877).
@@ -25,6 +25,7 @@
 - Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter and view names to hide part of the names at different UI places. Check syntax help for more info.
 ### Changed
+- Views: default view patterns will not skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates.
 - UI: default now playing icon is now '⯈' (previously '♫').
 - UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
