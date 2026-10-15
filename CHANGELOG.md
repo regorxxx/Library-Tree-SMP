@@ -25,7 +25,7 @@
 - Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter and view names to hide part of the names at different UI places. Check syntax help for more info.
 ### Changed
-- Views: default view patterns will not skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
+- Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
 - UI: default now playing icon is now '⯈' (previously '♫').
 - UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
