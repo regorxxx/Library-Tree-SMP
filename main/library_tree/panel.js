@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/10/26
+//15/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1544,7 +1544,7 @@ class Panel {
 								ppt.sbarShow = 1;
 								ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
 								ppt.nowPlayingIndicator = true;
-								ppt.highLightActivePlaylist = ppt.activePlaylistIndicator = true;
+								ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
 								ppt.rowStripes = true;
 								// Art
 								this.imgView = ppt.albumArtShow = false;
@@ -1585,7 +1585,7 @@ class Panel {
 								ppt.sbarType = 1;
 								ppt.sbarShow = 1;
 								ppt.nowPlayingSidemarker = ppt.nowPlayingIndicator = ppt.highLightNowplaying = false;
-								ppt.highLightActivePlaylist = ppt.activePlaylistIndicator = true;
+								ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
 								// Art
 								ppt.albumArtLabelType = 3;
 								ppt.itemOverlayType = img.getOverlayIdxByType('tracks (#)'); // Regorxxx <- New overlay styles ->
@@ -1712,7 +1712,7 @@ class Panel {
 				this.rootName = this.cleanDisplay(this.viewName) + (ppt.showSource ? ' [' + this.sourceName + ']' : ''); // Regorxxx <- Allow hidden display on filters/views ->
 				break;
 			case 3: {
-				const nm =  this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
+				const nm = this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
 				const basename = basenames.join(' ')
 					.replace(/(album|artist|top|track)s\s/gi, '$1 ')
@@ -1793,15 +1793,42 @@ class Panel {
 				ppt.highLightNowplayingLast = ppt.highLightNowplaying;
 				ppt.nowPlayingIndicatorLast = ppt.nowPlayingIndicator;
 				ppt.nowPlayingSidemarkerLast = ppt.nowPlayingSidemarker;
+				// Regorxxx <- Highlight active playlist
+				ppt.highLightActivePlaylistLast = ppt.highLightActivePlaylist;
+				ppt.activePlaylistSidemarkerLast = ppt.activePlaylistSidemarker;
+				// Regorxxx ->
+				// Regorxxx <- Booklet indicator
+				ppt.highLightBookletLast = ppt.highLightBooklet;
+				ppt.bookletIndicatorLast = ppt.bookletIndicator;
+				ppt.bookletSidemarkerLast = ppt.bookletSidemarker;
+				// Regorxxx ->
 				ppt.itemShowStatistics = 7;
 				ppt.highLightNowplaying = true;
 				ppt.nowPlayingIndicator = true;
 				ppt.nowPlayingSidemarker = true;
+				// Regorxxx <- Highlight active playlist
+				ppt.highLightActivePlaylist = false;
+				ppt.activePlaylistSidemarker = false;
+				// Regorxxx ->
+				// Regorxxx <- Booklet indicator
+				ppt.highLightBooklet = false;
+				ppt.bookletIndicator = false;
+				ppt.bookletSidemarker = false;
+				// Regorxxx ->
 			} else {
 				ppt.itemShowStatistics = ppt.itemShowStatisticsLast;
 				ppt.highLightNowplaying = ppt.highLightNowplayingLast;
 				ppt.nowPlayingIndicator = ppt.nowPlayingIndicatorLast;
 				ppt.nowPlayingSidemarker = ppt.nowPlayingSidemarkerLast;
+				// Regorxxx <- Highlight active playlist
+				ppt.highLightActivePlaylist = ppt.highLightActivePlaylistLast;
+				ppt.activePlaylistSidemarker = ppt.activePlaylistSidemarkerLast;
+				// Regorxxx ->
+				// Regorxxx <- Booklet indicator
+				ppt.highLightBooklet = ppt.highLightBookletLast;
+				ppt.bookletIndicator = ppt.bookletIndicatorLast;
+				ppt.bookletSidemarker = ppt.bookletSidemarkerLast;
+				// Regorxxx ->
 			}
 		}
 		ppt.autoExpandLimit = Math.round(ppt.autoExpandLimit);

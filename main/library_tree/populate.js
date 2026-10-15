@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/10/26
+//15/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -7,6 +7,7 @@
 /* global debounce:readable */
 /* global isArrayEqual:readable, _t:readable */
 /* global globTags:readable */
+/* global getFiles:readable */
 /* global findTracksAtPlaylist:readable */
 /* global Language:readable */
 
@@ -69,7 +70,26 @@ class Populate {
 			'search': {}
 		};
 
-		this.highlight = {};
+		this.highlight = {
+			node: false,
+			nowPlaying: false,
+			nowPlayingIndicator: false,
+			nowPlayingSidemarker: false,
+			nowPlayingShow: false,
+			nowPlayingIndicatorTree: false, // Regorxxx <- Show now playing icon on tree ->
+			nowPlayingIndicatorIcon: '', // Regorxxx <- Configurable now playing icon ->
+			nowPlayingIndicatorPauseIcon: '', // Regorxxx <- Configurable now playing (paused) icon ->
+			nowPlayingIndicatorIconDiff: false, // Regorxxx <- Configurable now playing (paused) icon ->
+			booklet: false, // Regorxxx <- Booklet indicator ->
+			bookletIndicator: false, // Regorxxx <- Booklet indicator ->
+			bookletShow: false, // Regorxxx <- Booklet indicator ->
+			bookletIndicatorIcon: '', // Regorxxx <- Booklet indicator ->
+			bookletIndicatorPos: 0, // Regorxxx <- Booklet indicator ->
+			row: false,
+			text: false,
+			activePlaylistSidemarker: false, // Regorxxx <- Highlight active playlist ->
+			activePlaylist: false // Regorxxx <- Highlight active playlist ->
+		};
 
 		this.getMainMenuIndex = {
 			add: Number.parseFloat(this.hotKeys[3]),
@@ -1175,6 +1195,12 @@ class Populate {
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
 		const statsExtraStr = this.getCurrentStatistic().displayVal || ''; // Regorxxx <- Improve statistics labels ->
+		// Regorxxx <- Booklet indicator
+		const bookletLevel = this.getBookletLevel();
+		const bookletPos = this.highlight.bookletIndicatorPos;
+		const bookletIcon = this.highlight.bookletIndicatorIcon;
+		// Regorxxx ->
+		const nowPlayingIcon = fb.IsPaused ? this.highlight.nowPlayingIndicatorPauseIcon : this.highlight.nowPlayingIndicatorIcon; // Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon ->
 		for (i = b; i < f; i++) {
 			const item = this.tree[i];
 			this.getItemStats(item);
@@ -1183,12 +1209,20 @@ class Populate {
 			if (this.highlight.nowPlayingShow && !item.root && this.inRange(this.nowp, item.item)) { nowp_c.push(i); }
 			// Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon
 			item.np = nowp_c.includes(i) || panel.textDiffHighlight && this.m.i == i
-				? (fb.IsPaused ? this.highlight.nowPlayingIndicatorPauseIcon : this.highlight.nowPlayingIndicatorIcon) + '  '
+				? nowPlayingIcon + '  '
 				: '';
 			// Regorxxx ->
+			// Regorxxx <- Booklet indicator
+			if (this.highlight.bookletShow && !item.bookletChecked) {
+				if (!item.root && !item.track && this.canShowBooklet(item, bookletLevel)) {
+					item.booklet = this.hasBooklet(item) ? bookletIcon : '';
+					item.bookletChecked = true;
+				}
+			}
+			// Regorxxx ->
 			if (item.np && item.id != this.id) this.row.note_w = gr.CalcTextWidth(item.np, ui.font.main);
-			if (item.id != this.id || item.np) {
-				let note_w = !item.np || item.track ? 0 : this.row.note_w;
+			if (item.id != this.id || item.np || item.booklet) {
+				let note_w = !item.np && !item.booklet || item.track ? 0 : this.row.note_w;
 				item.name_w = gr.CalcTextWidth(panel.cleanMarkers(nm[i]), ui.font.main) - note_w; // Regorxxx <- Code cleanup ->
 				item.count_w = this.nodeCounts && this.countsRight || this.statisticsShow ?
 					gr.CalcTextWidth((counts || '000') + (this.statisticsShow ? statsExtraStr : ''), ui.font.small) + (counts ? ui.row.h * 0.2 : 0) : 0; // Regorxxx <- Improve statistics labels ->
@@ -1327,25 +1361,48 @@ class Populate {
 					}
 				}
 				// Regorxxx ->
+				// Regorxxx <- Booklet indicator
+				if (this.highlight.bookletShow && item.booklet) {
+					if (this.highlight.booklet || this.highlight.bookletSidemarker) {
+						if (this.highlight.bookletSidemarker) { gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.booklet); };
+					}
+					if (this.highlight.bookletIndicator) {
+						switch (bookletPos) {
+							case 0: nm[i] = item.booklet + '  ' + nm[i]; break;
+							case 1: nm[i] = nm[i] + '  ' + item.booklet; break;
+							case 2:
+								if (!item.np || !this.highlight.nowPlayingIndicator || !(this.highlight.nowPlayingIndicatorTree || item.track)) {
+									nm[i] = item.booklet + '  ' + nm[i];
+								}
+								break;
+						}
+					}
+				}
+				// Regorxxx ->
 				if (item.np && this.highlight.nowPlayingIndicator && (this.highlight.nowPlayingIndicatorTree || item.track)) { nm[i] = item.np + nm[i]; }  // Regorxxx <- Show now playing icon on tree ->
 				const type = item.sel ? (this.highlight.row || !this.fullLineSelection ? 2 : 0) : this.m.i == i && this.highlight.text ? 1 : 0;
 				const np = item.np && this.highlight.nowPlaying;
-				// Regorxxx <- Highlight active playlist
-				const ap = isAp === item && this.highlight.activePlaylist; // Regorxxx <- Highlight active playlist ->
+				// Regorxxx <- Highlight active playlist | Booklet icon
+				const ap = isAp === item && this.highlight.activePlaylist;
+				const bo = item.booklet && this.highlight.booklet;
 				const txt_co = np && !item.sel
 					? ui.col.nowp
 					: ap && !item.sel
 						? ui.col.apls
-						: item.sel && this.fullLineSelection
-							? (this.highlight.row ? ui.col.textSel : ui.col.text)
-							: this.m.i == i && this.highlight.text
-								? ui.col.text_h
-								: ui.col.counts || ui.col.count;
+						: bo && !item.sel
+							? ui.col.booklet
+							: item.sel && this.fullLineSelection
+								? (this.highlight.row ? ui.col.textSel : ui.col.text)
+								: this.m.i == i && this.highlight.text
+									? ui.col.text_h
+									: ui.col.counts || ui.col.count;
 				const txt_c = np && !item.sel
 					? ui.col.nowp
 					: ap && !item.sel
 						? ui.col.apls
-						: ui.col.txtArr[type];
+						: bo && !item.sel
+							? ui.col.booklet
+							: ui.col.txtArr[type];
 				// Regorxxx ->
 				if (panel.colMarker) {
 					// Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon | Fix display bug when using custom colors on TF
@@ -3159,10 +3216,16 @@ class Populate {
 			nowPlayingIndicatorIcon: ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing icon ->
 			nowPlayingIndicatorPauseIcon: ppt.nowPlayingIndicatorPauseIcon, // Regorxxx <- Configurable now playing (paused) icon ->
 			nowPlayingIndicatorIconDiff: ppt.nowPlayingIndicatorPauseIcon !== ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing (paused) icon ->
+			booklet: ppt.highLightBooklet, // Regorxxx <- Booklet indicator ->
+			bookletIndicator: ppt.bookletIndicator, // Regorxxx <- Booklet indicator ->
+			bookletSidemarker: ppt.bookletSidemarker, // Regorxxx <- Highlight active playlist ->
+			bookletShow: ppt.highLightBooklet || ppt.bookletIndicator || ppt.bookletSidemarker, // Regorxxx <- Booklet indicator ->
+			bookletIndicatorIcon: ppt.bookletIndicatorIcon, // Regorxxx <- Booklet indicator ->
+			bookletIndicatorPos: ppt.bookletIndicatorPos, // Regorxxx <- Booklet indicator ->
+			activePlaylistSidemarker: ppt.activePlaylistSidemarker, // Regorxxx <- Highlight active playlist ->
+			activePlaylist: ppt.highLightActivePlaylist, // Regorxxx <- Highlight active playlist ->
 			row: ppt.highLightRow,
-			text: ppt.highLightText,
-			activePlaylistSidemarker: ppt.activePlaylistIndicator, // Regorxxx <- Highlight active playlist ->
-			activePlaylist: ppt.highLightActivePlaylist // Regorxxx <- Highlight active playlist ->
+			text: ppt.highLightText
 		};
 		this.iconVerticalPad = ppt.iconVerticalPad;
 		this.nodeCounts = panel.imgView && img.getOverlay(ppt.itemOverlayType).isCount ? 1 : ppt.nodeCounts; // Regorxxx <- Fix track overlay on imgs | New overlay styles ->
@@ -4171,6 +4234,34 @@ class Populate {
 			}
 		}
 		return false;
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- Booklet indicator
+	canShowBooklet(item, level) {
+		return (this.rootNode ? level !== 0 : level !== 1) && level === item.level || panel.folderView && this.hasChildTracks(item);
+	}
+
+	hasChildTracks(item) {
+		return item.child.some((c) => c.track);
+	}
+
+	getBookletFiles(item, mask = ppt.bookletIndicatorFileMask || '') {
+		const handle = panel.list[this.getFirstFromRange(item.item)];
+		const handlePath = handle.Path;
+		const root = utils.SplitFilePath(handle.Path)[0];
+		const files = getFiles(root, new Set(['.pdf']), mask, 3);
+		return { root, handlePath, files, count: files.length };
+	}
+
+	getBookletLevel() {
+		return panel.folderView
+			? -1
+			: panel.getBranchTf().split('|').findIndex((s) => s.toUpperCase().includes('%ALBUM%')) + (this.rootNode ? 1 : 0);
+	}
+
+	hasBooklet(item) {
+		return this.getBookletFiles(item).count !== 0;
 	}
 	// Regorxxx ->
 }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 13/10/26 -->
+﻿<!DOCTYPE html> <!-- 15/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1146,7 +1146,7 @@
 					<div id="lines"></div>
 				</div>
 
-				<!-- Regorxxx New Statistics. Adjust column width -->
+				<!-- Regorxxx Now playing options | Booklet indicator -->
 				<div class="column29">
 					<div class="div_text2">Show</div>
 					<div id="show"></div>
@@ -1155,6 +1155,22 @@
 					<div id="customNowPlaying"></div>
 					<div class="div_text2">Playlist item (playlists sources)</div>
 					<div id="showPlaylist"></div>
+					<div class="div_text2">Booklet item</div>
+					<div id="showBooklet"></div>
+					<div id="bookletIcon"></div>
+					<div id="bookletFileMask"></div>
+					<div style="padding-right:10%;" class="info4"><i>If empty, matches any pdf file.</i></div>
+					<div class="info3" style="margin:0.5em 0 0;">Booklet icon position:</div>
+					<span class="dropdown"><a id="bookletPos_dropdown" class="dropbtn" href="#" onclick="return toggle('bookletPos');"></a>
+						<span id="bookletPos" class="dropdown-content"></span>
+					</span>
+					<br>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="booklet_help" onclick="showHelp('booklet_text');return false;">Booklet help</button></div>
+					<div id="booklet_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">Handling of booklet files:<br>&#x2022; Checks if any '.pdf' file exists at Album's folder.<br>&#x2022; File must be at the same/lower level than tracks.<br>&emsp;&#x25E6; Multi-CD subfolders are not supported.<br>&emsp;&#x25E6; Put booklet files on every CD folder.<br>&#x2022; Target folder along its subfolders are checked.<br>&emsp;&#x25E6; Subfolders are checked up to 3 levels.<br>&emsp;&#x25E6; Only downward direction is supported.<br>&#x2022; Context menu allows to open found files.<br>&#x2022; File mask can be set to look for specific files:<br>&emsp;&#x25E6; Empty matches all.<br>&emsp;&#x25E6; Only filename can be set, extension is '.pdf'.<br>&emsp;&#x25E6; Wildcards can be used: '*booklet*.*'<br>&emsp;&#x25E6; 'booklet.*' or 'booklet.pdf' are equivalent.<br><br><b><u>View TF:</b></u><br>&#x2022; Checks for %ALBUM% tag on view.<br>&#x2022; If not found, feature is disabled.<br>&#x2022; If there are multiple matches, first one is used.<br>&#x2022; Note tree levels are defined by splitters ('|').<br>&#x2022; Only applies icon/highlighting at such level.<br>&#x2022; Expect some performance impact on views showing albums at first level, not relevant in any other case: <br>&emsp;&#x25E6; Problematic: %ALBUM%|%TITLE%...<br>&emsp;&#x25E6; OK: %ARTIST%|%ALBUM%|%TRACK%...<br><br><b><u>View by Folder structure:</b></u><br>&#x2022; Only works on folders containing tracks.<br>&#x2022; It does not check for tracks at nested folders.<br>&#x2022; Requires expanding a level for checking.<br>&#x2022; Performance impact is usually negligible.
+						</div>
+						<div><br></div>
+					</div>
 				</div>
 
 				<!-- Regorxxx New Statistics. Adjust column width -->
@@ -1483,12 +1499,11 @@
 				var len = t.length >>> 0;
 				if (typeof fun !== 'function') { throw new TypeError('fun is not a function'); }
 				var res = [];
-				var thisp = arguments[1];
+				var thisp = arguments.length > 1 ? arguments[1] : void (0);
 				for (var i = 0; i < len; i++) {
 					if (i in t) {
 						var val = t[i]; // in case fun mutates this
-						if (fun.call(thisp, val, i, t))
-							res.push(val);
+						if (fun.call(thisp, val, i, t)) { res.push(val); }
 					}
 				}
 				return res;
@@ -1520,6 +1535,77 @@
 			Array.isArray = function (obj) {
 				return Object.prototype.toString.call(obj) === '[object Array]';
 			}
+		}
+		// Production steps of ECMA-262, Edition 6, 22.1.2.1
+		if (!('from' in Array)) {
+			Array.from = (function () {
+				var toStr = Object.prototype.toString;
+				var isCallable = function (fn) {
+					return typeof fn === 'function' || toStr.call(fn) === '[object Function]';
+				};
+				var toInteger = function (value) {
+					var number = Number(value);
+					if (isNaN(number)) { return 0; }
+					if (number === 0 || !isFinite(number)) { return number; }
+					return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
+				};
+				var maxSafeInteger = Math.pow(2, 53) - 1;
+				var toLength = function (value) {
+					var len = toInteger(value);
+					return Math.min(Math.max(len, 0), maxSafeInteger);
+				};
+				return function from(arrayLike/*, mapFn, thisArg */) {
+					var C = this;
+					var items = Object(arrayLike);
+					if (arrayLike == null) {
+						throw new TypeError('Array.from requires an array-like object - not null or undefined');
+					}
+					var mapFn = arguments.length > 1 ? arguments[1] : void undefined;
+					var T;
+					if (typeof mapFn !== 'undefined') {
+						if (!isCallable(mapFn)) {
+							throw new TypeError('Array.from: when provided, the second argument must be a function');
+						}
+						if (arguments.length > 2) {
+							T = arguments[2];
+						}
+					}
+					var len = toLength(items.length);
+					var A = isCallable(C) ? Object(new C(len)) : new Array(len);
+					var k = 0;
+					var kValue;
+					while (k < len) {
+						kValue = items[k];
+						if (mapFn) {
+							A[k] = typeof T === 'undefined' ? mapFn(kValue, k) : mapFn.call(T, kValue, k);
+						} else {
+							A[k] = kValue;
+						}
+						k += 1;
+					}
+					A.length = len;
+					return A;
+				};
+			}());
+		}
+		if (!('map' in Array.prototype)) {
+			Array.prototype.map = function (callbackfn) {
+				if (typeof callbackfn !== 'function' && toStr.call(fn) !== '[object Function]') { throw new TypeError('Array.prototype.map callback must be a function'); }
+				var O = Object(this);
+				var self = typeof O === 'string' ? O.split('') : O;
+				var len = self.length >>> 0;
+				var thisp = arguments.length > 1 ? arguments[1] : void (0);
+				var res = Array.from(O);
+				var k = 0;
+				while (k < len) {
+					if (k in O) {
+						var val = O[k];
+						res[k] = callbackfn.call(thisp, val, k, O);
+					}
+					k += 1;
+				}
+				return res;
+			};
 		}
 		if (!('trunc' in Math)) {
 			Math.trunc = function (v) {
@@ -1968,7 +2054,7 @@
 					: ['Select', 'Send to playlist'];
 			// Regorxxx ->
 			// Regorxxx <- Code cleanup | Highlight active playlist
-			var colourLabelsRGB = ['Text', 'Text highlight', 'Text selection', 'Now playing text / sidemarker highlight', 'Active Playlist sidemarker highlight', 'Text search', 'Buttons'];
+			var colourLabelsRGB = ['Text', 'Text highlight', 'Text selection', 'Now playing text / sidemarker highlight', 'Active Playlist text / sidemarker highlight', 'Booklet text / sidemarker highlight', 'Text search', 'Buttons'];
 			var colourLabelsRGBA = ['Background', 'Background accent', 'Background selection', 'Frame hover', 'Frame selection', 'Counts & statistics', 'Node collapse', 'Node expand', 'Node hover', 'Node lines', 'Separators', 'Side marker', 'Transparent fill', 'Art Track Count Text', 'Art Track Count Overlay'];
 			// Regorxxx ->
 			var coverFormatLabels = ['Cover auto-fill', 'Cover opacity (%)'];
@@ -2010,9 +2096,14 @@
 			var searchLabels = ['Search only', 'Send results to playlist on enter', 'Auto-send results to playlist', 'Require enter to search', 'Auto-refresh when using $selected{}, ...'];
 			var showLabels = ['Row stripes', 'Album art options (context menu)', 'Album art options (settings)', 'Facet view', 'Tracks (tree)']; // Regorxxx <- Art options at context menu / settings ->
 			var showPlaylistLabels = ['Active pls. in highlight', 'Active pls. sidemarker (tree / text)']; // Regorxxx <- Highlight active playlist ->
-			// Regorxxx <- Now playing options ->
+			// Regorxxx <- Now playing options
 			var showNowPlayingLabels = ['Now playing in highlight', 'Now playing sidemarker (tree / text)', 'Now playing indicator (tree / text)'];
 			var customNowPlayingLabels = ['Now playing icon', 'Now playing (paused) icon'];
+			// Regorxxx ->
+			// Regorxxx <- Booklet indicator
+			var showBookletLabels = ['Booklet in highlight', 'Booklet sidemarker (tree / text)', 'Booklet indicator (tree / text)'];
+			var bookletIconLabels = ['Booklet icon', 'Booklet file mask'];
+			var bookletPosLabels = ['Left', 'Right', 'Left (if no other icon shown)'];
 			// Regorxxx ->
 			// Regorxxx <- New statistics
 			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips'];
@@ -2072,8 +2163,8 @@
 				// Regorxxx <- New statistics
 				// Regorxxx <- Configurable now playing icon | Configurable now playing (paused)
 				display: {
-					name: ['covAlpha', 'nowPlayingIndicatorIcon', 'nowPlayingIndicatorPauseIcon', 'margin', 'treeIndent', 'verticalPad', 'verticalAlbumArtPad', 'marginTopBottom', 'sideMarkerWidth'],
-					type: ['float', 'text', 'text', 'int', 'int', 'int', 'int', 'int', 'int']
+					name: ['covAlpha', 'nowPlayingIndicatorIcon', 'nowPlayingIndicatorPauseIcon', 'bookletIndicatorIcon', 'bookletIndicatorFileMask', 'margin', 'treeIndent', 'verticalPad', 'verticalAlbumArtPad', 'marginTopBottom', 'sideMarkerWidth'],
+					type: ['float', 'text', 'text', 'text', 'text', 'int', 'int', 'int', 'int', 'int', 'int']
 				},
 				// Regorxxx ->
 				statistics: {
@@ -2087,10 +2178,10 @@
 					type: ['int', 'int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
-				// Regorxxx <- Tooltip font | Custom album art overlay track count | Highlight active playlist
+				// Regorxxx <- Tooltip font | Custom album art overlay track count | Highlight active playlist | Booklet icon
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'apls', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'apls', 'booklet', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Sorting transliteration | Preserve tree sorting at selection | Performance improvements
@@ -2101,22 +2192,23 @@
 				// Regorxxx ->
 				all: {}
 			}
-			// Regorxxx <- Drag n' drop to search box | New statistics
-			input.all.name = input.behaviour.name.concat(input.search.name, input.display.name, input.statistics.name, input.albumArt.name, input.custom.name, input.advanced.name);
-			input.all.type = input.behaviour.type.concat(input.search.type, input.display.type, input.statistics.type, input.albumArt.type, input.custom.type, input.advanced.type);
+			// Regorxxx <- Drag n' drop to search box | New statistics | Code cleanup
+			input.all.name = Object.values(input).map(function (v) { return v.name; }).flat(Infinity);
+			input.all.type =  Object.values(input).map(function (v) { return v.type; }).flat(Infinity)
+			// Regorxxx ->
 			// Regorxxx <- Better debug
 			if (input.all.name.length !== input.all.type.length) { throw new Error('Input names length (' + input.all.name.length + ') does not match type length (' + input.all.type.length + ')'); }
 			// Regorxxx ->
-			// Regorxxx ->
+
 			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
 				behaviour: ['plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources ->
 				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
-				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'facetView', 'showTracks', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistIndicator', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options ->
+				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'facetView', 'showTracks', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistSidemarker', 'highLightBooklet', 'bookletSidemarker', 'bookletIndicator', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options | Booklet icon ->
 				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'albumArtNodeCollage', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', ppt['drawMode_internal'].value === 1 ? 'imgFrontPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1Perspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2Perspective' : null, 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered | Branch collage art ->
-				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist ->
+				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'bookletUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'logArtCustomTf', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'streamSupport', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
 			box.all = Object.values(box).flat(Infinity); // Regorxxx <- New search tab | New TF remap tab | New statistics tab | Code cleanup ->
@@ -2591,6 +2683,7 @@
 				window.viewSorting.style.display = 'none';
 			}
 			// Regorxxx ->
+
 			// Regorxxx <- Auto-DJ feature
 			function setAutoDjTrackPicking(n) {
 				window.autodjPick_dropdown.innerHTML = autodjLabels[n];
@@ -2600,6 +2693,14 @@
 			var autoDjTrackPickingValues = ['random', 'match', 'match-genre', 'match-mood'];
 			function getAutoDjTrackPickingIdx(value) { return autoDjTrackPickingValues.indexOf(value.toLowerCase() || 'random'); }
 			function getAutoDjTrackPickingValue(idx) { return autoDjTrackPickingValues[idx]; }
+			// Regorxxx ->
+
+			// Regorxxx <- Booklet icon
+			function setBookletPos(n) {
+				window.bookletPos_dropdown.innerHTML = bookletPosLabels[n];
+				ppt['bookletIndicatorPos_internal'].value = n;
+				window.bookletPos.style.display = 'none';
+			}
 			// Regorxxx ->
 
 			// Regorxxx <- Code cleanup | Custom TF art | New img styles | Effect per art type
@@ -3259,11 +3360,18 @@
 				// Regorxxx ->
 				for (i = 4; i < 7; i++) { window.showH2.insertAdjacentHTML('beforeend', '<div><input id="showH2_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showH2_checkbox' + i + '" class="checkbox_label">' + highLightLabels[i] + '</label></div>'); }
 				for (i = 0; i < showLabels.length; i++) { window.show.insertAdjacentHTML('beforeend', '<div><input id="show_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="show_checkbox' + i + '" class="checkbox_label">' + showLabels[i] + '</label></div>'); }
-				// Regorxxx <- Now playing options ->
+				// Regorxxx <- Now playing options
 				for (i = 0; i < showNowPlayingLabels.length; i++) { window.showNowPlaying.insertAdjacentHTML('beforeend', '<div><input id="showNowPlaying_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showNowPlaying_checkbox' + i + '" class="checkbox_label">' + showNowPlayingLabels[i] + '</label></div>'); }
-				for (i = 0; i < customNowPlayingLabels.length; i++)  { window.customNowPlaying.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="customNowPlaying_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="customNowPlaying_container' + i + '" class="inp_label2">' + customNowPlayingLabels[i] + '</label></div>') };
+				for (i = 0; i < customNowPlayingLabels.length; i++) { window.customNowPlaying.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="customNowPlaying_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="customNowPlaying_container' + i + '" class="inp_label2">' + customNowPlayingLabels[i] + '</label></div>') };
 				// Regorxxx ->
 				for (i = 0; i < showPlaylistLabels.length; i++) { window.showPlaylist.insertAdjacentHTML('beforeend', '<div><input id="showPlaylist_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showPlaylist_checkbox' + i + '" class="checkbox_label">' + showPlaylistLabels[i] + '</label></div>'); } // Regorxxx <- Highlight active playlist ->
+				// Regorxxx <- Booklet icon
+				for (i = 0; i < showBookletLabels.length; i++) { window.showBooklet.insertAdjacentHTML('beforeend', '<div><input id="showBooklet_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="showBooklet_checkbox' + i + '" class="checkbox_label">' + showBookletLabels[i] + '</label></div>'); }
+				i = 0; window.bookletIcon.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="bookletIcon_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="bookletIcon_container' + i + '" class="inp_label2">' + bookletIconLabels[i] + '</label></div>');
+				i = 1; window.bookletFileMask.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="bookletIcon_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input35" /><label for="bookletIcon_container' + i + '" class="inp_label2">' + bookletIconLabels[i] + '</label></div>');
+				window.bookletPos_dropdown.innerHTML = bookletPosLabels[ppt['bookletIndicatorPos_internal'].value];
+				for (i = 0; i < bookletPosLabels.length; i++) { window.bookletPos.insertAdjacentHTML('beforeend', '<a onclick="setBookletPos(' + i + ');">' + bookletPosLabels[i] + '</a>'); }
+				// Regorxxx ->
 			}
 
 			function setStatistcs() {
@@ -3390,7 +3498,7 @@
 			var fg = [];
 			// Regorxxx <- Code cleanup
 			function setCustomColours(value) {
-				var itemsRGB = ['text', 'text_h', 'textSel', 'nowp', 'apls', 'search', 'txt_box']; // Regorxxx <- Highlight active playlist ->
+				var itemsRGB = ['text', 'text_h', 'textSel', 'nowp', 'apls', 'booklet', 'search', 'txt_box']; // Regorxxx <- Highlight active playlist ->
 				var itemsRGBA = ['bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count ->v
 				var i = 0;
 				var j = 0;
@@ -3491,7 +3599,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3550,6 +3658,8 @@
 			window.search_checkbox4.parentNode.disabled = window.search_checkbox3.checked;
 			// Regorxxx ->
 			window.customNowPlaying_container0.parentNode.disabled = window.customNowPlaying_container1.parentNode.disabled = !ppt['nowPlayingIndicator_internal'].value; // Regorxxx <- Now playing options ->
+			window.bookletIcon_container0.parentNode.disabled = !ppt['bookletIndicator_internal'].value; // Regorxxx <- Booklet icon ->
+			window.bookletIcon_container1.parentNode.disabled = !ppt['bookletIndicator_internal'].value && !ppt['highLightBooklet_internal'].value && !ppt['bookletSidemarker_internal'].value; // Regorxxx <- Booklet icon ->
 			window.theme_checkbox7.parentNode.disabled = ppt['theme_internal'].value == 1 || ppt['theme_internal'].value == 4;
 			window.coverFormat_checkbox0.parentNode.disabled = ppt['theme_internal'].value != 5;
 			window.coverFormat_container1.parentNode.disabled = ppt['theme_internal'].value != 5;
@@ -4002,6 +4112,8 @@
 
 			window.coverFormat_container1.parentNode.disabled = ppt['theme_internal'].value != 5;
 			window.customNowPlaying_container0.parentNode.disabled = window.customNowPlaying_container1.parentNode.disabled = !ppt['nowPlayingIndicator_internal'].value; // Regorxxx <- Now playing options ->
+			window.bookletIcon_container0.parentNode.disabled = !ppt['bookletIndicator_internal'].value; // Regorxxx <- Booklet icon ->
+			window.bookletIcon_container1.parentNode.disabled = !ppt['bookletIndicator_internal'].value && !ppt['highLightBooklet_internal'].value && !ppt['bookletSidemarker_internal'].value; // Regorxxx <- Booklet icon ->
 		}
 
 		window.btn_resetPage.onclick = function () {
@@ -4066,6 +4178,7 @@
 				setRoot(ppt['rootNode_internal'].default_value);
 				setNode(ppt['nodeStyle_internal'].default_value);
 				setHoverBg(ppt['highLightRow_internal'].default_value);
+				setBookletPos(ppt['bookletIndicatorPos_internal'].default_value);
 			}
 			// Regorxxx ->
 			// Regorxxx <- New statistics tab.
@@ -4252,7 +4365,8 @@
 			['showHl_dropdown', 'showHl'],
 			['theme_dropdown', 'themeBg'],
 			['thumbSize_dropdown', 'thumbSize'],
-			['autodjPick_dropdown', 'autodjPick'] // Regorxxx <- Auto-DJ feature ->
+			['autodjPick_dropdown', 'autodjPick'], // Regorxxx <- Auto-DJ feature ->
+			['bookletPos_dropdown', 'bookletPos'] // Regorxxx <- Booklet Icon ->
 		];
 
 		function hide() {

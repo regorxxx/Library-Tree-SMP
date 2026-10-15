@@ -1,11 +1,10 @@
 ﻿'use strict';
-//13/10/26
+//15/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
-/* global _isFile:readable, _isFolder:readable */
-/* global _explorer:readable */
+/* global _isFile:readable, _isFolder:readable, _explorer:readable, _run:readable */
 /* global isArrayEqual:readable, _p:readable, _b:readable */
 /* global createAutoPlaylistPresets:readable */
 /* global Input:readable */
@@ -385,6 +384,35 @@ class MenuItems {
 				flags: !i || i == 1 && this.expandable ? MF_STRING : MF_GRAYED,
 				separator: i == 1 && this.show_context && (!ppt.settingsShow && !ppt.searchShow && !ppt.filterShow || this.shift)
 			}));
+		}
+
+		if (this.validItem && pop.highlight.bookletShow) {
+			menu.newItem({ separator: true });
+			const hasBooklet = pop.tree[this.ix].booklet;
+			const subMenuName = 'Booklet file(s)' + (hasBooklet ? '' : '\t[-N/A-]');
+			menu.newMenu({ menuName: subMenuName, appendTo: 'baseMenu', flags: hasBooklet ? MF_STRING : MF_GRAYED });
+			menu.newItem({ menuName: subMenuName, str: 'PDF files found:', flags: MF_GRAYED });
+			menu.newItem({ menuName: subMenuName, separator: true });
+			if (hasBooklet) {
+				const booklet = pop.getBookletFiles(pop.tree[this.ix]);
+				if (booklet.count) {
+					booklet.files.forEach((path) => {
+						menu.newItem({
+							menuName: subMenuName,
+							str: utils.SplitFilePath(path)[1],
+							func: () => _run(path)
+						});
+					});
+					menu.newItem({ menuName: subMenuName, separator: true });
+					menu.newItem({
+						menuName: subMenuName,
+						str: 'Open root folder',
+						func: () => _explorer(booklet.root)
+					});
+				} else {
+					menu.newItem({ menuName: subMenuName, str: '-N/A-', flags: MF_GRAYED });
+				}
+			}
 		}
 
 		// Regorxxx <- Basic playlist manager

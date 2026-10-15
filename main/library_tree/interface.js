@@ -1,5 +1,5 @@
 ﻿'use strict';
-//10/10/26
+//15/10/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -150,7 +150,7 @@ class UserInterface {
 
 	// Regorxxx <- Code cleanup
 	assignColours() {
-		const propRGB = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'apls']; // Regorxxx <- Highlight active playlist ->
+		const propRGB = ['text', 'text_h', 'textSel', 'nowp', 'search', 'txt_box', 'apls', 'booklet']; // Regorxxx <- Highlight active playlist | Booklet icon->
 		const propRGBA = ['bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount']; // Regorxxx <- Custom album art overlay track count/year ->
 		this.col.txt = '';
 		this.col.txt_h = '';
@@ -655,6 +655,9 @@ class UserInterface {
 		if (this.col.nowp === '') this.col.nowp = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 255) : $.RGB(128, 228, 27) : this.col.text_h;
 		// Regorxxx <- Highlight active playlist
 		if (this.col.apls === '') { this.col.apls = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 220) : $.RGB(128, 238, 47) : this.col.text_h; }
+		// Regorxxx ->
+		// Regorxxx <- Booklet icon
+		if (this.col.booklet === '') { this.col.booklet = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 220) : $.RGB(128, 238, 47) : this.col.text_h; }
 		// Regorxxx ->
 
 		if (this.col.bg_h === '') {
