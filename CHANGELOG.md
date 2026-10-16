@@ -31,6 +31,7 @@
 - UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
 - UI: mouse actions at 'Behaviour' tab (HTML options panel) now reflect when an action is forced by mode or source being used.
+- UI: art overlay colors settings will be lost after update due to a properties rename. i.e. 'Custom Colour Art Track Count Overlay' -> 'Custom Colour Art Overlay'
 - HTML: cleanup of 'Display' tab, with some options moved to its own sub-section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Helpers: updated helpers.

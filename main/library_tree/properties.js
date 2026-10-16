@@ -160,8 +160,8 @@ let properties = [
 	// Regorxxx <- Custom album art overlay track count/year
 	['Custom Colour Art Track Count Text', '255,255,255', 'textTrackCount'],
 	['Custom Colour Art Track Count Text Use', false, 'textTrackCountUse'],
-	['Custom Colour Art Track Count Overlay', '0,0,0,0.45', 'bgTrackCount'],
-	['Custom Colour Art Track Count Overlay Use', false, 'bgTrackCountUse'],
+	['Custom Colour Art Overlay', '0,0,0,0.45', 'bgTrackCount'],
+	['Custom Colour Art Overlay Use', false, 'bgTrackCountUse'],
 	// Regorxxx ->
 
 	['Custom Font', 'Segoe UI,16,0', 'custFont'],
