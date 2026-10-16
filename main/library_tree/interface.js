@@ -535,35 +535,41 @@ class UserInterface {
 
 		this.font.label = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 11 / 14) : this.font.main.Size, this.font.main.Style);
 		this.font.small = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 12 / 14) : this.font.main.Size, this.font.main.Style);
-		this.font.tracks = gdi.Font('Arial', Math.round(this.font.main.Size * 12 / 14), 2);
 		this.sz.sideMarker = ppt.sideMarkerWidth ? Math.max(ppt.sideMarkerWidth, 1) : 4 * this.l.w;
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
 
 		if (ppt.custAlbumArtGrpFontUse && ppt.custAlbumArtGrpFont.length) {
 			const custFont = $.split(ppt.custAlbumArtGrpFont, 1);
 			this.font.group = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0); // Regorxxx <- Change default font styles ->
+		} else {this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0);} // Regorxxx <- Change default font styles ->
 
 		if (ppt.custAlbumArtLotFontUse && ppt.custAlbumArtLotFont.length) {
 			const custFont = $.split(ppt.custAlbumArtLotFont, 1);
 			this.font.lot = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else this.font.lot = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);
+		} else {this.font.lot = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);}
 
 		if (ppt.custAlbumArtDurFontUse && ppt.custAlbumArtDurFont.length) {
 			const custFont = $.split(ppt.custAlbumArtDurFont, 1);
 			this.font.statistics = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else this.font.statistics = gdi.Font('Segoe UI', this.font.main.Size, 2); // Regorxxx <- Change default font styles ->
+		} else { this.font.statistics = gdi.Font('Segoe UI', this.font.main.Size, 2); } // Regorxxx <- Change default font styles ->
 
 		// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 		if (ppt.custTooltipFontUse && ppt.custTooltipFont.length) {
 			const custFont = $.split(ppt.custTooltipFont, 1);
 			this.font.mainTooltip = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else this.font.mainTooltip = gdi.Font(this.font.main.Name, this.font.main.Size, this.font.main.Style);
+		} else { this.font.mainTooltip = gdi.Font(this.font.main.Name, this.font.main.Size, this.font.main.Style); }
 
 		if (ppt.custAlbumArtTooltipFontUse && ppt.custAlbumArtTooltipFont.length) {
 			const custFont = $.split(ppt.custAlbumArtTooltipFont, 1);
 			this.font.groupTooltip = gdi.Font(custFont[0], this.font.group.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0);
+		} else {this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0);}
+		// Regorxxx ->
+
+		// Regorxxx <- Custom art overlay font
+		if (ppt.custAlbumArtOverlayFontUse && ppt.custAlbumArtOverlayFont.length) {
+			const custFont = $.split(ppt.custAlbumArtOverlayFont, 1);
+			this.font.tracks = gdi.Font(custFont[0], Math.round(this.font.main.Size * 12 / 14), Math.round($.value(custFont[1], 2, 0)));
+		} else { this.font.tracks = gdi.Font('Arial', Math.round(this.font.main.Size * 12 / 14), 2); }
 		// Regorxxx ->
 
 		if (init) return;
@@ -1133,7 +1139,7 @@ class UserInterface {
 		this.font.find = gdi.Font(fnm, this.font.zoomSize * 1.5, 1);
 		this.font.label = gdi.Font(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 11 / 14) : this.font.zoomSize, fst);
 		this.font.small = gdi.Font(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 12 / 14) : this.font.zoomSize, fst);
-		this.font.tracks = gdi.Font('Arial', Math.round(this.font.zoomSize * 12 / 14), 2);
+		this.font.tracks = gdi.Font(this.font.tracks.Name, Math.round(this.font.zoomSize * 12 / 14), this.font.tracks.Style); // Regorxxx <- Custom art overlay font ->
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
 		this.font.group = gdi.Font(this.font.group.Name, this.font.zoomSize, this.font.group.Style);
 		this.font.lot = gdi.Font(this.font.lot.Name, this.font.zoomSize, this.font.lot.Style);

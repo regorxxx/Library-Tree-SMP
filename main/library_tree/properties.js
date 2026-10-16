@@ -168,11 +168,13 @@ let properties = [
 	['Custom Font Album Art Line 1', 'Segoe UI,0', 'custAlbumArtGrpFont'], // Regorxxx <- Change default font styles ->
 	['Custom Font Album Art Line 2', 'Segoe UI Semibold,0', 'custAlbumArtLotFont'],
 	['Custom Font Album Art Line 3', 'Segoe UI,2', 'custAlbumArtDurFont'], // Regorxxx <- Change default font styles ->
+	['Custom Font Album Art Overlay', 'Arial,2', 'custAlbumArtOverlayFont'], // Regorxxx <- Custom art overlay font ->
 
 	['Custom Font Use', false, 'custFontUse'],
 	['Custom Font Album Art Line 1 Use', false, 'custAlbumArtGrpFontUse'],
 	['Custom Font Album Art Line 2 Use', false, 'custAlbumArtLotFontUse'],
 	['Custom Font Album Art Line 3 Use', false, 'custAlbumArtDurFontUse'],
+	['Custom Font Album Art Overlay Use', false, 'custAlbumArtOverlayFontUse'], // Regorxxx <- Custom art overlay font ->
 
 	// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 	['Custom Font Tooltip', 'Segoe UI,0', 'custTooltipFont'],
