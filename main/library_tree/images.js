@@ -783,6 +783,7 @@ class Images {
 		this.column = 0;
 		const style = this.getStyle(this.style.image);
 		const art = this.getArt(ppt.artId);
+		/**  * @type {{i: i, column: number, item: object, selIdx, bHover: boolean, bSel: boolean, bBooklet: boolean, bNowPlaying: boolean, bActivePls: boolean}[][]}  */
 		const stack = [[], [], []];
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 		const plsBranch = panel.isBranchedPlaylistSource(); // Regorxxx <- Highlight active playlist ->
@@ -906,8 +907,7 @@ class Images {
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott');
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
-							}
-							else {
+							} else {
 								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
@@ -2039,9 +2039,11 @@ class Images {
 							this.get_album_art_async(null, art, key, v.ix);
 						}
 					}
+					if (j % 5 === 0) { panel.treePaint(); } // Regorxxx <- Intermediate repaints to ensure jumping to focus is smoother on flow mode ->
 				} else {
 					clearInterval(this.timer.load);
 					this.timer.load = null;
+					panel.treePaint(); // Regorxxx <- Intermediate repaints to ensure jumping to focus is smoother on flow mode ->
 				}
 			};
 		})();
@@ -2287,7 +2289,7 @@ class Images {
 					if (!v[overlay.itemKey]) { v[overlay.itemKey] = ''; }
 					switch (bookletPos) {
 						case 2:
-						case 0: v[overlay.itemKey] = bookletIcon + ' ' + v[overlay.itemKey];  break;
+						case 0: v[overlay.itemKey] = bookletIcon + ' ' + v[overlay.itemKey]; break;
 						case 1: v[overlay.itemKey] += ' ' + bookletIcon; break;
 					}
 					v[overlay.itemKey] = v[overlay.itemKey].trim();
