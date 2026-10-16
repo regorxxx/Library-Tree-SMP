@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/10/26
+//16/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -319,7 +319,7 @@ class Images {
 	}
 
 	async get_album_art_async(handle, art, key, ix, bSave = true) {
-		if (ppt.logLibProfiler) {
+		if (ppt.logArtProfiler) {
 			this.createArtProfiler();
 			this.artProfiler.CheckPoint('get_album_art_async');
 		} else { this.clearArtProfiler(); }
@@ -335,9 +335,9 @@ class Images {
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
-			if (ppt.logLibProfiler) { this.artProfiler.CheckPoint('getFiles'); }
+			if (ppt.logArtProfiler) { this.artProfiler.CheckPoint('getFiles'); }
 			const files = getFiles(path, new Set(imgAllowedExt)); // Pass the pattern as is to avoid performance impact
-			if (ppt.logLibProfiler) { this.artProfiler.CheckPointStep('getFiles'); }
+			if (ppt.logArtProfiler) { this.artProfiler.CheckPointStep('getFiles'); }
 			if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + files.length + ' files)'); } // Regorxxx <- Art logging ->
 			if (files[0] && _isFile(files[0])) {
 				result.path = files[0];
@@ -356,7 +356,7 @@ class Images {
 			result.bSave = false;
 		}
 		this.cacheAlbumArt(result);
-		if (ppt.logLibProfiler) {
+		if (ppt.logArtProfiler) {
 			this.artProfiler.CheckPointStep('get_album_art_async');
 			this.printArtProfiler();
 		}
@@ -426,7 +426,7 @@ class Images {
 	}
 
 	async load_image_async(key, image_path, ix, rawCache) {
-		if (ppt.logLibProfiler) {
+		if (ppt.logArtProfiler) {
 			this.createArtProfiler();
 			this.artProfiler.CheckPoint('load_image_async');
 		} else { this.clearArtProfiler(); }
@@ -442,7 +442,7 @@ class Images {
 			if (rawCache) { this.cacheItPreLoad(result.image, key, ix); }
 			else { this.cacheIt(result.image, key, ix); }
 		}
-		if (ppt.logLibProfiler) {
+		if (ppt.logArtProfiler) {
 			this.artProfiler.CheckPointStep('load_image_async');
 			this.printArtProfiler();
 		}
@@ -2341,7 +2341,7 @@ class Images {
 		}
 
 		if (ppt.rootNode) {
-			if (!this.groupField) this.groupField = 'Item';
+			if (!this.groupField) { this.groupField = 'Item'; }
 			const plurals = this.groupField.split(' ').map(v => pluralize(v));
 			const pluralField = plurals.join(' ').replace(/(album|artist|top|track)s\s/gi, '$1 ').replace(/(similar artist)\s/gi, '$1s ').replace(/years - albums/gi, 'Year - Albums');
 			pop.tree[0].key = pop.tree[0].name;
