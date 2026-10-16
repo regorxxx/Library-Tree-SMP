@@ -2200,8 +2200,10 @@ class Images {
 		pop.tree.forEach((v, i) => {
 			// Regorxxx <- Track preference art
 			const arr = pop.tree[i].name.split('^@^');
-			v.grp = (panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1]) || ''; // Regorxxx <- Fix undefined values ->
-			v.lot = (panel.lines == 2 ? (ppt.albumArtFlipLabels ? arr[0] : arr[1]) : '') || ''; // Regorxxx <- Fix undefined values ->
+			// Regorxxx <- Fix undefined values for views without all info or root nodes + Show index on scrolling
+			v.grp = (panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1]) || '';
+			v.lot = (panel.lines == 2 ? (ppt.albumArtFlipLabels ? arr[0] : arr[1]) : '') || '';
+			// Regorxxx ->
 			let handle;
 			let handleCut = -1;
 			switch (ppt.albumArtPreferHandle) {
