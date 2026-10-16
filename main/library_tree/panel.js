@@ -1808,6 +1808,7 @@ class Panel {
 				// Regorxxx <- Booklet indicator
 				ppt.highLightBookletLast = ppt.highLightBooklet;
 				ppt.bookletIndicatorLast = ppt.bookletIndicator;
+				ppt.bookletIndicatorOverlayLast = ppt.bookletIndicatorOverlay;
 				ppt.bookletSidemarkerLast = ppt.bookletSidemarker;
 				// Regorxxx ->
 				ppt.itemShowStatistics = 7;
@@ -1821,6 +1822,7 @@ class Panel {
 				// Regorxxx <- Booklet indicator
 				ppt.highLightBooklet = false;
 				ppt.bookletIndicator = false;
+				ppt.bookletIndicatorOverlay = false;
 				ppt.bookletSidemarker = false;
 				// Regorxxx ->
 			} else {
@@ -1835,6 +1837,7 @@ class Panel {
 				// Regorxxx <- Booklet indicator
 				ppt.highLightBooklet = ppt.highLightBookletLast;
 				ppt.bookletIndicator = ppt.bookletIndicatorLast;
+				ppt.bookletIndicatorOverlay = ppt.bookletIndicatorOverlayLast;
 				ppt.bookletSidemarker = ppt.bookletSidemarkerLast;
 				// Regorxxx ->
 			}

@@ -776,7 +776,7 @@ class Images {
 	// Regorxxx ->
 
 	draw(gr) {
-		if (!panel.imgView) return;
+		if (!panel.imgView) { return; }
 		let box_x, box_y;
 		let coords = {};
 		this.getItemsToDraw();
@@ -798,6 +798,7 @@ class Images {
 				selIdx: bSel ? pop.lastSelMul.indexOf(i) : -1,
 				bHover,
 				bSel,
+				bBooklet: item.booklet,
 				bNowPlaying: this.checkNowPlaying(item),
 				bActivePls: plsBranch && panel.lines !== 2 && this.checkActivePlaylist(item, plsBranch), // Regorxxx <- Highlight active playlist ->
 			});
@@ -1222,8 +1223,10 @@ class Images {
 		if (this.labels.hide && (!style.fillBg || pop.highlight.row == 3 && ppt.frameImage)) return;
 		let col, x, y, w, h;
 		switch (true) {
-			case (cell.bNowPlaying || cell.bActivePls || cell.bSel) && !(pop.selRect.down && pop.selRect.over.has(cell.i)): // Regorxxx <- Rectangle selection on art view ->
-				col = ui.col.imgBgSel;
+			case (cell.bNowPlaying || cell.bActivePls || cell.bSel || (cell.bBooklet && pop.highlight.booklet)) && !(pop.selRect.down && pop.selRect.over.has(cell.i)): // Regorxxx <- Rectangle selection on art view ->
+				col = cell.bNowPlaying || cell.bActivePls || cell.bSel
+					? ui.col.imgBgSel
+					: ui.col.imgBgBooklet;
 				switch (this.labels.overlay || this.labels.hide) {
 					case true:
 						x = box_x + Math.round((this.box.w - (cur_img ? cur_img.Width : this.im.w)) / 2);
@@ -1926,7 +1929,7 @@ class Images {
 		}
 	}
 
-	// Regorxxx <- Highlight active playlist | Code cleanup
+	// Regorxxx <- Highlight active playlist | Code cleanup | Booklet indicator
 	getGrpCol(item, cell) {
 		return cell.bNowPlaying
 			? ui.col.nowp
@@ -1938,9 +1941,11 @@ class Images {
 						? this.labels.overlayDark
 							? ui.col.text
 							: ui.col.textSel
-						: this.labels.overlayDark
-							? $.RGB(240, 240, 240)
-							: ui.col.text;
+						: cell.bBooklet && pop.highlight.booklet
+							? ui.col.booklet
+							: this.labels.overlayDark
+								? $.RGB(240, 240, 240)
+								: ui.col.text;
 	}
 	// Regorxxx ->
 
@@ -2095,7 +2100,7 @@ class Images {
 		this.albumArtDiskCache ? (preLoad && !ppt.albumArtNodeCollage ? this.preLoad() : this.getImages()) : this.loadThrottle(); // Regorxxx <- Branch collage art ->
 	}
 
-	// Regorxxx <- Highlight active playlist | Code cleanup
+	// Regorxxx <- Highlight active playlist | Code cleanup | Booklet indicator
 	getLotCol(item, cell) {
 		return cell.bNowPlaying
 			? ui.col.nowp
@@ -2107,13 +2112,15 @@ class Images {
 						? this.labels.overlayDark
 							? ui.col.lotBlend
 							: ui.col.selBlend
-						: this.labels.overlayDark
-							? $.RGB(220, 220, 220)
-							: ui.col.lotBlend;
+						: cell.bBooklet && pop.highlight.booklet
+							? ui.col.booklet
+							: this.labels.overlayDark
+								? $.RGB(220, 220, 220)
+								: ui.col.lotBlend;
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Highlight active playlist | Code cleanup | Customizable stats color
+	// Regorxxx <- Highlight active playlist | Code cleanup | Customizable stats color | Booklet indicator
 	getStatsCol(item, cell) {
 		return cell.bNowPlaying
 			? ui.col.nowp
@@ -2125,9 +2132,11 @@ class Images {
 						? this.labels.overlayDark
 							? ui.col.counts ? ui.getBlend(ui.col.lotBlend, ui.col.counts, 0.8) : ui.col.lotBlend
 							: ui.col.counts ? ui.getBlend(ui.col.selBlend, ui.col.counts, 0.8) : ui.col.selBlend
-						: this.labels.overlayDark
-							? ui.col.counts ? ui.getBlend($.RGB(220, 220, 220), ui.col.counts, 0.1) : $.RGB(220, 220, 220)
-							: ui.col.counts || ui.col.lotBlend;
+						: cell.bBooklet && pop.highlight.booklet
+							? ui.col.booklet
+							: this.labels.overlayDark
+								? ui.col.counts ? ui.getBlend($.RGB(220, 220, 220), ui.col.counts, 0.1) : $.RGB(220, 220, 220)
+								: ui.col.counts || ui.col.lotBlend;
 	}
 	// Regorxxx ->
 
@@ -2197,6 +2206,12 @@ class Images {
 		const overlay = this.getOverlay(ppt.itemOverlayType); // Regorxxx <- New overlay styles ->
 		const plsBranch = panel.isBranchedPlaylistSource(); // Regorxxx <- Multiple-playlist flat view ->
 		const albumTF = new FbTitleFormat('%ALBUM%'); // Regorxxx <- Track preference art ->
+		// Regorxxx <- Booklet indicator
+		const bookletLevel = pop.getBookletLevel(true);
+		const bUseBooklet = pop.highlight.bookletShow && (bookletLevel === panel.lines || panel.folderView);
+		const bookletIcon = pop.highlight.bookletIndicatorIcon;
+		const bookletPos = pop.highlight.bookletIndicatorPos;
+		// Regorxxx ->
 		pop.tree.forEach((v, i) => {
 			// Regorxxx <- Track preference art
 			const arr = pop.tree[i].name.split('^@^');
@@ -2247,6 +2262,14 @@ class Images {
 				}
 			}
 			// Regorxxx ->
+			// Regorxxx <- Booklet indicator
+			if (bUseBooklet && !v.bookletChecked) {
+				if (!v.root && !v.track && pop.canShowBooklet(v, bookletLevel, true)) {
+					v.booklet = pop.hasBooklet(v);
+					v.bookletChecked = true;
+				}
+			}
+			// Regorxxx ->
 			v.handle = handle;
 			// Regorxxx <- Multiple-playlist flat view
 			if (handle) {
@@ -2259,6 +2282,15 @@ class Images {
 						if (overlay.tf && !overlay.isCount) { v[overlay.itemKey] = overlay.tf.EvalWithMetadb(handle); }
 						break;
 					}
+				}
+				if (v.booklet && pop.highlight.bookletIndicatorOverlay) {
+					if (!v[overlay.itemKey]) { v[overlay.itemKey] = ''; }
+					switch (bookletPos) {
+						case 2:
+						case 0: v[overlay.itemKey] = bookletIcon + ' ' + v[overlay.itemKey];  break;
+						case 1: v[overlay.itemKey] += ' ' + bookletIcon; break;
+					}
+					v[overlay.itemKey] = v[overlay.itemKey].trim();
 				}
 				// Regorxxx ->
 				if (!this.groupField && !panel.folderView && i % mod === 0) {

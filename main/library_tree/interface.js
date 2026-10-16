@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/26
+//16/10/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -658,6 +658,7 @@ class UserInterface {
 		// Regorxxx ->
 		// Regorxxx <- Booklet icon
 		if (this.col.booklet === '') { this.col.booklet = this.img.blurDark ? ppt.themed && ppt.theme == 9 ? $.RGB(104, 225, 220) : $.RGB(128, 238, 47) : this.col.text_h; }
+		this.col.imgBgBooklet = this.col.booklet & 0x39ffffff;
 		// Regorxxx ->
 
 		if (this.col.bg_h === '') {

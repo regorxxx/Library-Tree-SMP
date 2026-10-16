@@ -437,6 +437,8 @@ let properties = [
 	['Booklet Highlight Last', false, 'highLightBookletlast'],
 	['Booklet Indicator', false, 'bookletIndicator'],
 	['Booklet Indicator Last', false, 'bookletIndicatorLast'],
+	['Booklet Overlay', false, 'bookletIndicatorOverlay'],
+	['Booklet Overlay Last', false, 'bookletIndicatorOverlayLast'],
 	['Booklet Indicator icon', '\u{1F56E}', 'bookletIndicatorIcon'],
 	['Booklet Indicator position', 0, 'bookletIndicatorPos'],
 	['Booklet Indicator file mask', '', 'bookletIndicatorFileMask'],

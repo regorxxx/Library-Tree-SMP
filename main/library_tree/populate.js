@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/26
+//16/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -82,6 +82,7 @@ class Populate {
 			nowPlayingIndicatorIconDiff: false, // Regorxxx <- Configurable now playing (paused) icon ->
 			booklet: false, // Regorxxx <- Booklet indicator ->
 			bookletIndicator: false, // Regorxxx <- Booklet indicator ->
+			bookletIndicatorOverlay: false, // Regorxxx <- Booklet indicator ->
 			bookletShow: false, // Regorxxx <- Booklet indicator ->
 			bookletIndicatorIcon: '', // Regorxxx <- Booklet indicator ->
 			bookletIndicatorPos: 0, // Regorxxx <- Booklet indicator ->
@@ -1199,6 +1200,7 @@ class Populate {
 		const bookletLevel = this.getBookletLevel();
 		const bookletPos = this.highlight.bookletIndicatorPos;
 		const bookletIcon = this.highlight.bookletIndicatorIcon;
+		const bUseBooklet = this.highlight.bookletShow && (bookletLevel !== -1 || panel.folderView);
 		// Regorxxx ->
 		const nowPlayingIcon = fb.IsPaused ? this.highlight.nowPlayingIndicatorPauseIcon : this.highlight.nowPlayingIndicatorIcon; // Regorxxx <- Configurable now playing icon | Configurable now playing (paused) icon ->
 		for (i = b; i < f; i++) {
@@ -1213,7 +1215,7 @@ class Populate {
 				: '';
 			// Regorxxx ->
 			// Regorxxx <- Booklet indicator
-			if (this.highlight.bookletShow && !item.bookletChecked) {
+			if (bUseBooklet && !item.bookletChecked) {
 				if (!item.root && !item.track && this.canShowBooklet(item, bookletLevel)) {
 					item.booklet = this.hasBooklet(item) ? bookletIcon : '';
 					item.bookletChecked = true;
@@ -1362,7 +1364,7 @@ class Populate {
 				}
 				// Regorxxx ->
 				// Regorxxx <- Booklet indicator
-				if (this.highlight.bookletShow && item.booklet) {
+				if (bUseBooklet && item.booklet) {
 					if (this.highlight.booklet || this.highlight.bookletSidemarker) {
 						if (this.highlight.bookletSidemarker) { gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.booklet); };
 					}
@@ -3218,8 +3220,11 @@ class Populate {
 			nowPlayingIndicatorIconDiff: ppt.nowPlayingIndicatorPauseIcon !== ppt.nowPlayingIndicatorIcon, // Regorxxx <- Configurable now playing (paused) icon ->
 			booklet: ppt.highLightBooklet, // Regorxxx <- Booklet indicator ->
 			bookletIndicator: ppt.bookletIndicator, // Regorxxx <- Booklet indicator ->
+			bookletIndicatorOverlay: ppt.bookletIndicatorOverlay, // Regorxxx <- Booklet indicator ->
 			bookletSidemarker: ppt.bookletSidemarker, // Regorxxx <- Highlight active playlist ->
-			bookletShow: ppt.highLightBooklet || ppt.bookletIndicator || ppt.bookletSidemarker, // Regorxxx <- Booklet indicator ->
+			bookletShow: panel.imgView
+				? ppt.highLightBooklet || ppt.bookletIndicatorOverlay
+				: ppt.highLightBooklet || ppt.bookletIndicator || ppt.bookletSidemarker, // Regorxxx <- Booklet indicator ->
 			bookletIndicatorIcon: ppt.bookletIndicatorIcon, // Regorxxx <- Booklet indicator ->
 			bookletIndicatorPos: ppt.bookletIndicatorPos, // Regorxxx <- Booklet indicator ->
 			activePlaylistSidemarker: ppt.activePlaylistSidemarker, // Regorxxx <- Highlight active playlist ->
@@ -4238,8 +4243,10 @@ class Populate {
 	// Regorxxx ->
 
 	// Regorxxx <- Booklet indicator
-	canShowBooklet(item, level) {
-		return (this.rootNode ? level !== 0 : level !== 1) && level === item.level || panel.folderView && this.hasChildTracks(item);
+	canShowBooklet(item, level, isArt = false) {
+		return isArt
+			? !panel.folderView && level !== -1 && item.level === (this.rootNode ? 1 : 0)
+			: level !== -1 && level === item.level || panel.folderView && this.hasChildTracks(item);
 	}
 
 	hasChildTracks(item) {
@@ -4254,10 +4261,13 @@ class Populate {
 		return { root, handlePath, files, count: files.length };
 	}
 
-	getBookletLevel() {
-		return panel.folderView
+	getBookletLevel(isArt = false) {
+		let level = panel.folderView
 			? -1
-			: panel.getBranchTf().split('|').findIndex((s) => s.toUpperCase().includes('%ALBUM%')) + (this.rootNode ? 1 : 0);
+			: panel.getBranchTf().split('|').findIndex((s) => s.toUpperCase().includes('%ALBUM%'));
+		return isArt
+			? (level !== -1 ? level + 1 : -1)
+			: (level !== -1 ? (this.rootNode ? 1 : 0) : -1);
 	}
 
 	hasBooklet(item) {
