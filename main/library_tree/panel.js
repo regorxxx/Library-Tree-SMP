@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/26
+//16/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -822,8 +822,8 @@ class Panel {
 		this.defFilterPatterns.push(this.defFilterPatterns.shift());
 	}
 
-	getViewIndex(arr, name, type) {
-		const findViewIndex = arr.findIndex(v => v.name === name.trim() && v.type === type.trim());
+	setViewIndex(name, type, arr = this.grp) {
+		const findViewIndex = arr.findIndex(v => v.name === name.trim() && (!type || v.type === type.trim()));
 		if (findViewIndex != -1) { ppt.viewBy = findViewIndex; }
 		return findViewIndex;
 	}
@@ -831,22 +831,20 @@ class Panel {
 	getViews() {
 		// Regorxxx <- Improve view patterns. Fixed multiple bugs on automatic group handling for default view patterns and cases where a default group was not found. | Flag for %COMMENT% usage on default views
 		let pt = [
+			// Some names are also used at Quick-Setup
 			['View 01: Name // Pattern', 'View by Folder Structure // Pattern Not Configurable', void (0), void (0), 1],
-			['View XX: Name // Pattern', 'View by Artist | Album // $swapbranchprefix{%<ARTIST>%}|%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Artist | Album (year) // $swapbranchprefix{%<ARTIST>%}|$year(%DATE%) - %ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist', 'Album', [2, 2, 2, 1, 1]],
-			['View XX: Name // Pattern', 'View by Album Artist | Album // $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album Artist | Album (year) // $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|$year(%DATE%) - %ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
-			['View XX: Name // Pattern', 'View by Album Artist - Album // [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Album Artist - Album // [$swapprefix(%ALBUM ARTIST%,$prefix) • ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Artist initial | Artist // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,$prefix),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))|%ARTIST%|$if2(%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%},εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album // %ALBUM%[ \'[\'$if2($meta(ALBUM ARTIST),$meta(ARTIST,0))\']\']$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Album (year) // $year(%DATE%) - %ALBUM%[ \'[\'$if2($meta(ALBUM ARTIST),$meta(ARTIST,0))\']\']$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Artist initial (facets) // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,$prefix),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album (facets) // $nodisplay{$year(%DATE%)}%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%} \'[\'$year(%DATE%)\']\'|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Album - Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Title (playlists) // %TRACKNUMBER% - %TITLE% • $swapprefix(%ALBUM ARTIST%,$prefix)', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,$prefix) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix($if2($meta(ALBUM ARTIST),$meta(ARTIST,0)),$prefix)|%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) - ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) • ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Style // %<STYLE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Style', 'Album', 1],
@@ -1073,7 +1071,7 @@ class Panel {
 				this.getFilters();
 				this.getFields(ppt.viewBy, ppt.filterBy, true);
 				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter | Multiple filters support
-				if (this.getViewIndex(this.grp, viewName, viewType) === -1 || !this.getFilterIndexes(this.filter.mode, filterNames, filterTypes).length) {
+				if (this.setViewIndex(viewName, viewType) === -1 || !this.getFilterIndexes(this.filter.mode, filterNames, filterTypes).length) {
 					return this.reOpen();
 				} else { this.getFields(ppt.viewBy, ppt.filterBy); }
 				// Regorxxx ->
@@ -1130,6 +1128,7 @@ class Panel {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
 								ppt.countsRight = false;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 0;
@@ -1151,6 +1150,7 @@ class Panel {
 								ppt.albumArtLabelType = 1;
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1162,6 +1162,7 @@ class Panel {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 1;
@@ -1183,6 +1184,7 @@ class Panel {
 								ppt.albumArtLabelType = 1;
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1194,6 +1196,7 @@ class Panel {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 1;
 								ppt.nodeStyle = 3;
@@ -1212,7 +1215,7 @@ class Panel {
 								ppt.verticalPad = 5;
 								ppt.rootNode = 3;
 								this.imgView = ppt.albumArtShow = false;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 1;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = false;
 								ppt.albumArtLabelType = 1;
 								ppt.albumArtFlipLabels = true;
@@ -1222,6 +1225,7 @@ class Panel {
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
 								ppt.artId = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1233,6 +1237,7 @@ class Panel {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 5;
@@ -1254,6 +1259,7 @@ class Panel {
 								ppt.albumArtLabelType = 1;
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1265,6 +1271,7 @@ class Panel {
 						applySettings = (status, confirmed) => {
 							if (confirmed) {
 								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
 								ppt.countsRight = true;
 								ppt.itemShowStatistics = 0;
 								ppt.nodeStyle = 1;
@@ -1308,7 +1315,7 @@ class Panel {
 								ppt.rootNode = 3;
 								ppt.facetView = false;
 								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 1;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = false;
 								ppt.albumArtLabelType = 2;
 								ppt.albumArtFlipLabels = true;
@@ -1318,6 +1325,7 @@ class Panel {
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1340,7 +1348,7 @@ class Panel {
 								ppt.rootNode = 3;
 								ppt.facetView = false;
 								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 1;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = false;
 								ppt.albumArtLabelType = 1;
 								ppt.albumArtFlipLabels = true;
@@ -1350,6 +1358,7 @@ class Panel {
 								ppt.thumbNailSize = 2;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1372,7 +1381,7 @@ class Panel {
 								ppt.rootNode = 3;
 								ppt.facetView = false;
 								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 1;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = false;
 								ppt.albumArtLabelType = 4;
 								ppt.albumArtFlipLabels = true;
@@ -1382,6 +1391,7 @@ class Panel {
 								ppt.thumbNailSize = 3;
 								ppt.artId = 0;
 								ppt.albumArtGrpLevel = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1404,7 +1414,7 @@ class Panel {
 								ppt.rootNode = 3;
 								ppt.facetView = false;
 								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 0;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = false;
 								ppt.albumArtLabelType = 2;
 								ppt.itemShowStatistics = 0;
@@ -1413,6 +1423,7 @@ class Panel {
 								ppt.thumbNailSize = 1;
 								ppt.artId = 4;
 								ppt.albumArtGrpLevel = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1432,15 +1443,16 @@ class Panel {
 								ppt.treeAutoExpandSingle = false;
 								ppt.facetView = false;
 								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) ppt.viewBy = 1;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
 								ppt.albumArtFlowMode = true;
 								ppt.albumArtLabelType = 1;
 								ppt.itemShowStatistics = 0;
 								ppt.imgStyleFront = 1;
 								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
 								ppt.thumbNailSize = 2;
-								if (!ppt.presetLoadCurView) ppt.artId = 0;
+								if (!ppt.presetLoadCurView) { ppt.artId = 0; }
 								ppt.albumArtGrpLevel = 0;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1462,10 +1474,8 @@ class Panel {
 								ppt.autoCollapse = false;
 								ppt.treeAutoExpandSingle = false;
 								ppt.facetView = false;
-								if (!ppt.presetLoadCurView) {
-									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Date - Title (queue)');
-									if (viewBy !== -1) { ppt.viewBy = viewBy; }
-								}
+								this.imgView = ppt.albumArtShow = false;
+								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Date - Title (queue)'); } // Regorxxx <- Code cleanup ->
 								ui.sbar.type = 1;
 								ppt.sbarType = 1;
 								ppt.sbarShow = 1;
@@ -1491,8 +1501,7 @@ class Panel {
 								ppt.treeAutoExpandSingle = false;
 								ppt.facetView = false;
 								if (!ppt.presetLoadCurView) {
-									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Artist | Title (queue)');
-									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									this.setViewIndex('View by Artist | Title (queue)');
 									ppt.artId = 0;
 								}
 								ui.sbar.type = 1;
@@ -1506,6 +1515,7 @@ class Panel {
 								ppt.imgStyleFront = 1;
 								ppt.thumbNailSize = 2;
 								ppt.albumArtGrpLevel = 2;
+								ppt.albumArtNodeCollage = false;
 								this.load();
 							}
 						};
@@ -1522,8 +1532,7 @@ class Panel {
 								ppt.fixedPlaylist = false;
 								ppt.fixedPlaylistName = 'All';
 								if (!ppt.presetLoadCurView) {
-									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
-									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									this.setViewIndex('View by Title (playlists)');
 									ppt.artId = 0;
 								}
 								ppt.plsPopEmpty = true;
@@ -1564,8 +1573,7 @@ class Panel {
 								ppt.fixedPlaylist = false;
 								ppt.fixedPlaylistName = 'All';
 								if (!ppt.presetLoadCurView) {
-									const viewBy = this.grp.findIndex((gr) => gr.name === 'View by Title (queue)');
-									if (viewBy !== -1) { ppt.viewBy = viewBy; }
+									this.setViewIndex('View by Artist | Album (year)') !== -1 || this.setViewIndex('View by Artist | Title (queue)');
 									ppt.artId = 0;
 								}
 								ppt.plsPopEmpty = true;

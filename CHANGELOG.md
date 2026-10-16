@@ -27,6 +27,9 @@
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 ### Changed
 - Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
+- Views: cleanup of the default views TF list, removing almost duplicated entries. For ex. 'View by Artist | Album (year)' and 'View by Artist | Album', only difference is date addition.
+- Quicksetup: fix 'Quick Setup: Artist Photos [Labels Right]' preset which used View by folder structure instead of an artist view.
+- Quicksetup: minor improvements related to art, source and view handling in some presets.
 - UI: default now playing icon is now '⯈' (previously '♫').
 - UI: now playing icon is now shown along the entire tree that contains the playing track and not only at the track level. Old behavior can be reverted at 'Nowplaying Indicator Full tree' (properties panel).
 - UI: moved sorting features to its own submenu within settings menu.
