@@ -58,6 +58,7 @@
 - Search: fixed regexp expressions not working due to changes on [3.0.0](#300---2026-08-24).
 - Debug: fixed album art profiler logging not respecting related setting in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
+- Fixed crash if D2D drawing mode was enabled on SMP.
 
 ## [3.0.0] - 2026-08-24
 ### Added
