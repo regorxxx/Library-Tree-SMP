@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/26
+//18/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -407,7 +407,7 @@ let properties = [
 	['Node: Highlight on Hover', true, 'highLightNode'],
 	['Node: Item Counts Align Right', true, 'countsRight'],
 	['Node: Item Counts Hide-0 Tracks-1 Sub-Items-2', 1, 'nodeCounts'],
-	['Node: Root Hide-0 All Music-1 View Name-2', 1, 'rootNode'],
+	['Node: Root Hide-0 All Music-1 View Name-2', 1, 'rootNode'], // Regorxxx <- New summary items ->
 	['Node: Root Inline Style', true, 'inlineRoot'],
 	['Node: Root Show Source', false, 'showSource'],
 	['Node: Show Lines', true, 'nodeLines'],
@@ -416,6 +416,9 @@ let properties = [
 	['Node [Squares]: Windows', false, 'winNode'],
 	['Node Custom Icon: +|-', '\uE013|\uE015', 'iconCustom'],
 	['Node Custom Icon: Vertical Offset (%)', -2, 'iconVerticalPad'],
+
+	['Toolbar: Header Hide-0 Source-1 View-2 Summary-3 Panel-4', 4, 'headerTitle'], // Regorxxx <- Header on search bar ->
+	['Toolbar: Header Flags Left-0 Center-1 Right-2', 0, 'headerTitleFlags'], // Regorxxx <- Header on search bar ->
 
 	['Nowplaying Highlight', false, 'highLightNowplaying'],
 	['Nowplaying Highlight Last', false, 'highLightNowplayinglast'],

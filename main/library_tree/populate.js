@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/26
+//18/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -590,11 +590,7 @@ class Populate {
 				this.row.lineMax[depth] = v.ix;
 			});
 		}
-		if (this.rootNode === 3) {
-			this.tree[0].name = this.tree[0].child.length > 1
-				? panel.rootName.replace('#^^^^#', this.tree[0].child.length)
-				: panel.rootName1;
-		}
+		if (this.rootNode === 3) { this.tree[0].name = panel.getTitle('root'); } // Regorxxx <- New summary items ->
 		find.initials = null;
 		if (!block) {
 			sbar.setRows(this.tree.length);

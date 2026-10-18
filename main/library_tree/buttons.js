@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//18/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
@@ -27,6 +27,7 @@ class Buttons {
 		// Regorxxx ->
 
 		this.b = {};
+		/** @type {{ filter: Btn, search: Btn, s_img: Btn, settings: Btn, cross1: Btn, cross2: Btn, scrollUp: Btn, scrollDown: Btn }} */
 		this.btns = {};
 		this.s = {};
 
@@ -146,10 +147,28 @@ class Buttons {
 		});
 	}
 
+	/**
+	 * Draws buttons
+	 *
+	 * @method
+	 * @name draw
+	 * @kind method
+	 * @memberof Buttons
+	 * @param {GdiGraphics} gr
+	 * @returns {void}
+	 */
 	draw(gr) {
 		Object.values(this.btns).forEach(v => {
 			if (!v.hide) v.draw(gr);
 		});
+		const search = this.btns.s_img;
+		const settings = this.btns.settings;
+		// Regorxxx <- Header on search bar
+		if (this.btns.filter.hide && search.hide && !settings.hide && ppt.headerTitle !== 0) {
+			const flags = ppt.headerTitleFlags | DT_WORD_ELLIPSIS;
+			gr.GdiDrawText(panel.getTitle('header'), panel.filter.font, settings.item.normal, search.p1, search.y, settings.p1 - settings.p2 * 1.5, search.h, flags);
+		}
+		// Regorxxx ->
 	}
 
 	lbtn_dn(x, y) {
@@ -519,6 +538,16 @@ class Btn {
 		this.repaint();
 	}
 
+	/**
+	 * Draws button
+	 *
+	 * @method
+	 * @name draw
+	 * @kind method
+	 * @memberof Btn
+	 * @param {GdiGraphics} gr
+	 * @returns {void}
+	 */
 	draw(gr) {
 		switch (this.type) {
 			case 1:

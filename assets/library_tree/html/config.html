@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 16/10/26 -->
+﻿<!DOCTYPE html> <!-- 18/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1125,7 +1125,12 @@
 				<div class="column38">
 					<div class="div_text1">Top bar</b></div>
 					<div id="bar"></div>
+					<!-- Regorxxx Header on search bar -->
 					<div style="padding-right:10%;" class="info4"><i>*If hidden, right click over filter or icon. If all hidden, use context menu.</i></div>
+					<span class="dropdown">Header (filter & search disabled):&nbsp;&nbsp; <a id="headerTitle_dropdown" class="dropbtn" href="#" onclick="return toggle('headerTitle');"></a>
+						<span id="headerTitle" class="dropdown-content"></span>
+					</span>
+					<!-- Regorxxx -->
 					<div class="div_text2">Theme</div>
 					<span class="dropdown"><a id="theme_dropdown" class="dropbtn" href="#" onclick="return toggle('themeBg');"></a>
 						<span id="themeBg" class="dropdown-content"></span>
@@ -2079,7 +2084,7 @@
 			var playlistSortLabels = ['Playlist sort order (empty = default)', 'Use smart sorting based on current view']; // Regorxxx <- Preserve tree sorting at selection ->
 			var topTracksLabels = ['Custom query filter', 'Custom TF expression for sorting', 'Custom TF for duplicates removal <a class="tooltip">([] to skip)<span class="tooltiptext">[] to skip processing<br><br>Empty to use default settings</span></a>']; // Regorxxx <- Top tracks ->
 			var rememberLabels = ['On exit', 'All views', 'Before search', 'Force current/prev. saved selection']; // Regorxxx <- Switch forced selection remember  ->
-			var rootLabels = ['Hide', 'All Music', 'View name', 'Summary item', 'Display in line (tree)', 'Show source'];
+			var rootLabels = ['Hide', 'All Music', 'View name', 'Summary item', 'Panel name', 'Display in line (tree)', 'Show source']; // Regorxxx <- New summary items | Header on search bar ->
 			var sbarColLabels = ['Grey', 'Blend'];
 			var sbarIconLabels = ['Arrows', 'Triangles', 'Custom'];
 			var sbarShowLabels = ['Hide', 'Auto', 'Show'];
@@ -2291,6 +2296,14 @@
 				ppt['rootNode_internal'].value = n;
 				window.root.style.display = 'none';
 			}
+
+			// Regorxxx <- Header on search bar
+			function setHeaderTitle(n) {
+				window.headerTitle_dropdown.innerHTML = rootLabels[n];
+				ppt['headerTitle_internal'].value = n;
+				window.headerTitle.style.display = 'none';
+			}
+			// Regorxxx ->
 
 			function setNode(n) {
 				setNodeLabels();
@@ -3324,6 +3337,11 @@
 			function setDisplay() {
 				for (i = 0; i < 4; i++) { window.bar.insertAdjacentHTML('beforeend', '<div><input id="bar_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="bar_checkbox' + i + '" class="checkbox_label">' + barLabels[i] + '</label></div>'); }
 
+				// Regorxxx <- Header on search bar
+				window.headerTitle_dropdown.innerHTML = rootLabels[ppt['headerTitle_internal'].value];
+				for (i = 0; i < 5; i++) { window.headerTitle.insertAdjacentHTML('beforeend', '<a onclick="setHeaderTitle(' + i + ');">' + rootLabels[i] + '</a>'); }
+				// Regorxxx ->
+
 				window.theme_dropdown.innerHTML = themeLabels[ppt['theme_internal'].value];
 				for (i = 0; i < 6; i++) { window.themeBg.insertAdjacentHTML('beforeend', '<a onclick="setTheme(' + i + ');">' + themeLabels[i] + '</a>'); }
 				i = 6; window.themeStyle.insertAdjacentHTML('beforeend', '<div><input id="theme_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="theme_checkbox' + i + '" class="checkbox_label">' + themeLabels[i] + '</label></div>');
@@ -3339,10 +3357,12 @@
 				for (i = 2; i < 4; i++) { window.metrics2.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="metrics_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="metrics_container' + i + '" class="inp_label2">' + metricsLabels[i] + '</label></div>'); }
 				for (i = 4; i < 6; i++) { window.metrics3.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><input id="metrics_container' + i + '" name="display_input" style="padding:0; margin:0;" class="input3" /><label for="metrics_container' + i + '" class="inp_label2">' + metricsLabels[i] + '</label></div>') };
 
+				// Regorxxx <- New summary items
 				window.root_dropdown.innerHTML = rootLabels[ppt['rootNode_internal'].value];
-				for (i = 0; i < 4; i++) { window.root.insertAdjacentHTML('beforeend', '<a onclick="setRoot(' + i + ');">' + rootLabels[i] + '</a>'); }
-				i = 4; window.rootStyle.insertAdjacentHTML('beforeend', '<div><input id="root_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="root_checkbox' + i + '" class="checkbox_label">' + rootLabels[i] + '</label></div>');
+				for (i = 0; i < 5; i++) { window.root.insertAdjacentHTML('beforeend', '<a onclick="setRoot(' + i + ');">' + rootLabels[i] + '</a>'); }
 				i = 5; window.rootStyle.insertAdjacentHTML('beforeend', '<div><input id="root_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="root_checkbox' + i + '" class="checkbox_label">' + rootLabels[i] + '</label></div>');
+				i = 6; window.rootStyle.insertAdjacentHTML('beforeend', '<div><input id="root_checkbox' + i + '" name="display_checkbox" style="' + cbox + '" type="checkbox" /><label for="root_checkbox' + i + '" class="checkbox_label">' + rootLabels[i] + '</label></div>');
+				// Regorxxx ->
 
 				window.node_dropdown.innerHTML = ppt['nodeStyle_internal'].value == 7 ? 'Squares (windows)' : nodeLabels[ppt['nodeStyle_internal'].value];
 				for (i = 0; i < 7; i++) { window.node.insertAdjacentHTML('beforeend', '<a id="nodeNo' + i + '" onclick="setNode(' + i + ');">' + nodeLabels[i] + '</a>'); }
@@ -3598,7 +3618,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setHeaderTitle && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3647,6 +3667,7 @@
 			}
 			// Regorxxx ->
 			window.itemOverlayCountForce.style.display = ppt['itemOverlayType_internal'].value >= 1 && ppt['itemOverlayType_internal'].value <= 4 ? 'block' : 'none'; // Regorxxx <- Don't bind track count to other stats ->
+			window.headerTitle_dropdown.disabled = window.bar_checkbox0.checked || window.bar_checkbox1.checked; // Regorxxx <- Header on search bar ->
 		}
 
 		function textChange(e) {
@@ -3807,6 +3828,7 @@
 			}
 			// Regorxxx ->
 			window.itemOverlayCountForce.style.display = ppt['itemOverlayType_internal'].value >= 1 && ppt['itemOverlayType_internal'].value <= 4 ? 'block' : 'none'; // Regorxxx <- Don't bind track count to other stats ->
+			window.headerTitle_dropdown.disabled = window.bar_checkbox0.checked || window.bar_checkbox1.checked; // Regorxxx <- Header on search bar ->
 		}
 
 		setInterval(inputChanged, 500);
@@ -4174,6 +4196,7 @@
 			// Regorxxx <- Fix reset
 			if (cur.page == 'display') {
 				setTheme(ppt['theme_internal'].default_value);
+				setHeaderTitle(ppt['headerTitle_internal'].default_value); // Regorxxx <- Header on search bar ->
 				setRoot(ppt['rootNode_internal'].default_value);
 				setNode(ppt['nodeStyle_internal'].default_value);
 				setHoverBg(ppt['highLightRow_internal'].default_value);

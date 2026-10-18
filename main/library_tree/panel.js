@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/26
+//18/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -40,6 +40,9 @@ class Panel {
 		this.pos = -1;
 		this.rc = DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
 		this.rootName = '';
+		this.rootName1 = '';
+		this.headerName = ''; // Regorxxx <- Header on search bar ->
+		this.headerName1 = ''; // Regorxxx <- Header on search bar ->
 		this.s_lc = $.stringFormat(0, 1);
 		this.samePattern = true;
 		this.sbar_x = 0;
@@ -669,6 +672,7 @@ class Panel {
 			window.MinHeight = 0;
 		}
 		this.setRootName();
+		this.setHeaderName(); // Regorxxx <- Header on search bar ->
 		this.filter.menu = this.filter.mode.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 		this.menu = this.grp.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 	}
@@ -1709,29 +1713,60 @@ class Panel {
 		window.MaxHeight = window.MinHeight = ppt.pn_h;
 	}
 
-	setRootName() {
-		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
-		this.viewName = this.grp[ppt.viewBy].name;
-		switch (ppt.rootNode) {
-			case 1:
-				this.rootName = ppt.showSource ? this.sourceName : 'All Music';
-				break;
-			case 2:
-				this.rootName = this.cleanDisplay(this.viewName) + (ppt.showSource ? ' [' + this.sourceName + ']' : ''); // Regorxxx <- Allow hidden display on filters/views ->
-				break;
-			case 3: {
+	// Regorxxx <- New summary items | Header on search bar
+	getTitles(style) {
+		switch (style) {
+			case 0: return ['', ''];
+			case 1: // All music
+				return [ppt.showSource ? this.sourceName : 'All Music', ''];
+			case 2: // View name
+				return [this.cleanDisplay(this.viewName) + (ppt.showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
+			case 3: { // Summary item
 				const nm = this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
 				const basename = basenames.join(' ')
 					.replace(/(album|artist|top|track)s\s/gi, '$1 ')
 					.replace(/(similar artist)\s/gi, '$1s ')
 					.replace(/years - albums/gi, 'Year - Albums');
-				this.rootName = (this.imgView ? `All #^^^^# ${basename}` : `${ppt.showSource ? this.sourceName : 'All'} (#^^^^# ${basename})`);
-				this.rootName1 = (this.imgView ? `All 1 ${nm}` : `${ppt.showSource ? this.sourceName : 'All'} (1 ${nm})`);
-				break;
+				return [
+					(this.imgView ? `All #^^^^# ${basename}` : `${ppt.showSource ? this.sourceName : 'All'} (#^^^^# ${basename})`),
+					(this.imgView ? `All 1 ${nm}` : `${ppt.showSource ? this.sourceName : 'All'} (1 ${nm})`)
+				];
+			}
+			case 4: { // Panel name
+				return [window.Name, ''];
 			}
 		}
 	}
+
+	setRootName() {
+		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
+		this.viewName = this.grp[ppt.viewBy].name;
+		[this.rootName, this.rootName1] = this.getTitles(ppt.rootNode);
+	}
+
+	setHeaderName() {
+		[this.headerName, this.headerName1] = this.getTitles(ppt.headerTitle);
+	}
+
+	getTitle(type) {
+		const titles = [];
+		let style;
+		switch (type) {
+			case 'root': titles.push(this.rootName, this.rootName1); style = ppt.rootNode; break;
+			case 'header': titles.push(this.headerName, this.headerName1); style = ppt.headerTitle; break;
+		}
+		let title = titles[0];
+		if (title && style === 3) {
+			title = ppt.rootNode !== 0 && pop.tree[0].child.length > 1
+				? titles[0].replace('#^^^^#', pop.tree[0].child.length)
+				: ppt.rootNode === 0
+					? titles[0].replace('#^^^^#', pop.tree.length)
+					: titles[1];
+		}
+		return title;
+	}
+	// Regorxxx ->
 
 	setSelection() {
 		const flowMode = this.imgView && ppt.albumArtFlowMode;
@@ -1908,6 +1943,7 @@ class Panel {
 			if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
 		}
 		this.setRootName();
+		this.setHeaderName(); // Regorxxx <- Header on search bar ->
 		but.setSbarIcon();
 		pop.setValues();
 		pop.inlineRoot = ppt.rootNode && (ppt.inlineRoot || ppt.facetView);
