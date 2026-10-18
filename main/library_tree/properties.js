@@ -407,7 +407,7 @@ let properties = [
 	['Node: Highlight on Hover', true, 'highLightNode'],
 	['Node: Item Counts Align Right', true, 'countsRight'],
 	['Node: Item Counts Hide-0 Tracks-1 Sub-Items-2', 1, 'nodeCounts'],
-	['Node: Root Hide-0 All Music-1 View Name-2', 1, 'rootNode'], // Regorxxx <- New summary items ->
+	['Node: Root Hide-0 Source-1 View-2 Summary-3 Panel-4', 1, 'rootNode'], // Regorxxx <- New summary items ->
 	['Node: Root Inline Style', true, 'inlineRoot'],
 	['Node: Root Show Source', false, 'showSource'],
 	['Node: Show Lines', true, 'nodeLines'],
