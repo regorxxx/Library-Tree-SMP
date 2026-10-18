@@ -417,8 +417,11 @@ let properties = [
 	['Node Custom Icon: +|-', '\uE013|\uE015', 'iconCustom'],
 	['Node Custom Icon: Vertical Offset (%)', -2, 'iconVerticalPad'],
 
-	['Toolbar: Header Hide-0 Source-1 View-2 Summary-3 Panel-4', 4, 'headerTitle'], // Regorxxx <- Header on search bar ->
-	['Toolbar: Header Flags Left-0 Center-1 Right-2', 0, 'headerTitleFlags'], // Regorxxx <- Header on search bar ->
+	// Regorxxx <- Header on search bar
+	['Toolbar: Header Hide-0 Source-1 View-2 Summary-3 Panel-4', 4, 'headerTitle'],
+	['Toolbar: Header Flags Left-0 Center-1 Right-2', 0, 'headerTitleFlags'],
+	['Toolbar: Header Show Source', false, 'headerTitleShowSource'],
+	// Regorxxx ->
 
 	['Nowplaying Highlight', false, 'highLightNowplaying'],
 	['Nowplaying Highlight Last', false, 'highLightNowplayinglast'],

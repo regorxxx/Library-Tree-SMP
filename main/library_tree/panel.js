@@ -1714,13 +1714,13 @@ class Panel {
 	}
 
 	// Regorxxx <- New summary items | Header on search bar
-	getTitles(style) {
+	getTitles(style, showSource) {
 		switch (style) {
 			case 0: return ['', ''];
 			case 1: // All music
-				return [ppt.showSource ? this.sourceName : 'All Music', ''];
+				return [showSource ? this.sourceName : 'All Music', ''];
 			case 2: // View name
-				return [this.cleanDisplay(this.viewName) + (ppt.showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
+				return [this.cleanDisplay(this.viewName) + (showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
 			case 3: { // Summary item
 				const nm = this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
@@ -1729,12 +1729,12 @@ class Panel {
 					.replace(/(similar artist)\s/gi, '$1s ')
 					.replace(/years - albums/gi, 'Year - Albums');
 				return [
-					(this.imgView ? `All #^^^^# ${basename}` : `${ppt.showSource ? this.sourceName : 'All'} (#^^^^# ${basename})`),
-					(this.imgView ? `All 1 ${nm}` : `${ppt.showSource ? this.sourceName : 'All'} (1 ${nm})`)
+					(this.imgView ? `All #^^^^# ${basename}` : `${showSource ? this.sourceName : 'All'} (#^^^^# ${basename})`),
+					(this.imgView ? `All 1 ${nm}` : `${showSource ? this.sourceName : 'All'} (1 ${nm})`)
 				];
 			}
 			case 4: { // Panel name
-				return [window.Name, ''];
+				return [window.Name + (showSource ? ' [' + this.sourceName + ']' : ''), ''];
 			}
 		}
 	}
@@ -1742,11 +1742,11 @@ class Panel {
 	setRootName() {
 		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
 		this.viewName = this.grp[ppt.viewBy].name;
-		[this.rootName, this.rootName1] = this.getTitles(ppt.rootNode);
+		[this.rootName, this.rootName1] = this.getTitles(ppt.rootNode, ppt.showSource);
 	}
 
 	setHeaderName() {
-		[this.headerName, this.headerName1] = this.getTitles(ppt.headerTitle);
+		[this.headerName, this.headerName1] = this.getTitles(ppt.headerTitle, ppt.headerTitleShowSource);
 	}
 
 	getTitle(type) {
