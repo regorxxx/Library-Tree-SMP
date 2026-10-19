@@ -41,6 +41,7 @@
 - UI: root node settings will be lost after update due to a property rename.
 - HTML: cleanup of 'Display' tab, with some options moved to its own sub-section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
+- Syntax: $iterate{} now also allows backticks (`), in addition to single quotes ('), to escape the TF function. Syntax docs have been updated to reflect the change, along more examples and tips.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
 - Installation: fonts installation is no longer needed when using JSplitter. Fonts will be directly loaded on real time, without system wide installation. Note this doesn't apply to 'Segoe UI' and 'Arial Unicode', which are supposed to be bundled with Windows; if missing (Unix systems), install required fonts from [here](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts).

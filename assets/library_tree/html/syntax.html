@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 05/10/26 -->
+<!DOCTYPE html> <!-- 19/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -308,7 +308,7 @@
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
-					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' (or `x`) and contain the string $counter, to be replaced on every step. <br> If C is not specified, '' is used. If N is not specified, 0 is used. </td>
 					<td>
 						<em>$iterate{'$meta(ARTIST,$counter)',2,&#166}</em>
 						<br>
@@ -480,7 +480,7 @@
 						</li>
 					</ul>
 					<li>
-						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. and can be used for conditional behavior. </div>
+						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. for conditional behavior. </div>
 					</li>
 					<ul>
 						<li>
@@ -494,6 +494,32 @@
 						</li>
 						<li>
 							<div class="li"> Don't try to use them for filtering purposes, use filters instead. </div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> $iterate{} expressions tips: </div>
+					</li>
+					<ul>
+						<br>
+						<li>
+							<div class="li"> Use backticks (`X`) instead of quotes ('X') when the TF expression (X) already contains quotes, for ex. to scape special chars. </div>
+							<div class="li"> $iterate{`'['$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[0][1][2]</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Leave constant expressions outside the iteration loop whenever possible, to avoid unwanted side effects or extra processing. </div>
+							<div class="li"> Wrong:<br>&nbsp;&nbsp;&nbsp;&nbsp;$iterate{`$puts(text,count:)'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;$puts(text,count:)$iterate{`'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Use [] to filter empty branches when tracks may be missing all values. For ex. not all tracks have 2 artists: </div>
+							<div class="li"> Wrong:<br>&nbsp;&nbsp;&nbsp;&nbsp;%DATE%|$iterate{'$meta(ARTIST,$counter)',2,¦}|%TITLE%&nbsp;&nbsp;->&nbsp;&nbsp;...|Rolling Stones¦|...&nbsp;&nbsp;(has one empty branch at artist level)</div>
+							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;%DATE%|$iterate{'[$meta(ARTIST,$counter)]',2,¦}|%TITLE%&nbsp;&nbsp;->&nbsp;&nbsp;...|Rolling Stones|...&nbsp;&nbsp;(filters the empty branch)</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Additional examples at hydrogenaudio forum: <a href="https://hydrogenaudio.org/index.php/topic,130057.msg1089301.html#msg1089301">https://hydrogenaudio.org/index.php/topic,130057.msg1089301.html#msg1089301</a> </div>
 						</li>
 					</ul>
 				</ul>
@@ -661,7 +687,7 @@
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
-					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (OR, AND, ...). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (OR, AND, ...). <br> Note X TF expression must be enclosed on single quotes 'X' (or `x`) and contain the string $counter, to be replaced on every step. <br> If C is not specified, '' is used. If N is not specified, 0 is used. </td>
 					<td> <em>$iterate{'ARTIST IS $nowplaying{$meta(ARTIST,$counter)}',2,OR}</em> </td>
 					<td> (ARTIST IS $nowplaying{$meta(ARTIST,0)}) OR (ARTIST IS $nowplaying{$meta(ARTIST,1)}) </td>
 				</tr>
@@ -830,7 +856,7 @@
 						</li>
 					</ul>
 					<li>
-						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. and can be used for conditional behavior. </div>
+						<div class="li"> Usage of $sourcetype, $viewname, $filtername, etc. for conditional behavior. </div>
 					</li>
 					<ul>
 						<li>
@@ -846,7 +872,22 @@
 							<div class="li"> It's preferable to directly use a Filter than permanently using the search box with these variables to do the same. Filters are much faster. </div>
 						</li>
 					</ul>
-				</ul>
+					<li>
+						<div class="li"> $iterate{} expressions tips: </div>
+					</li>
+					<ul>
+						<br>
+						<li>
+							<div class="li"> Use backticks (`X`) instead of quotes ('X') when the TF expression (X) already contains quotes, for ex. to scape special chars. </div>
+							<div class="li"> $iterate{`'['$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[0][1][2]</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Leave constant expressions outside the iteration loop whenever possible, to avoid unwanted side effects or extra processing. </div>
+							<div class="li"> Wrong:<br>&nbsp;&nbsp;&nbsp;&nbsp;$iterate{`$puts(text,count:)'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;$puts(text,count:)$iterate{`'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+						</li>
+					</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Filters and Search box" -->
@@ -1081,7 +1122,7 @@
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
-					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' (or `x`) and contain the string $counter, to be replaced on every step. <br> If C is not specified, '' is used. If N is not specified, 0 is used. </td>
 					<td>
 						<em>$iterate{'$meta(ARTIST,$counter)',2,-}</em>
 						<br>
@@ -1309,6 +1350,22 @@
 								<br>
 								Only does harmonic mixing when filter is not 'Lossless' and sorts while using 'Lossless' filter as selected from panel.
 							</div>
+						</li>
+					</ul>
+					<li>
+						<div class="li"> $iterate{} expressions tips: </div>
+					</li>
+					<ul>
+						<br>
+						<li>
+							<div class="li"> Use backticks (`X`) instead of quotes ('X') when the TF expression (X) already contains quotes, for ex. to scape special chars. </div>
+							<div class="li"> $iterate{`'['$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[0][1][2]</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Leave constant expressions outside the iteration loop whenever possible, to avoid unwanted side effects or extra processing. </div>
+							<div class="li"> Wrong:<br>&nbsp;&nbsp;&nbsp;&nbsp;$iterate{`$puts(text,count:)'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;$puts(text,count:)$iterate{`'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
 						</li>
 					</ul>
 				</ul>
@@ -1566,7 +1623,7 @@
 				</tr>
 				<tr>
 					<td> <em>$iterate{'X',N,C}</em> </td>
-					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' and contain the string $counter, to be replaced on every step. </td>
+					<td> Returns value of X (TF expression), iterated over N steps (from 0) and joined with a connector C (any string or branch splitter). <br> Note X TF expression must be enclosed on single quotes 'X' (or `x`) and contain the string $counter, to be replaced on every step. <br> If C is not specified, '' is used. If N is not specified, 0 is used. </td>
 					<td>
 						<em>$iterate{'$meta(ARTIST,$counter)',2,-}</em>
 						<br>
@@ -1696,6 +1753,22 @@
 					<li>
 						<div class="li"> Paths starting with '<b>.\profile\</b>' are relative to foobar profile folder.'<b>%FB2K_PROFILE_PATH%</b>' or '<b>%PROFILE%</b>' may also be used. </div>
 					</li>
+					<li>
+						<div class="li"> $iterate{} expressions tips: </div>
+					</li>
+					<ul>
+						<br>
+						<li>
+							<div class="li"> Use backticks (`X`) instead of quotes ('X') when the TF expression (X) already contains quotes, for ex. to scape special chars. </div>
+							<div class="li"> $iterate{`'['$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[0][1][2]</div>
+						</li>
+						<br>
+						<li>
+							<div class="li"> Leave constant expressions outside the iteration loop whenever possible, to avoid unwanted side effects or extra processing. </div>
+							<div class="li"> Wrong:<br>&nbsp;&nbsp;&nbsp;&nbsp;$iterate{`$puts(text,count:)'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;$puts(text,count:)$iterate{`'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
+						</li>
+					</ul>
 				</ul>
 		</div>
 		<!-- SECTION "Album Art" -->

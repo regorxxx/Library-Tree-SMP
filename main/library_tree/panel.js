@@ -351,7 +351,19 @@ class Panel {
 				}
 				s = s.replace(q[0], cache);
 			}
-			while (s.includes('$iterate{')) {
+			while (s.includes('$iterate{`')) { // Allow `X` (for compatibility with ' being used to scape special chars)
+				const q = s.match(/\$iterate{`(.+?)`(?:,(\d*?))?(?:,(.*?))?}/);
+				if (!q) { s = s.replace(/\$iterate({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
+				cache = q[3];
+				s = s.replace(
+					q[0],
+					() => logicDic.has(cache)
+						? queryJoin(Array.from({ length: Number(q[2]) || 1 }, (v, j) => q[1].replace(/\$counter/g, j)), cache)
+						: Array.from({ length: Number(q[2]) || 1 }, (v, j) => q[1].replace(/\$counter/g, j)).join(cache || '')
+							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
+				);
+			}
+			while (s.includes('$iterate{\'')) { // Allow 'X' (only if TF uses no scaping)
 				const q = s.match(/\$iterate{'(.+?)'(?:,(\d*?))?(?:,(.*?))?}/);
 				if (!q) { s = s.replace(/\$iterate({?.*?}|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				cache = q[3];
@@ -363,6 +375,7 @@ class Panel {
 							.replaceAll(']¦[', '][¦').replaceAll(']|[', '][|')
 				);
 			}
+			if (s.includes('$iterate{')) { s = s.replace(/\$iterate({?.*?}|{?)/g, '\'[\'UNKNOWN FUNCTION\']\''); }
 			while (s.includes('$meta_branch_remap(')) {
 				const q = s.match(/\$meta_branch_remap\((.+?)?\)/);
 				if (!q) { s = s.replace(/\$meta_branch_remap(\(?.*?\)|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
