@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/10/26
+//19/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -445,7 +445,7 @@ addEventListener('on_notify_data', (name, info) => {
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			let idx = -1;
 			if (typeof info.filterName !== 'undefined') {
-				const name = info.viewName.trim().toLowerCase();
+				const name = info.filterName.trim().toLowerCase();
 				idx = panel.dialogFiltGrps.findIndex((v) => panel.cleanDisplay(v.name.toLowerCase()) === name);
 				if (idx === -1) { panel.filter.menu.findIndex(v => v.name.toLowerCase() === name); }  // Regorxxx <- Allow hidden display on filters/views ->
 			} else if (typeof info.filterIdx !== 'undefined' && info.filterIdx >= -1 && info.filterIdx < panel.dialogFiltGrps.length) {
