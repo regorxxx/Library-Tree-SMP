@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/26
+//19/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -704,7 +704,7 @@ class Images {
 	}
 
 	createCollageFromImgs(g, cellWidth, cellHeight, rows, imgs) {
-		this.createCollage(g, cellWidth, cellHeight, rows, rows, imgs.length, imgs);
+		this.createCollage(g, cellWidth, cellHeight, rows, rows, Math.max(this.maxCollageArtItems, imgs.length), imgs);
 	}
 
 	getHeartPoints(w, h, x = 0, y = 0) {
@@ -2025,6 +2025,7 @@ class Images {
 							}
 							void Promise.all(promises).then((results) => {
 								if (results.length > 1) {
+									console.log(results, results.length);
 									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
 									this.cacheIt(img, key, v.ix);
 								} else {
