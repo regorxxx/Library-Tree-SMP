@@ -1734,9 +1734,9 @@ class Panel {
 			case 1: // All music
 				return [showSource ? this.sourceName : 'All Music', ''];
 			case 2: // View name
-				return [this.cleanDisplay(this.viewName) + (showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
+				return [this.getDisplayViewName()+ (showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
 			case 3: { // Summary item
-				const nm = this.cleanDisplay(this.viewName).replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
+				const nm = this.getDisplayViewName().replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
 				const basename = basenames.join(' ')
 					.replace(/(album|artist|top|track)s\s/gi, '$1 ')
@@ -1748,9 +1748,17 @@ class Panel {
 				];
 			}
 			case 4: { // Panel name
-				return [window.Name + (showSource ? ' [' + this.sourceName + ']' : ''), ''];
+				return [this.getDisplayPanelName() + (showSource ? ' [' + this.sourceName + ']' : ''), ''];
 			}
 		}
+	}
+
+	getDisplayPanelName() {
+		return this.cleanDisplay(window.Name);
+	}
+
+	getDisplayViewName() {
+		return this.cleanDisplay(this.viewName);
 	}
 
 	setViewSourceNames() {
