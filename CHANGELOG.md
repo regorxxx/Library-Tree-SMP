@@ -55,6 +55,7 @@
 - UI: fixed bug, on original script, related to node text not being updated on repaint in some cases (for ex. to show the now playing icon) if the view TF used $colour{} functions. Only way to force an update was to collapse the parent node and reopen it. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088559.html#msg1088559).
 - UI: fixed bug, on original script, related to a crash on album art mode while scrolling in some configurations. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1086764.html#msg1086764).
 - UI: fixed branch collage art leaving empty spaces in some cases instead of filling them with dummy art.
+- UI: fixed 'Last played (hour)' overlay not working.
 - Quicksetup: fixed bug, on original script, related to 'Quick Setup: Artist Photos [Labels Right]' preset using View by folder structure instead of an artist view.
 - Search: fixed bug, on original script. related to sorting while any search is active using 'View by Folder Structure'. If library items were added or moved, new items would appear at the top of the list and/or with sorting reversed. Previous fixes did not cover all cases, since it seems there was an error on original binary insert logic which has been unnoticed for years. See [Issue 3](https://github.com/regorxxx/Library-Tree-SMP/issues/3).
 - HTML: fixed bug, on original script, where panel crashed after changing node style to 'Squares'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088877.html#msg1088877).

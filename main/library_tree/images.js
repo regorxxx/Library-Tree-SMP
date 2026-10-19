@@ -83,7 +83,7 @@ class Images {
 			{ idx: 8, type: 'last played (full)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([' + globTags.lastPlayed + '],   -   )') },
 			{ idx: 9, type: 'last played (date)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$date(' + globTags.lastPlayed + ')],   -   )') },
 			{ idx: 10, type: 'last played (hour)', itemKey: 'year', isCount: false, tf: new FbTitleFormat('$if2([$time(' + globTags.lastPlayed + ')],   -   )') },
-			{ idx: 10, type: 'playing', itemKey: 'year', isCount: false, tf: null }
+			{ idx: 11, type: 'playing', itemKey: 'year', isCount: false, tf: null }
 		];
 		// Regorxxx ->
 
