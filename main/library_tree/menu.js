@@ -1,5 +1,5 @@
 ﻿'use strict';
-//15/10/26
+//19/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1764,6 +1764,8 @@ class MenuItems {
 		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
+		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
+		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
 	}
@@ -1869,6 +1871,8 @@ class MenuItems {
 		ppt.libSource = 1;
 		if (panel.imgView) { img.clearCache(); }
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
+		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
+		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
 		lib.searchCache = {};
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
@@ -2020,6 +2024,8 @@ class MenuItems {
 		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
 		panel.setRootName(); // Regorxxx <- Filter / View / Source button |  Expand TF support on view patterns->
+		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
+		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
 		// Regorxxx <- Internal cache of views
 		if (bProcessTree) {
 			if (panel.viewNeedsUpdateTf('source')) { panel.getView(panel.grp[ppt.viewBy].type); }

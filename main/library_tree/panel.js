@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/10/26
+//19/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -672,6 +672,7 @@ class Panel {
 			window.MinHeight = 0;
 		}
 		this.setRootName();
+		this.setViewSourceNames(); // Regorxxx <- Header on search bar ->
 		this.setHeaderName(); // Regorxxx <- Header on search bar ->
 		this.filter.menu = this.filter.mode.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 		this.menu = this.grp.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
@@ -1739,9 +1740,12 @@ class Panel {
 		}
 	}
 
-	setRootName() {
+	setViewSourceNames() {
 		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
 		this.viewName = this.grp[ppt.viewBy].name;
+	}
+
+	setRootName() {
 		[this.rootName, this.rootName1] = this.getTitles(ppt.rootNode, ppt.showSource);
 	}
 
@@ -1943,6 +1947,7 @@ class Panel {
 			if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
 		}
 		this.setRootName();
+		this.setViewSourceNames(); // Regorxxx <- Header on search bar ->
 		this.setHeaderName(); // Regorxxx <- Header on search bar ->
 		but.setSbarIcon();
 		pop.setValues();
