@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/10/26
+//20/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -684,9 +684,7 @@ class Panel {
 			window.MaxHeight = 2147483647;
 			window.MinHeight = 0;
 		}
-		this.setRootName();
-		this.setViewSourceNames(); // Regorxxx <- Header on search bar ->
-		this.setHeaderName(); // Regorxxx <- Header on search bar ->
+		this.setNames(); // Regorxxx <- Header on search bar ->
 		this.filter.menu = this.filter.mode.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 		this.menu = this.grp.map((v) => this.formatDisplay(v.name)); // Regorxxx <- Allow hidden display on filters/views ->
 	}
@@ -1680,7 +1678,7 @@ class Panel {
 						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
 						window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
 					}
-					if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
+					if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
 				}
 				pop.checkAutoHeight();
 				break;
@@ -1714,7 +1712,7 @@ class Panel {
 					}
 				}
 				this.draw = true;
-				if (ppt.searchSend == 2 && this.search.txt.length) pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
+				if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
 				pop.checkAutoHeight();
 				break;
 			}
@@ -1734,7 +1732,7 @@ class Panel {
 			case 1: // All music
 				return [showSource ? this.sourceName : 'All Music', ''];
 			case 2: // View name
-				return [this.getDisplayViewName()+ (showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
+				return [this.getDisplayViewName() + (showSource ? ' [' + this.sourceName + ']' : ''), '']; // Regorxxx <- Allow hidden display on filters/views ->
 			case 3: { // Summary item
 				const nm = this.getDisplayViewName().replace(/view by|^by\b/i, '').trim(); // Regorxxx <- Allow hidden display on filters/views ->
 				const basenames = nm.split(' ').map(v => pluralize(v));
@@ -1762,7 +1760,21 @@ class Panel {
 	}
 
 	setViewSourceNames() {
-		this.sourceName = [this.isAllPlaylistSource() ? 'All playlists' : (this.isPlayingPlaylistSource() ? 'Playing Playlist' : 'Active Playlist'), this.isFixedPlaylistSource() ? ppt.fixedPlaylistName : 'Library', 'Panel', 'Playback Queue', 'Auto-DJ Queue'][ppt.libSource]; // Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source ->
+		// Regorxxx <- Queue source | Auto-DJ source | Active/Playing/All playlist source
+		this.sourceName = [
+			this.isAllPlaylistSource()
+				? 'All playlists'
+				: (this.isPlayingPlaylistSource()
+					? 'Playing Playlist' : 'Active Playlist'
+				),
+			this.isFixedPlaylistSource()
+				? ppt.fixedPlaylistName
+				: 'Library',
+			'Panel',
+			'Playback Queue',
+			'Auto-DJ Queue'
+		][ppt.libSource];
+		// Regorxxx ->
 		this.viewName = this.grp[ppt.viewBy].name;
 	}
 
@@ -1772,6 +1784,12 @@ class Panel {
 
 	setHeaderName() {
 		[this.headerName, this.headerName1] = this.getTitles(ppt.headerTitle, ppt.headerTitleShowSource);
+	}
+
+	setNames() {
+		this.setViewSourceNames();
+		this.setRootName();
+		this.setHeaderName();
 	}
 
 	getTitle(type) {
@@ -1967,9 +1985,7 @@ class Panel {
 			const themed_image = `${fb.ProfilePath}settings\\themed\\themed_image.bmp`;
 			if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
 		}
-		this.setRootName();
-		this.setViewSourceNames(); // Regorxxx <- Header on search bar ->
-		this.setHeaderName(); // Regorxxx <- Header on search bar ->
+		this.setNames(); // Regorxxx <- Header on search bar ->
 		but.setSbarIcon();
 		pop.setValues();
 		pop.inlineRoot = ppt.rootNode && (ppt.inlineRoot || ppt.facetView);
