@@ -1140,6 +1140,12 @@ class MenuItems {
 						'\n• Check \'Playback queue\' statistics to show idx.' +
 						'\n• Recommended to use TITLE-based view TFs (with single level branching).' +
 						'\n' +
+						'\nSearch mode:' +
+						'\n----------------------' +
+						'\n• Works like foobar2000 search: empty at startup. i.e. no results.' +
+						'\n• Use the search box to fill the list with matches.' +
+						'\n• Filters work while a search is active.' +
+						'\n' +
 						'\nUI:' +
 						'\n----------------------' +
 						'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
@@ -1149,6 +1155,7 @@ class MenuItems {
 						'\nTransliteration support:' +
 						'\n-----------------------' +
 						'\n• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).' +
+						'\n• Each language usage can be independently switched.' +
 						'\n' +
 						'\nSMP / JSplitter Panel:' +
 						'\n----------------------' +
@@ -1473,6 +1480,20 @@ class MenuItems {
 			checkRadio: i == sourceIdx,
 			separator: i == this.sourceTypes().length - 1
 		}));
+		// Regorxxx ->
+
+		// Regorxxx <- Search mode
+		menu.newItem({
+			menuName: appendTo ? 'Source' : void (0),
+			str: 'Search mode',
+			func: () => {
+				ppt.toggle('searchMode');
+				window.Reload();
+			},
+			checkItem: ppt.searchMode,
+			flags: ppt.searchMode || !but.btns.s_img.hide ? MF_STRING : MF_GRAYED,
+			separator: true
+		});
 		// Regorxxx ->
 
 		menu.newItem({

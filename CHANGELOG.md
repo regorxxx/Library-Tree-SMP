@@ -27,6 +27,7 @@
 - Sorting: folder view can now be sorted using sorting submenu.
 - Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter, view and panel names to hide part of the names at different UI places. Check syntax help for more info.
+- Search mode: new search mode (found at sources submenu) which stops any panel processing until the search box is used, effectively behaving like native foobar2000 search window. i.e. you look for something and it shows the matches, clear the the search and nothing is shown.
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 ### Changed
 - Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
@@ -42,7 +43,7 @@
 - HTML: cleanup of 'Display' tab, with some options moved to its own sub-section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Syntax: $iterate{} now also allows backticks (`), in addition to single quotes ('), to escape the TF function. Syntax docs have been updated to reflect the change, along more examples and tips.
-- Readme: improved Quick help with more info regarding new features, playback queue and playlist source usage.
+- Readme: improved Quick help with more info regarding new features, playback queue and playlists source usage.
 - Helpers: updated helpers.
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
 - Installation: fonts installation is no longer needed when using JSplitter. Fonts will be directly loaded on real time, without system wide installation. Note this doesn't apply to 'Segoe UI' and 'Arial Unicode', which are supposed to be bundled with Windows; if missing (Unix systems), install required fonts from [here](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts).

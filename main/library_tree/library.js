@@ -1,5 +1,5 @@
 ﻿'use strict';
-//14/10/26
+//20/10/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -59,6 +59,7 @@ class Library {
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
 		this.lib_update = $.debounce(() => {
+			if (ppt.searchMode && !panel.search.txt) { return; } // Regorxxx <- Search mode ->
 			if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 			this.time.Reset();
 			pop.clearCache(); // Regorxxx <- Code cleanup ->
@@ -88,11 +89,11 @@ class Library {
 			pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 			this.setNodes();
 			panel.setHeight(true);
-			if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);
-			else if (!panel.search.txt.length) pop.notifySelection();
-			if (ppt.searchSend != 2) return;
-			if (panel.search.txt) pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
-			else plman.ClearPlaylist(panel.createLibPlaylist());
+			if (panel.search.txt.length > 2) { window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list); }
+			else if (!panel.search.txt.length) { pop.notifySelection(); }
+			if (ppt.searchSend != 2) { return; }
+			if (panel.search.txt) { pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
+			else { plman.ClearPlaylist(panel.createLibPlaylist()); }
 		}, 333);
 
 		this.search500 = $.debounce(() => {
@@ -101,9 +102,9 @@ class Library {
 			pop.clearCache('search'); // Regorxxx <- Code cleanup ->
 			this.setNodes();
 			panel.setHeight(true);
-			if (panel.search.txt.length > 2) window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list);
-			else if (!panel.search.txt.length) pop.notifySelection();
-			if (ppt.searchSend != 2) return;
+			if (panel.search.txt.length > 2) { window.NotifyOthers(window.Name, lib.list.Count ? panel.list : lib.list); }
+			else if (!panel.search.txt.length) { pop.notifySelection(); }
+			if (ppt.searchSend != 2) { return; }
 			pop.load({ handleList: panel.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); // Regorxxx <- Code cleanup ->
 		}, 500);
 
@@ -759,6 +760,12 @@ class Library {
 			panel.treePaint();
 			return;
 		}
+		// Regorxxx <- Search mode
+		if (ppt.searchMode && !panel.search.txt) {
+			if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
+			return;
+		}
+		// Regorxxx ->
 		this.rootNames('', 0, panel.isPanelSource() ? false : items, sort);
 		if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
 	}
@@ -782,7 +789,7 @@ class Library {
 		this.initialised = true;
 		this.load(handleList);
 		this.getLibrary(true);
-		this.rootNodes(ppt.rememberTree, ppt.process);
+		if (!ppt.searchMode || panel.search.txt) { this.rootNodes(ppt.rememberTree, ppt.process); } // Regorxxx <- Search mode ->
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
@@ -1475,13 +1482,23 @@ class Library {
 		}];
 	}
 
-	// Regorxxx <- Queue source | Auto-DJ source | Code cleanup
+	// Regorxxx <- Queue source | Auto-DJ source | Code cleanup | Search mode
 	setEmptyText() {
-		this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
-			? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
-			: panel.isQueueLikeSource()
-				? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
-				: 'Nothing received';
+		if (ppt.searchMode) {
+			this.empty = panel.search.txt === ''
+				? 'Nothing found\n\n'
+				: panel.isFixedPlaylistSource() || panel.isLibrarySource()
+					? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
+					: panel.isQueueLikeSource()
+						? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
+						: 'Nothing received';
+		} else {
+			this.empty = panel.isFixedPlaylistSource() || panel.isLibrarySource()
+				? (panel.isFixedPlaylistSource() ? 'Nothing found\n\n' : (!this.list.Count && this.v2_init ? 'Loading...\n\n' : 'Nothing to show\n\nClick here to configure the media library'))
+				: panel.isQueueLikeSource()
+					? 'Empty ' + (panel.isAutoDjSource() ? 'Auto-DJ' : 'playback') + ' queue'
+					: 'Nothing received';
+		}
 	}
 	// Regorxxx ->
 
@@ -1494,6 +1511,20 @@ class Library {
 
 	setNodes() {
 		if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
+		// Regorxxx <- Search mode
+		if (ppt.searchMode && !panel.search.txt) {
+			ppt.set(this.rememberViewProp(), JSON.stringify({}));
+			this.checkView();
+			this.logFilter();
+			this.readTreeState(true);
+			pop.clearTree();
+			sbar.setRows(0);
+			panel.list = new FbMetadbHandleList();
+			this.none = 'Nothing found';
+			this.treeState(false, ppt.rememberTree);
+			return;
+		}
+		// Regorxxx ->
 		if (panel.search.txt == '' && ppt.rememberPreSearch) {
 			ppt.set(this.rememberViewProp(), JSON.stringify({}));
 			this.checkView();

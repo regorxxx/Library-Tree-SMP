@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/10/26
+//20/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -16,7 +16,7 @@ addEventListener('on_colours_changed', (keepCache) => {
 		panel.getFields(ppt.viewBy, ppt.filterBy);
 		if (lib) {
 			lib.getLibrary();
-			lib.rootNodes(true, true);
+			if (!ppt.searchMode || panel.search.txt) { lib.rootNodes(true, true); } // Regorxxx <- Search mode ->
 		}
 	}
 	sbar.setCol();

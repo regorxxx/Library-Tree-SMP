@@ -1671,7 +1671,7 @@ class Panel {
 						else if (ppt.rememberTree) { lib.logFilter(); }
 					}
 					lib.getLibrary();
-					lib.rootNodes(ppt.reset ? 0 : 1, true);
+					if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.reset ? 0 : 1, true); } // Regorxxx <- Search mode ->
 					but.refresh(true);
 					this.searchPaint();
 					if (!pop.notifySelection()) {
@@ -1700,7 +1700,7 @@ class Panel {
 				const key = ppt.rememberView ? this.viewName : 'def';
 				if ((ppt.rememberView || treeArtToggle) && lib.exp[key]) lib.readTreeState(false, treeArtToggle);
 				lib.getLibrary(treeArtToggle);
-				lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle));
+				if (!ppt.searchMode || this.search.txt) { lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle)); } // Regorxxx <- Search mode ->
 				if (ppt.rememberView) {
 					this.calcText();
 					but.refresh(true);
@@ -2637,7 +2637,7 @@ class Panel {
 		if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
 		else if (ppt.rememberTree) { lib.logFilter(); }
 		lib.getLibrary();
-		lib.rootNodes(ppt.rememberView, !!ppt.rememberView);
+		if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.rememberView, !!ppt.rememberView); } // Regorxxx <- Search mode ->
 		if (ppt.rememberView) {
 			this.calcText();
 			but.refresh(true);
