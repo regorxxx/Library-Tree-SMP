@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/10/26
+//20/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1118,10 +1118,27 @@ class MenuItems {
 						'\n----------------------' +
 						'\n• Sorting is applied directly from View TF pattern.' +
 						'\n• Can be overridden by query expressions at Search box and Filters.' +
+						'\n• Check also Sorting submenu for further options.' +
 						'\n• Specific sources have additional settings (e.g. Playback Queue).' +
 						'\n• Selection sorting can be set independently (e.g. sending to playlist).' +
 						'\n• If not specified, selection sorting will use panel sorting by default.' +
 						'\n• Panel Sorting priority: Search box > Filter > Source > View' +
+						'\n' +
+						'\nPlaylist sources:' +
+						'\n----------------------' +
+						'\n• By default shows all tracks mixed, like library sources.' +
+						'\n• Sorting is applied directly from View TF pattern.' +
+						'\n• There is a setting to sort by playlist idx.' +
+						'\n• Multi-branch playlist view splits tracks into their playlists.' +
+						'\n• Playlist manager features when multi-branch playlist view is enabled.' +
+						'\n' +
+						'\nQueue sources:' +
+						'\n----------------------' +
+						'\n• Sorting is applied by playback queue idx (configurable).' +
+						'\n• Display comes from View TF pattern.' +
+						'\n• Now playing track can be shown (configurable).' +
+						'\n• Check \'Playback queue\' statistics to show idx.' +
+						'\n• Recommended to use TITLE-based view TFs (with single level branching).' +
 						'\n' +
 						'\nUI:' +
 						'\n----------------------' +
@@ -1406,7 +1423,7 @@ class MenuItems {
 			if (d.sortType) {
 				menu.newItem({
 					menuName: d.menuName,
-					str: ['', 'By year', 'Albums by year'][d.sortType],
+					str: ['', 'By year:', 'Albums by year:'][d.sortType],
 					flags: MF_GRAYED,
 					separator: true
 				});
@@ -1763,9 +1780,7 @@ class MenuItems {
 		}
 		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
-		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
-		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
-		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
+		panel.setNames(); // Regorxxx <- Filter / View / Source button | Header on search bar ->
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
 	}
@@ -1870,9 +1885,7 @@ class MenuItems {
 		}
 		ppt.libSource = 1;
 		if (panel.imgView) { img.clearCache(); }
-		panel.setRootName(); // Regorxxx <- Filter / View / Source button ->
-		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
-		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
+		panel.setNames(); // Regorxxx <- Filter / View / Source button | Header on search bar ->
 		lib.searchCache = {};
 		if (panel.viewNeedsUpdateTf('playlist')) { panel.getView(panel.grp[ppt.viewBy].type); } // Regorxxx <- Expand TF support on view patterns ->
 		lib.treeState(false, 2);
@@ -2023,9 +2036,7 @@ class MenuItems {
 		}
 		if (panel.imgView) { img.clearCache(); }
 		lib.searchCache = {};
-		panel.setRootName(); // Regorxxx <- Filter / View / Source button |  Expand TF support on view patterns->
-		panel.setViewSourceNames(); // Regorxxx <- Header on search bar ->
-		panel.setHeaderName(); // Regorxxx <- Header on search bar ->
+		panel.setNames(); // Regorxxx <- Filter / View / Source button | Header on search bar ->
 		// Regorxxx <- Internal cache of views
 		if (bProcessTree) {
 			if (panel.viewNeedsUpdateTf('source')) { panel.getView(panel.grp[ppt.viewBy].type); }
