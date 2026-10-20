@@ -27,7 +27,7 @@
 - Sorting: folder view can now be sorted using sorting submenu.
 - Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter, view and panel names to hide part of the names at different UI places. Check syntax help for more info.
-- Search mode: new search mode (found at sources submenu) which stops any panel processing until the search box is used, effectively behaving like native foobar2000 search window. i.e. you look for something and it shows the matches, clear the the search and nothing is shown.
+- Search mode: new search mode (found at sources submenu) which stops any panel processing until the search box is used, effectively behaving like native foobar2000 search window. i.e. you look for something and it shows the matches, clear the the search and nothing is shown. Note loading is almost instant, since there is no TF processing until a search is done. This feature is meant to be used along popup panels, like [foo_flowin](https://github.com/ttsping/foo_flowin) to fully replace native search as a panel that you can show/hide on demand. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089365.html#msg1089365).
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 ### Changed
 - Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).

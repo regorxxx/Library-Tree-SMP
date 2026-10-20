@@ -1145,6 +1145,7 @@ class MenuItems {
 						'\n• Works like foobar2000 search: empty at startup. i.e. no results.' +
 						'\n• Use the search box to fill the list with matches.' +
 						'\n• Filters work while a search is active.' +
+						'\n• Best used as popup panel (foo_flowin) and "Remember on exit" disabled.' +
 						'\n' +
 						'\nUI:' +
 						'\n----------------------' +
