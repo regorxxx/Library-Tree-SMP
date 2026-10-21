@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//21/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -76,7 +76,7 @@ addEventListener('on_key_down', (vkey) => {
 	img.on_key_down(vkey);
 	find.on_key_down(vkey); // Regorxxx <- Up/down navigation during quicksearch ->
 	if (ppt.filterShow && ppt.multiBtnShow && !panel.search.active && !find.jSearch && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyDown(vkey); } // Regorxxx <- Filter / View / Source button ->
-	if (!ppt.searchShow) return;
+	if (!ppt.searchShow) { return; }
 	search.on_key_down(vkey);
 });
 
@@ -84,7 +84,7 @@ addEventListener('on_key_up', (vkey) => {
 	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 	img.on_key_up(vkey);
 	if (ppt.filterShow && !panel.search.active && (vkey === VK_SHIFT || vkey === VK_CONTROL)) { but.multiBtnKeyUp(); } // Regorxxx <- Filter / View / Source button ->
-	if (!ppt.searchShow) return;
+	if (!ppt.searchShow) { return; }
 	search.on_key_up(vkey);
 });
 
@@ -157,7 +157,7 @@ addEventListener('on_playback_dynamic_info_track', () => {
 addEventListener('on_mouse_lbtn_dblclk', (x, y) => {
 	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 	but.lbtn_dn(x, y);
-	if (ppt.searchShow) search.lbtn_dblclk(x, y);
+	if (ppt.searchShow) { search.lbtn_dblclk(x, y); }
 	pop.lbtn_dblclk(x, y);
 	but.lbtn_dblclk(x, y); // Regorxxx <- Double click scrollbar
 	sbar.lbtn_dblclk(x, y);
@@ -169,7 +169,7 @@ addEventListener('on_mouse_lbtn_down', (x, y) => {
 		y: y
 	};
 	if (ui.style.topBarShow || ppt.sbarShow) but.lbtn_dn(x, y);
-	if (ppt.searchShow) search.lbtn_dn(x, y);
+	if (ppt.searchShow) { search.lbtn_dn(x, y); }
 	pop.lbtn_dn(x, y);
 	sbar.lbtn_dn(x, y);
 	ui.sz.y_start = y;
@@ -177,13 +177,13 @@ addEventListener('on_mouse_lbtn_down', (x, y) => {
 
 addEventListener('on_mouse_lbtn_up', (x, y) => {
 	pop.lbtn_up(x, y);
-	if (ppt.searchShow) search.lbtn_up();
+	if (ppt.searchShow) { search.lbtn_up(); }
 	but.lbtn_up(x, y);
 	sbar.lbtn_up();
 });
 
 addEventListener('on_mouse_leave', () => {
-	if (ui.style.topBarShow || ppt.sbarShow) but.leave();
+	if (ui.style.topBarShow || ppt.sbarShow) { but.leave(); }
 	sbar.leave();
 	pop.leave();
 });
@@ -208,8 +208,8 @@ addEventListener('on_mouse_move', (x, y) => {
 	if (panel.m.x == x && panel.m.y == y) { return; }
 	if (panel.isFileExplorerSource()) { return; } // Regorxxx <- File explorer mode ->
 	pop.hand = false;
-	if (ui.style.topBarShow || ppt.sbarShow) but.move(x, y);
-	if (ppt.searchShow) search.move(x, y);
+	if (ui.style.topBarShow || ppt.sbarShow) { but.move(x, y); }
+	if (ppt.searchShow) { search.move(x, y); }
 	pop.move(x, y);
 	pop.dragDrop(x, y);
 	sbar.move(x, y);
@@ -221,8 +221,8 @@ addEventListener('on_mouse_move', (x, y) => {
 addEventListener('on_mouse_rbtn_up', (x, y) => {
 	if (panel.isFileExplorerSource()) { return true; } // Regorxxx <- File explorer mode ->
 	if (y < panel.search.h && x > panel.search.x && x < panel.search.x + panel.search.w) {
-		if (ppt.searchShow) search.rbtn_up(x, y);
-	} else men.rbtn_up(x, y);
+		if (ppt.searchShow) { search.rbtn_up(x, y); }
+	} else { men.rbtn_up(x, y); }
 	return true;
 });
 
