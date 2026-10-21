@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//21/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2031,7 +2031,7 @@ class Panel {
 			}
 			// Regorxxx ->
 		}
-		if (!bRefreshLib) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update ->
+		if (!bRefreshLib && (!ppt.searchMode || this.search.txt)) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update | Search mode ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
 		if (this.pn_h_auto) {
 			window.MaxHeight = window.MinHeight = ppt.pn_h;
