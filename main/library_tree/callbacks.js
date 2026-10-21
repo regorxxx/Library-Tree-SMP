@@ -408,15 +408,16 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': search': {
-			if (!ppt.searchShow) { break; }
+			if (!ppt.searchShow && !ppt.searchMode) { break; }
 			if (!info || !info.search) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
+			if (!Object.hasOwn(info, 'clear') || info.clear) { search.clear(); }
 			info.search.split('').forEach((s) => search.on_char(s.codePointAt(0), true));
-			search.on_char(vk.enter);
+			if (!Object.hasOwn(info, 'enter') || info.enter) { search.on_char(vk.enter); }
 			break;
 		}
 		case window.ScriptInfo.Name + ': search clear': {
-			if (!ppt.searchShow) { break; }
+			if (!ppt.searchShow && !ppt.searchMode) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			search.clear();
 			break;

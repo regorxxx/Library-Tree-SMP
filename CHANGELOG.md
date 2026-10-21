@@ -48,6 +48,8 @@
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
 - Installation: fonts installation is no longer needed when using JSplitter. Fonts will be directly loaded on real time, without system wide installation. Note this doesn't apply to 'Segoe UI' and 'Arial Unicode', which are supposed to be bundled with Windows; if missing (Unix systems), install required fonts from [here](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts).
 - Installation: package description will now contain the build timestamp ('Package built: YYYY/MM/DD hh:mm') as first line; meant to be used on nightlies (which don't follow semVer).
+- External integration: Changed callbacks.
+	* 'Library-Tree-SMP: search' -> { window: string[], search: string, clear: boolean, enter: boolean }
 ### Removed
 ### Fixed
 - Statistics: fixed bug, on original script, related to tag updates not triggering a source refresh while using statistics. For ex. rating changes not being reflected on rating stats on real time.

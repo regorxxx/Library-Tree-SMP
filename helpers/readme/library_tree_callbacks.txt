@@ -88,8 +88,10 @@ Callbacks:
 	- Simulates quicksearch with given string
 
 • 'Library-Tree-SMP: search'
-	-> { window: string[], search: string }
+	-> { window: string[], search: string, clear: boolean, enter: boolean }
 	- Performs search with given string
+	- clear = false to not clear previous search string
+	- enter = false to avoid simulating 'Pressing enter'
 
 • 'Library-Tree-SMP: search clear'
 	-> { window: string[] }
