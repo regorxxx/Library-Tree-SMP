@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/10/26
+//22/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -702,7 +702,7 @@ class Panel {
 	// Regorxxx ->
 
 	getFilters() {
-		// Regorxxx <- Default TF for compatibility with all stats components and improved filters
+		// Regorxxx <- Default TF for compatibility with all stats components and improved filters | Code cleanup
 		let pt = [
 			['Filter 01: Name // Query', 'Filter // Button Name'],
 			['Filter XX: Name // Query', 'Lossless // "$info(ENCODING)" IS lossless'],
@@ -712,6 +712,7 @@ class Panel {
 			['Filter XX: Name // Query', 'Albums // (RELEASETYPE IS album) OR (RELEASETYPE MISSING AND (NOT DESCRIPTION IS single AND NOT DESCRIPTION IS ep))'],
 			['Filter XX: Name // Query', 'Singles and EPs // (RELEASETYPE IS single OR RELEASETYPE IS ep) OR (RELEASETYPE MISSING AND (DESCRIPTION IS single OR DESCRIPTION IS ep))'],
 			['Filter XX: Name // Query', 'separator // .'],
+			['Filter XX: Name // Query', 'Most Played /hide/ %PLAY_COUNT% PRESENT OR %LASTFM_PLAY_COUNT% PRESENT OR %2003_PLAYCOUNT% PRESENT SORT DESCENDING BY ' + globTags.playCount],
 			['Filter XX: Name // Query', 'Never Played // %PLAY_COUNT% MISSING AND %LASTFM_PLAY_COUNT% MISSING AND %2003_PLAYCOUNT% MISSING'],
 			['Filter XX: Name // Query', 'Played Often // ' + queryJoin([
 				_qCond(globTags.playCount) + ' GREATER 3',
@@ -759,7 +760,7 @@ class Panel {
 				],
 				'AND NOT'
 			)],
-			['Filter XX: Name // Query', 'Nowplaying Similar // ' + queryJoin(
+			['Filter XX: Name // Query', 'Nowplaying Similar Tracks // ' + queryJoin(
 				[
 					queryJoin(
 						[
@@ -771,19 +772,20 @@ class Panel {
 				],
 				'AND NOT'
 			)],
-		].filter(Boolean).map((entry, i) => [entry[0].replace('Filter XX', 'Filter ' + (i + 1).toString().padStart(2, '0')), entry[1]]);;
+		].filter(Boolean).map((entry, i) => [entry[0].replace('Filter XX', 'Filter ' + (i + 1).toString().padStart(2, '0')), entry[1]]);
 		// Regorxxx ->
-
-		let grps = [];
-		this.defFilterPatterns = pt.map(v => {
-			grps = v[1].split('//');
+		// Regorxxx <- Code cleanup | Support hidden default filters
+		const processFilter = (v) => {
+			const bShow = v.includes('//');
+			const grps = v.split(bShow ? '//' : '/hide/');
 			return {
 				name: grps[0].trim(),
 				type: grps[1].trim(),
-				menu: true
+				menu: bShow
 			};
-		});
-
+		};
+		this.defFilterPatterns = pt.map((v) => processFilter(v[1]));
+		// Regorxxx ->
 		const dialogFilters = [];
 		this.filter_ppt = [];
 		let pptNo = 0;
@@ -815,23 +817,7 @@ class Panel {
 			}
 		}
 
-		this.dialogFiltGrps = dialogFilters.map(v => {
-			if (v.includes('//')) {
-				grps = v.split('//');
-				return {
-					name: grps[0].trim(),
-					type: grps[1].trim(),
-					menu: true
-				};
-			} else if (v.includes('/hide/')) {
-				grps = v.split('/hide/');
-				return {
-					name: grps[0].trim(),
-					type: grps[1].trim(),
-					menu: false
-				};
-			}
-		});
+		this.dialogFiltGrps = dialogFilters.map((v) => processFilter(v)); // Regorxxx <- Code cleanup | Support hidden default filters ->
 
 		// move filter button to end
 		this.dialogFiltGrps.push(this.dialogFiltGrps.shift());
@@ -849,15 +835,19 @@ class Panel {
 		let pt = [
 			// Some names are also used at Quick-Setup
 			['View 01: Name // Pattern', 'View by Folder Structure // Pattern Not Configurable', void (0), void (0), 1],
+			['View XX: Name // Pattern', 'View by Artist | Album /hide/ $swapbranchprefix{%<ARTIST>%}|%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Artist | Album (year) // $swapbranchprefix{%<ARTIST>%}|$year(%DATE%) - %ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist', 'Album', [2, 2, 2, 1, 1]],
+			['View XX: Name // Pattern', 'View by Album Artist | Album /hide/ $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album Artist | Album (year) // $swapbranchprefix{$if2(%<ALBUM ARTIST>%,%<ARTIST>%)}|$year(%DATE%) - %ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album Artist', 'Album', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album Artist - Album // [$swapprefix(%ALBUM ARTIST%,$prefix) • ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Artist initial | Artist // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,$prefix),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))|%ARTIST%|$if2(%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%},εXtra)|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album // %ALBUM%[ \'[\'$if2($meta(ALBUM ARTIST),$meta(ARTIST,0))\']\']$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Album (year) /hide/ $year(%DATE%) - %ALBUM%[ \'[\'$if2($meta(ALBUM ARTIST),$meta(ARTIST,0))\']\']$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Artist initial (facets) // $puts(initial,$upper($cut($replace($swapprefix(%ARTIST%,$prefix),$char(33),,$char(34),,$char(35),,$char(36),,$char(37),,$char(38),,$char(39)$char(39),,$char(39),,,$char(40),,$char(41),,$char(42),,$char(43),,$char(44),,$char(45),,$char(46),,$char(47),),1)))$if($stricmp($ascii($get(initial)),?),$get(initial),$ascii($get(initial)))', 'Artist Initial', 'Artist', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Album (facets) // $nodisplay{$year(%DATE%)}%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%} \'[\'$year(%DATE%)\']\'|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Title (playlists) // %TRACKNUMBER% - %TITLE% • $swapprefix(%ALBUM ARTIST%,$prefix)', 'Track', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Album - Title (queue) /hide/ [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,$prefix) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix($if2($meta(ALBUM ARTIST),$meta(ARTIST,0)),$prefix)|%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) • ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
@@ -872,18 +862,19 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Year // $year(%DATE%)|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Year', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Decade // $div($year(%DATE%),10)0s|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Decade', 'Album', 1],
 		].filter(Boolean).map((entry, i) => [entry[0].replace('View XX', 'View ' + (i + 1).toString().padStart(2, '0')), ...entry.slice(1)]);
-		let grps = [];
-		this.defViewPatterns = pt.map(v => {
-			grps = v[1].split('//');
+		// Regorxxx <- Code cleanup | Support hidden default filters
+		const processView = (v, levels) => {
+			const bShow = v.includes('//');
+			const grps = v.split(bShow ? '//' : '/hide/');
 			return {
 				name: grps[0].trim(),
 				type: grps[1].trim(),
-				level1: v[2],
-				level2: v[3],
-				lines: v[4],
-				menu: true
+				...(levels ? { level1: levels[0], level2: levels[1], lines: levels[2] } : {}),
+				menu: bShow
 			};
-		});
+		};
+		this.defViewPatterns = pt.map((v) => processView(v[1], v.slice(2)));
+		// Regorxxx ->
 
 		this.defaultViews = this.defViewPatterns.filter((v) => v.name !== 'separator').map(v => v.type);
 		this.defaultViews.shift();
@@ -942,23 +933,7 @@ class Panel {
 		}
 		this.propNames.shift();
 
-		this.dialogGrps = dialogViews.map(v => {
-			if (v.includes('//')) {
-				grps = v.split('//');
-				return {
-					name: grps[0].trim(),
-					type: grps[1].trim(),
-					menu: true
-				};
-			} else if (v.includes('/hide/')) {
-				grps = v.split('/hide/');
-				return {
-					name: grps[0].trim(),
-					type: grps[1].trim(),
-					menu: false
-				};
-			}
-		});
+		this.dialogGrps = dialogViews.map((v) => processView(v)); // Regorxxx <- Code cleanup ->
 
 		// move folder structure to end
 		this.dialogGrps.push(this.dialogGrps.shift());
