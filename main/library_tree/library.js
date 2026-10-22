@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//22/10/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -529,12 +529,13 @@ class Library {
 		node.splice(i, 0, item);
 	}
 
-	// Regorxxx <- Code cleanup | Expose TF formatting for arbitrary input | Support SORT BY query sorting | Multiple filters support
+	// Regorxxx <- Code cleanup | Expose TF formatting for arbitrary input | Support SORT BY query sorting | Multiple filters support | Log query errors
 	processFilterQuery() {
 		const processed = panel.processCustomTf(panel.getFilterQuery());
 		this.filterQuery = panel.processCustomTf(stripSort(processed));
 		this.filterSort = getSortObj(processed);
 		this.validFilter = isQuery(this.filterQuery, true);
+		if (!this.validFilter) { console.log(window.ScriptName + ' - Non valid query:' + this.filterQuery); }
 	}
 
 	hasFilterQuery() {
