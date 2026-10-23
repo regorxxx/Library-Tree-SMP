@@ -1,7 +1,7 @@
 ﻿'use strict';
-//26/08/26
+//23/10/26
 
-/* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable */
+/* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, timer:readable, $:readable, vk:readable, tooltip:readable, sbar:readable, Tooltip:readable, searchMenu:readable, men:readable */
 /* global MK_CONTROL:readable, MK_SHIFT, SmoothingMode:readable */
 /* global _getClipboardData:readable, _setClipboardData:readable */
 /* global Language:readable */
@@ -156,7 +156,7 @@ class Search {
 		};
 		// Regorxxx ->
 
-		// Regorxxx <- Fix search history on enter
+		// Regorxxx <- Fix search history on enter | Sort by date
 		this.logHistoryAdd = () => {
 			let item = -1;
 			const itemPresent = this.menu.some((v, i) => {
@@ -169,11 +169,9 @@ class Search {
 			}
 			if (!panel.search.txt) return;
 			this.menu.push({ search: panel.search.txt, accessed: Date.now() });
-			if (this.menu.length > 25) {
-				this.menu.sort((a, b) => b.accessed - a.accessed);
-				this.menu.length = 25;
-			}
-			this.menu.sort((a, b) => pop.collator.compare(a.search, b.search));
+			this.menu.sort((a, b) => b.accessed - a.accessed);
+			if (this.menu.length > 25) { this.menu.length = 25; }
+			if (!ppt.searchSortDate) { this.menu.sort((a, b) => pop.collator.compare(a.search, b.search)); }
 			ppt.searchHistory = JSON.stringify(this.menu);
 		};
 
@@ -592,6 +590,18 @@ class Search {
 				panel.search.cursor = true;
 				timer.searchCursor(true);
 				break;
+			case vk.up: {
+				let idx = this.menu.findIndex((s) => s.search === panel.search.txt);
+				idx = idx === -1 ? this.menu.length - 1 : idx - 1;
+				men.setSearchHistory(idx);
+				break;
+			}
+			case vk.dn: {
+				let idx = this.menu.findIndex((s) => s.search === panel.search.txt);
+				idx = idx === -1 ? 0 : idx === this.menu.length - 1 ? 0 : idx + 1;
+				men.setSearchHistory(idx);
+				break;
+			}
 			case vk.home:
 			case vk.end:
 				if (vkey == vk.home) this.offset = this.start = this.end = this.cx = 0;

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//23/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -503,6 +503,7 @@ let properties = [
 	['Search History', JSON.stringify([]), 'searchHistory'],
 	['Search Send', 1, 'searchSend'],
 	['Search Auto-refresh TF Expressions', true, 'searchRefreshTf'], // Regorxxx <- Search text also triggers updates to filtering ->
+	['Search History sort by date', true, 'searchSortDate'], // Regorxxx <- Sort by date ->
 
 	['Show Filter', true, 'filterShow'],
 	['Show Panel Source Message', true, 'panelSourceMsg'],

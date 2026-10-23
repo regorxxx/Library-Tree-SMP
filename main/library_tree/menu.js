@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//23/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1169,17 +1169,17 @@ class MenuItems {
 			menu.newItem({
 				menuName: 'Help',
 				str: 'foobar2000 Query syntax',
-				func: () => this.setSearchHistory(0),
+				func: () => this.openSearchHelp(0),
 			});
 			menu.newItem({
 				menuName: 'Help',
 				str: window.ScriptInfo.Name + ' syntax',
-				func: () => this.setSearchHistory(-2),
+				func: () => this.openSearchHelp(1),
 			});
 			menu.newItem({
 				menuName: 'Help',
 				str: 'RegExp reference',
-				func: () => this.setSearchHistory(-1)
+				func: () => this.openSearchHelp(2)
 			});
 			menu.newItem({ menuName: 'Help', separator: true });
 			menu.newItem({
@@ -1581,9 +1581,9 @@ class MenuItems {
 			});
 		}
 		if (search.menu.length) {
-			for (let i = 1; i < search.menu.length + 2; i++) {
+			for (let i = 0; i < search.menu.length; i++) {
 				sMenu.newItem({
-					str: i < search.menu.length + 1 ? search.menu[i - 1].search.trim().cut(80) : 'Clear history', // Regorxxx <- Cut and trim search history entries ->
+					str: i < search.menu.length ? search.menu[i].search.trim().cut(80) : 'Clear history', // Regorxxx <- Cut and trim search history entries ->
 					func: () => this.setSearchHistory(i),
 					flags: i != 1 || search.menu.length ? MF_STRING : MF_GRAYED,
 					separator: search.menu.length && i == search.menu.length
@@ -1595,17 +1595,17 @@ class MenuItems {
 		sMenu.newItem({
 			menuName: 'Help',
 			str: 'foobar2000 Query syntax',
-			func: () => this.setSearchHistory(0),
+			func: () => this.openSearchHelp(0),
 		});
 		sMenu.newItem({
 			menuName: 'Help',
 			str: window.ScriptInfo.Name + ' syntax',
-			func: () => this.setSearchHistory(-2),
+			func: () => this.openSearchHelp(1),
 		});
 		sMenu.newItem({
 			menuName: 'Help',
 			str: 'RegExp reference',
-			func: () => this.setSearchHistory(-1)
+			func: () => this.openSearchHelp(2)
 		});
 		// Regorxxx ->
 	}
@@ -1974,41 +1974,45 @@ class MenuItems {
 		}
 	}
 
+	// Regorxxx <- RegExp library search | Syntax help
 	setSearchHistory(i) {
+		if (!search.menu.length) { return; }
 		switch (true) {
-			case !i: {
-				let fn = fb.FoobarPath + 'doc\\Query Syntax Help.html';
-				if (!_isFile(fn)) fn = fb.FoobarPath + 'Query Syntax Help.html';
-				$.browser('"' + fn);
-				break;
-			}
-			// Regorxxx <- Syntax help
-			case i === -2: {
-				let fn = folders.xxx + 'assets\\library_tree\\html\\syntax.html';
-				$.browser('"' + fn);
-				break;
-			}
-			// Regorxxx ->
-			// Regorxxx <- RegExp library search
-			case i === -1: {
-				let fn = 'https://regexr.com/';
-				$.browser(fn);
-				break;
-			}
-			// Regorxxx ->
-			case i < search.menu.length + 1:
-				panel.search.txt = search.menu[i - 1].search;
-				search.menu[i - 1].accessed = Date.now();
+			case i < search.menu.length:
+				panel.search.txt = search.menu.at(i).search;
+				search.menu.at(i).accessed = Date.now();
 				search.focus();
 				but.setSearchBtnsHide();
 				lib.search();
 				break;
-			case i == search.menu.length + 1:
+			case i == search.menu.length:
 				search.menu = [];
 				ppt.searchHistory = JSON.stringify([]);
 				break;
 		}
 	}
+
+	openSearchHelp(i) {
+		switch (i) {
+			case 0: {
+				let fn = fb.FoobarPath + 'doc\\Query Syntax Help.html';
+				if (!_isFile(fn)) { fn = fb.FoobarPath + 'Query Syntax Help.html'; };
+				$.browser('"' + fn);
+				break;
+			}
+			case 1: {
+				let fn = folders.xxx + 'assets\\library_tree\\html\\syntax.html';
+				$.browser('"' + fn);
+				break;
+			}
+			case 2: {
+				let fn = 'https://regexr.com/';
+				$.browser(fn);
+				break;
+			}
+		}
+	}
+	// Regorxxx ->
 
 	// Regorxxx <- External integration | Internal cache of views | Preset rules
 	setSource(i, { bOmitMsg = false, bProcessTree = true, bSkipPresets = false } = {}) {

@@ -9,6 +9,7 @@
 
 ## [Unreleased][]
 ### Added
+- Search: added Up|Down keyboard shortcuts to scroll the search history, i.e. the input box is automatically filled with next/prev search.
 - Booklet: new booklet feature which checks for booklet files at album level, shows some kind of indicator on UI and allows to directly open the PDF file via menus. It works on TF views (dynamically analyzing levels with %ALBUM% tag) and View by Folder structure (folders which contain track files). Look at 'Display' tab (HTML options panel) for more info or 'Booklet [...]' (properties panel). Custom colors can be set at 'Custom' tab (HTML options panel) or 'Custom Colour Text Booklet Highlight' (properties panel). Feature is disabled by default. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089031.html#msg1089031) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089101.html#msg1089101).
 - HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088499.html#msg1088499).
 - UI: split 'Show album art options' into context menu and setting entries so they can be independently hidden without completely disabling album art feature (which now happens if both are disabled). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
@@ -31,6 +32,7 @@
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
 ### Changed
+- Search: search history is now sorted by date (instead of alphabetically) by default. If legacy behavior is desired, check 'Search History sort by date' (properties panel).
 - Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
 - Views: cleanup of the default views TF list, hiding almost duplicated entries. For ex. 'View by Artist | Album (year)' and 'View by Artist | Album', only difference is date addition. They can still be restored at more settings.
 - Quicksetup: minor improvements related to art, source and view handling in some presets.
