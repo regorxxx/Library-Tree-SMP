@@ -4,7 +4,7 @@
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
 /* global MF_STRING:readable, MF_CHECKED:readable, MF_GRAYED:readable, VK_SHIFT:readable */
-/* global _isFile:readable, _isFolder:readable, _explorer:readable, _run:readable */
+/* global _isFile:readable, _isFolder:readable, _explorer:readable, _run:readable, utf8:readable */
 /* global isArrayEqual:readable, _p:readable, _b:readable */
 /* global createAutoPlaylistPresets:readable */
 /* global Input:readable */
@@ -914,7 +914,7 @@ class MenuItems {
 			].forEach((v) => menu.newItem({
 				menuName: 'Quick setup',
 				str: v.name,
-				func: () => panel.set('quickSetup', v.idx),
+				func: () => panel.setQuickSetup(v.idx),
 				flags: v.flags || MF_STRING,
 				checkItem: v.checkItem || false,
 				separator: v.separator
@@ -934,7 +934,7 @@ class MenuItems {
 				].forEach((v) => menu.newItem({
 					menuName: 'Art options',
 					str: v.name,
-					func: () => panel.set('quickSetup', v.idx),
+					func: () => panel.setQuickSetup(v.idx),
 					flags: v.flags || MF_STRING,
 					checkItem: v.checkItem || false,
 					separator: v.separator
@@ -972,7 +972,7 @@ class MenuItems {
 			].forEach((v) => menu.newItem({
 				menuName: 'Quick setup',
 				str: v.name,
-				func: () => panel.set('quickSetup', v.idx),
+				func: () => panel.setQuickSetup(v.idx),
 				flags: v.flags || MF_STRING,
 				checkItem: v.checkItem || false,
 				separator: v.separator
@@ -1051,118 +1051,17 @@ class MenuItems {
 				menuName: 'Help',
 				str: 'Quick help',
 				func: () => {
-					fb.ShowPopupMessage(
-						'List view:' +
-						'\n-----------------' +
-						[
-							{ key: 'Ctrl + A', action: 'Select all nodes|Select none.' },
-							{ key: 'Ctrl + <', action: 'Invert selected nodes.' },
-							{ key: 'Ctrl + C', action: 'Copy selected tracks.' },
-							{ key: 'Ctrl + V', action: 'Paste selected tracks.' },
-							{ key: 'Ctrl + E', action: 'Set focus at Search box.' },
-							{ key: 'Enter', action: 'Send to current playlist.' },
-							{ key: 'Shift + Enter', action: 'Add to current playlist.' },
-							{ key: 'Ctrl + Enter', action: 'Send to new playlist.' },
-							{ key: 'Page Up|Page Down', action: 'Scroll up|Scroll down.' },
-							{ key: 'Home|End', action: 'Scroll to top|Scroll to bottom.' },
-							{ key: 'Up|Down', action: 'Navigate tree.' },
-							{ key: 'Left|Right', action: 'Collapse|Expand nodes.' },
-							{ key: 'Alt + Up', action: 'Jump to first node within same level.' },
-							{ key: 'Alt + Down', action: 'Jump to last node within same level.' },
-							{ key: 'Num *', action: 'Expand current nodes.' },
-							{ key: 'Num -', action: 'Collapse all nodes.' }
-						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
-						'\n' +
-						'\nQuick-Search:' +
-						'\n-------------' +
-						'\n• Tree can be navigated by pressing any char. i.e. pressing \'A\'.' +
-						'\n• Multiple presses will jump between nodes with such initial (cycling).' +
-						'\n• Full strings can also be pressed, looking for first match (at start).' +
-						'\n• Pressing Shift|Ctrl first will allow matches at any position.' +
-						'\n• Use Up|Down keys to navigate between all found matches.' +
-						'\n• Asymmetric search and transliteration.' +
-						'\n' +
-						'\nDrag n\' drop (tracks):' +
-						'\n----------------------' +
-						'\n• Standard: add selection to playlist.' +
-						'\n• On Search Box: add query based on tracks (Ctrl|Alt modifiers).' +
-						'\n• On Playback Queue: add tracks to playback queue (Ctrl modifier).' +
-						'\n' +
-						'\nSearch Box:' +
-						'\n--------------' +
-						'\n• RegExp support: /[expression]/[flags], flags can be any of \'gimsuyt\'.' +
-						'\n\t∙ Flag \'t\' applies transliteration to tag values before matching.' +
-						'\n• Query sorting support: sorting expressions can be used along queries.' +
-						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...] | [...] SORT BY [...]' +
-						'\n\t∙ Ascending: [...] SORT ASCENDING BY [...]' +
-						'\n\t∙ Descending:  [...] SORT DESCENDING BY [...]' +
-						'\n\t∙ Sorting without filtering: ALL SORT BY [...] | SORT BY [...]' +
-						[
-							{ key: 'Ctrl + A', action: 'Select all.' },
-							{ key: 'Ctrl + C', action: 'Copy selected text.' },
-							{ key: 'Ctrl + V', action: 'Paste selected text.' },
-							{ key: 'Ctrl + X', action: 'Cut selected text.' },
-							{ key: 'Back', action: 'Delete left characters.' },
-							{ key: 'Delete', action: 'Delete right characters.' },
-							{ key: 'Ctrl + Back', action: 'Delete left word.' },
-							{ key: 'Enter', action: 'Search.' },
-							{ key: 'Ctrl + Z', action: 'Undo.' },
-							{ key: 'Ctrl + Y', action: 'Redo.' },
-							{ key: 'Esc', action: 'Cancel search (and clean input).' },
-							{ key: 'Home', action: 'Set cursor at left.' },
-							{ key: 'End', action: 'Set cursor at right.' },
-							{ key: 'Left|Right', action: 'Move cursor.' },
-						].map((s) => '\n• ' + s.key + ': ' + s.action).join('') +
-						'\n' +
-						'\nPanel Sorting:' +
-						'\n----------------------' +
-						'\n• Sorting is applied directly from View TF pattern.' +
-						'\n• Can be overridden by query expressions at Search box and Filters.' +
-						'\n• Check also Sorting submenu for further options.' +
-						'\n• Specific sources have additional settings (e.g. Playback Queue).' +
-						'\n• Selection sorting can be set independently (e.g. sending to playlist).' +
-						'\n• If not specified, selection sorting will use panel sorting by default.' +
-						'\n• Panel Sorting priority: Search box > Filter > Source > View' +
-						'\n' +
-						'\nPlaylist sources:' +
-						'\n----------------------' +
-						'\n• By default shows all tracks mixed, like library sources.' +
-						'\n• Sorting is applied directly from View TF pattern.' +
-						'\n• There is a setting to sort by playlist idx.' +
-						'\n• Multi-branch playlist view splits tracks into their playlists.' +
-						'\n• Playlist manager features when multi-branch playlist view is enabled.' +
-						'\n' +
-						'\nQueue sources:' +
-						'\n----------------------' +
-						'\n• Sorting is applied by playback queue idx (configurable).' +
-						'\n• Display comes from View TF pattern.' +
-						'\n• Now playing track can be shown (configurable).' +
-						'\n• Check \'Playback queue\' statistics to show idx.' +
-						'\n• Recommended to use TITLE-based view TFs (with single level branching).' +
-						'\n' +
-						'\nSearch mode:' +
-						'\n----------------------' +
-						'\n• Works like foobar2000 search: empty at startup. i.e. no results.' +
-						'\n• Use the search box to fill the list with matches.' +
-						'\n• Filters work while a search is active.' +
-						'\n• Best used as popup panel (foo_flowin) and "Remember on exit" disabled.' +
-						'\n' +
-						'\nUI:' +
-						'\n----------------------' +
-						'\n• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.' +
-						'\n• Double click scrollbar thumb to show now playing/focused item.' +
-						'\n• Double click scrollbar buttons to scroll to top/bottom.' +
-						'\n' +
-						'\nTransliteration support:' +
-						'\n-----------------------' +
-						'\n• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).' +
-						'\n• Each language usage can be independently switched.' +
-						'\n' +
-						'\nSMP / JSplitter Panel:' +
-						'\n----------------------' +
-						'\n• Shift + Win + R. Click: open SMP panel menu.'
-						, window.PanelName + ': Quick help'
-					);
+					const file = folders.xxx + 'helpers\\readme\\library_tree_quick_help.txt';
+					if (_isFile(file)) { fb.ShowPopupMessage(utils.ReadTextFile(file, utf8)); }
+				}
+			});
+			menu.newItem({ menuName: 'Help', separator: true });
+			menu.newItem({
+				menuName: 'Help',
+				str: 'FAQ and Tips',
+				func: () => {
+					const file = folders.xxx + 'helpers\\readme\\library_tree_tips.txt';
+					if (_isFile(file)) { fb.ShowPopupMessage(utils.ReadTextFile(file, utf8)); }
 				}
 			});
 			menu.newItem({ menuName: 'Help', separator: true });
@@ -1267,10 +1166,10 @@ class MenuItems {
 						if (curr.has(i) && curr.size === 1) { return; }
 						if (vk.k('shift') && i !== 0) {
 							if (curr.has(i)) {
-								curr.delete(i); panel.set('Filter', [...curr].join('|'));
-							} else { curr.add(i); panel.set('Filter', [...curr].join('|')); }
+								curr.delete(i); panel.setFilter([...curr].join('|'));
+							} else { curr.add(i); panel.setFilter([...curr].join('|')); }
 						} else {
-							panel.set('Filter', i);
+							panel.setFilter(i);
 						}
 					},
 					checkItem: i == panel.filter.menu.length && !ppt.reset,
@@ -1286,7 +1185,7 @@ class MenuItems {
 			func: () => {
 				ppt.toggle('filterDupl');
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('showDupl'); }
-				panel.set('Filter', ppt.filterBy);
+				panel.setFilter(ppt.filterBy);
 			},
 			checkItem: panel.isBranchedPlaylistSource() ? false : ppt.filterDupl,
 			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING
@@ -1296,7 +1195,7 @@ class MenuItems {
 			func: () => {
 				ppt.toggle('showDupl');
 				if (ppt.filterDupl && ppt.showDupl) { ppt.toggle('filterDupl'); }
-				panel.set('Filter', ppt.filterBy);
+				panel.setFilter(ppt.filterBy);
 			},
 			checkItem: panel.isBranchedPlaylistSource() ? false : ppt.showDupl,
 			flags: panel.isBranchedPlaylistSource() ? MF_GRAYED : MF_STRING,
@@ -1690,10 +1589,10 @@ class MenuItems {
 		sbar.setCol();
 		but.createImages();
 		if (clearCache) { img.clearCache(); }
-		if (typeof sel === 'undefined') { panel.set('view', view, true); }
+		if (typeof sel === 'undefined') { panel.setView(view, true); }
 		else {
 			const handle = sel >= panel.list.Count ? null : panel.list[sel];
-			panel.set('view', view, true);
+			panel.setView(view, true);
 			if (handle) {
 				const item = panel.list.Find(handle);
 				let idx = -1;
@@ -2134,7 +2033,7 @@ class MenuItems {
 			if (panel.imgView && curStatisticsShown != statisticsShown) {
 				img.labels = { statistics: ppt.itemShowStatistics ? 1 : 0 };
 				img.clearCache();
-				panel.set('view', ppt.viewBy);
+				panel.setView(ppt.viewBy);
 			}
 			panel.treePaint();
 		} else panel.open('statistics'); // Regorxxx <- New statistics ->
@@ -2170,7 +2069,7 @@ class MenuItems {
 					ppt.set(panel.imgView ? 'Tree Search' : 'Tree Image Search', null);
 				}
 			}
-			panel.set('view', i);
+			panel.setView(i);
 			if (bSkipPresets) { ppt.toggle('presetRulesOnViewUse'); }
 		}
 	}

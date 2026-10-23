@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/10/26
+//23/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -849,7 +849,7 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Title (playlists) // %TRACKNUMBER% - %TITLE% • $swapprefix(%ALBUM ARTIST%,$prefix)', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Album - Title (queue) /hide/ [$swapprefix(%ALBUM ARTIST%,$prefix) - ][\'[\'%date%\']\' ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%} - [[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Album', 'Track', 1],
 			['View XX: Name // Pattern', 'View by Date - Title (queue) // [$swapprefix(%ARTIST%,$prefix) - ][\'[\'%date%\']\' ][[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Date', 'Track', 1],
-			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix($if2($meta(ALBUM ARTIST),$meta(ARTIST,0)),$prefix)|%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', 1],
+			['View XX: Name // Pattern', 'View by Artist | Title (queue) // $swapprefix($if2($meta(ALBUM ARTIST),$meta(ARTIST,0)),$prefix)|%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Artist', 'Track', [2, 2, 2, 1, 1]],
 			['View XX: Name // Pattern', 'View by Title (queue) // [$swapprefix(%ALBUM ARTIST%,$prefix) • ]%TITLE%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}', 'Track', 'Track', 1],
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Genre // %<GENRE>%|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Genre', 'Album', 1],
@@ -1109,590 +1109,594 @@ class Panel {
 		window.RepaintRect(0, 0, ui.w, this.search.h);
 	}
 
-	set(n, i, treeArtToggle) {
-		// Regorxxx <- Code cleanup | New quicksetup presets
-		switch (n) {
-			case 'quickSetup': {
-				let applySettings, caption, prompt;
-				switch (i) {
-					case 0: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
-								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
-								ppt.countsRight = false;
-								ppt.itemShowStatistics = 0;
-								ppt.nodeStyle = 0;
-								ppt.inlineRoot = false;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								ui.sbar.type = 0;
-								ppt.sbarType = 0;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = false;
-								ppt.highLightText = false;
-								ppt.rowStripes = false;
-								ppt.highLightRow = 2;
-								ppt.highLightNode = true;
-								ppt.verticalPad = 3;
-								ppt.rootNode = 1;
-								this.imgView = ppt.albumArtShow = false;
-								ppt.albumArtLabelType = 1;
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Traditional Style';
-						prompt = 'This changes various options on the display tab.\n\nContinue?';
-						break;
+	// Regorxxx <- Code cleanup | New quick setup presets
+	set(type, i, treeArtToggle) { // left for compatibility purposes
+		switch (type) {
+			case 'quickSetup': this.setQuickSetup(i); break;
+			case 'Filter': this.setFilter(i); break;
+			case 'view': this.setView(i, treeArtToggle); break;
+		}
+	}
+
+	setQuickSetup(i) {
+		let applySettings, caption, prompt;
+		switch (i) {
+			case 0: { // Traditional
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+						if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
+						ppt.countsRight = false;
+						ppt.itemShowStatistics = 0;
+						ppt.nodeStyle = 0;
+						ppt.inlineRoot = false;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						ui.sbar.type = 0;
+						ppt.sbarType = 0;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = false;
+						ppt.highLightText = false;
+						ppt.rowStripes = false;
+						ppt.highLightRow = 2;
+						ppt.highLightNode = true;
+						ppt.verticalPad = 3;
+						ppt.rootNode = 1;
+						this.imgView = ppt.albumArtShow = false;
+						ppt.albumArtLabelType = 1;
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
 					}
-					case 1: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
-								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
-								ppt.countsRight = true;
-								ppt.itemShowStatistics = 0;
-								ppt.nodeStyle = 1;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 2;
-								ppt.highLightNode = true;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								this.imgView = ppt.albumArtShow = false;
-								ppt.albumArtLabelType = 1;
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Modern Style';
-						prompt = 'This changes various options on the display tab.\n\nContinue?';
-						break;
-					}
-					case 2: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
-								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
-								ppt.countsRight = true;
-								ppt.itemShowStatistics = 1;
-								ppt.nodeStyle = 3;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = true;
-								ppt.treeAutoExpandSingle = true;
-								ppt.facetView = false;
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 1;
-								ppt.highLightNode = false;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								this.imgView = ppt.albumArtShow = false;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = false;
-								ppt.albumArtLabelType = 1;
-								ppt.albumArtFlipLabels = true;
-								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtGrpLevel = 0;
-								ppt.artId = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Ultra Modern Style';
-						prompt = 'This changes various options on the display tab.\n\nContinue?';
-						break;
-					}
-					case 3: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
-								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
-								ppt.countsRight = true;
-								ppt.itemShowStatistics = 0;
-								ppt.nodeStyle = 5;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								ui.sbar.type = 0;
-								ppt.sbarType = 0;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = true;
-								ppt.rowStripes = false;
-								ppt.highLightRow = 0;
-								ppt.highLightNode = true;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								this.imgView = ppt.albumArtShow = false;
-								ppt.albumArtLabelType = 1;
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Clean';
-						prompt = 'This changes various options on the display tab.\n\nContinue?';
-						break;
-					}
-					case 4: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
-								if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
-								ppt.countsRight = true;
-								ppt.itemShowStatistics = 0;
-								ppt.nodeStyle = 1;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = true;
-								this.imgView = ppt.albumArtShow = false;
-								ppt.albumArtLabelType = 1;
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 2;
-								ppt.highLightNode = true;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Facet';
-						prompt = 'This changes various options on the display tab.\n\nContinue?';
-						break;
-					}
-					case 5: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 1;
-								ppt.highLightNode = false;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = false;
-								ppt.albumArtLabelType = 2;
-								ppt.albumArtFlipLabels = true;
-								ppt.itemShowStatistics = 1;
-								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtGrpLevel = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Covers [Labels Right]';
-						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
-						break;
-					}
-					case 6: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 1;
-								ppt.highLightNode = false;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = false;
-								ppt.albumArtLabelType = 1;
-								ppt.albumArtFlipLabels = true;
-								ppt.itemShowStatistics = 0;
-								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 2;
-								ppt.artId = 0;
-								ppt.albumArtGrpLevel = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Covers [Labels Bottom]';
-						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
-						break;
-					}
-					case 7: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 1;
-								ppt.highLightNode = false;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = false;
-								ppt.albumArtLabelType = 4;
-								ppt.albumArtFlipLabels = true;
-								ppt.itemShowStatistics = 0;
-								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 3;
-								ppt.artId = 0;
-								ppt.albumArtGrpLevel = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Covers [Labels Blend]';
-						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
-						break;
-					}
-					case 8: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.fullLineSelection = true;
-								ppt.highLightText = false;
-								ppt.rowStripes = true;
-								ppt.highLightRow = 1;
-								ppt.highLightNode = false;
-								ppt.verticalPad = 5;
-								ppt.rootNode = 3;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = false;
-								ppt.albumArtLabelType = 2;
-								ppt.itemShowStatistics = 0;
-								ppt.imgStyleArtist = 2;
-								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 1;
-								ppt.artId = 4;
-								ppt.albumArtGrpLevel = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Artist Photos [Labels Right]';
-						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
-						break;
-					}
-					case 9: ppt.thumbNailSize++; this.load(); break;
-					case 10: ppt.thumbNailSize--; this.load(); break;
-					case 11: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ppt.countsRight = true;
-								ppt.nodeStyle = 1;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = true;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
-								ppt.albumArtFlowMode = true;
-								ppt.albumArtLabelType = 1;
-								ppt.itemShowStatistics = 0;
-								ppt.imgStyleFront = 1;
-								ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
-								ppt.thumbNailSize = 2;
-								if (!ppt.presetLoadCurView) { ppt.artId = 0; }
-								ppt.albumArtGrpLevel = 0;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Flow Mode';
-						prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
-						break;
-					}
-					case 12:
-						ppt.toggle('presetLoadCurView');
-						return;
-					case 13: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ppt.libSource = 3;
-								ppt.queueSorting = true;
-								ppt.countsRight = true;
-								ppt.itemShowStatistics = 7;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								this.imgView = ppt.albumArtShow = false;
-								if (!ppt.presetLoadCurView) { this.setViewIndex('View by Date - Title (queue)'); } // Regorxxx <- Code cleanup ->
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.rootNode = 0;
-								ppt.albumArtGrpLevel = 0;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Playback Queue viewer';
-						prompt = 'This changes various options on the display tab, views and source settings.\n\nContinue?';
-						break;
-					}
-					case 14: {
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								ppt.libSource = 3;
-								ppt.queueSorting = true;
-								ppt.countsRight = true;
-								ppt.nodeStyle = 1;
-								ppt.itemShowStatistics = 7;
-								ppt.inlineRoot = true;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.facetView = false;
-								if (!ppt.presetLoadCurView) {
-									this.setViewIndex('View by Artist | Title (queue)');
-									ppt.artId = 0;
-								}
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.rootNode = 0;
-								ppt.albumArtLabelType = 3;
-								ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
-								this.imgView = ppt.albumArtShow = true;
-								ppt.albumArtFlowMode = true;
-								ppt.imgStyleFront = 1;
-								ppt.thumbNailSize = 2;
-								ppt.albumArtGrpLevel = 2;
-								ppt.albumArtNodeCollage = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Playback Queue flow';
-						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
-						break;
-					}
-					case 15: { // Playlist manager (tree)
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								// Source | View
-								ppt.libSource = 0;
-								ppt.plsSource = 2;
-								ppt.fixedPlaylist = false;
-								ppt.fixedPlaylistName = 'All';
-								if (!ppt.presetLoadCurView) {
-									this.setViewIndex('View by Title (playlists)');
-									ppt.artId = 0;
-								}
-								ppt.plsPopEmpty = true;
-								ppt.plsFlatView = false;
-								ppt.plsSorting = true;
-								// Behaviour
-								ppt.rootNode = 0;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.itemShowStatistics = 0;
-								// UI
-								ppt.countsRight = true;
-								ppt.fullLineSelection = true;
-								ppt.nodeStyle = 1;
-								ppt.facetView = false;
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
-								ppt.nowPlayingIndicator = true;
-								ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
-								ppt.rowStripes = true;
-								// Art
-								this.imgView = ppt.albumArtShow = false;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Playlist Manager (tree)';
-						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
-						break;
-					}
-					case 16: { // Playlist manager (art)
-						applySettings = (status, confirmed) => {
-							if (confirmed) {
-								// Source | View
-								ppt.libSource = 0;
-								ppt.plsSource = 2;
-								ppt.fixedPlaylist = false;
-								ppt.fixedPlaylistName = 'All';
-								if (!ppt.presetLoadCurView) {
-									this.setViewIndex('View by Artist | Album (year)') !== -1 || this.setViewIndex('View by Artist | Title (queue)');
-									ppt.artId = 0;
-								}
-								ppt.plsPopEmpty = true;
-								ppt.plsFlatView = false;
-								ppt.plsSorting = true;
-								// Behaviour
-								ppt.rootNode = 0;
-								ppt.autoCollapse = false;
-								ppt.treeAutoExpandSingle = false;
-								ppt.itemShowStatistics = 2;
-								// UI
-								ppt.countsRight = true;
-								ppt.fullLineSelection = true;
-								ppt.nodeStyle = 1;
-								ppt.facetView = false;
-								ui.sbar.type = 1;
-								ppt.sbarType = 1;
-								ppt.sbarShow = 1;
-								ppt.nowPlayingSidemarker = ppt.nowPlayingIndicator = ppt.highLightNowplaying = false;
-								ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
-								// Art
-								ppt.albumArtLabelType = 3;
-								ppt.itemOverlayType = img.getOverlayIdxByType('tracks (#)'); // Regorxxx <- New overlay styles ->
-								this.imgView = ppt.albumArtShow = true;
-								ppt.albumArtFlowMode = false;
-								ppt.imgStyleFront = 1;
-								ppt.thumbNailSize = 2;
-								ppt.albumArtGrpLevel = 1;
-								ppt.albumArtNodeCollage = true;
-								ppt.itemOverlayVAlign = ppt.itemOverlayHAlign = 0;
-								ppt.itemOverlayCountForce = true;
-								this.load();
-							}
-						};
-						caption = 'Quick Setup: Playlist Manager (art)';
-						prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
-						break;
-					}
-				}
-				if (applySettings) { $.okCancelPopup(caption, prompt, applySettings, 'yesNo'); } // Regorxxx <- Native themed popups | Code cleanup ->
+				};
+				caption = 'Quick Setup: Traditional Style';
+				prompt = 'This changes various options on the display tab.\n\nContinue?';
 				break;
 			}
-			// Regorxxx ->
-			case 'Filter':
-				lib.searchCache = {};
-				pop.clearCache('filter'); // Regorxxx <- Code cleanup ->
-				pop.clearCache('search'); // Regorxxx <- Code cleanup ->
-				if (i === this.filter.menu.length) {
-					ppt.toggle('reset');
-					if (ppt.reset) {
-						this.searchPaint();
-						lib.treeState(true, 2);
+			case 1: { // Modern
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+						if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
+						ppt.countsRight = true;
+						ppt.itemShowStatistics = 0;
+						ppt.nodeStyle = 1;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 2;
+						ppt.highLightNode = true;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						this.imgView = ppt.albumArtShow = false;
+						ppt.albumArtLabelType = 1;
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
 					}
-				} else {
-					// Regorxxx <- Preset rules
-					if (ppt.presetRulesOnFilterUse) {
-						const rule = this.getPresetRule({ filterBy: i });
-						if (this.applyPresetRule(rule)) { break; };
-					}
-					// Regorxxx ->
-					ppt.filterBy = i;
-					if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
-					but.multiBtnSetName(this.cleanDisplay(this.getFilterName()), false); // Regorxxx <- Filter / View / Source button | Multiple filters support | Code cleanup | Allow hidden display on filters/views ->
-					this.calcText();
-					if (this.search.txt) lib.upd_search = true;
-					if (!ppt.reset) {
-						const ix = pop.get_ix(this.imgView ? img.panel.x + 1 : 0, (!this.imgView || img.style.vertical ? this.tree.y : this.tree.x) + sbar.row.h / 2, true, false);
-						let l = Math.min(Math.floor(ix + this.rows), pop.tree.length);
-						if (ix != -1) {
-							for (i = ix; i < l; i++) {
-								if (pop.tree[i].sel) {
-									sbar.checkScroll(sbar.row.h * i, 'full', true);
-									lib.logTree();
-									break;
-								}
-							}
-						}
-						if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
-						else if (ppt.rememberTree) { lib.logFilter(); }
-					}
-					lib.getLibrary();
-					if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.reset ? 0 : 1, true); } // Regorxxx <- Search mode ->
-					but.refresh(true);
-					this.searchPaint();
-					if (!pop.notifySelection()) {
-						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-						window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
-					}
-					if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
-				}
-				pop.checkAutoHeight();
+				};
+				caption = 'Quick Setup: Modern Style';
+				prompt = 'This changes various options on the display tab.\n\nContinue?';
 				break;
-			case 'view': {
-				if (this.colMarker) this.draw = false;
-				if (this.search.txt) lib.upd_search = true;
-				// Regorxxx <- Preset rules
-				const viewBy = i < this.grp.length ? i : ppt.viewBy;
-				if (ppt.presetRulesOnViewUse) {
-					const rule = this.getPresetRule({ viewBy });
-					if (this.applyPresetRule(rule)) { break; };
-				}
-				this.getFields(viewBy, ppt.filterBy);
-				// Regorxxx ->
-				this.on_size();
-				lib.searchCache = {};
-				pop.clearCache(); // Regorxxx <- Code cleanup ->
-				lib.checkView();
-				const key = ppt.rememberView ? this.viewName : 'def';
-				if ((ppt.rememberView || treeArtToggle) && lib.exp[key]) lib.readTreeState(false, treeArtToggle);
-				lib.getLibrary(treeArtToggle);
-				if (!ppt.searchMode || this.search.txt) { lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle)); } // Regorxxx <- Search mode ->
-				if (ppt.rememberView) {
-					this.calcText();
-					but.refresh(true);
-					this.searchPaint();
-					lib.logTree();
-					if (!pop.notifySelection()) {
-						const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
-						window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
+			}
+			case 2: { // Ultra-modern
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+						if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
+						ppt.countsRight = true;
+						ppt.itemShowStatistics = 1;
+						ppt.nodeStyle = 3;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = true;
+						ppt.treeAutoExpandSingle = true;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 1;
+						ppt.highLightNode = false;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						this.imgView = ppt.albumArtShow = false;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = false;
+						ppt.albumArtLabelType = 1;
+						ppt.albumArtFlipLabels = true;
+						ppt.imgStyleFront = 1;
+						ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtGrpLevel = 0;
+						ppt.artId = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
 					}
-				}
-				this.draw = true;
-				if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
-				pop.checkAutoHeight();
+				};
+				caption = 'Quick Setup: Ultra Modern Style';
+				prompt = 'This changes various options on the display tab.\n\nContinue?';
+				break;
+			}
+			case 3: { // Clean
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+						if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
+						ppt.countsRight = true;
+						ppt.itemShowStatistics = 0;
+						ppt.nodeStyle = 5;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						ui.sbar.type = 0;
+						ppt.sbarType = 0;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = true;
+						ppt.rowStripes = false;
+						ppt.highLightRow = 0;
+						ppt.highLightNode = true;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						this.imgView = ppt.albumArtShow = false;
+						ppt.albumArtLabelType = 1;
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Clean';
+				prompt = 'This changes various options on the display tab.\n\nContinue?';
+				break;
+			}
+			case 4: { // Facets
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						if (this.isFileExplorerSource()) { ppt.libSource = 1; ppt.fixedPlaylist = false; }// Regorxxx <- File explorer mode ->
+						if (!ppt.presetLoadCurView && ppt.libSource === 3) { ppt.libSource = 0; }
+						ppt.countsRight = true;
+						ppt.itemShowStatistics = 0;
+						ppt.nodeStyle = 1;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = true;
+						this.imgView = ppt.albumArtShow = false;
+						ppt.albumArtLabelType = 1;
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 2;
+						ppt.highLightNode = true;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Facet';
+				prompt = 'This changes various options on the display tab.\n\nContinue?';
+				break;
+			}
+			case 5: { // Covers [labels right]
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 1;
+						ppt.highLightNode = false;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = true;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = false;
+						ppt.albumArtLabelType = 2;
+						ppt.albumArtFlipLabels = true;
+						ppt.itemShowStatistics = 1;
+						ppt.imgStyleFront = 1;
+						ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtGrpLevel = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Covers [Labels Right]';
+				prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
+				break;
+			}
+			case 6: { // Covers [labels bottom]
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 1;
+						ppt.highLightNode = false;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = true;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = false;
+						ppt.albumArtLabelType = 1;
+						ppt.albumArtFlipLabels = true;
+						ppt.itemShowStatistics = 0;
+						ppt.imgStyleFront = 1;
+						ppt.itemOverlayType = img.getOverlayIdxByType('tracks'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 2;
+						ppt.artId = 0;
+						ppt.albumArtGrpLevel = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Covers [Labels Bottom]';
+				prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
+				break;
+			}
+			case 7: { // Covers [labels blend]
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 1;
+						ppt.highLightNode = false;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = true;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = false;
+						ppt.albumArtLabelType = 4;
+						ppt.albumArtFlipLabels = true;
+						ppt.itemShowStatistics = 0;
+						ppt.imgStyleFront = 1;
+						ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 3;
+						ppt.artId = 0;
+						ppt.albumArtGrpLevel = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Covers [Labels Blend]';
+				prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
+				break;
+			}
+			case 8: { // Artist photos [labels right]
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.fullLineSelection = true;
+						ppt.highLightText = false;
+						ppt.rowStripes = true;
+						ppt.highLightRow = 1;
+						ppt.highLightNode = false;
+						ppt.verticalPad = 5;
+						ppt.rootNode = 3;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = true;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = false;
+						ppt.albumArtLabelType = 2;
+						ppt.itemShowStatistics = 0;
+						ppt.imgStyleArtist = 2;
+						ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 1;
+						ppt.artId = 4;
+						ppt.albumArtGrpLevel = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Artist Photos [Labels Right]';
+				prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
+				break;
+			}
+			case 9: ppt.thumbNailSize++; this.load(); break;
+			case 10: ppt.thumbNailSize--; this.load(); break;
+			case 11: { // Flow mode
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ppt.countsRight = true;
+						ppt.nodeStyle = 1;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = true;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Artist | Album (year)'); } // Regorxxx <- Code cleanup ->
+						ppt.albumArtFlowMode = true;
+						ppt.albumArtLabelType = 1;
+						ppt.itemShowStatistics = 0;
+						ppt.imgStyleFront = 1;
+						ppt.itemOverlayType = img.getOverlayIdxByType('none'); // Regorxxx <- New overlay styles ->
+						ppt.thumbNailSize = 2;
+						if (!ppt.presetLoadCurView) { ppt.artId = 0; }
+						ppt.albumArtGrpLevel = 0;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Flow Mode';
+				prompt = 'This changes various options on the display and album art tabs.\n\nContinue?';
+				break;
+			}
+			case 12: // Use current view
+				ppt.toggle('presetLoadCurView');
+				return;
+			case 13: { // Playback queue viewer
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ppt.libSource = 3;
+						ppt.queueSorting = true;
+						ppt.countsRight = true;
+						ppt.itemShowStatistics = 7;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						this.imgView = ppt.albumArtShow = false;
+						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Date - Title (queue)'); } // Regorxxx <- Code cleanup ->
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.rootNode = 0;
+						ppt.albumArtGrpLevel = 0;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Playback Queue viewer';
+				prompt = 'This changes various options on the display tab, views and source settings.\n\nContinue?';
+				break;
+			}
+			case 14: { // Playback queue flow
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						ppt.libSource = 3;
+						ppt.queueSorting = true;
+						ppt.countsRight = true;
+						ppt.nodeStyle = 1;
+						ppt.itemShowStatistics = 7;
+						ppt.inlineRoot = true;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.facetView = false;
+						if (!ppt.presetLoadCurView) {
+							this.setViewIndex('View by Artist | Title (queue)');
+							ppt.artId = 0;
+						}
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.rootNode = 0;
+						ppt.albumArtLabelType = 3;
+						ppt.itemOverlayType = img.getOverlayIdxByType('year'); // Regorxxx <- New overlay styles ->
+						this.imgView = ppt.albumArtShow = true;
+						ppt.albumArtFlowMode = true;
+						ppt.imgStyleFront = 1;
+						ppt.thumbNailSize = 2;
+						ppt.albumArtGrpLevel = 2;
+						ppt.albumArtNodeCollage = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Playback Queue flow';
+				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+				break;
+			}
+			case 15: { // Playlist manager (tree)
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						// Source | View
+						ppt.libSource = 0;
+						ppt.plsSource = 2;
+						ppt.fixedPlaylist = false;
+						ppt.fixedPlaylistName = 'All';
+						if (!ppt.presetLoadCurView) {
+							this.setViewIndex('View by Title (playlists)');
+							ppt.artId = 0;
+						}
+						ppt.plsPopEmpty = true;
+						ppt.plsFlatView = false;
+						ppt.plsSorting = true;
+						// Behaviour
+						ppt.rootNode = 0;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.itemShowStatistics = 0;
+						// UI
+						ppt.countsRight = true;
+						ppt.fullLineSelection = true;
+						ppt.nodeStyle = 1;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
+						ppt.nowPlayingIndicator = true;
+						ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
+						ppt.rowStripes = true;
+						// Art
+						this.imgView = ppt.albumArtShow = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Playlist Manager (tree)';
+				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+				break;
+			}
+			case 16: { // Playlist manager (art)
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						// Source | View
+						ppt.libSource = 0;
+						ppt.plsSource = 2;
+						ppt.fixedPlaylist = false;
+						ppt.fixedPlaylistName = 'All';
+						if (!ppt.presetLoadCurView) {
+							this.setViewIndex('View by Artist | Album (year)') !== -1 || this.setViewIndex('View by Artist | Title (queue)');
+							ppt.artId = 0;
+						}
+						ppt.plsPopEmpty = true;
+						ppt.plsFlatView = false;
+						ppt.plsSorting = true;
+						// Behaviour
+						ppt.rootNode = 0;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.itemShowStatistics = 2;
+						// UI
+						ppt.countsRight = true;
+						ppt.fullLineSelection = true;
+						ppt.nodeStyle = 1;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.nowPlayingSidemarker = ppt.nowPlayingIndicator = ppt.highLightNowplaying = false;
+						ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
+						// Art
+						ppt.albumArtLabelType = 3;
+						ppt.itemOverlayType = img.getOverlayIdxByType('tracks (#)'); // Regorxxx <- New overlay styles ->
+						this.imgView = ppt.albumArtShow = true;
+						ppt.albumArtFlowMode = false;
+						ppt.imgStyleFront = 1;
+						ppt.thumbNailSize = 2;
+						ppt.albumArtGrpLevel = 1;
+						ppt.albumArtNodeCollage = true;
+						ppt.itemOverlayVAlign = ppt.itemOverlayHAlign = 0;
+						ppt.itemOverlayCountForce = true;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Playlist Manager (art)';
+				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
 				break;
 			}
 		}
+		if (applySettings) { $.okCancelPopup(caption, prompt, applySettings, 'yesNo'); } // Regorxxx <- Native themed popups | Code cleanup ->
 	}
+
+	setFilter(i) {
+		lib.searchCache = {};
+		pop.clearCache('filter'); // Regorxxx <- Code cleanup ->
+		pop.clearCache('search'); // Regorxxx <- Code cleanup ->
+		if (i === this.filter.menu.length) {
+			ppt.toggle('reset');
+			if (ppt.reset) {
+				this.searchPaint();
+				lib.treeState(true, 2);
+			}
+		} else {
+			// Regorxxx <- Preset rules
+			if (ppt.presetRulesOnFilterUse) {
+				const rule = this.getPresetRule({ filterBy: i });
+				if (this.applyPresetRule(rule)) { return; };
+			}
+			// Regorxxx ->
+			ppt.filterBy = i;
+			if (this.condViewFilter) { this.getFields(ppt.viewBy, ppt.filterBy); }
+			but.multiBtnSetName(this.cleanDisplay(this.getFilterName()), false); // Regorxxx <- Filter / View / Source button | Multiple filters support | Code cleanup | Allow hidden display on filters/views ->
+			this.calcText();
+			if (this.search.txt) lib.upd_search = true;
+			if (!ppt.reset) {
+				const ix = pop.get_ix(this.imgView ? img.panel.x + 1 : 0, (!this.imgView || img.style.vertical ? this.tree.y : this.tree.x) + sbar.row.h / 2, true, false);
+				let l = Math.min(Math.floor(ix + this.rows), pop.tree.length);
+				if (ix != -1) {
+					for (i = ix; i < l; i++) {
+						if (pop.tree[i].sel) {
+							sbar.checkScroll(sbar.row.h * i, 'full', true);
+							lib.logTree();
+							break;
+						}
+					}
+				}
+				if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
+				else if (ppt.rememberTree) { lib.logFilter(); }
+			}
+			lib.getLibrary();
+			if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.reset ? 0 : 1, true); } // Regorxxx <- Search mode ->
+			but.refresh(true);
+			this.searchPaint();
+			if (!pop.notifySelection()) {
+				const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
+				window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
+			}
+			if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
+		}
+		pop.checkAutoHeight();
+	}
+
+	setView(i, treeArtToggle) {
+		if (this.colMarker) this.draw = false;
+		if (this.search.txt) lib.upd_search = true;
+		// Regorxxx <- Preset rules
+		const viewBy = i < this.grp.length ? i : ppt.viewBy;
+		if (ppt.presetRulesOnViewUse) {
+			const rule = this.getPresetRule({ viewBy });
+			if (this.applyPresetRule(rule)) { return; };
+		}
+		this.getFields(viewBy, ppt.filterBy);
+		// Regorxxx ->
+		this.on_size();
+		lib.searchCache = {};
+		pop.clearCache(); // Regorxxx <- Code cleanup ->
+		lib.checkView();
+		const key = ppt.rememberView ? this.viewName : 'def';
+		if ((ppt.rememberView || treeArtToggle) && lib.exp[key]) lib.readTreeState(false, treeArtToggle);
+		lib.getLibrary(treeArtToggle);
+		if (!ppt.searchMode || this.search.txt) { lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle)); } // Regorxxx <- Search mode ->
+		if (ppt.rememberView) {
+			this.calcText();
+			but.refresh(true);
+			this.searchPaint();
+			lib.logTree();
+			if (!pop.notifySelection()) {
+				const list = !this.search.txt.length || !lib.list.Count ? lib.list : this.list;
+				window.NotifyOthers(window.Name, this.hasFilterActive() ? list : new FbMetadbHandleList()); // Regorxxx <- Multiple filters support | Code cleanup ->
+			}
+		}
+		this.draw = true;
+		if (ppt.searchSend == 2 && this.search.txt.length) { pop.load({ handleList: this.list, bAddToPls: false, bAutoPlay: false, bUseDefaultPls: true, bInsertToPls: false }); }// Regorxxx <- Code cleanup ->
+		pop.checkAutoHeight();
+	}
+	// Regorxxx ->
 
 	setHeight(n) {
 		if (!this.pn_h_auto) return;
@@ -2577,7 +2581,7 @@ class Panel {
 					ppt.libSource = ppt.fixedPlaylist ? 1 : 0;
 					break;
 				}
-				case 0:  // Playlist
+				case 0: // Playlist
 					ppt.fixedPlaylist = false;
 					ppt.libSource = 0;
 					break;

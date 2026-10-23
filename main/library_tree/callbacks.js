@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/10/26
+//23/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -455,7 +455,7 @@ addEventListener('on_notify_data', (name, info) => {
 			}
 			const bSkipPresets = !!info.skipPresets || !ppt.presetRulesOnNotifyUse;
 			if (bSkipPresets) { ppt.toggle('presetRulesOnFilterUse'); }
-			if (idx !== -1) { panel.set('Filter', idx); }
+			if (idx !== -1) { panel.setFilter(idx); }
 			if (bSkipPresets) { ppt.toggle('presetRulesOnFilterUse'); }
 			break;
 		}
