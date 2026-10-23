@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/10/26
+//23/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -905,11 +905,11 @@ class Images {
 						if (panel.lines == 2) {
 							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott');
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group', style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), panel.ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
@@ -922,9 +922,9 @@ class Images {
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
@@ -942,11 +942,11 @@ class Images {
 						if (panel.lines == 2) {
 							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group');
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott', style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(lot, ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
@@ -958,9 +958,9 @@ class Images {
 						} else {
 							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group');
+								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(grp, ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style  | Customizable stats color
 							if (statistics) {

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//20/10/26
+//23/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1018,7 +1018,7 @@ class Populate {
 		return ret;
 	}
 
-	cusCol(gr, text, item, item_x, item_y, w, h, type, np, font, ellipsisSpace, cus) {
+	cusCol(gr, text, item, item_x, item_y, w, h, type, np, font, ellipsisSpace, cus, align = panel.lc) {
 		if (!text) return;
 		let col = [];
 		let col_x = [];
@@ -1064,7 +1064,7 @@ class Populate {
 		}
 		text.forEach((v, i) => {
 			if (i % 2 == 0 && text[i]) {
-				gr.GdiDrawText(text[i], font, np ? ui.col.nowp : col[i][type], item_x + col_x[i], item_y, col_w[i], h, panel.lc);
+				gr.GdiDrawText(panel.cleanMarkers(text[i]), font, np ? ui.col.nowp : col[i][type], item_x + col_x[i], item_y, col_w[i], h, align);
 			}
 		});
 	}

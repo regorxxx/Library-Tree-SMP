@@ -61,6 +61,7 @@
 - UI: fixed bug, on original script, where buttons could overlap if window width was small enough, instead of being adjusted or hidden. Now it first cuts the filter button text, then hides it, then hides the search icon until only the settings button is left. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087556.html#msg1087556).
 - UI: fixed bug, on original script, related to node text not being updated on repaint in some cases (for ex. to show the now playing icon) if the view TF used $colour{} functions. Only way to force an update was to collapse the parent node and reopen it. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088559.html#msg1088559).
 - UI: fixed bug, on original script, related to a crash on album art mode while scrolling in some configurations. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1086764.html#msg1086764).
+- UI: fixed bug, on original script, related to wrong art text alignment when using color codes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089502.html#msg1089502).
 - UI: fixed branch collage art leaving empty spaces in some cases instead of filling them with dummy art.
 - UI: fixed 'Last played (hour)' overlay not working.
 - Quicksetup: fixed bug, on original script, related to 'Quick Setup: Artist Photos [Labels Right]' preset using View by folder structure instead of an artist view.
