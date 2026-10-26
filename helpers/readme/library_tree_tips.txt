@@ -1,0 +1,6 @@
+﻿Filters and Views:
+------------------
+• Panel has a huge list of view and filters by default, but those
+unused can be hidden at the 'More settings' to clean-up the filter menu.
+
+• Remember separators may be added to submenus as needed.
