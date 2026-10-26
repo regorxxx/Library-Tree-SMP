@@ -36,7 +36,7 @@
 - Album art: new setting to filters duplicated images (by path) while using branch collage art. Can be found at 'Album Art' tab (HTML options panel) or 'Image Show Branch Collage deduplicate' (properties panel).
 - Album art: added support for special art variables usage within views TF, allowing to set art per tree level or node type. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089627.html#msg1089627).
 - Album art: added support for '$viewtfx' and '$foldertfx' art variables to load specific custom TF art types associated only to folder and Tf views. Use '$File (by Tf) [x]' if you prefer art to automatically change based on view mode. i.e. '%ALBUM ARTIST%[$viewtf1]|%ALBUM%[$viewtf2]'. Check syntax docs for more info.
-- Album art: added support for '$default', '$crop', '$circular', '$starfill', '$stareffect', '$staroutline', '$heart' style variables to use specific styles types for current branch. i.e. '%ALBUM ARTIST%[$circular]|%ALBUM%[$crop]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089627.html#msg1089627).  Check syntax docs for more info.
+- Album art: added support for '$default', '$crop', '$circular', '$starfill', '$stareffect', '$staroutline', '$heart' style variables to use specific styles types for current branch. i.e. '%ALBUM ARTIST%[$circular]|%ALBUM%[$crop]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089627.html#msg1089627). Check syntax docs for more info.
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
 ### Changed
