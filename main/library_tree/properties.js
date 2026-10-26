@@ -240,6 +240,7 @@ let properties = [
 	['Image Show Options (context menu)', true, 'albumArtOptionsShowContext'], // Regorxxx <- Art options at context menu / settings ->
 	['Image Show Options (settings)', true, 'albumArtOptionsShowSettings'], // Regorxxx <- Art options at context menu / settings ->
 	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
+	['Image Show Branch Collage deduplicate', true, 'albumArtNodeCollageDedup'], // Regorxxx <- Branch collage art ->
 	['Image Item Track Preference', 0, 'albumArtPreferHandle'], // Regorxxx <- Track preference art ->
 	['Image Style [Front]', 1, 'imgStyleFront'],
 	['Image Style [Back]', 1, 'imgStyleBack'],

@@ -33,6 +33,7 @@
 - Quicksetup: new presets added using the search mode feature.
 - Album art: new $nodeinitial variable to 'File (by TF)' art types, to display node name initials with swapped back prefixes (following prefix setting). i.e. to retrieve 'R' from'The Rolling Stones'.
 - Album art: new $nodeinitialclean, $nodenameswapclean, $nodenameclean variables to 'File (by TF)' art types, which are like non-clean versions with any emoji removed. Used on new search view TFs, will be handy for people who add icons to views.
+- Album art: new setting to filters duplicated images (by path) while using branch collage art. Can be found at 'Album Art' tab (HTML options panel) or 'Image Show Branch Collage deduplicate' (properties panel).
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
 ### Changed
@@ -49,6 +50,7 @@
 - UI: root node settings will be lost after update due to a property rename.
 - HTML: cleanup of 'Display' tab, with some options moved to its own sub-section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
+- Album art: branch collage art now also supports same-level branching ('¦'). New search mode-related view TFs use it.
 - Syntax: $iterate{} now also allows backticks (`), in addition to single quotes ('), to escape the TF function. Syntax docs have been updated to reflect the change, along more examples and tips.
 - Readme: improved Quick help with more info regarding new features, playback queue and playlists source usage.
 - Helpers: updated helpers.

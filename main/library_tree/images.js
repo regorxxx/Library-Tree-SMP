@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -331,7 +331,7 @@ class Images {
 				const idx = (panel.artVariables.find((av) => path.includes(av.id)) || { idx: -1 }).idx;
 				if (idx !== -1) {
 					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
-					if (ppt.logArtCustomTf) { this.artProfiler.CheckPointStep('get_album_art_async'); }
+					if (ppt.logArtProfiler) { this.artProfiler.CheckPointStep('get_album_art_async'); }
 					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
 				}
 			}
@@ -453,7 +453,7 @@ class Images {
 	cacheIt(image, key, ix, saveName) {
 		try {
 			if (!image) {
-				if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
+				if (this.style.rootComposite && ix < this.rootNo) { this.rootDebounce(); }
 				if (this.albumArtDiskCache && !this.database[key]) {
 					this.toSave.unshift({
 						key,
@@ -493,30 +493,32 @@ class Images {
 					'display',
 					key
 				);
-				if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
+				if (this.style.rootComposite && ix < this.rootNo) { this.rootDebounce(); }
 			}
 
-			if (!this.timer.save && this.toSave.length) this.timer.save = setInterval(() => {
-				const ln = this.toSave.length;
-				if (ln) {
-					const item = this.toSave[ln - 1];
-					if (item.setKeyOnly) {
-						this.database[item.key] = item.saveName;
-						$.save(item.folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
-					} else {
-						const saved = item.image.SaveAs(item.folder + item.saveName, this.getCacheFileFormat(item.saveName)); // Regorxxx <- Allow images with transparencies ->
-						if (saved) {
+			if (!this.timer.save && this.toSave.length) {
+				this.timer.save = setInterval(() => {
+					const ln = this.toSave.length;
+					if (ln) {
+						const item = this.toSave[ln - 1];
+						if (item.setKeyOnly) {
 							this.database[item.key] = item.saveName;
 							$.save(item.folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
+						} else {
+							const saved = item.image.SaveAs(item.folder + item.saveName, this.getCacheFileFormat(item.saveName)); // Regorxxx <- Allow images with transparencies ->
+							if (saved) {
+								this.database[item.key] = item.saveName;
+								$.save(item.folder + 'database.dat', JSON.stringify(this.database, null, 3), true);
+							}
 						}
+						this.toSave.pop();
 					}
-					this.toSave.pop();
-				}
-				if (!this.toSave.length) {
-					clearInterval(this.timer.save);
-					this.timer.save = null;
-				}
-			}, 1000);
+					if (!this.toSave.length) {
+						clearInterval(this.timer.save);
+						this.timer.save = null;
+					}
+				}, 1000);
+			}
 
 		} catch (e) { // eslint-disable-line no-unused-vars
 			$.trace('unable to load thumbnail image: ' + key);
@@ -534,7 +536,7 @@ class Images {
 					key
 				);
 			}
-			if (this.style.rootComposite && ix < this.rootNo) this.rootDebounce();
+			if (this.style.rootComposite && ix < this.rootNo) { this.rootDebounce(); }
 		} catch (e) { // eslint-disable-line no-unused-vars
 			$.trace('unable to load thumbnail image: ' + key);
 		}
@@ -2024,8 +2026,10 @@ class Images {
 								}
 							}
 							void Promise.all(promises).then((results) => {
-								if (results.length > 1) {
-									console.log(results, results.length);
+								const paths = ppt.albumArtNodeCollageDedup
+									? new Set(results.map((r) => r.path))
+									: new Set(results);
+								if (paths.size > 1) {
 									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
 									this.cacheIt(img, key, v.ix);
 								} else {
@@ -2061,10 +2065,9 @@ class Images {
 	}
 
 	getItem(i) {
-		if (!pop.tree[i]) {
-			return null;
-		}
-		const key = pop.tree[i].key;
+		const item = pop.tree[i];
+		if (!item) { return null; }
+		const key = item.key;
 		if (!this.cache[key] && this.database[key] && this.database[key] != 'noAlbumArt') {
 			if (_isFile(this.cacheFolder + this.database[key])) { // cacheItPreload if file exists
 				return {
@@ -2217,7 +2220,7 @@ class Images {
 		// Regorxxx ->
 		pop.tree.forEach((v, i) => {
 			// Regorxxx <- Track preference art
-			const arr = pop.tree[i].name.split('^@^');
+			const arr = v.name.split('^@^');
 			// Regorxxx <- Fix undefined values for views without all info or root nodes + Show index on scrolling
 			v.grp = (panel.lines == 1 || !ppt.albumArtFlipLabels ? arr[0] : arr[1]) || '';
 			v.lot = (panel.lines == 2 ? (ppt.albumArtFlipLabels ? arr[0] : arr[1]) : '') || '';
@@ -2332,7 +2335,7 @@ class Images {
 					v.handleArr = [];
 					for (const handle of handleArr) {
 						const tag = tfArtId
-							? tfArtId.EvalWithMetadb(handle).split('|').filter((s) => !s.includes('^@^')).join('').trim() || ''
+							? tfArtId.EvalWithMetadb(handle).split(/\||¦/gi).filter((s) => !s.includes('^@^')).join('').trim() || ''
 							: handle.Path.split('\\').at(-2) || '';
 						if (tag && !ids.has(tag)) {
 							ids.add(tag);
@@ -2606,7 +2609,7 @@ class Images {
 		this.setRoot();
 		if (this.style.rootComposite) this.checkRootImg();
 		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
-		if (stub) this.stub.noImg = this.format(stub, art, this.getStyle(this.style.image, true), this.im.w, this.im.w, this.labels.fade, 'noImg');
+		if (stub) { this.stub.noImg = this.format(stub, art, this.getStyle(this.style.image, true), this.im.w, this.im.w, this.labels.fade, 'noImg'); }
 		// Regorxxx <- Fix img frame for root images (hover effect)
 		this.stub.root = this.root_img
 			? this.format(this.root_img, art, this.getStyleByType('default'), this.im.w, this.im.w, this.labels.fade, 'root')
