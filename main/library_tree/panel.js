@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//27/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -313,9 +313,9 @@ class Panel {
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
 				.replace(/\$nodenameswapclean/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))).replace(iconRe, ''))
 				.replace(/\$nodenameclean/gi, () => sanitizeTagTfo(this.cleanMarkers((node || {}).nm || '-N/A-').split('^@^')[0]).replace(iconRe, ''))
-				.replace(/\$nodeinitialclean/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))).replace(iconRe, '')[0])
+				.replace(/\$nodeinitialclean/gi, () => Array.from(sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))).replace(iconRe, ''))[0])
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))))
-				.replace(/\$nodeinitial/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))[0])
+				.replace(/\$nodeinitial/gi, () => Array.from(sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))))[0])
 				.replace(/\$nodename/gi, () => sanitizeTagTfo(this.cleanMarkers((node || {}).nm || '-N/A-').split('^@^')[0]))
 				.replace(/\$nodetype/gi, '$if2($get(nodetype),$put(nodetype,$select($if($strstr(%_PATH_RAW%,http://),1,$if($strstr(%_PATH_RAW%,https://),1,$if($strstr(%_PATH_RAW%,fy+),4,$if($strstr(%_PATH_RAW%,3dydfy:),4,$if($strstr(%_PATH_RAW%,youtube.),4,$if($strstr(%_PATH_RAW%,www.),1,$if($strstr(%_PATH_RAW%,unpack),3,2))))))),stream,track,container,youtube)))')
 				.replace(/\$nodeplaying/gi, () => fb.IsPlaying && node && pop.inRange(pop.nowp, node.item) ? '$not(0)' : '')

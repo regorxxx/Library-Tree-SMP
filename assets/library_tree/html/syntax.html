@@ -1480,6 +1480,58 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$nodeinitial</em> </td>
+					<td>
+						Returns node name's initial (for every item shown at the panel). Special characters are already escaped.
+						<br>
+						<br>
+						Note [swap/strip] prefix settings are already applied.
+					</td>
+					<td>
+						<em>
+							$nodeinitial\$nodename.jpg
+						</em>
+					</td>
+					<td>
+						Looks for jpg files in a nested tree by letter.
+						<br>
+						<br>
+						'Rock' -> 'R\Rock.jpg'
+						<br>
+						<br>
+						'Tergo Lupi, A' -> 'T\Tergo Lupi, A.jpg'
+						<br>
+						<br>
+						'👩‍🎤A Tergo Lupi' -> '👩\👩‍🎤Tergo Lupi, A.jpg'
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$nodenameclean<br>$nodenameswapclean<br>$nodeinitialclean</em> </td>
+					<td>
+						Equivalent to non-clean variables, but have any emoji removed.
+					</td>
+					<td>
+						<em>
+							$nodenameclean.jpg
+							<br>
+							<br>
+							$nodenameswapclean.jpg
+							<br>
+							<br>
+							$nodeinitialclean\$crc32($nodenameclean).jpg
+						</em>
+					</td>
+					<td>
+						'👩‍🎤A Tergo Lupi' -> 'Tergo Lupi, A.jpg'
+						<br>
+						<br>
+						'👩‍🎤A Tergo Lupi' -> 'A Tergo Lupi.jpg'
+						<br>
+						<br>
+						'👩‍🎤A Tergo Lupi' -> 'T\1541400956.jpg'
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$nodeplaying</em> </td>
 					<td>
 						Returns true when node is the playing one (playing track is any of its children).
