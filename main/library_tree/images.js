@@ -318,12 +318,23 @@ class Images {
 			: new FbTitleFormat(tf).Eval(true);
 	}
 
-	async get_album_art_async(handle, art, key, ix, bSave = true) {
+	async get_album_art_async(handle, art, key, ix, bSave = true, bForceViewArt = ppt.imgFollowView) {
 		if (ppt.logArtProfiler) {
 			this.createArtProfiler();
 			this.artProfiler.CheckPoint('get_album_art_async');
 		} else { this.clearArtProfiler(); }
 		const result = { path: '', image: null, ext: '', key, ix, bSave }; // Regorxxx <- Allow images with transparencies ->
+		const item = pop.tree[ix];
+		if (bForceViewArt) {
+			if (item.nm.includes(panel.markers.artType)) {
+				const idx = (panel.artVariables.find((av) => item.nm.includes(av.id)) || { idx: -1 }).idx;
+				if (idx !== -1) {
+					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
+					if (ppt.logArtProfiler) { this.artProfiler.CheckPointStep('get_album_art_async'); }
+					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false, false);
+				}
+			}
+		}
 		if (Object.hasOwn(art, 'tf')) {
 			const item = pop.tree[ix];
 			const path = this.getArtMask(art.tf, handle, item);
@@ -332,7 +343,7 @@ class Images {
 				if (idx !== -1) {
 					if (ppt.logArtCustomTf) { console.log(window.ScriptInfo.Name + ': ' + item.nm + ' -> ' + _foldPath(path) + ' (' + this.getArt(idx, panel.folderView).name + ')'); } // Regorxxx <- Art logging ->
 					if (ppt.logArtProfiler) { this.artProfiler.CheckPointStep('get_album_art_async'); }
-					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false);
+					return this.get_album_art_async(handle, this.getArt(idx, panel.folderView), key, ix, false, false);
 				}
 			}
 			if (ppt.logArtProfiler) { this.artProfiler.CheckPoint('getFiles'); }
@@ -355,7 +366,7 @@ class Images {
 			console.log(window.ScriptInfo.Name + ': ' + result.path + ' -> ' + 'Non valid or unsupported image'); // Regorxxx <- Art logging ->
 			result.bSave = false;
 		}
-		this.cacheAlbumArt(result);
+		this.cacheAlbumArt(result, this.getStyleFromNode(item));
 		if (ppt.logArtProfiler) {
 			this.artProfiler.CheckPointStep('get_album_art_async');
 			this.printArtProfiler();
@@ -363,11 +374,11 @@ class Images {
 		return result;
 	}
 
-	cacheAlbumArt(result) {
+	cacheAlbumArt(result, style) {
 		const o = this.cache[result.key];
 		if (o && o.img == 'called') {
 			const saveName = result.bSave ? utils.MD5(result.path) + result.ext : null; // Regorxxx <- Allow images with transparencies | Expand TF support ->
-			this.cacheIt(result.image, result.key, result.ix, saveName);
+			this.cacheIt(result.image, result.key, result.ix, saveName, style);
 		}
 	}
 
@@ -425,7 +436,7 @@ class Images {
 		return ['.png', '.gif', '.webp'].includes(ext);
 	}
 
-	async load_image_async(key, image_path, ix, rawCache) {
+	async load_image_async(key, image_path, ix, rawCache, style) {
 		if (ppt.logArtProfiler) {
 			this.createArtProfiler();
 			this.artProfiler.CheckPoint('load_image_async');
@@ -439,8 +450,8 @@ class Images {
 		};
 		const o = this.cache[key];
 		if (o && o.img == 'called') {
-			if (rawCache) { this.cacheItPreLoad(result.image, key, ix); }
-			else { this.cacheIt(result.image, key, ix); }
+			if (rawCache) { this.cacheItPreLoad(result.image, key, ix, style); }
+			else { this.cacheIt(result.image, key, ix, void(0), style); }
 		}
 		if (ppt.logArtProfiler) {
 			this.artProfiler.CheckPointStep('load_image_async');
@@ -450,7 +461,7 @@ class Images {
 	}
 	// Regorxxx ->
 
-	cacheIt(image, key, ix, saveName) {
+	cacheIt(image, key, ix, saveName, style = this.getStyle(this.style.image)) {
 		try {
 			if (!image) {
 				if (this.style.rootComposite && ix < this.rootNo) { this.rootDebounce(); }
@@ -489,7 +500,7 @@ class Images {
 
 				this.checkCache();
 				this.addToCache( // Regorxxx <- Code cleanup ->
-					this.format(image, this.getArt(ppt.artId), this.getStyle(this.style.image), this.im.w, this.im.w, this.labels.fade),
+					this.format(image, this.getArt(ppt.artId), style, this.im.w, this.im.w, this.labels.fade),
 					'display',
 					key
 				);
@@ -526,12 +537,12 @@ class Images {
 		this.drawDebounce();
 	}
 
-	cacheItPreLoad(image, key, ix) {
+	cacheItPreLoad(image, key, ix, style = this.getStyle(this.style.image)) {
 		try {
 			if (image) {
 				this.checkCache();
 				this.addToCache( // Regorxxx <- Code cleanup ->
-					this.format(image, this.getArt(ppt.artId), this.getStyle(this.style.image), this.im.w, this.im.w, this.labels.fade),
+					this.format(image, this.getArt(ppt.artId), style, this.im.w, this.im.w, this.labels.fade),
 					'displayPreload',
 					key
 				);
@@ -783,7 +794,7 @@ class Images {
 		let coords = {};
 		this.getItemsToDraw();
 		this.column = 0;
-		const style = this.getStyle(this.style.image);
+		const globalStyle = this.getStyle(this.style.image);
 		const art = this.getArt(ppt.artId);
 		/**  * @type {{i: i, column: number, item: object, selIdx, bHover: boolean, bSel: boolean, bBooklet: boolean, bNowPlaying: boolean, bActivePls: boolean}[][]}  */
 		const stack = [[], [], []];
@@ -816,6 +827,7 @@ class Images {
 			box_y = this.style.vertical ? Math.floor(this.panel.y + row * this.row.h - sbar.delta) : this.style.y;
 			if (box_y >= 0 - this.row.h && box_y < this.panel.y + this.panel.h) {
 				const item = cell.item;
+				const style = this.getStyleFromNode(item) || globalStyle;
 				pop.getItemStats(item);
 				const grp = item.grp;
 				const lot = item.lot;
@@ -1967,7 +1979,8 @@ class Images {
 					handle: item.handle,
 					key,
 					handleArr: item.handleArr,
-					keyArr: item.keyArr
+					keyArr: item.keyArr,
+					style: this.getStyleFromNode(item)
 				});
 			}
 		};
@@ -2031,13 +2044,13 @@ class Images {
 									: new Set(results);
 								if (paths.size > 1) {
 									const img = $.gr(this.cellWidth * 2, this.cellWidth * 2, true, g => this.createCollageFromImgs(g, this.cellWidth, this.cellWidth, 2, results.map((r) => r.image)));
-									this.cacheIt(img, key, v.ix);
+									this.cacheIt(img, key, v.ix, void (0), v.style);
 								} else {
-									this.cacheIt(results[0].image, key, v.ix);
+									this.cacheIt(results[0].image, key, v.ix, void (0), v.style);
 								}
 							});
 						} else if (this.albumArtDiskCache && _isFile(this.cacheFolder + this.database[key])) {
-							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, void (0), v.style);
 						} else if (v.handle) {
 							this.get_album_art_async(v.handle, art, key, v.ix);
 						} else if (Object.hasOwn(art, 'tf') && panel.isNoHandleCustomTf(art.tf)) { // Regorxxx <- Multiple-playlist flat view ->
@@ -2072,7 +2085,8 @@ class Images {
 			if (_isFile(this.cacheFolder + this.database[key])) { // cacheItPreload if file exists
 				return {
 					ix: i,
-					key
+					key,
+					style: this.getStyleFromNode(item)
 				};
 			}
 		}
@@ -2661,7 +2675,7 @@ class Images {
 						img: 'called',
 						accessed: ++this.accessed
 					};
-					void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+					void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true, v.style);
 				}
 			}
 		}
@@ -2687,7 +2701,7 @@ class Images {
 								img: 'called',
 								accessed: 0
 							};
-							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true, v.style);
 						}
 					}
 
@@ -2699,7 +2713,7 @@ class Images {
 								img: 'called',
 								accessed: 0
 							};
-							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true);
+							void this.load_image_async(key, this.cacheFolder + this.database[key], v.ix, true, v.style);
 						}
 					}
 				} else {
@@ -2862,5 +2876,10 @@ class Images {
 		}
 	}
 	// Regorxxx ->
+
+	getStyleFromNode(item) {
+		const styleIdx = (panel.styleVariables.find((sv) => item.nm.includes(sv.id)) || { idx: -1 }).idx;
+		return styleIdx !== -1 ? this.getStyle(styleIdx) : void (0);
+	}
 }
 const img = new Images;

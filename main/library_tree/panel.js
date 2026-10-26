@@ -80,12 +80,14 @@ class Panel {
 			softSplitter: '\u00ac',
 			metaSep: '@@',
 			artType: '€€',
+			artStyle: '€#€',
 			clean: {
 				multiProcessRe: /#!#/g,
 				noDisplayRe: /#@#/g,
 				imgViewRe: /\^@\^/g,
 				colRe: /@!#.*?@!#/g,
-				artTypeRe: /€€\d+?€€/g
+				artTypeRe: /€€\d+?€€/g,
+				styleTypeRe: /€#€\d+?€#€/g
 			},
 			group: {
 				noDisplayRe: /#@#(.*?)#@#/gi,
@@ -114,6 +116,14 @@ class Panel {
 			return artVar;
 		});
 		// Regorxxx ->
+		// Regorxxx <- Custom TF art
+		this.styleVariables = img.styles.map((style) => {
+			const idx = style.idx;
+			const id = this.markers.artStyle + idx + this.markers.artStyle;
+			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')', 'gi') };;
+		});
+		// Regorxxx ->
+
 		this.filter = {
 			menu: [],
 			mode: [],
@@ -319,6 +329,7 @@ class Panel {
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
 				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
 			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
+			this.styleVariables.forEach((style) => s = s.replace(style.regExp, style.replacer));
 			s = _resolvePath(s.trimStart());
 			while (s.includes('$randfloat{')) {
 				const q = s.match(/\$randfloat{(\w*?)(?:,(\w+?))?}/);
@@ -466,7 +477,7 @@ class Panel {
 		if (this.multiProcess) { s = s.replace(this.markers.clean.multiProcessRe, ''); }
 		if (this.noDisplay) { s = s.replace(isSort ? this.markers.clean.noDisplayRe : this.markers.group.noDisplayRe, ''); }
 		if (this.colMarker) { s = s.replace(this.markers.clean.colRe, ''); }
-		if (this.imgView) { s = s.replace(this.markers.clean.imgViewRe, '  ').replace(this.markers.clean.artTypeRe, ''); }
+		if (this.imgView) { s = s.replace(this.markers.clean.imgViewRe, '  ').replace(this.markers.clean.artTypeRe, '').replace(this.markers.clean.styleTypeRe, ''); }
 		return s;
 	}
 	// Regorxxx ->

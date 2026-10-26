@@ -369,6 +369,7 @@ let properties = [
 	['Image Perspective axis: hv-0 h-1 v-2 auto-3', 0, 'imgPerspectiveAxis'],
 	// Regorxxx ->
 	['Image Carousel enabled', false, 'imgCarousel'], // Regorxxx <- Art carousel ->
+	['Image Follow view TF', true, 'imgFollowView'], // Regorxxx <- Art variables on view TF ->
 
 	['Initial Load Filters', true, 'initialLoadFilters'],
 	['Initial Load Views', true, 'initialLoadViews'],
