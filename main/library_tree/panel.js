@@ -84,7 +84,8 @@ class Panel {
 				multiProcessRe: /#!#/g,
 				noDisplayRe: /#@#/g,
 				imgViewRe: /\^@\^/g,
-				colRe: /@!#.*?@!#/g
+				colRe: /@!#.*?@!#/g,
+				artTypeRe: /€€\d+?€€/g
 			},
 			group: {
 				noDisplayRe: /#@#(.*?)#@#/gi,
@@ -101,7 +102,16 @@ class Panel {
 		this.artVariables = img.art.map((art) => {
 			const idx = art.idx;
 			const id = this.markers.artType + idx + this.markers.artType;
-			return { idx, regExp: new RegExp('\\$' + escapeRegExpV2(art.type), 'gi'), replacer: () => this.imgView ? id : '-N/A-', id };
+			const artVar = { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id };
+			if (typeof art.cacheName === 'function') {
+				artVar.regExp = new RegExp('\\$(?:' + escapeRegExpV2(art.type) + '|' + escapeRegExpV2(art.cacheName(false)) + '|' + escapeRegExpV2(art.cacheName(true)) + ')', 'gi');
+			} else {
+				const reTf = [...new Set([art.type, art.cacheName].filter(Boolean).map((t) => t.toLowerCase()))]
+					.map((t) => escapeRegExpV2(t))
+					.join('|');
+				artVar.regExp = new RegExp('\\$(?:' + reTf + ')', 'gi');
+			}
+			return artVar;
 		});
 		// Regorxxx ->
 		this.filter = {
@@ -456,7 +466,7 @@ class Panel {
 		if (this.multiProcess) { s = s.replace(this.markers.clean.multiProcessRe, ''); }
 		if (this.noDisplay) { s = s.replace(isSort ? this.markers.clean.noDisplayRe : this.markers.group.noDisplayRe, ''); }
 		if (this.colMarker) { s = s.replace(this.markers.clean.colRe, ''); }
-		if (this.imgView) { s = s.replace(this.markers.clean.imgViewRe, '  '); }
+		if (this.imgView) { s = s.replace(this.markers.clean.imgViewRe, '  ').replace(this.markers.clean.artTypeRe, ''); }
 		return s;
 	}
 	// Regorxxx ->

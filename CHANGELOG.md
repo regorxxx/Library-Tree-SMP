@@ -34,6 +34,7 @@
 - Album art: new $nodeinitial variable to 'File (by TF)' art types, to display node name initials with swapped back prefixes (following prefix setting). i.e. to retrieve 'R' from'The Rolling Stones'.
 - Album art: new $nodeinitialclean, $nodenameswapclean, $nodenameclean variables to 'File (by TF)' art types, which are like non-clean versions with any emoji removed. Used on new search view TFs, will be handy for people who add icons to views.
 - Album art: new setting to filters duplicated images (by path) while using branch collage art. Can be found at 'Album Art' tab (HTML options panel) or 'Image Show Branch Collage deduplicate' (properties panel).
+- Album art: added support for '$viewtfx' and '$foldertfx'to 'File (by TF)' art types. Use '$File (by Tf) [x]' if you prefer art to automatically change based on view mode. i.e. %ALBUM ARTIST%[$viewtf1]|%ALBUM%[$viewtf2]
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
 ### Changed
