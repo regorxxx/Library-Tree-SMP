@@ -9,7 +9,6 @@
 
 ## [Unreleased][]
 ### Added
-- Search: added Up|Down keyboard shortcuts to scroll the search history, i.e. the input box is automatically filled with next/prev search.
 - Booklet: new booklet feature which checks for booklet files at album level, shows some kind of indicator on UI and allows to directly open the PDF file via menus. It works on TF views (dynamically analyzing levels with %ALBUM% tag) and View by Folder structure (folders which contain track files). Look at 'Display' tab (HTML options panel) for more info or 'Booklet [...]' (properties panel). Custom colors can be set at 'Custom' tab (HTML options panel) or 'Custom Colour Text Booklet Highlight' (properties panel). Feature is disabled by default. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089031.html#msg1089031) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089101.html#msg1089101).
 - HTML: added new 'TF & Remap' tab at HTML options panel, with new available settings. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088499.html#msg1088499).
 - UI: split 'Show album art options' into context menu and setting entries so they can be independently hidden without completely disabling album art feature (which now happens if both are disabled). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
@@ -20,6 +19,7 @@
 - UI: new 'Panel name' option for root node. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089275.html#msg1089275).
 - Remap: added a new feature called tag remapping which allows to replace specific tags with custom values. Currently used for LANGUAGE tag, panel is now able to replace ISO 639 codes with the full language name on real time. For ex. when using a View which uses %LANGUAGE%, 'eng' would be replaced with 'English'. When tag is not found, value is replaced with 'Missing'; it also has special remaps like instrumental tracks (zxx), etc. Note remapping only works at search when using RegExps (i.e. '/arabic/gi', instead of looking for 'ara'), otherwise queries are directly managed by foobar2000 (and original values used). See 'Remap: %LANGUAGE% tag ISO 693' (properties panel). See [Issue 16](https://github.com/regorxxx/Library-Tree-SMP/issues/16) and [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088245.html#msg1088245).
 - Views: added new default view patterns related to LANGUAGE tag; meant to be used with remap feature above. Tag is generally available when tagging files with [MusicBrainz Picard](https://picard.musicbrainz.org/).
+- Views: added new default view patterns related to search mode (see below); meant to be used with remap feature above. Tag is generally available when tagging files with [MusicBrainz Picard](https://picard.musicbrainz.org/).
 - Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087544.html#msg1087544).
 - Filters: added new default filter query expressions like: 'Recently Modified', ...
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
@@ -28,7 +28,11 @@
 - Sorting: folder view can now be sorted using sorting submenu.
 - Sorting: sorting by statistics is also available while using track counts.
 - Syntax: added $nodisplay{} support at filter, view and panel names to hide part of the names at different UI places. Check syntax help for more info.
+- Search: added Up|Down keyboard shortcuts to scroll the search history, i.e. the input box is automatically filled with next/prev search.
 - Search mode: new search mode (found at sources submenu) which stops any panel processing until the search box is used, effectively behaving like native foobar2000 search window. i.e. you look for something and it shows the matches, clear the the search and nothing is shown. Note loading is almost instant, since there is no TF processing until a search is done. This feature is meant to be used along popup panels, like [foo_flowin](https://github.com/ttsping/foo_flowin) to fully replace native search as a panel that you can show/hide on demand. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089365.html#msg1089365).
+- Quicksetup: new presets added using the search mode feature.
+- Album art: new $nodeinitial variable to 'File (by TF)' art types, to display node name initials with swapped back prefixes (following prefix setting). i.e. to retrieve 'R' from'The Rolling Stones'.
+- Album art: new $nodeinitialclean, $nodenameswapclean, $nodenameclean variables to 'File (by TF)' art types, which are like non-clean versions with any emoji removed. Used on new search view TFs, will be handy for people who add icons to views.
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
 ### Changed

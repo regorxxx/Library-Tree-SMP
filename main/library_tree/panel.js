@@ -289,10 +289,15 @@ class Panel {
 				? sourceParent.map((p) => p.guid).join('\', \'')
 				: '';
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
+			const iconRe = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{200D}]/gu;
 			s = s.replace(/\$prefix/gi, () => this.prefix.join(','))
+				.replace(/\$nodenameswapclean/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))).replace(iconRe, ''))
+				.replace(/\$nodenameclean/gi, () => sanitizeTagTfo(this.cleanMarkers((node || {}).nm || '-N/A-').split('^@^')[0]).replace(iconRe, ''))
+				.replace(/\$nodeinitialclean/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))).replace(iconRe, '')[0])
 				.replace(/\$nodenameswap/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' '))))
+				.replace(/\$nodeinitial/gi, () => sanitizeTagTfo(this.cleanMarkers(((node || {}).nm || '-N/A-').split('^@^')[0].split(this.prefixRe).reverse().join(' ')))[0])
 				.replace(/\$nodename/gi, () => sanitizeTagTfo(this.cleanMarkers((node || {}).nm || '-N/A-').split('^@^')[0]))
-				.replace(/\$nodetype/gi, '$if2($get(nodetype),$put(nodetype,$select($if($strstr(%_path_raw%,http://),1,$if($strstr(%_path_raw%,https://),1,$if($strstr(%_path_raw%,fy+),4,$if($strstr(%_path_raw%,3dydfy:),4,$if($strstr(%_path_raw%,youtube.),4,$if($strstr(%_path_raw%,www.),1,$if($strstr(%_path_raw%,unpack),3,2))))))),stream,track,container,youtube)))')
+				.replace(/\$nodetype/gi, '$if2($get(nodetype),$put(nodetype,$select($if($strstr(%_PATH_RAW%,http://),1,$if($strstr(%_PATH_RAW%,https://),1,$if($strstr(%_PATH_RAW%,fy+),4,$if($strstr(%_PATH_RAW%,3dydfy:),4,$if($strstr(%_PATH_RAW%,youtube.),4,$if($strstr(%_PATH_RAW%,www.),1,$if($strstr(%_PATH_RAW%,unpack),3,2))))))),stream,track,container,youtube)))')
 				.replace(/\$nodeplaying/gi, () => fb.IsPlaying && node && pop.inRange(pop.nowp, node.item) ? '$not(0)' : '')
 				.replace(/\$sourcetype/gi, () => sanitizeTagTfo(sourceType || '-N/A-'))
 				.replace(/\$sourcename/gi, () => sanitizeTagTfo(sourceName || '-N/A-'))
@@ -861,6 +866,10 @@ class Panel {
 			['View XX: Name // Pattern', 'separator // .'],
 			['View XX: Name // Pattern', 'View by Year // $year(%DATE%)|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Year', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Decade // $div($year(%DATE%),10)0s|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Decade', 'Album', 1],
+			['View XX: Name // Pattern', 'separator // .'],
+			['View XX: Name // Pattern', 'Search by Artist ¦ Album ¦ Title // $colour{200-50-100}$nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist]¦$colour{50-200-100}$nodisplay{%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front]¦$nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front]', 'Artist ¦ Album ¦ Title', 'Artist ¦ Album ¦ Title', 1],
+			['View XX: Name // Pattern', 'Search by Artist | Album ¦ Title // $colour{200-50-100}$nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist]|$nodisplay{%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front]¦$nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front]', 'Artist', 'Album ¦ Title', [2, 2, 2, 1, 1]],
+			['View XX: Name // Pattern', 'Search by Title // $nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE% • $nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)', 'Track', 'Track', 1],
 		].filter(Boolean).map((entry, i) => [entry[0].replace('View XX', 'View ' + (i + 1).toString().padStart(2, '0')), ...entry.slice(1)]);
 		// Regorxxx <- Code cleanup | Support hidden default filters
 		const processView = (v, levels) => {
@@ -1615,6 +1624,84 @@ class Panel {
 					}
 				};
 				caption = 'Quick Setup: Playlist Manager (art)';
+				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+				break;
+			}
+			case 17: { // Search window (library)
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						// Source | View
+						ppt.libSource = 1;
+						if (!ppt.presetLoadCurView) {
+							this.setViewIndex('Search by Artist ¦ Album ¦ Title');
+							ppt.artId = 0;
+						}
+						ppt.searchMode = true;
+						// Behaviour
+						ppt.rootNode = 0;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = true;
+						ppt.itemShowStatistics = 2;
+						ppt.rememberTree = false;
+						// UI
+						ppt.countsRight = true;
+						ppt.fullLineSelection = true;
+						ppt.nodeStyle = 1;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
+						ppt.nowPlayingIndicator = true;
+						ppt.rowStripes = true;
+						// Art
+						this.imgView = ppt.albumArtShow = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Search window (library)';
+				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
+				break;
+			}
+			case 18: { // Search window (playlists)
+				applySettings = (status, confirmed) => {
+					if (confirmed) {
+						// Source | View
+						ppt.libSource = 0;
+						ppt.plsSource = 2;
+						ppt.fixedPlaylist = false;
+						ppt.fixedPlaylistName = 'All';
+						if (!ppt.presetLoadCurView) {
+							this.setViewIndex('Search by Title');
+							ppt.artId = 0;
+						}
+						ppt.plsPopEmpty = true;
+						ppt.plsFlatView = false;
+						ppt.plsSorting = true;
+						ppt.searchMode = true;
+						// Behaviour
+						ppt.rootNode = 0;
+						ppt.autoCollapse = false;
+						ppt.treeAutoExpandSingle = false;
+						ppt.itemShowStatistics = 0;
+						// UI
+						ppt.countsRight = true;
+						ppt.fullLineSelection = true;
+						ppt.nodeStyle = 1;
+						ppt.facetView = false;
+						ui.sbar.type = 1;
+						ppt.sbarType = 1;
+						ppt.sbarShow = 1;
+						ppt.nowPlayingSidemarker = ppt.highLightNowplaying = false;
+						ppt.nowPlayingIndicator = true;
+						ppt.highLightActivePlaylist = ppt.activePlaylistSidemarker = true;
+						ppt.rowStripes = true;
+						// Art
+						this.imgView = ppt.albumArtShow = false;
+						this.load();
+					}
+				};
+				caption = 'Quick Setup: Search window (playlists)';
 				prompt = 'This changes various options on the display and art tabs, views and source settings.\n\nContinue?';
 				break;
 			}

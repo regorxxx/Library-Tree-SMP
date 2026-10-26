@@ -897,7 +897,7 @@ class MenuItems {
 			}
 		}
 		// Regorxxx ->
-		// Regorxxx <- Code cleanup | New quicksetup presets
+		// Regorxxx <- Code cleanup | New quick setup presets
 		{
 			menu.newMenu({ menuName: 'Quick setup', appendTo: mainMenu() });
 			[
@@ -910,6 +910,8 @@ class MenuItems {
 				{ name: 'Playback Queue flow', idx: 14, separator: true },
 				{ name: 'Playlist Manager (tree)', idx: 15 },
 				{ name: 'Playlist Manager (art)', idx: 16, separator: true },
+				{ name: 'Search Window (library)', idx: 17 },
+				{ name: 'Search Window (playlists)', idx: 18, separator: true },
 
 			].forEach((v) => menu.newItem({
 				menuName: 'Quick setup',
