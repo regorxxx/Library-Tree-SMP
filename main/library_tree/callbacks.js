@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -16,7 +16,7 @@ addEventListener('on_colours_changed', (keepCache) => {
 		panel.getFields(ppt.viewBy, ppt.filterBy);
 		if (lib) {
 			lib.getLibrary();
-			if (!ppt.searchMode || panel.search.txt) { lib.rootNodes(true, true); } // Regorxxx <- Search mode ->
+			if (!panel.isSearchLikeSource() || panel.search.txt) { lib.rootNodes(true, true); } // Regorxxx <- Search mode ->
 		}
 	}
 	sbar.setCol();
@@ -408,7 +408,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': search': {
-			if (!ppt.searchShow && !ppt.searchMode) { break; }
+			if (!ppt.searchShow && !panel.isSearchLikeSource()) { break; }
 			if (!info || !info.search) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			if (!Object.hasOwn(info, 'clear') || info.clear) { search.clear(); }
@@ -417,7 +417,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case window.ScriptInfo.Name + ': search clear': {
-			if (!ppt.searchShow && !ppt.searchMode) { break; }
+			if (!ppt.searchShow && !panel.isSearchLikeSource()) { break; }
 			if (info.window && !info.window.includes(window.Name)) { break; }
 			search.clear();
 			break;

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1162,7 +1162,7 @@ class Populate {
 		}
 		 // Regorxxx <- Search mode ->
 		if (!this.tree.length || !panel.draw) {
-			const text = !panel.search.txt && ppt.searchMode
+			const text = !panel.search.txt && panel.isSearchLikeSource()
 				? 'Enter a search\n\n'
 				: this.libItems && !panel.search.txt && !panel.hasFilterActive() && panel.isStandardSource()
 					? 'Loading...\n\n'

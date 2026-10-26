@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -1651,7 +1651,7 @@ class Panel {
 				else if (ppt.rememberTree) { lib.logFilter(); }
 			}
 			lib.getLibrary();
-			if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.reset ? 0 : 1, true); } // Regorxxx <- Search mode ->
+			if (!this.isSearchLikeSource() || this.search.txt) { lib.rootNodes(ppt.reset ? 0 : 1, true); } // Regorxxx <- Search mode ->
 			but.refresh(true);
 			this.searchPaint();
 			if (!pop.notifySelection()) {
@@ -1681,7 +1681,7 @@ class Panel {
 		const key = ppt.rememberView ? this.viewName : 'def';
 		if ((ppt.rememberView || treeArtToggle) && lib.exp[key]) lib.readTreeState(false, treeArtToggle);
 		lib.getLibrary(treeArtToggle);
-		if (!ppt.searchMode || this.search.txt) { lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle)); } // Regorxxx <- Search mode ->
+		if (!this.isSearchLikeSource() || this.search.txt) { lib.rootNodes((ppt.rememberView || treeArtToggle), !!(ppt.rememberView || treeArtToggle)); } // Regorxxx <- Search mode ->
 		if (ppt.rememberView) {
 			this.calcText();
 			but.refresh(true);
@@ -2010,7 +2010,7 @@ class Panel {
 			}
 			// Regorxxx ->
 		}
-		if (!bRefreshLib && (!ppt.searchMode || this.search.txt)) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update | Search mode ->
+		if (!bRefreshLib && (!this.isSearchLikeSource() || this.search.txt)) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update | Search mode ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
 		if (this.pn_h_auto) {
 			window.MaxHeight = window.MinHeight = ppt.pn_h;
@@ -2616,7 +2616,7 @@ class Panel {
 		if (!ppt.rememberTree && !ppt.reset) { lib.logTree(); }
 		else if (ppt.rememberTree) { lib.logFilter(); }
 		lib.getLibrary();
-		if (!ppt.searchMode || this.search.txt) { lib.rootNodes(ppt.rememberView, !!ppt.rememberView); } // Regorxxx <- Search mode ->
+		if (!this.isSearchLikeSource() || this.search.txt) { lib.rootNodes(ppt.rememberView, !!ppt.rememberView); } // Regorxxx <- Search mode ->
 		if (ppt.rememberView) {
 			this.calcText();
 			but.refresh(true);
@@ -2668,7 +2668,7 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup | Multiple-playlist flat view | Basic playlist manager
+	// Regorxxx <- Allow multiple fixed playlists as source | Allow fixed playlist by GUID | Active/Playing/All playlist source | Code cleanup | Multiple-playlist flat view | Basic playlist manager | Search mode
 	getFixedPlaylistSources() {
 		const fixedPlaylistIndex = [];
 		(ppt.fixedPlaylistName || '').split('|').forEach((name) => {
@@ -2760,6 +2760,10 @@ class Panel {
 
 	isQueueLikeSource() {
 		return ppt.libSource === 3 || ppt.libSource === 4;
+	}
+
+	isSearchLikeSource() {
+		return ppt.searchMode;
 	}
 
 	isDefaultPlaylistSource() {

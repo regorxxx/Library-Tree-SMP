@@ -1,5 +1,5 @@
 ﻿'use strict';
-//22/10/26
+//26/10/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -59,7 +59,7 @@ class Library {
 		ppt.autoExpandLimit = $.clamp(ppt.autoExpandLimit, 10, 1000);
 
 		this.lib_update = $.debounce(() => {
-			if (ppt.searchMode && !panel.search.txt) { return; } // Regorxxx <- Search mode ->
+			if (panel.isSearchLikeSource() && !panel.search.txt) { return; } // Regorxxx <- Search mode ->
 			if (pop.is_focused) { window.SetCursor(IDC_WAIT); }
 			this.time.Reset();
 			pop.clearCache(); // Regorxxx <- Code cleanup ->
@@ -762,7 +762,7 @@ class Library {
 			return;
 		}
 		// Regorxxx <- Search mode
-		if (ppt.searchMode && !panel.search.txt) {
+		if (panel.isSearchLikeSource() && !panel.search.txt) {
 			if (profiler) { profiler.Print('Build roots'); } // Regorxxx <- Library profiling ->
 			return;
 		}
@@ -790,7 +790,7 @@ class Library {
 		this.initialised = true;
 		this.load(handleList);
 		this.getLibrary(true);
-		if (!ppt.searchMode || panel.search.txt) { this.rootNodes(ppt.rememberTree, ppt.process); } // Regorxxx <- Search mode ->
+		if (!panel.isSearchLikeSource() || panel.search.txt) { this.rootNodes(ppt.rememberTree, ppt.process); } // Regorxxx <- Search mode ->
 		if (bNotify && ppt.panelInternalCache) { setTimeout(() => pop.notifySelection(), 1000); } // Regorxxx <- Don't create cache playlists if possible
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
@@ -1485,7 +1485,7 @@ class Library {
 
 	// Regorxxx <- Queue source | Auto-DJ source | Code cleanup | Search mode
 	setEmptyText() {
-		if (ppt.searchMode) {
+		if (panel.isSearchLikeSource()) {
 			this.empty = panel.search.txt === ''
 				? 'Nothing found\n\n'
 				: panel.isFixedPlaylistSource() || panel.isLibrarySource()
@@ -1513,7 +1513,7 @@ class Library {
 	setNodes() {
 		if (panel.imgView && ppt.albumArtNodeCollage) { img.clearCache(); } // Regorxxx <- Branch collage art ->
 		// Regorxxx <- Search mode
-		if (ppt.searchMode && !panel.search.txt) {
+		if (panel.isSearchLikeSource() && !panel.search.txt) {
 			ppt.set(this.rememberViewProp(), JSON.stringify({}));
 			this.checkView();
 			this.logFilter();
