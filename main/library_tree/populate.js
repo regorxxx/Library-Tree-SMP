@@ -3780,6 +3780,7 @@ class Populate {
 			return;
 		}
 		// Regorxxx ->
+		if (panel.isSearchLikeSource() && ppt.searchModeSorting) { return; }
 		if (panel.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 		if (panel.isPlaylistSource() && ppt.plsSorting) { return; } // Regorxxx <- Support playlist sorting ->
 		// Regorxxx <- Support SORT BY query sorting | Sort by Stats

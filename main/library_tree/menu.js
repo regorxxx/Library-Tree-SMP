@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1264,9 +1264,10 @@ class MenuItems {
 	// Regorxxx <- Sorting menu
 	addSortEntries(menu, appendTo) {
 		if (appendTo) { menu.newMenu({ menuName: 'Sorting', appendTo }); }
-		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting ->
+		// Regorxxx <- Queue source | Support playlist sorting | Support SORT BY query sorting | Search mode ->
 		const isPlsLike = panel.isPlaylistSource();
 		const isQueueLike = panel.isQueueLikeSource();
+		const isSearchLike = panel.isSearchLikeSource();
 		if (isQueueLike) {
 			menu.newItem({
 				menuName: appendTo ? 'Sorting' : void (0),
@@ -1293,7 +1294,20 @@ class MenuItems {
 				checkItem: ppt.plsSorting && !lib.filterSort && !lib.searchSort
 			});
 		}
-		if (isQueueLike || isPlsLike) { menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true }); }
+		if (isSearchLike) {
+			menu.newItem({
+				menuName: appendTo ? 'Sorting' : void (0),
+				str: 'By Search idx',
+				func: () => {
+					ppt.toggle('searchModeSorting');
+					ppt.statsSorting = false;
+					lib.treeState(false, 2);
+				},
+				flags: !isSearchLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				checkItem: ppt.searchModeSorting && !lib.filterSort && !lib.searchSort
+			});
+		}
+		if (isQueueLike || isPlsLike || isSearchLike) { menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true }); }
 		// Regorxxx <- Sort by Stats
 		menu.newItem({
 			menuName: appendTo ? 'Sorting' : void (0),
@@ -1303,7 +1317,7 @@ class MenuItems {
 				ppt.queueSorting = ppt.plsSorting = false;
 				lib.treeState(false, 2);
 			},
-			checkItem: ppt.statsSorting && (pop.statisticsShow || pop.nodeCounts) && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting),
+			checkItem: ppt.statsSorting && (pop.statisticsShow || pop.nodeCounts) && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && (!isSearchLike || !ppt.searchModeSorting),
 			flags: pop.statisticsShow || pop.nodeCounts ? MF_STRING : MF_GRAYED
 		});
 		menu.newItem({ menuName: appendTo ? 'Sorting' : void (0), separator: true });
@@ -1324,7 +1338,7 @@ class MenuItems {
 			menu.newMenu({
 				menuName: d.menuName,
 				appendTo: appendTo ? 'Sorting' : void (0),
-				flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
+				flags: d.sortType && (!isQueueLike || !ppt.queueSorting) && (!isPlsLike || !ppt.plsSorting) && (!isSearchLike || !ppt.searchModeSorting) && !lib.filterSort && !lib.searchSort ? MF_STRING : MF_GRAYED,
 			});
 			// Regorxxx ->
 			if (d.sortType) {

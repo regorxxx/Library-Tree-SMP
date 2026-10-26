@@ -1133,6 +1133,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						ui.sbar.type = 0;
 						ppt.sbarType = 0;
 						ppt.sbarShow = 1;
@@ -1167,6 +1168,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						ui.sbar.type = 1;
 						ppt.sbarType = 1;
 						ppt.sbarShow = 1;
@@ -1201,6 +1203,7 @@ class Panel {
 						ppt.autoCollapse = true;
 						ppt.treeAutoExpandSingle = true;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						ui.sbar.type = 1;
 						ppt.sbarType = 1;
 						ppt.sbarShow = 1;
@@ -1242,6 +1245,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						ui.sbar.type = 0;
 						ppt.sbarType = 0;
 						ppt.sbarShow = 1;
@@ -1276,6 +1280,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = true;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						this.imgView = ppt.albumArtShow = false;
 						ppt.albumArtLabelType = 1;
 						ppt.thumbNailSize = 2;
@@ -1471,6 +1476,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						this.imgView = ppt.albumArtShow = false;
 						if (!ppt.presetLoadCurView) { this.setViewIndex('View by Date - Title (queue)'); } // Regorxxx <- Code cleanup ->
 						ui.sbar.type = 1;
@@ -1497,6 +1503,7 @@ class Panel {
 						ppt.autoCollapse = false;
 						ppt.treeAutoExpandSingle = false;
 						ppt.facetView = false;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						if (!ppt.presetLoadCurView) {
 							this.setViewIndex('View by Artist | Title (queue)');
 							ppt.artId = 0;
@@ -1535,6 +1542,7 @@ class Panel {
 						ppt.plsPopEmpty = true;
 						ppt.plsFlatView = false;
 						ppt.plsSorting = true;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						// Behaviour
 						ppt.rootNode = 0;
 						ppt.autoCollapse = false;
@@ -1576,6 +1584,7 @@ class Panel {
 						ppt.plsPopEmpty = true;
 						ppt.plsFlatView = false;
 						ppt.plsSorting = true;
+						ppt.searchMode = ppt.searchModeSorting = false;
 						// Behaviour
 						ppt.rootNode = 0;
 						ppt.autoCollapse = false;
@@ -1810,6 +1819,7 @@ class Panel {
 		if (sortObj) {
 			li.OrderByFormat(sortObj.tf, sortObj.direction * (ppt.reverseSorting ? -1 : 1)); // TF must be already processed with processCustomTf
 		} else {
+			if (this.isSearchLikeSource() && ppt.searchModeSorting) { return; } // Regorxxx <- Search mode ->
 			if (this.isQueueLikeSource() && ppt.queueSorting) { return; } // Regorxxx <- Queue source ->
 			if (this.isPlaylistSource() && (ppt.plsSorting || this.isBranchedPlaylistSource())) { return; } // Regorxxx <- Multiple-playlist flat view ->
 			if (this.folderView) {

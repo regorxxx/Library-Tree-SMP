@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 19/10/26 -->
+﻿<!DOCTYPE html> <!-- 26/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -870,14 +870,17 @@
 				<div class="column38" style="margin-right:1%;">
 					<div class="div_text1">Mode</div>
 					<div id="actionType"></div>
+					<div id="searchMode"></div> <!-- Search mode -->
 					<div style="display:inline-block; padding-top:0.7em;"><button id="mode_help" onclick="showHelp('mode_text');return false;">Mode help</button></div>
 					<div id="mode_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4600"><b><u>Default</b></u></div>
 						<div class="info4">&#x2022; Choose options</div>
 						<div class="info4600"><b><u>Browser</b></u></div>
-						<div class="info4">&#x2022; Keeps playing playlist<br>&#x2022; Easy to browse track lists, e.g. in album art or facet modes<br>&#x2022; Works best with playback follows cursor OFF & playlist visible<br>&#x2022; Double-click status bar etc to view playing playlist<br>&#x2022; Presets shown in red are set if enabled</div>
+						<div class="info4">&#x2022; Keeps playing playlist<br>&#x2022; Easy to browse track lists, e.g. in album art or facet modes<br>&#x2022; Works best with playback follows cursor OFF & playlist visible<br>&#x2022; Double-click status bar etc to view playing playlist<br>&#x2022; Presets shown in red are internally set if enabled</div>
 						<div class="info4600"><b><u>Player</b></u></div>
-						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & now playing indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are set if enabled</div>
+						<div class="info4">&#x2022; Plays from playback queue<br>&#x2022; Doesn't involve a playlist<br>&#x2022; Optional display of queue & now playing indicators<br>&#x2022; Max queue size: 256 (foobar2000 limit)<br>&#x2022; Presets shown in red are internally set if enabled</div>
+						<div class="info4600"><b><u>Search mode</b></u></div>
+						<div class="info4">&#x2022; Only displays results while using search box<br>&#x2022; Works along any other mode<br>&#x2022; Can mimic native search window</div>
 					</div>
 					<div class="info5600">Single-click:</div>
 					<span class="dropdown" style="margin-top:0"><a id="click_dropdown" class="dropbtn" href="#" onclick="return toggle('click');"></a>
@@ -933,13 +936,13 @@
 						<div class="info4">Showing the contextual menu associated to tracks on huge selections will delay menu creation due to heavy processing.<br><br>To avoid this delay, it can be set to disabled or run secondary menu (on click) -processed when needed-.</div>
 					</div>
 					<!-- Regorxxx -->
+					<div class="div_text2">Tree</div>
+					<div id="expand"></div>
+					<div id="expandLimit"></div>
 				</div>
 
 				<div class="column27">
 					<!-- Regorxxx Search settings to search tab -->
-					<div class="div_text2">Tree</div>
-					<div id="expand"></div>
-					<div id="expandLimit"></div>
 					<div class="div_text2">Remember state</div>
 					<div id="remember"></div>
 					<div class="div_text6">Selection</div>
@@ -968,6 +971,10 @@
 					<!-- Regorxxx Queue source -->
 					<span class="info5600">Playback queue &amp; Auto-DJ:</span>
 					<div style="margin:0.31em 0 0;" id="queue"></div>
+					<!-- Regorxxx -->
+					<!-- Regorxxx Search mode -->
+					<span class="info5600">Search mode:</span>
+					<div style="margin:0.31em 0 0;" id="searchModeSorting"></div>
 					<!-- Regorxxx -->
 				</div>
 
@@ -2004,7 +2011,7 @@
 			// Regorxxx ->
 
 			var presetRulesLabels = ['Apply on Source switching', 'Apply on Views switching', 'Apply on Filters switching', 'Apply on Playlists switching (used along Source Id condition to track active playlist)', 'Apply on Notify callback -external integration- (also depends on triggers above)']; // Regorxxx <- Presets tab | Preset rules ->
-			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)'];
+			var actionTypeLabels = ['Default', 'Browser (keep playing playlist)', 'Player (play & manage without a playlist)', 'Search mode'];
 			var albumArtGapLabels = ['Normal (0 = auto)', 'Compact', 'Modifier']; // Regorxxx <- Extra gap settings ->
 			var albumArtLabels = ['None', 'Bottom', 'Right', 'Blend', 'Dark', 'Flip'];
 			var albumArtOverlayLabels = ['None', 'Track Count', 'Track Count (#)', 'Item Count', 'Item Count (#)', 'Decade', 'Year', 'Month', 'Last Played (full)', 'Last Played (date)', 'Last Played (hour)', 'Playing Indicator']; // Regorxxx <- New overlay styles ->
@@ -2074,6 +2081,7 @@
 			// Regorxxx  ->
 			var queueLabels = ['Show now playing track', 'Force sorting by queue idx']; // Regorxxx <- Queue source | Auto-DJ source ->
 			var plsSourceLabels = ['Force sorting by playlist idx']; // Regorxxx <- Support playlist sorting ->
+			var searchModeSortingLabels = ['Force sorting by search idx']; // Regorxxx <- Search mode ->
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Album art overlay', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Custom art overlay font ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
@@ -2207,7 +2215,7 @@
 
 			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
-				behaviour: ['plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources ->
+				behaviour: ['searchMode', 'plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'searchModeSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources | Search mode ->
 				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'headerTitleShowSource', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'facetView', 'showTracks', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistSidemarker', 'highLightBooklet', 'bookletSidemarker', 'bookletIndicator', 'bookletIndicatorOverlay', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options | Booklet icon | Header on search bar ->
@@ -3141,6 +3149,9 @@
 
 			function setBehaviour() {
 				for (i = 0; i < 3; i++) { window.actionType.insertAdjacentHTML('beforeend', '<div><input id="actionMode' + i + '" name="actionMode" style="' + cbox + '" type="radio" /><label for="actionMode' + i + '" class="checkbox_label">' + actionTypeLabels[i] + '</label></div>'); }
+				// Regorxxx <- Search mode
+				i = 0; window.searchMode.insertAdjacentHTML('beforeend', '<div><input id="searchMode_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="searchMode_checkbox' + i + '" class="checkbox_label">' + actionTypeLabels[3] + '</label></div>');
+				// Regorxxx ->
 				// Regorxxx <- Mouse actions on playlist sources | Top tracks
 				if (ppt['actionMode_internal'].value || ppt['libSource_internal'].value == 0 && !ppt['plsActions_internal'].value || ppt['libSource_internal'].value == 5) {
 					window.click_dropdown.innerHTML = clickLabels[0];
@@ -3246,10 +3257,13 @@
 				i = 1; window.viewSortingTrans.insertAdjacentHTML('beforeend', '<div><input id="viewSortingTrans_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="viewSortingTrans_checkbox' + i + '" class="checkbox_label">' + sortingTransLabels[i] + '</label></div>');
 				// Regorxxx ->
 				// Regorxxx <- Support playlist sorting
-				for (i = 0; i < 1; i++) { window.plsSource.insertAdjacentHTML('beforeend', '<div><input id="plsSource_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsSource_checkbox' + i + '" class="checkbox_label">' + plsSourceLabels[i] + '</label></div>'); }
+				for (i = 0; i < plsSourceLabels.length; i++) { window.plsSource.insertAdjacentHTML('beforeend', '<div><input id="plsSource_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsSource_checkbox' + i + '" class="checkbox_label">' + plsSourceLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Queue source | Auto-DJ source
-				for (i = 0; i < 2; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
+				for (i = 0; i < queueLabels.length; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
+				// Regorxxx ->
+				// Regorxxx <- Search mode
+				for (i = 0; i < searchModeSortingLabels.length; i++) { window.searchModeSorting.insertAdjacentHTML('beforeend', '<div><input id="panel.searchModeSorting()_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="panel.searchModeSorting()_checkbox' + i + '" class="checkbox_label">' + searchModeSortingLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="playlist_container' + i + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="playlist_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				window.playlist.insertAdjacentHTML('beforeend', '<div class="info4">Use %VIEW_NAME% for name of current view</div>');

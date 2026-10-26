@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/10/26
+//26/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -392,6 +392,7 @@ let properties = [
 	['Library Source: Playlist empty nodes (non-flat view)', true, 'plsPopEmpty'], // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
 	['Library Source: Stream tags (experimental)', false, 'streamSupport'], // Regorxxx <- Support for stream tag-retrieval ->
 	['Library Source: Search mode', false, 'searchMode'], // Regorxxx <- Search mode ->
+	['Library Source: Search mode force sorting', false, 'searchModeSorting'], // Regorxxx <- Search mode ->
 
 	['Limit Menu Expand: 10-6000', 500, 'treeExpandLimit'],
 	['Limit Tree Auto Expand: 10-1000', 350, 'autoExpandLimit'],
