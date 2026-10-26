@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 19/10/26 -->
+<!DOCTYPE html> <!-- 26/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -403,6 +403,49 @@
 						1.98 - 1.98
 					</td>
 				</tr>
+				<tr id="view_art">
+					<td> <em>$default<br>$crop<br>$circular<br>$starfill<br>$stareffect<br>$staroutline<br>$heart</em> </td>
+					<td>
+						Sets specified art style to given branch (until next '|' is found).
+						<br>
+						<br>
+						If present on evaluated expression, overrides any other art/file.
+					</td>
+					<td>
+						<em>
+							%ALBUM ARTIST%[$circular]|%ALBUM%[$crop]
+						</em>
+					</td>
+					<td>
+						Artist will use circular style and albums fill style.
+						<br>
+						<br>
+						Note how [] is used, therefore nothing being shown on tree mode.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$front<br>$back<br>$disc<br>$icon<br>$artist<br>$File (by Tf) [x]<br>$viewtfx<br>$filetfx</em> </td>
+					<td>
+						Sets specified art type to given branch (until next '|' is found).
+						<br>
+						<br>
+						If present on evaluated expression, overrides any other art/file.
+						<br>
+						<br>
+						Check <a href="#art_summary" class="toc">Album art custom TF</a> section for more info.
+					</td>
+					<td>
+						<em>
+							%ALBUM ARTIST%[$artist]|%ALBUM%[$front]
+						</em>
+					</td>
+					<td>
+						Artist will use artist imgs and albums front imgs.
+						<br>
+						<br>
+						Note how [] is used, therefore nothing being shown on tree mode.
+					</td>
+				</tr>
 			</table>
 		</div>
 		<div class="level2">
@@ -522,6 +565,9 @@
 							<div class="li"> Additional examples at hydrogenaudio forum: <a href="https://hydrogenaudio.org/index.php/topic,130057.msg1089301.html#msg1089301">https://hydrogenaudio.org/index.php/topic,130057.msg1089301.html#msg1089301</a> </div>
 						</li>
 					</ul>
+					<li>
+						<div class="li"> Note art used can be overridden by current view TF due to usage of <a href="#view_art">special art variables</a>. For ex: '%ALBUM ARTIST%[$artist]|%ALBUM%[$crop]' </div>
+					</li>
 				</ul>
 		</div>
 		<!-- SECTION "Views" -->
@@ -1483,6 +1529,52 @@
 					</td>
 				</tr>
 				<tr>
+					<td> <em>$File (by Tf) [x]</em> </td>
+					<td>
+						Uses the specified art type by custom TF. Replace [x] with [1], [2], ... as needed.
+						<br>
+						<br>
+						Note results depend on folder view being used.
+						<br>
+						<br>
+						If present on evaluated expression, overrides any other art/file.
+						<br>
+						<br>
+						Note usage of these variables invalidates any kind of caching.
+					</td>
+					<td>
+						<em>
+							$if($nodeplaying,$file (by Tf) [1],$lower($nodename).*)
+						</em>
+					</td>
+					<td>
+						Looks for custom file by Tf while playing, otherwise any file matching the node name.
+					</td>
+				</tr>
+				<tr>
+					<td> <em>$viewtfx<br>$foldertfx</em> </td>
+					<td>
+						Uses the specified art type by custom TF. Replace [x] with [1], [2], ... as needed.
+						<br>
+						<br>
+						Note results do not depend on folder view being used. i.e. if you use $foldertf1, it always uses the folder Tf expression.
+						<br>
+						<br>
+						If present on evaluated expression, overrides any other art/file.
+						<br>
+						<br>
+						Note usage of these variables invalidates any kind of caching.
+					</td>
+					<td>
+						<em>
+							$if($nodeplaying,$foldertf1,$lower($nodename).*)
+						</em>
+					</td>
+					<td>
+						Looks for custom file by folder Tf while playing, otherwise any file matching the node name.
+					</td>
+				</tr>
+				<tr>
 					<td> <em>$prefix</em> </td>
 					<td> Returns custom prefixes (separated by comma), ready to be used on TF functions. </td>
 					<td>
@@ -1769,6 +1861,9 @@
 							<div class="li"> Do this instead:<br>&nbsp;&nbsp;&nbsp;&nbsp;$puts(text,count:)$iterate{`'['$get(text)$counter']'`,3}&nbsp;&nbsp;->&nbsp;&nbsp;[count:0][count:1][count:2]</div>
 						</li>
 					</ul>
+					<li>
+						<div class="li"> Art used can be further modified by current view TF due to usage of <a href="#view_art">special art variables</a>. For ex: '%ALBUM ARTIST%[$artist]|%ALBUM%[$crop]' </div>
+					</li>
 				</ul>
 		</div>
 		<!-- SECTION "Album Art" -->
