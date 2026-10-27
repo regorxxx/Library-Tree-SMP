@@ -1,5 +1,5 @@
 ﻿'use strict';
-//21/10/26
+//27/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
@@ -162,7 +162,7 @@ class Buttons {
 			if (!v.hide) v.draw(gr);
 		});
 		// Regorxxx <- Header on search bar
-		if (ppt.filterShow && ppt.searchShow && !ppt.settingsShow && ppt.headerTitle !== 0) {
+		if (!ppt.filterShow && !ppt.searchShow && ppt.settingsShow && ppt.headerTitle !== 0) {
 			const search = this.btns.s_img;
 			const settings = this.btns.settings;
 			const flags = ppt.headerTitleFlags | DT_WORD_ELLIPSIS;
