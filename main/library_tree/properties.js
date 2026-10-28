@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//28/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -240,7 +240,7 @@ let properties = [
 	['Image Show Options (context menu)', true, 'albumArtOptionsShowContext'], // Regorxxx <- Art options at context menu / settings ->
 	['Image Show Options (settings)', true, 'albumArtOptionsShowSettings'], // Regorxxx <- Art options at context menu / settings ->
 	['Image Show Branch Collage', false, 'albumArtNodeCollage'], // Regorxxx <- Branch collage art ->
-	['Image Show Branch Collage deduplicate', true, 'albumArtNodeCollageDedup'], // Regorxxx <- Branch collage art ->
+	['Image Branch Collage deduplicate', true, 'albumArtNodeCollageDedup'], // Regorxxx <- Branch collage art ->
 	['Image Item Track Preference', 0, 'albumArtPreferHandle'], // Regorxxx <- Track preference art ->
 	['Image Style [Front]', 1, 'imgStyleFront'],
 	['Image Style [Back]', 1, 'imgStyleBack'],
@@ -612,7 +612,7 @@ let properties = [
 	['Filter remove duplicates', false, 'filterDupl'],
 	['Filter show duplicates ', false, 'showDupl'],
 	// Regorxxx ->
-	['- Draw mode: GDI (0), D2D (1)', 0, 'drawMode'], // Regorxxx <- GDI/D2D draw mode ->
+	['- Draw mode: GDI (0), D2D (1)', 1, 'drawMode'], // Regorxxx <- GDI/D2D draw mode ->
 	['Automatically check updates', globSettings.bAutoUpdateCheck, 'bAutoUpdateCheck'], // Regorxxx <- Update checks ->
 	['Image mouse rectangle selection on album art', true, 'selRectArt'], // Regorxxx <- Selection rectangle on art view ->
 	// Regorxxx <- Customizable quicksearch timer
