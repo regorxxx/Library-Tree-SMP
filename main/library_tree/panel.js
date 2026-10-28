@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/10/26
+//28/10/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -106,12 +106,12 @@ class Panel {
 			const id = this.markers.artType + idx + this.markers.artType;
 			const artVar = { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id };
 			if (typeof art.cacheName === 'function') {
-				artVar.regExp = new RegExp('\\$(?:' + escapeRegExpV2(art.type) + '|' + escapeRegExpV2(art.cacheName(false)) + '|' + escapeRegExpV2(art.cacheName(true)) + ')', 'gi');
+				artVar.regExp = new RegExp('\\$(?:' + escapeRegExpV2(art.type) + '|' + escapeRegExpV2(art.cacheName(false)) + '|' + escapeRegExpV2(art.cacheName(true)) + ')\\b', 'gi');
 			} else {
 				const reTf = [...new Set([art.type, art.cacheName].filter(Boolean).map((t) => t.toLowerCase()))]
 					.map((t) => escapeRegExpV2(t))
 					.join('|');
-				artVar.regExp = new RegExp('\\$(?:' + reTf + ')', 'gi');
+				artVar.regExp = new RegExp('\\$(?:' + reTf + ')\\b', 'gi');
 			}
 			return artVar;
 		});
@@ -120,7 +120,7 @@ class Panel {
 		this.styleVariables = img.styles.map((style) => {
 			const idx = style.idx;
 			const id = this.markers.artStyle + idx + this.markers.artStyle;
-			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')', 'gi') };;
+			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')\\b', 'gi') };
 		});
 		// Regorxxx ->
 
@@ -888,9 +888,9 @@ class Panel {
 			['View XX: Name // Pattern', 'View by Year // $year(%DATE%)|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Year', 'Album', 1],
 			['View XX: Name // Pattern', 'View by Decade // $div($year(%DATE%),10)0s|[%ALBUM ARTIST% - ]%ALBUM%$nodisplay{' + (ppt.viewByComment ? '%COMMENT%-' : '') + '%MUSICBRAINZ_ALBUMID%}|[[%DISCNUMBER%.]%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%', 'Decade', 'Album', 1],
 			['View XX: Name // Pattern', 'separator // .'],
-			['View XX: Name // Pattern', 'Search by Artist ¦ Album ¦ Title // $colour{200-50-100}$nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist]¦$colour{50-200-100}$nodisplay{%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front]¦$nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front]', 'Artist ¦ Album ¦ Title', 'Artist ¦ Album ¦ Title', 1],
-			['View XX: Name // Pattern', 'Search by Artist | Album ¦ Title // $colour{200-50-100}$nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist]|$nodisplay{%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front]¦$nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front]', 'Artist', 'Album ¦ Title', [2, 2, 2, 1, 1]],
-			['View XX: Name // Pattern', 'Search by Title // $nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE% • $nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)', 'Track', 'Track', 1],
+			['View XX: Name // Pattern', 'Search by Artist ¦ Album ¦ Title // $colour{255-46-119}$nodisplay{0%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist$starfill]¦$colour{46-161-255}$nodisplay{1%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front$cd]¦$nodisplay{2%TRACKNUMBER%-%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front$fillnote]', 'Artist ¦ Album ¦ Title', 'Artist ¦ Album ¦ Title', 1],
+			['View XX: Name // Pattern', 'Search by Artist | Album ¦ Title // $colour{255-46-119}$nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$artist$starfill]|$colour{46-161-255}$nodisplay{0%ALBUM%}$char(128191)%ALBUM% • $swapprefix(%ALBUM ARTIST%,$prefix)[$front$cd]¦$nodisplay{1%TRACKNUMBER%-%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE%[$front$fillnote]', 'Artist', 'Album ¦ Title', [2, 2, 2, 1, 1]],
+			['View XX: Name // Pattern', 'Search by Title // $nodisplay{%TITLE%}$char(127925)[%TRACKNUMBER%. ][%TRACK ARTIST% - ]%TITLE% • $nodisplay{%ALBUM ARTIST%}$char(128105)$char(8205)$char(127908)$swapprefix(%ALBUM ARTIST%,$prefix)[$fillnote]', 'Track', 'Track', 1],
 		].filter(Boolean).map((entry, i) => [entry[0].replace('View XX', 'View ' + (i + 1).toString().padStart(2, '0')), ...entry.slice(1)]);
 		// Regorxxx <- Code cleanup | Support hidden default filters
 		const processView = (v, levels) => {

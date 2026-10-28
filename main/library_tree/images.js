@@ -70,7 +70,7 @@ class Images {
 		};
 
 		// Regorxxx <- New overlay styles
-		/** @type {{idx: number, type: string, itemKey: '', isCount: boolean, tf: FbTitleFormat}[]} */
+		/** @type {Overlay[]} */
 		this.overlays = [
 			{ idx: 0, type: 'none', itemKey: '', isCount: false, tf: null },
 			{ idx: 1, type: 'tracks', itemKey: 'count', isCount: true, tf: null },
@@ -88,7 +88,7 @@ class Images {
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | New img styles
-		/** @type {{idx: number, type: string, mask: string | void, border: string, shadow: string, collageLine: boolean, centerLabel: boolean, centerTrackCount: boolean, overlayOffsetV: number, overlayOffsetH: number, fillBg: boolean, collageCondense: number}[]} */
+		/** @type {Style[]} */
 		this.styles = [
 			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default', collageLine: true, centerLabel: true, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
 			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
@@ -96,20 +96,25 @@ class Images {
 			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.065, overlayOffsetH: 0, fillBg: true, collageCondense: 0.9 },
 			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 0.8 },
 			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 1 },
-			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 }
+			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 7, type: 'cd', mask: 'cd', border: 'cd', shadow: 'cd', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 8, type: 'cdcase', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
+			{ idx: 9, type: 'circularnote', mask: 'circularNote', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 10, type: 'fillnote', mask: 'fillNote', border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
+			{ idx: 11, type: 'test', mask: 'test', border: 'test', shadow: 'test', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 		];
 		// Regorxxx ->
 
 		// Regorxxx <- Code cleanup | External integration | Custom TF art | Effect per art type | Image border setting
-		/** @type {{idx: number, type: string, name?: string | (folderView: boolean) => string, cacheName: string | (folderView: boolean) => string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, hoverZoom: string, perspective: string, tf?: string | (folderView: boolean) => string, trim: boolean, showMenu: string, switchIdx: number[]}[]} */
+		/** @type {ArtType[]} */
 		this.art = [
-			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', hoverZoom: 'imgFrontHoverZoom', perspective: 'imgFrontPerspective', trim: false, showMenu: 'Show Albums', switchIdx: [4, 5] },
-			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', hoverZoom: 'imgBackHoverZoom', perspective: 'imgBackPerspective', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
-			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', hoverZoom: 'imgDiscHoverZoom', perspective: 'imgDiscPerspective', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
-			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur', vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', hoverZoom: 'imgIconHoverZoom', perspective: 'imgIconPerspective', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
-			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale', hoverZoom: 'imgArtistHoverZoom', perspective: 'imgArtistPerspective', trim: true, showMenu: 'Show Artists', switchIdx: [0, 5] },
-			{ idx: 5, type: 'File (by Tf) [1]', name: (folderView) => ppt.albumArtTf1Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf1' : 'viewtf1', lines: 1, style: 'imgStyleTf1', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf1ReflStyle', reflectionRoot: 'imgTf1ReflRoot', border: 'imgTf1Border', shadow: 'imgTf1Shadow', mute: 'imgTf1Mute', edgeGlow: 'imgTf1EdgeGlow', bloom: 'imgTf1Bloom', blur: 'imgTf1Blur', vignette: 'imgTf1Vignette', grayScale: 'imgTf1GrayScale', hoverZoom: 'imgTf1HoverZoom', perspective: 'imgTf1Perspective', tf: (folderView) => folderView ? 'albumArtTf1Folder' : 'albumArtTf1View', trim: true, showMenu: 'Show Art (Tf)', switchIdx: [0, 4] },
-			{ idx: 6, type: 'File (by Tf) [2]', name: (folderView) => ppt.albumArtTf2Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf2' : 'viewtf2', lines: 1, style: 'imgStyleTf2', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf2ReflStyle', reflectionRoot: 'imgTf2ReflRoot', border: 'imgTf2Border', shadow: 'imgTf2Shadow', mute: 'imgTf2Mute', edgeGlow: 'imgTf2EdgeGlow', bloom: 'imgTf2Bloom', blur: 'imgTf2Blur', vignette: 'imgTf2Vignette', grayScale: 'imgTf2GrayScale', hoverZoom: 'imgTf2HoverZoom', perspective: 'imgTf2Perspective', tf: (folderView) => folderView ? 'albumArtTf2Folder' : 'albumArtTf2View', trim: true, showMenu: 'Show Art (Tf)', switchIdx: [0, 4] }
+			{ idx: 0, type: 'Front', cacheName: 'front', lines: 2, style: 'imgStyleFront', reflection: 'imgFrontRefl', reflectionStyle: 'imgFrontReflStyle', reflectionRoot: 'imgFrontReflRoot', border: 'imgFrontBorder', shadow: 'imgFrontShadow', mute: 'imgFrontMute', edgeGlow: 'imgFrontEdgeGlow', bloom: 'imgFrontBloom', blur: 'imgFrontBlur', vignette: 'imgFrontVignette', grayScale: 'imgFrontGrayScale', hoverZoom: 'imgFrontHoverZoom', perspective: 'imgFrontPerspective', sleeve: 'imgFrontSleeve', trim: false, showMenu: 'Show Albums', switchIdx: [4, 5] },
+			{ idx: 1, type: 'Back', cacheName: 'back', lines: 2, style: 'imgStyleBack', reflection: 'imgBackRefl', reflectionStyle: 'imgBackReflStyle', reflectionRoot: 'imgBackReflRoot', border: 'imgBackBorder', shadow: 'imgBackShadow', mute: 'imgBackMute', edgeGlow: 'imgBackEdgeGlow', bloom: 'imgBackBloom', blur: 'imgBackBlur', vignette: 'imgBackVignette', grayScale: 'imgBackGrayScale', hoverZoom: 'imgBackHoverZoom', perspective: 'imgBackPerspective', sleeve: 'imgBackSleeve', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
+			{ idx: 2, type: 'Disc', cacheName: 'disc', lines: 2, style: 'imgStyleDisc', reflection: 'imgDiscRefl', reflectionStyle: 'imgDiscReflStyle', reflectionRoot: 'imgDiscReflRoot', border: 'imgDiscBorder', shadow: 'imgDiscShadow', mute: 'imgDiscMute', edgeGlow: 'imgDiscEdgeGlow', bloom: 'imgDiscBloom', blur: 'imgDiscBlur', vignette: 'imgDiscVignette', grayScale: 'imgDiscGrayScale', hoverZoom: 'imgDiscHoverZoom', perspective: 'imgDiscPerspective', sleeve: 'imgDiscSleeve', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
+			{ idx: 3, type: 'Icon', cacheName: 'icon', lines: 1, style: 'imgStyleIcon', reflection: 'imgIconRefl', reflectionStyle: 'imgIconReflStyle', reflectionRoot: 'imgIconReflRoot', border: 'imgIconBorder', shadow: 'Shadow', mute: 'imgIconMute', edgeGlow: 'imgIconEdgeGlow', bloom: 'imgIconBloom', blur: 'imgIconBlur', vignette: 'imgIconVignette', grayScale: 'imgIconGrayScale', hoverZoom: 'imgIconHoverZoom', perspective: 'imgIconPerspective', sleeve: 'imgIconSleeve', trim: true, showMenu: 'Show Albums', switchIdx: [4, 5] },
+			{ idx: 4, type: 'Artist', cacheName: 'artist', lines: 1, style: 'imgStyleArtist', reflection: 'imgArtistRefl', reflectionStyle: 'imgArtistReflStyle', reflectionRoot: 'imgArtistReflRoot', border: 'imgArtistBorder', shadow: 'imgArtistShadow', mute: 'imgArtistMute', edgeGlow: 'imgArtistEdgeGlow', bloom: 'imgArtistBloom', blur: 'imgArtistBlur', vignette: 'imgArtistVignette', grayScale: 'imgArtistGrayScale', hoverZoom: 'imgArtistHoverZoom', perspective: 'imgArtistPerspective', sleeve: 'imgArtistSleeve', trim: true, showMenu: 'Show Artists', switchIdx: [0, 5] },
+			{ idx: 5, type: 'File (by Tf) [1]', name: (folderView) => ppt.albumArtTf1Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf1' : 'viewtf1', lines: 1, style: 'imgStyleTf1', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf1ReflStyle', reflectionRoot: 'imgTf1ReflRoot', border: 'imgTf1Border', shadow: 'imgTf1Shadow', mute: 'imgTf1Mute', edgeGlow: 'imgTf1EdgeGlow', bloom: 'imgTf1Bloom', blur: 'imgTf1Blur', vignette: 'imgTf1Vignette', grayScale: 'imgTf1GrayScale', hoverZoom: 'imgTf1HoverZoom', perspective: 'imgTf1Perspective', sleeve: 'imgTf1Sleeve', tf: (folderView) => folderView ? 'albumArtTf1Folder' : 'albumArtTf1View', trim: true, showMenu: 'Show Art (Tf)', switchIdx: [0, 4] },
+			{ idx: 6, type: 'File (by Tf) [2]', name: (folderView) => ppt.albumArtTf2Name.split('|')[folderView ? 1 : 0], cacheName: (folderView) => folderView ? 'foldertf2' : 'viewtf2', lines: 1, style: 'imgStyleTf2', reflection: 'imgTfRefl1', reflectionStyle: 'imgTf2ReflStyle', reflectionRoot: 'imgTf2ReflRoot', border: 'imgTf2Border', shadow: 'imgTf2Shadow', mute: 'imgTf2Mute', edgeGlow: 'imgTf2EdgeGlow', bloom: 'imgTf2Bloom', blur: 'imgTf2Blur', vignette: 'imgTf2Vignette', grayScale: 'imgTf2GrayScale', hoverZoom: 'imgTf2HoverZoom', perspective: 'imgTf2Perspective', sleeve: 'imgTf2Sleeve', tf: (folderView) => folderView ? 'albumArtTf2Folder' : 'albumArtTf2View', trim: true, showMenu: 'Show Art (Tf)', switchIdx: [0, 4] }
 		];
 
 		this.useD2D = window.DrawMode === 1 && typeof Effects !== 'undefined';
@@ -155,7 +160,17 @@ class Images {
 			starEffect: null,
 			starOutline: null,
 			heart: null,
-			flareEffect: null
+			flareEffect: null,
+			flareCdEffect: null,
+			flareCdEffectV2: null,
+			sleeveBorderEffect: null,
+			sleeveApertureEffect: null,
+			sleeveCrackEffect: null,
+			sleeve: null,
+			cd: null,
+			cdCase: null,
+			note: null,
+			test: null,
 		};
 
 		this.row = {
@@ -204,6 +219,9 @@ class Images {
 		this.setNoCover();
 		if (ppt.imgCarousel) { this.startCarousel(); } // Regorxxx <- Art carousel ->
 	}
+	/** @typedef {{idx: number, type: string, itemKey: '', isCount: boolean, tf: FbTitleFormat}} Overlay */
+	/** @typedef {{idx: number, type: string, mask: string | void, border: string, shadow: string, collageLine: boolean, centerLabel: boolean, centerTrackCount: boolean, overlayOffsetV: number, overlayOffsetH: number, fillBg: boolean, collageCondense: number}} Style */
+	/** @typedef {{idx: number, type: string, name?: string | (folderView: boolean) => string, cacheName: string | (folderView: boolean) => string, lines: number, style: string, reflection: string, reflectionStyle: string, reflectionRoot: string, border: string, shadow: string, mute: string, bloom: string, blur: string, vignette: string, grayScale: string, hoverZoom: string, perspective: string, sleeve: string, tf?: string | (folderView: boolean) => string, trim: boolean, showMenu: string, switchIdx: number[]}} ArtType */
 
 	// Methods
 
@@ -262,7 +280,7 @@ class Images {
 		if (typeof copy.name === 'function') { copy.name = copy.name(folderView); }
 		if (!Object.hasOwn(copy, 'name') || !copy.name) { copy.name = copy.type; }
 		['switchIdx'].forEach((k) => copy[k] = [...copy[k]]);
-		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale', 'hoverZoom', 'perspective'].forEach((k) => copy[k] = ppt[copy[k]]);
+		['style', 'reflection', 'reflectionStyle', 'reflectionRoot', 'border', 'shadow', 'mute', 'edgeGlow', 'bloom', 'blur', 'vignette', 'grayScale', 'hoverZoom', 'perspective', 'sleeve'].forEach((k) => copy[k] = ppt[copy[k]]);
 		if (window.DrawMode !== 1) { copy.perspective = false; }
 		return copy;
 	}
@@ -451,7 +469,7 @@ class Images {
 		const o = this.cache[key];
 		if (o && o.img == 'called') {
 			if (rawCache) { this.cacheItPreLoad(result.image, key, ix, style); }
-			else { this.cacheIt(result.image, key, ix, void(0), style); }
+			else { this.cacheIt(result.image, key, ix, void (0), style); }
 		}
 		if (ppt.logArtProfiler) {
 			this.artProfiler.CheckPointStep('load_image_async');
@@ -724,8 +742,80 @@ class Images {
 		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 60, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
 	}
 
+	getTestPoints(w, h, x = 0, y = 0) {
+		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 60, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
+	}
+
 	createMasks() {
 		const wh = 500;
+		this.mask.flareCdEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			g.DrawLine(0, 0, wh, wh, 10, $.RGB(255, 255, 255));
+			g.DrawLine(50, 0, wh - 50, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(100, 0, wh - 100, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(-50, 0, wh + 50, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(-150, 0, wh + 150, wh, 3, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+		this.mask.flareCdEffect.StackBlur(30);
+		this.mask.flareCdEffectV2 = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			g.DrawLine(wh / 4, wh, wh, wh / 2 + wh / 8, 3, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh / 2, wh, 0, 10, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh / 3, wh * 2 / 3, 0, 3, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+		this.mask.flareCdEffectV2.StackBlur(25);
+		this.mask.flareEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			g.FillPolygon($.RGB(255, 255, 255), 0, getStarPoints(wh, 50, 25));
+			g.SetSmoothingMode();
+		});
+		this.mask.flareEffect.StackBlur(5);
+		this.mask.sleeveEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			// Borders
+			g.DrawLine(0, 0, 0, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(wh, 0, wh, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh, wh, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(0, 0, wh, 0, 3, $.RGB(255, 255, 255));
+			// Flare
+			g.DrawLine(0, 0, wh, wh, 10, $.RGB(255, 255, 255));
+			g.DrawLine(50, 0, wh - 50, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(100, 0, wh - 100, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(-50, 0, wh + 50, wh, 3, $.RGB(255, 255, 255));
+			g.DrawLine(-150, 0, wh + 150, wh, 3, $.RGB(255, 255, 255));
+			// Flare
+			g.DrawLine(wh / 4, wh, wh, wh / 2 + wh / 8, 3, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh / 2, wh, 0, 10, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh / 3, wh * 2 / 3, 0, 3, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+		this.mask.sleeveEffect.StackBlur(100);
+		this.mask.sleeveBorderEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			g.DrawLine(0, 0, 0, wh, 2, $.RGB(255, 255, 255));
+			g.DrawLine(wh - 2, 0, wh - 2, wh, 2, $.RGB(255, 255, 255));
+			g.DrawLine(0, wh - 2, wh, wh - 2, 2, $.RGB(255, 255, 255));
+			g.DrawLine(0, 0, wh, 0, 2, $.RGB(255, 255, 255));
+		});
+		this.mask.sleeveBorderEffect.StackBlur(10);
+		this.mask.sleeveApertureEffect = $.gr(wh, wh, true, g => {
+			g.DrawLine(0, 0, wh / 4, wh / 7, 2, $.RGB(255, 255, 255));
+			g.DrawLine(wh / 4, wh / 7, wh * 3 / 4, wh / 7, 2, $.RGB(255, 255, 255));
+			g.DrawLine(wh * 3 / 4, wh / 7, wh, 0, 2, $.RGB(255, 255, 255));
+		});
+		this.mask.sleeveApertureEffect.StackBlur(2);
+		this.mask.sleeveCrackEffect = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			const total = 200;
+			const points = Array.from({ length: total }, () => Math.randomInt(0, wh));
+			g.DrawPolygon($.RGB(170, 170, 170), 2, points.slice(total / 2));
+			g.DrawPolygon($.RGB(50, 50, 50), 2, points.slice(0, total / 2));
+			g.SetSmoothingMode();
+		});
+		this.mask.sleeveCrackEffect.StackBlur(25);
+
 		this.mask.circular = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -763,12 +853,63 @@ class Images {
 			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh, 0, -wh / 20));
 			g.SetSmoothingMode();
 		});
-		this.mask.flareEffect = $.gr(wh, wh, true, g => {
-			g.SetSmoothingMode(SmoothingMode.AntiAlias);
-			g.FillPolygon($.RGB(255, 255, 255), 0, getStarPoints(wh, 50, 25));
+		this.mask.cd = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let b = wh / 50;
+			g.FillEllipse(0.5, 0.5, wh - 1.75, wh - 1.75, $.RGB(100, 100, 100)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			g.FillEllipse(0.5 + b, 0.5 + b, wh - 1.75 - b * 2, wh - 1.75 - b * 2, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			let r = wh / 10;
+			r *= 1.3;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(100, 100, 100)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			r /= 1.3;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.SetSmoothingMode();
 		});
-		this.mask.flareEffect.StackBlur(5);
+		this.mask.cdCase = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.AntiAlias);
+			// Spine
+			g.FillSolidRect(0, 0, wh / 15, wh, $.RGB(0, 0, 0));
+			g.DrawLine(0, 0, 0, wh, 5, $.RGB(30, 25, 25));
+			g.DrawLine(wh / 15 + 2, 0, wh / 15 + 2, wh, 2, $.RGB(110, 80, 125));
+			g.DrawLine(wh / 15 + 4, 0, wh / 15 + 4, wh, 5, $.RGB(100, 100, 125));
+			g.DrawLine(wh / 15 + 6, 0, wh / 15 + 6, wh, 2, $.RGB(50, 50, 50));
+			g.DrawLine(wh / 15 / 2, 0, wh / 15 / 2, 10, 20, $.RGB(50, 50, 75));
+			g.DrawLine(wh / 15 / 2, wh, wh / 15 / 2, wh - 10, 20, $.RGB(50, 50, 75));
+			g.DrawLine(6, 0, 6, wh, 2, $.RGB(15, 15, 20));
+			g.DrawLine(wh / 15 / 2 - 3, 0, wh / 15 / 2 - 3, wh, 3, $.RGB(25, 25, 20));
+			g.DrawLine(wh / 15 / 2 + 3, 0, wh / 15 / 2 + 3, wh, 3, $.RGB(25, 25, 20));
+			g.DrawLine(wh / 15 / 2 + 9, 0, wh / 15 / 2 + 9, wh, 2, $.RGB(15, 15, 20));
+			// Border
+			g.DrawLine(wh - 2, 0, wh - 2, wh, 5, $.RGB(100, 100, 125));
+			g.DrawLine(0, wh - 2, wh, wh - 2, 5, $.RGB(100, 100, 125));
+			g.DrawLine(0, 0, wh, 0, 5, $.RGB(100, 100, 125));
+			g.SetSmoothingMode();
+		});
+
+		this.mask.circularNote = this.mask.circular;
+		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\cnote.png')
+			.then((img) => {
+				this.mask.circularNote = $.gr(wh, wh, true, g => {
+					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+				});
+			}).catch((error) => console.log(window.ScriptName + ':\n' + error));
+
+		this.mask.fillNote = $.gr(wh, wh, true, g => g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255)));
+		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\fnote.png')
+			.then((img) => {
+				this.mask.fillNote = $.gr(wh, wh, true, g => {
+					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+				});
+			}).catch((error) => console.log(window.ScriptName + ':\n' + error));
+
+		this.mask.test = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			// g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+			g.SetSmoothingMode();
+		});
 	}
 
 	// Regorxxx <- Fix img frame for root images (hover effect)
@@ -894,12 +1035,12 @@ class Images {
 						if (ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImg, cell); } // Regorxxx <- Zoom hover effect ->
 						else { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImg, !this.labels.overlay && !this.labels.hide ? 'stnd' : 'thick', cell); } // Regorxxx <- Zoom hover effect ->
 					} else if (pop.highlight.row == 1 && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, coords.y, ui.sz.sideMarker, this.im.w, ui.col.sideMarker);
-					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
+					if (ppt.flareImage) { this.drawImageEffect(gr, style, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (cell.bSel) {
 					if (this.labels.overlay && !style.fillBg) { this.drawFrame(gr, art, box_x, box_y, ui.col.frameImgSel, 'thick', cell); } // Regorxxx <- Zoom hover effect ->
 					else if (this.labels.hide && pop.highlight.row == 3 && ppt.frameImage) { this.drawImageFrame(gr, art, style, item, coords, ui.col.frameImgSel, cell); } // Regorxxx <- Zoom hover effect ->
-					if (ppt.flareImage) { this.drawImageEffect(gr, 'flare', coords); } // Regorxxx <- Flare hover effect ->
+					if (ppt.flareImage) { this.drawImageEffect(gr, style, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
 					const x = box_x + this.text.x;
@@ -1093,6 +1234,7 @@ class Images {
 			}
 		} else {
 			switch (style.border) {
+				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w - l_w / 2, coords.h - l_w / 2, l_w, col);
@@ -1108,6 +1250,11 @@ class Images {
 					gr.DrawPolygon(col, l_w, this.getHeartPoints(coords.w, coords.h, coords.x - l_w / 4, coords.y - coords.h / 20));
 					break;
 				}
+				case 'test': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.DrawEllipse(coords.x, coords.y, coords.w - l_w / 2, coords.h - l_w / 2, l_w, col);
+					break;
+				}
 				default: {
 					gr.SetSmoothingMode(SmoothingMode.HighQuality);
 					gr.DrawRect(coords.x + 1, coords.y + 1, coords.w - l_w / 2 - 1, coords.h - l_w / 2 - 1, l_w, col);
@@ -1118,15 +1265,54 @@ class Images {
 		gr.SetSmoothingMode();
 	}
 
-	drawImageEffect(gr, effect, coords) {
+	/**
+	 * Description
+	 *
+	 * @method
+	 * @name drawImageEffect
+	 * @kind method
+	 * @memberof Images
+	 * @param {GdiGraphics|GdiBitmap} gr
+	 * @param {Style} style
+	 * @param {string} effect
+	 * @param {{ x: number, y:number, w: number, h: number}} coords
+	 * @returns {void}
+	 */
+	drawImageEffect(gr, style, effect, coords) {
+		let img;
+		if (gr instanceof GdiBitmap) { img = gr; gr = img.GetGraphics(); }
 		gr.SetSmoothingMode(SmoothingMode.HighQuality);
 		switch (effect) { // NOSONAR
 			case 'flare': { // Regorxxx <- Flare hover effect ->
 				gr.DrawImage(this.mask.flareEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.flareEffect.Width, this.mask.flareEffect.Height);
 				break;
 			}
+			case 'cdflare': {
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+				gr.DrawImage(this.mask.flareCdEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.flareCdEffect.Width, this.mask.flareCdEffect.Height, 0, 75);
+				gr.DrawImage(this.mask.flareCdEffectV2, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.flareCdEffectV2.Width, this.mask.flareCdEffectV2.Height, 0, 25);
+				gr.SetSmoothingMode();
+				break;
+			}
+			case 'sleeve': {
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+				gr.DrawImage(this.mask.sleeveEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.flareCdEffect.Width, this.mask.flareCdEffect.Height, 0, 150);
+				gr.DrawImage(this.mask.flareCdEffectV2, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.flareCdEffectV2.Width, this.mask.flareCdEffectV2.Height, 0, 25);
+				gr.DrawImage(this.mask.sleeveBorderEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.sleeveBorderEffect.Width, this.mask.sleeveBorderEffect.Height, 0, 100);
+				if (style.fillBg) { gr.DrawImage(this.mask.sleeveApertureEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.sleeveApertureEffect.Width, this.mask.sleeveApertureEffect.Height, 0, 50); }
+				gr.DrawImage(this.mask.sleeveCrackEffect, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.sleeveCrackEffect.Width, this.mask.sleeveCrackEffect.Height, 0, 100);
+				gr.SetSmoothingMode();
+				break;
+			}
+			case 'cdcase': {
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+				gr.DrawImage(this.mask.cdCase, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.cdCase.Width, this.mask.cdCase.Height, 0, 255);
+				gr.SetSmoothingMode();
+				break;
+			}
 		}
 		gr.SetSmoothingMode();
+		if (img) { img.ReleaseGraphics(gr); }
 	}
 
 	// Regorxxx <- Item overlay vertical alignment | Item overlay horizontal alignment | New overlay styles
@@ -1305,7 +1491,7 @@ class Images {
 		return image;
 	}
 
-	applyArtEffect(image, art) {
+	applyArtEffect(image, art, style) {
 		if (this.useD2D) {
 			let intensity;
 			image = applyEffect(image, (img) => {
@@ -1508,6 +1694,8 @@ class Images {
 				);
 			}
 		}
+		if (art.sleeve) { this.drawImageEffect(image, style, 'sleeve', { x: 0, y: 0, w: image.Width, h: image.Height }); }
+		if (style.type === 'cdcase') { this.drawImageEffect(image, style, 'cdcase', { x: 0, y: 0, w: image.Width, h: image.Height }); }
 		return image;
 	}
 
@@ -1593,6 +1781,7 @@ class Images {
 
 	drawStyleBorder(gr, style, coords) {
 		switch (style.border) {
+			case 'cd':
 			case 'circular': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				gr.DrawEllipse(coords.x + 1, coords.y + 1, coords.w - 2, coords.h - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
@@ -1608,6 +1797,12 @@ class Images {
 			case 'heart': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				gr.DrawPolygon(ui.col.imgBor, 2, this.getHeartPoints(coords.w - 2, coords.h, coords.x + 1, coords.y - coords.h / 20));
+				gr.SetSmoothingMode();
+				break;
+			}
+			case 'test': {
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
+				gr.DrawEllipse(coords.x + 1, coords.y + 1, coords.w - 2, coords.h - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -1629,6 +1824,7 @@ class Images {
 			} else { gr.DrawImage(this.shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, this.shadow.Width, this.shadow.Height); }
 		} else if (this.style.dropGrad) {
 			switch (style.shadow) {
+				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
@@ -1650,6 +1846,12 @@ class Images {
 					gr.SetSmoothingMode();
 					break;
 				}
+				case 'test': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
+					gr.SetSmoothingMode();
+					break;
+				}
 				default: {
 					gr.FillGradRect(coords.x + coords.w, coords.y, 4 * $.scale, coords.h, 0, $.RGBA(0, 0, 0, 56), 0);
 					gr.FillGradRect(coords.x, coords.y + coords.h, coords.w, 4 * $.scale, 90, $.RGBA(0, 0, 0, 56), 0);
@@ -1664,6 +1866,7 @@ class Images {
 			gr.DrawImage(this.shadowStub, x, y, this.shadowStub.Width, this.shadowStub.Height, 0, 0, this.shadowStub.Width, this.shadowStub.Height);
 		} else if (this.style.dropGradStub) {
 			switch (style.shadow) {
+				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(x, y, w, h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
@@ -1682,6 +1885,12 @@ class Images {
 					y -= 3;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y - h / 20));
+					gr.SetSmoothingMode();
+					break;
+				}
+				case 'test': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					gr.DrawEllipse(x, y, w, h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -1832,16 +2041,38 @@ class Images {
 		return Math.max(this.bor.pad / 4, Math.round(5 * $.scale));
 	}
 
+	/**
+	 * Description
+	 *
+	 * @method
+	 * @name format
+	 * @kind method
+	 * @memberof Images
+	 * @param {GdiBitmap} image
+	 * @param {ArtType} art
+	 * @param {Style} style
+	 * @param {number} w
+	 * @param {number} h
+	 * @param {boolean} fade
+	 * @param {string} caller
+	 * @returns {GdiBitmap}
+	 */
 	format(image, art, style, w, h, fade, caller) {
 		let ix = 0;
 		let iy = 0;
 		let iw = image.Width;
 		let ih = image.Height;
+		if (style.type === 'cd') { this.drawImageEffect(image, style, 'cdflare', { x: ix, y: iy, w: iw, h: ih }); }
 		switch (style.type) {
 			case 'starfill':
 			case 'stareffect':
 			case 'staroutline':
 			case 'heart':
+			case 'cd':
+			case 'cdcase':
+			case 'circularnote':
+			case 'fillnote':
+			case 'test':
 			case 'crop':
 			case 'circular': {
 				const s1 = iw / w;
@@ -1856,6 +2087,9 @@ class Images {
 						iy = Math.round((image.Height - ih) / 8);
 					}
 					image = image.Clone(ix, iy, iw, ih);
+				}
+				if (style.type === 'cdcase') {
+					image = $.gr(iw, ih, true, (g) => g.DrawImage(image, iw / 15, 0, iw, ih, iw / 15, 0, iw - iw / 15, ih));
 				}
 				// Regorxxx <- Cut img to avoid artifacts at borders | Use HQ Bicubic interpolation
 				w = Math.round(w);
@@ -1891,7 +2125,7 @@ class Images {
 			}
 		}
 		this.applyStyleMask(image, style);
-		image = this.applyArtEffect(image, art);
+		image = this.applyArtEffect(image, art, style);
 		if (fade) { this.fadeMask(image, image.Width, image.Height); }
 		return image;
 	}
@@ -2176,6 +2410,7 @@ class Images {
 		let wh = style.shadow === 'default' ? this.im.w : this.im.w * 0.985; // draw at actual size if possible as faster; regular have to be resized during draw
 		const sz = this.im.w * 1.17;
 		switch (style.shadow) {
+			case 'cd':
 			case 'circular':
 				this.shadow = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
 				this.shadow.StackBlur(4);
@@ -2186,6 +2421,10 @@ class Images {
 				break;
 			case 'heart':
 				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
+				this.shadow.StackBlur(4);
+				break;
+			case 'test':
+				this.shadow = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
 				this.shadow.StackBlur(4);
 				break;
 			default:

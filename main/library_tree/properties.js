@@ -367,6 +367,13 @@ let properties = [
 	['Image Perspective angle', 110, 'imgPerspectiveAlpha'],
 	['Image Perspective middle point', 1/3, 'imgPerspectiveProp'],
 	['Image Perspective axis: hv-0 h-1 v-2 auto-3', 0, 'imgPerspectiveAxis'],
+	['Image Sleeve [Front]', false, 'imgFrontSleeve'],
+	['Image Sleeve [Back]', false, 'imgBackSleeve'],
+	['Image Sleeve [Disc]', false, 'imgDiscSleeve'],
+	['Image Sleeve [Icon]', false, 'imgIconSleeve'],
+	['Image Sleeve [Artist]', false, 'imgArtistSleeve'],
+	['Image Sleeve [TF-1]', false, 'imgTf1Sleeve'],
+	['Image Sleeve [TF-2]', false, 'imgTf2Sleeve'],
 	// Regorxxx ->
 	['Image Carousel enabled', false, 'imgCarousel'], // Regorxxx <- Art carousel ->
 	['Image Follow view TF', true, 'imgFollowView'], // Regorxxx <- Art variables on view TF ->
