@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//28/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -2284,7 +2284,7 @@ class Images {
 			// Regorxxx ->
 			// Regorxxx <- Booklet indicator
 			if (bUseBooklet && !v.bookletChecked) {
-				if (!v.root && !v.track && pop.canShowBooklet(v, bookletLevel, true)) {
+				if (!v.root && !v.track && pop.canShowBookletArt(v, bookletLevel, true)) {
 					v.booklet = pop.hasBooklet(v);
 					v.bookletChecked = true;
 				}

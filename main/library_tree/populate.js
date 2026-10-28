@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//28/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1223,7 +1223,7 @@ class Populate {
 			// Regorxxx ->
 			// Regorxxx <- Booklet indicator
 			if (bUseBooklet && !item.bookletChecked) {
-				if (!item.root && !item.track && this.canShowBooklet(item, bookletLevel)) {
+				if (!item.root && !item.track && this.canShowBookletTree(item, bookletLevel)) {
 					item.booklet = this.hasBooklet(item) ? bookletIcon : '';
 					item.bookletChecked = true;
 				}
@@ -4251,10 +4251,12 @@ class Populate {
 	// Regorxxx ->
 
 	// Regorxxx <- Booklet indicator
-	canShowBooklet(item, level, isArt = false) {
-		return isArt
-			? !panel.folderView && level !== -1 && item.level === (this.rootNode ? 1 : 0)
-			: level !== -1 && level === item.level || panel.folderView && this.hasChildTracks(item);
+	canShowBookletTree(item, level) {
+		return level !== -1 && level === item.level || panel.folderView && this.hasChildTracks(item);
+	}
+
+	canShowBookletArt(item, level) {
+		return !panel.folderView && level !== -1 && item.level === (this.rootNode ? 1 : 0);
 	}
 
 	hasChildTracks(item) {
@@ -4274,8 +4276,8 @@ class Populate {
 			? -1
 			: panel.getBranchTf().split('|').findIndex((s) => s.toUpperCase().includes('%ALBUM%'));
 		return isArt
-			? (level !== -1 ? level + 1 : -1)
-			: (level !== -1 ? (this.rootNode ? 1 : 0) : -1);
+			? (level === -1 ? -1 : level + 1)
+			: (level === -1 ? -1 : (this.rootNode ? 1 : 0) + level);
 	}
 
 	hasBooklet(item) {
