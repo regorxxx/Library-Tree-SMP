@@ -4,3 +4,10 @@
 unused can be hidden at the 'More settings' to clean-up the filter menu.
 
 • Remember separators may be added to submenus as needed.
+
+• Set panel to D2D draw mode to display emojis (check properties panel).
+
+Album art:
+------------------
+• You can use special variables like $front to use specific art types
+on some branches or nodes.
