@@ -1,5 +1,5 @@
 ﻿'use strict';
-//05/10/26
+//28/10/26
 
 /* global fso:readable, WshShell:readable, folders:readable, popup:readable */
 /* global Language:readable, popUpBox:readable, ppt:readable */
@@ -93,13 +93,13 @@ class Helpers {
 	 * @returns {GdiBitmap}
 	 */
 	gr(w, h, im, func) {
-		if (Number.isNaN(w) || Number.isNaN(h)) return;
+		if (Number.isNaN(w) || Number.isNaN(h)) { return; }
 		let i = gdi.CreateImage(Math.max(w, 2), Math.max(h, 2));
 		let g = i.GetGraphics();
 		func(g, i);
 		i.ReleaseGraphics(g);
 		g = null;
-		if (im) return i;
+		if (im) { return i; }
 		else i = null;
 	}
 

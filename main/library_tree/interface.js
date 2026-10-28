@@ -1,5 +1,5 @@
 ﻿'use strict';
-//16/10/26
+//27/10/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -304,8 +304,8 @@ class UserInterface {
 	// Regorxxx ->
 
 	formatImg(image) {
-		if (!this.w || !this.h) return;
-		let imgw, imgh, imgx, imgy;
+		if (!this.w || !this.h) { return; }
+		let imgW, imgH, imgX, imgY;
 		if (!this.img.isBlur && ppt.autoFill || this.img.isBlur && ppt.blurAutofill) {
 			const s1 = image.Width / this.w;
 			const s2 = image.Height / this.h;
@@ -320,36 +320,36 @@ class UserInterface {
 			if (!wScale) { return; }
 			// Regorxxx ->
 			if (!this.img.isBlur && ppt.autoFill && Math.abs(s1 / s2 - 1) < 0.05) {
-				imgx = offsetX > 0 ? image.Width * offsetX : 0; // Regorxxx <- Background image position
-				imgy = 0;
-				imgw = image.Width * wScale; // Regorxxx <- Background image position
-				imgh = image.Height;
+				imgX = offsetX > 0 ? image.Width * offsetX : 0; // Regorxxx <- Background image position
+				imgY = 0;
+				imgW = image.Width * wScale; // Regorxxx <- Background image position
+				imgH = image.Height;
 			} else {
 				if (s1 > s2) {
-					imgw = Math.round(this.w * s2 * wScale); // Regorxxx <- Background image position
-					imgh = image.Height;
-					imgx = Math.round((image.Width - imgw + (image.Width * offsetX)) / 2); // Regorxxx <-  Background image position
-					imgy = 0;
+					imgW = Math.round(this.w * s2 * wScale); // Regorxxx <- Background image position
+					imgH = image.Height;
+					imgX = Math.round((image.Width - imgW + (image.Width * offsetX)) / 2); // Regorxxx <-  Background image position
+					imgY = 0;
 				} else {
-					imgw = image.Width * wScale; // Regorxxx <- Background image position
-					imgh = Math.round(this.h * s1);
-					imgx = offsetX > 0 ? image.Width * offsetX : 0; // Regorxxx <- Background image position
-					imgy = Math.round((image.Height - imgh) / 8);
+					imgW = image.Width * wScale; // Regorxxx <- Background image position
+					imgH = Math.round(this.h * s1);
+					imgX = offsetX > 0 ? image.Width * offsetX : 0; // Regorxxx <- Background image position
+					imgY = Math.round((image.Height - imgH) / 8);
 				}
 			}
 		}
-		this.img.cur = $.gr(this.w, this.h, true, (g, gi) => {
+		this.img.cur = $.gr(this.w, this.h, true, (g, img) => {
 			switch (true) {
 				case this.img.isBlur:
 					g.SetInterpolationMode();
-					if (ppt.blurAutofill) image = image.Clone(imgx, imgy, imgw, imgh);
+					if (ppt.blurAutofill) { image = image.Clone(imgX, imgY, imgW, imgH); }
 					if (this.img.blurBlend) {
 						if (ppt.blurTemp) {
 							const iSmall = image.Resize(Math.ceil(this.w * this.img.blurLevel / 100), Math.ceil(this.h * this.img.blurLevel / 100), 2); // Regorxxx <- Fix crash on small sizes for blend mode ->
 							const iFull = iSmall.Resize(this.w, this.h, 2);
 							const offset = 90 - this.img.blurLevel;
 							g.DrawImage(iFull, 0 - offset, 0 - offset, this.w + offset * 2, this.h + offset * 2, 0, 0, iFull.Width, iFull.Height, 0, this.img.blendAlpha);
-						} else g.DrawImage(image, 0, 0, this.w, this.h, 0, 0, image.Width, image.Height, 0, this.img.blendAlpha); // no blur
+						} else { g.DrawImage(image, 0, 0, this.w, this.h, 0, 0, image.Width, image.Height, 0, this.img.blendAlpha); } // no blur
 					} else {
 						if (ppt.theme == 1 || ppt.theme == 3) {
 							g.DrawImage(image, 0, 0, this.w, this.h, 0, 0, image.Width, image.Height);
@@ -364,7 +364,7 @@ class UserInterface {
 					}
 					break;
 				case !this.img.isBlur:
-					if (ppt.autoFill) g.DrawImage(image, 0, 0, this.w, this.h, imgx, imgy, imgw, imgh, 0, this.img.covAlpha);
+					if (ppt.autoFill) { g.DrawImage(image, 0, 0, this.w, this.h, imgX, imgY, imgW, imgH, 0, this.img.covAlpha); }
 					else {
 						const sc = Math.min(this.h / image.Height, this.w / image.Width);
 						const tw = Math.round(image.Width * sc);
@@ -541,12 +541,12 @@ class UserInterface {
 		if (ppt.custAlbumArtGrpFontUse && ppt.custAlbumArtGrpFont.length) {
 			const custFont = $.split(ppt.custAlbumArtGrpFont, 1);
 			this.font.group = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else {this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0);} // Regorxxx <- Change default font styles ->
+		} else { this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0); } // Regorxxx <- Change default font styles ->
 
 		if (ppt.custAlbumArtLotFontUse && ppt.custAlbumArtLotFont.length) {
 			const custFont = $.split(ppt.custAlbumArtLotFont, 1);
 			this.font.lot = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else {this.font.lot = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0);}
+		} else { this.font.lot = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0); }
 
 		if (ppt.custAlbumArtDurFontUse && ppt.custAlbumArtDurFont.length) {
 			const custFont = $.split(ppt.custAlbumArtDurFont, 1);
@@ -562,7 +562,7 @@ class UserInterface {
 		if (ppt.custAlbumArtTooltipFontUse && ppt.custAlbumArtTooltipFont.length) {
 			const custFont = $.split(ppt.custAlbumArtTooltipFont, 1);
 			this.font.groupTooltip = gdi.Font(custFont[0], this.font.group.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else {this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0);}
+		} else { this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0); }
 		// Regorxxx ->
 
 		// Regorxxx <- Custom art overlay font
@@ -884,10 +884,10 @@ class UserInterface {
 	}
 
 	on_get_album_art_done(handle, image, image_path) {
-		if (!this.cur_handle || !this.cur_handle.Compare(handle)) return;
-		if (this.img.cur_pth == image_path && this.img.cur && image) return window.Repaint();
+		if (!this.cur_handle || !this.cur_handle.Compare(handle)) { return; }
+		if (this.img.cur_pth == image_path && this.img.cur && image) { return window.Repaint(); }
 		this.img.cur_pth = image_path;
-		if (!image) image = this.setStub(0);
+		if (!image) { image = this.setStub(0); }
 		if (!image) {
 			this.img.cur = null;
 			this.resetImgColors(); // Regorxxx <- Set dynamic colors from artwork ->
