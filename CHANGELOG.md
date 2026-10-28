@@ -62,6 +62,7 @@
 - Helpers: replaced nircmd.exe with nircmdx.exe so all recycle bin errors are directly handled by console.
 - Installation: fonts installation is no longer needed when using JSplitter. Fonts will be directly loaded on real time, without system wide installation. Note this doesn't apply to 'Segoe UI' and 'Arial Unicode', which are supposed to be bundled with Windows; if missing (Unix systems), install required fonts from [here](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts).
 - Installation: package description will now contain the build timestamp ('Package built: YYYY/MM/DD hh:mm') as first line; meant to be used on nightlies (which don't follow semVer).
+- Installation: new installations will use D2D draw mode by default.
 - External integration: Changed callbacks.
 	* 'Library-Tree-SMP: search' -> { window: string[], search: string, clear: boolean, enter: boolean }
 ### Removed
@@ -130,7 +131,6 @@
 - Debug: new album art Custom TF results logging setting, which outputs the result of custom TF styles expressions for every node (along the number of files matched). i.e. it can be temporarily used to "preview" the expressions used for testing purposes. Setting can be found at 'Advanced' tab (HTML options panel) or 'Logging album art custom TF' (properties panel).
 - Debug: new album art performance logging associated to setting found at 'Advanced' tab (HTML options panel) or 'Logging library profiler' (properties panel).
 - Configuration: added new "userAgent" (Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36) and "curlImpersonate" (curl_firefox147.bat) at global settings (globSettings.json) for arbitrary downloads using curl and/or JS-host methods.
-- Configuration: new installations will use D2D draw mode by default.
 - Helpers: added curl-impersonate.exe v1.5.6. See [here](https://github.com/lexiforest/curl-impersonate).
 ### Changed
 - Syntax: $sourcename, $sourcenameortype and $sourceid now return the associated playlist for the given node while using multi-branch playlist view setting, instead of all playlists joined with comma. Without the setting, all sources are output joined with comma.
