@@ -353,13 +353,25 @@ class UserInterface {
 					} else {
 						if (ppt.theme == 1 || ppt.theme == 3) {
 							g.DrawImage(image, 0, 0, this.w, this.h, 0, 0, image.Width, image.Height);
-							if (this.img.blurLevel > 1) gi.StackBlur(this.img.blurLevel);
-							g.FillSolidRect(0, 0, this.w, this.h, this.isImageLight(gi) ? this.col.bg_light : this.col.bg_dark);
+							// Regorxxx <- Fix incompatibility with D2D
+							if (this.img.blurLevel > 1) {
+								if (window.DrawMode === 1) { img.ReleaseGraphics(g); }
+								img.StackBlur(this.img.blurLevel);
+								if (window.DrawMode === 1) { g = img.GetGraphics(g); }
+							}
+							// Regorxxx ->
+							g.FillSolidRect(0, 0, this.w, this.h, this.isImageLight(img) ? this.col.bg_light : this.col.bg_dark);
 						}
 						if (ppt.theme == 4) {
 							g.FillSolidRect(0, 0, this.w, this.h, this.getRandomCol());
 							g.DrawImage(image, 0, 0, this.w, this.h, 0, 0, image.Width, image.Height, 0, this.getImgAlpha(image));
-							if (this.img.blurLevel > 1) gi.StackBlur(this.img.blurLevel);
+							// Regorxxx <- Fix incompatibility with D2D
+							if (this.img.blurLevel > 1) {
+								if (window.DrawMode === 1) { img.ReleaseGraphics(g); }
+								img.StackBlur(this.img.blurLevel);
+								if (window.DrawMode === 1) { g = img.GetGraphics(g); }
+							}
+							// Regorxxx ->
 						}
 					}
 					break;
