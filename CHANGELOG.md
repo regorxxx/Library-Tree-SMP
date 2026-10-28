@@ -41,6 +41,7 @@
 - Album art: added support for '$default', '$crop', '$circular', '$starfill', '$stareffect', '$staroutline', '$heart' style variables to use specific styles types for current branch. i.e. '%ALBUM ARTIST%[$circular]|%ALBUM%[$crop]'. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089627.html#msg1089627). Check syntax docs for more info.
 - Debug: new setting to switch Art loading profiler logging at 'Advanced' tab (HTML options panel) or 'Logging art profiler' (properties panel).
 - Debug: wrong queries at filters are now output at console log, whenever a syntax error is shown on panel.
+- Installation: added support for [foo_component_update_checker](https://github.com/p2ashiura/foo_component_update_checker). Those who use that component, will get automatic notifications about package updates from now on (not nightlies).
 ### Changed
 - Search: search history is now sorted by date (instead of alphabetically) by default. If legacy behavior is desired, check 'Search History sort by date' (properties panel).
 - Views: default view patterns will now skip %COMMENT% usage for album sorting, unless explicitly enabled using a flag 'View By Use %COMMENT% on Defaults' (properties panel). Note after changing the flag, views need to be reset to default to apply. It will also survive updates. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089035.html#msg1089035).
