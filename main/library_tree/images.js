@@ -101,7 +101,9 @@ class Images {
 			{ idx: 8, type: 'cdcase', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
 			{ idx: 9, type: 'circularnote', mask: 'circularNote', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 10, type: 'fillnote', mask: 'fillNote', border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
-			{ idx: 11, type: 'test', mask: 'test', border: 'test', shadow: 'test', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 11, type: 'vinyl', mask: 'vinylLabel', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 12, type: 'cassette', mask: 'cassetteLabel', border: 'cassette', shadow: 'cassette', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 13, type: 'test', mask: 'test', border: 'test', shadow: 'test', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 		];
 		// Regorxxx ->
 
@@ -170,6 +172,11 @@ class Images {
 			cd: null,
 			cdCase: null,
 			note: null,
+			vinyl: null,
+			vinylLabel: null,
+			cassette: null,
+			cassetteBorder: null,
+			cassetteOverlay: null,
 			test: null,
 		};
 
@@ -905,9 +912,101 @@ class Images {
 				});
 			}).catch((error) => console.log(window.ScriptName + ':\n' + error));
 
+		this.mask.vinylLabel = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let r = wh / 4;
+			r *= 1.1;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(100, 100, 100));
+			r /= 1.1;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(0, 0, 0));
+			r /= 6.7;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(150, 150, 150));
+			r /= 1.3;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+
+		this.mask.vinylOverlay = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let b = wh / 50 / 3;
+			g.FillEllipse(0.5 + b, 0.5 + b, wh - b * 2, wh - 1.75 - b * 2, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			let r = wh / 3.5;
+			for (let i = 0; i < 6; i++) {
+				g.DrawEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, 2, $.RGBA(50 + Math.randomInt(0, 30), 50 + Math.randomInt(0, 10), 45 + Math.randomInt(0, 10), 100));
+				r *= 1.1;
+			}
+			g.SetSmoothingMode();
+		});
+		this.mask.vinylOverlay.ApplyMask(this.mask.vinylLabel.InvertColours());
+
+		this.mask.cassetteLabel = $.gr(wh, wh, true, g => {
+			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let h = wh / 6;
+			g.FillRoundRect(0.5, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGB(170, 170, 170));
+			g.FillRoundRect(0.5 + h / 2, h * 1.5, wh - 0.5 - h, wh - h * 3, h / 2, h / 2, $.RGB(0, 0, 0));
+			const d = h * 2 / 3;
+			g.FillRoundRect(0.5 + h * 1.5, wh / 2 - h / 3, wh - 0.5 - h * 3, d, h / 3, h / 3, $.RGB(100, 100, 100));
+			g.FillEllipse(0.5 + h * 1.5, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+
+		const cassetteBase = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let h = wh / 6;
+			g.FillRoundRect(0.5 + h / 2, h * 1.5, wh - 0.5 - h, wh - h * 3, h / 2, h / 2, $.RGB(0, 0, 0));
+			const d = h * 2 / 3;
+			g.FillRoundRect(0.5 + h * 1.5, wh / 2 - h / 3, wh - 0.5 - h * 3, d, h / 3, h / 3, $.RGB(100, 100, 100));
+			g.FillEllipse(0.5 + h * 1.5, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
+
+		this.mask.cassetteBorder = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let h = wh / 6;
+			g.FillRoundRect(0.5, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGB(35, 25, 25));
+			g.DrawRoundRect(2, h, wh - 5, wh - h * 2, h / 2, h / 2, 2, $.RGB(0, 0, 0, 150));
+			g.SetSmoothingMode();
+		});
+		this.mask.cassetteBorder.ApplyMask(this.mask.cassetteLabel.InvertColours());
+		this.mask.cassetteBorder.ApplyMask(cassetteBase);
+
+		this.mask.cassetteOverlay = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let h = wh / 6;
+			const d = h * 2 / 3;
+			const bezel = 5;
+			g.FillRoundRect(h * 1.5 - bezel, wh / 2 - h / 3 - bezel, wh - h * 3 + bezel * 2, d + bezel * 2, h / 3, h / 3, $.RGB(0, 0, 0));
+			const l = $.RGBA(200, 200, 200, 30);
+			const r = $.RGBA(200, 180, 50, 30);
+			if (window.Parent === 'foo_uie_jsplitter') {
+				const brush = gdi.Brush(BrushType.LinearGradient, [h, 0], [wh - h, 0], [0, r, 0.3, l, 0.7, l, 1, r], 1);
+				g.FillRoundRect(h, h * 1.5 + 10, wh - h * 2, h - 10, 10, 10, brush);
+			} else {
+				g.FillGradRect(h, h * 1.5 + 10, wh - h * 2, h - 10, 0, r, l, 0.5);
+			}
+			for (let i = 0; i < 6; i++) { g.DrawLine(wh / 5, h * 1.75 + 10 * i, wh - wh / 5, h * 1.75 + 10 * i, 2, $.RGBA(0, 0, 0, 50)); }
+			g.FillPolygon($.RGB(30, 25, 25), 0, [wh / 2 - h * 2, wh - h, wh / 2 + h * 2, wh - h, wh / 2 + h * 2 - h / 2, wh - h - h / 2, wh / 2 - h * 2 + h / 2, wh - h - h / 2]);
+			g.FillEllipse(h / 4, h + h / 4, h / 4, h / 4, $.RGBA(0, 0, 0, 100));
+			g.FillEllipse(wh - h / 4 * 2, h + h / 4, h / 4, h / 4, $.RGBA(0, 0, 0, 100));
+			g.FillEllipse(wh - h / 4 * 2, wh - h - h / 4 * 2, h / 4, h / 4, $.RGBA(0, 0, 0, 100));
+			g.FillEllipse(h / 4, wh - h - h / 4 * 2, h / 4, h / 4, $.RGBA(0, 0, 0, 100));
+			g.FillEllipse(wh / 2 - h / 4 / 2, wh - h - h / 4 * 1.5, h / 4, h / 4, $.RGBA(0, 0, 0, 100));
+			g.FillPolygon($.RGBA(0, 0, 0, 100), 0, [wh / 2 - wh / 10, wh - (h + h / 4) * 1.5, wh / 2 + wh / 10, wh - (h + h / 4) * 1.5, wh / 2 + wh / 10, wh - (h + h / 4) * 1.5 + wh / 10 / 3, wh / 2 + wh / 10 + wh / 10 / 3, wh - (h + h / 4) * 1.5 - wh / 10 / 3 / 2, wh / 2 + wh / 10, wh - (h + h / 4) * 1.5 - wh / 10 / 3 * 2, wh / 2 + wh / 10, wh - (h + h / 4) * 1.5 - wh / 10 / 3, wh / 2 - wh / 10, wh - (h + h / 4) * 1.5 - wh / 10 / 3]);
+			g.DrawLine(h / 2 + 20, wh - (h + h / 4 - wh / 10 / 3) * 1.5, wh - h / 2 - 20, wh - (h + h / 4 - wh / 10 / 3) * 1.5, 1, $.RGBA(0, 0, 0, 150));
+			g.DrawLine(h / 2, wh - (h + h / 4 + wh / 10 / 3 * 2) * 1.5, wh - h / 2, wh - (h + h / 4 + wh / 10 / 3 * 2) * 1.5, 1, $.RGBA(0, 0, 0, 150));
+			g.SetSmoothingMode();
+		});
+		this.mask.cassetteOverlay.ApplyMask(cassetteBase);
+
 		this.mask.test = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-			// g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			let h = wh / 6;
+			g.FillRoundRect(0.5, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGB(0, 0, 0));
 			g.SetSmoothingMode();
 		});
 	}
@@ -1249,6 +1348,12 @@ class Images {
 					gr.DrawPolygon(col, l_w, this.getHeartPoints(coords.w, coords.h, coords.x - l_w / 4, coords.y - coords.h / 20));
 					break;
 				}
+				case 'cassette': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					const h = coords.w / 6;
+					gr.DrawRoundRect(coords.x + 0.5, coords.y + h, coords.w - 0.5 - l_w / 2, coords.w - h * 2 - l_w / 2, h / 2, h / 2, l_w, col);
+					break;
+				}
 				case 'test': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w - l_w / 2, coords.h - l_w / 2, l_w, col);
@@ -1305,7 +1410,20 @@ class Images {
 			}
 			case 'cdcase': {
 				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-				gr.DrawImage(this.mask.cdCase, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.cdCase.Width, this.mask.cdCase.Height, 0, 255);
+				gr.DrawImage(this.mask.cdCase, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.cdCase.Width, this.mask.cdCase.Height);
+				gr.SetSmoothingMode();
+				break;
+			}
+			case 'vinyl': {
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+				gr.DrawImage(this.mask.vinylOverlay, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.vinylOverlay.Width, this.mask.vinylOverlay.Height);
+				gr.SetSmoothingMode();
+				break;
+			}
+			case 'cassette': {
+				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+				gr.DrawImage(this.mask.cassetteBorder, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.cassetteBorder.Width, this.mask.cassetteBorder.Height);
+				gr.DrawImage(this.mask.cassetteOverlay, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.cassetteOverlay.Width, this.mask.cassetteOverlay.Height);
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -1694,6 +1812,8 @@ class Images {
 			}
 		}
 		if (style.type === 'cdcase') { this.drawImageEffect(image, style, 'cdcase', { x: 0, y: 0, w: image.Width, h: image.Height }); }
+		if (style.type === 'vinyl') { this.drawImageEffect(image, style, 'vinyl', { x: 0, y: 0, w: image.Width, h: image.Height }); }
+		if (style.type === 'cassette') { this.drawImageEffect(image, style, 'cassette', { x: 0, y: 0, w: image.Width, h: image.Height }); }
 		if (art.sleeve) { this.drawImageEffect(image, style, 'sleeve', { x: 0, y: 0, w: image.Width, h: image.Height }); }
 		return image;
 	}
@@ -1798,6 +1918,12 @@ class Images {
 				gr.SetSmoothingMode();
 				break;
 			}
+			case 'cassette': {
+				gr.SetSmoothingMode(SmoothingMode.HighQuality);
+				const h = coords.w / 6;
+				gr.DrawRoundRect(coords.x + 0.5, coords.y + h, coords.w - 0.5 - 1 / 2, coords.w - h * 2 - 1 / 2, h / 2, h / 2, 1, ui.col.imgBor);
+				break;
+			}
 			case 'test': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				gr.DrawEllipse(coords.x + 1, coords.y + 1, coords.w - 2, coords.h - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
@@ -1844,6 +1970,12 @@ class Images {
 					gr.SetSmoothingMode();
 					break;
 				}
+				case 'cassette': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					const h = coords.w / 6;
+					gr.DrawRoundRect(coords.x + 0.5, coords.y + h, coords.w - 0.5, coords.w - h * 2, h / 2, h / 2, 4 * $.scale, $.RGBA(0, 0, 0, 32));
+					break;
+				}
 				case 'test': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
@@ -1884,6 +2016,12 @@ class Images {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(w, h, x - 3, y - h / 20));
 					gr.SetSmoothingMode();
+					break;
+				}
+				case 'cassette': {
+					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					const h = w / 6;
+					gr.DrawRoundRect(x + 0.5, y + h, w - 0.5, w - h * 2, h / 2, h / 2, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					break;
 				}
 				case 'test': {
@@ -2070,6 +2208,8 @@ class Images {
 			case 'cdcase':
 			case 'circularnote':
 			case 'fillnote':
+			case 'vinyl':
+			case 'cassette':
 			case 'test':
 			case 'crop':
 			case 'circular': {
@@ -2420,6 +2560,13 @@ class Images {
 				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
 				this.shadow[style.shadow].StackBlur(4);
 				break;
+			case 'cassette': {
+				const h = wh / 6;
+				wh *= 1.03;
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillRoundRect(0, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGBA(0, 0, 0, 128)));
+				this.shadow[style.shadow].StackBlur(4);
+				break;
+			}
 			case 'test':
 				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
 				this.shadow[style.shadow].StackBlur(4);

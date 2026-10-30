@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 28/10/26 -->
+﻿<!DOCTYPE html> <!-- 30/10/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -2208,7 +2208,7 @@
 			}
 			// Regorxxx <- Drag n' drop to search box | New statistics | Code cleanup
 			input.all.name = Object.values(input).map(function (v) { return v.name; }).flat(Infinity);
-			input.all.type =  Object.values(input).map(function (v) { return v.type; }).flat(Infinity)
+			input.all.type = Object.values(input).map(function (v) { return v.type; }).flat(Infinity)
 			// Regorxxx ->
 			// Regorxxx <- Better debug
 			if (input.all.name.length !== input.all.type.length) { throw new Error('Input names length (' + input.all.name.length + ') does not match type length (' + input.all.type.length + ')'); }
@@ -2725,7 +2725,7 @@
 			}
 			// Regorxxx ->
 
-			// Regorxxx <- Code cleanup | Custom TF art | New img styles | Effect per art type
+			// Regorxxx <- Code cleanup | Custom TF art | New art styles | Effect per art type
 			var imgTableStylesId = ['imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTf1', 'imgStyleTf2'];
 			var imgTableEffectsId = [
 				['imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'Reflection'],
@@ -2743,7 +2743,7 @@
 				['imgFrontSleeve', 'imgBackSleeve', 'imgDiscSleeve', 'imgIconSleeve', 'imgArtistSleeve', 'imgTf1Sleeve', 'imgTf2Sleeve', 'Sleeve']
 			].filter(Boolean);
 			var imgTableReflectionId = ['imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTf1ReflStyle', 'imgTf2ReflStyle'];
-			var imgTableStyles = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart', 'CD', 'CD Case', 'Circular Note', 'Auto-Fill Note'];
+			var imgTableStyles = ['Regular', 'Auto-Fill', 'Circular', 'Star-Fill', 'Star-Effect', 'Star-Outline', 'Heart', 'CD', 'CD Case', 'Circular Note', 'Auto-Fill Note', 'Vinyl', 'Cassette'];
 			var imgTableEffects = ['Reflection', 'Reflection Root', 'Border', 'Shadow', 'Mute', 'Edge Glow', 'Bloom', 'Blur', 'Vignette', ppt['drawMode_internal'].value === 1 ? 'Gray Scale' : null, 'Hover Zoom', ppt['drawMode_internal'].value === 1 ? 'Perspective' : null, 'Sleeve'].filter(Boolean);
 			var imgTableReflection = ['Asymmetric', 'Symmetric', 'Bottom', 'Bottom (skew)', 'Full', 'Full (skew)'];
 			var menuTable = ['buttonCol', 'searchCol', 'searchLnCol', 'nodeLineCol'];
@@ -3493,7 +3493,7 @@
 				// Regorxxx ->
 
 				// Regorxxx <- Branch collage art
-				for (i = 0; i < branchCollageLabels.length; i++) {  window.albumArtNodeCollage.insertAdjacentHTML('beforeend', '<div><input id="albumArtNodeCollage_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="albumArtNodeCollage_checkbox' + i + '" class="checkbox_label">' + branchCollageLabels [i] + '</label></div>'); }
+				for (i = 0; i < branchCollageLabels.length; i++) { window.albumArtNodeCollage.insertAdjacentHTML('beforeend', '<div><input id="albumArtNodeCollage_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="albumArtNodeCollage_checkbox' + i + '" class="checkbox_label">' + branchCollageLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 
 				var pth = '[*YOUR PATH*]\\art_img\\$lower($cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),1))\\$cut($if3($meta(artist,0),$meta(album artist,0),$meta(composer,0),$meta(performer,0)),40)\\*';
