@@ -1175,7 +1175,7 @@ class Images {
 								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group', style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(panel.cleanMarkers(grp), panel.ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
