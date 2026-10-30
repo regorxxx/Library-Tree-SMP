@@ -811,6 +811,7 @@ class Images {
 			g.DrawLine(0, 0, wh / 4, wh / 7, 2, $.RGB(255, 255, 255));
 			g.DrawLine(wh / 4, wh / 7, wh * 3 / 4, wh / 7, 2, $.RGB(255, 255, 255));
 			g.DrawLine(wh * 3 / 4, wh / 7, wh, 0, 2, $.RGB(255, 255, 255));
+			g.FillPolygon($.RGBA(255, 255, 255, 100), 0, [0, 0, wh / 4, wh / 7, wh / 4, wh / 7, wh * 3 / 4, wh / 7, wh * 3 / 4, wh / 7, wh, 0]);
 		});
 		this.mask.sleeveApertureEffect.StackBlur(2);
 		this.mask.sleeveCrackEffect = $.gr(wh, wh, true, g => {
