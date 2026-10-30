@@ -981,8 +981,12 @@ class Images {
 			const d = h * 2 / 3;
 			const bezel = 5;
 			g.FillRoundRect(h * 1.5 - bezel, wh / 2 - h / 3 - bezel, wh - h * 3 + bezel * 2, d + bezel * 2, h / 3, h / 3, $.RGB(0, 0, 0));
-			const l = $.RGBA(200, 200, 200, 30);
-			const r = $.RGBA(200, 180, 50, 30);
+			const l = this.labels.overlay && ppt.albumArtLabelMedium && ppt.thumbNailSize > 3
+				? $.RGBA(50, 50, 50, 235)
+				: $.RGBA(200, 200, 200, 30);
+			const r = this.labels.overlay && ppt.albumArtLabelMedium && ppt.thumbNailSize > 3
+				? $.RGBA(100, 80, 0, 220)
+				: $.RGBA(200, 180, 50, 30);
 			if (window.Parent === 'foo_uie_jsplitter') {
 				const brush = gdi.Brush(BrushType.LinearGradient, [h, 0], [wh - h, 0], [0, r, 0.3, l, 0.7, l, 1, r], 1);
 				g.FillRoundRect(h, h * 1.5 + 10, wh - h * 2, h - 10, 10, 10, brush);
@@ -1089,6 +1093,7 @@ class Images {
 				const lotCol = this.getLotCol(item, cell);
 				const statsCol = this.getStatsCol(item, cell);
 				// Regorxxx ->
+				const bInMedium = ppt.albumArtLabelMedium && ppt.thumbNailSize > 3 && (style.type === 'cassette' || style.type === 'vinyl');
 				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
@@ -1100,6 +1105,7 @@ class Images {
 				let y2 = this.im.y + 2 + this.im.w - this.overlayHeight;
 				if (art.reflection && art.reflectionStyle === 0) { x2 = Math.floor(x2 - this.bor.pad / 4); }
 				if (cur_img) {
+					this.im.h = cur_img.Height;
 					const offsetY = ppt.thumbNailVCenter ? (this.im.w - cur_img.Height) / 2 : 0; // Regorxxx <- Thumbnail Vertically centered ->
 					coords = {
 						x: box_x + Math.round((this.box.w - cur_img.Width) / 2),
@@ -1109,7 +1115,7 @@ class Images {
 					};
 					const bPaintBorder = art.border && (!cell.bSel || !this.labels.overlay || !style.fillBg);
 					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); // Regorxxx <- Zoom hover effect ->
-					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
+					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				} else {
 					coords = {
 						x: box_x + Math.round((this.box.w - this.im.w) / 2),
@@ -1122,11 +1128,11 @@ class Images {
 					} else if (!this.style.rootComposite && this.stub.root) {
 						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); // Regorxxx <- Zoom hover effect ->
 					}
-					if (this.labels.overlay) {
+					if (this.labels.overlay && !bInMedium) {
 						gr.FillGradRect(coords.x, y2 - 1, coords.w / 2, ui.l.w, 1, $.RGBA(0, 0, 0, 0), ui.col.imgBor);
 						gr.FillGradRect(coords.x + coords.w / 2, y2 - 1, coords.w / 2, ui.l.w, 1, ui.col.imgBor, $.RGBA(0, 0, 0, 0));
 					}
-					if (this.labels.overlayDark) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
+					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
 				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x, box_y }); // Regorxxx <- Item overlay horizontal alignment ->
@@ -1147,7 +1153,13 @@ class Images {
 					let type = 0;
 					if (panel.colMarker) { type = cell.bSel ? 2 : pop.highlight.text && cell.bHover ? 1 : 0; }
 					if (this.labels.overlay) {
-						y1 = this.im.y + this.text.y1;
+						y1 = bInMedium
+							? style.type === 'cassette'
+								? this.im.y + this.im.h / 6 * 1.75
+								: style.type === 'vinyl'
+									? this.im.y + this.im.h / 6 * 1.75 * 2
+									: this.im.y + this.text.y1
+							: this.im.y + this.text.y1;
 						y2 = y1 + this.text.h * (this.labels.statistics ? 0.93 : 0.9);
 						// Regorxxx <- Zoom hover effect
 						if (art.hoverZoom && (cell.bHover || cell.bSel)) {
@@ -2265,7 +2277,8 @@ class Images {
 		}
 		this.applyStyleMask(image, style);
 		image = this.applyArtEffect(image, art, style);
-		if (fade) { this.fadeMask(image, image.Width, image.Height); }
+		const bInMedium = ppt.albumArtLabelMedium && ppt.thumbNailSize > 3 && (style.type === 'cassette' || style.type === 'vinyl');
+		if (fade && !bInMedium) { this.fadeMask(image, image.Width, image.Height); }
 		return image;
 	}
 

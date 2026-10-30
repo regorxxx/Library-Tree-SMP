@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/10/26
+//30/10/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -227,6 +227,7 @@ let properties = [
 	['Image Item Overlay H-Align', 0, 'itemOverlayHAlign'], // Regorxxx <- Item overlay horizontal alignment ->
 	['Image Cut Resize px: Off (0) Clean (2) Zoom (>2) ', 2, 'albumArtCutResize'], // Regorxxx <- Cut img to avoid artifacts at borders ->
 	['Image Label', 1, 'albumArtLabelType'],
+	['Image Label Within Art Medium', true, 'albumArtLabelMedium'], // Regorxxx <- Regorxxx New art styles ->
 	['Image Memory Limit MB (0 = default)', 0, 'memoryLimit'],
 	['Image Memory Limit Aggressiveness: 0 (off) - 2 (max)', 0, 'memLimitMode'], // Regorxxx <- More strict memory limits ->
 	['Image No Artist Images', JSON.stringify([]), 'noArtistImages'],
