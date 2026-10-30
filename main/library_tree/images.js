@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/10/26
+//30/10/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -29,8 +29,8 @@ class Images {
 		this.preLoadItems = [];
 		this.rootNo = 4;
 		this.saveSize = 250;
-		this.shadow = null;
-		this.shadowStub = null;
+		this.shadow = {}; // Regorxxx <- New art styles ->
+		this.shadowStub = {}; // Regorxxx <- New art styles ->
 		this.start = 0;
 		this.toSave = [];
 		this.zooming = false;
@@ -43,7 +43,7 @@ class Images {
 			dir: 1
 		};
 		// Regorxxx ->
-		this.perspectiveCoords = {}; // Regorxxx <- New img styles ->
+		this.perspectiveCoords = {}; // Regorxxx <- New art styles ->
 
 		this.bor = {
 			bot: 6,
@@ -64,7 +64,7 @@ class Images {
 		};
 
 		this.stub = {
-			noImg: null,
+			noImg: {}, // Regorxxx <- Custom TF art ->
 			root: null,
 			rootFrame: null // Regorxxx <- Fix img frame for root images (hover effect) ->
 		};
@@ -87,7 +87,7 @@ class Images {
 		];
 		// Regorxxx ->
 
-		// Regorxxx <- Code cleanup | New img styles
+		// Regorxxx <- Code cleanup | New art styles
 		/** @type {Style[]} */
 		this.styles = [
 			{ idx: 0, type: 'default', mask: void (0), border: 'default', shadow: 'default', collageLine: true, centerLabel: true, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
@@ -250,7 +250,7 @@ class Images {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Code cleanup | New img styles | Effect per art type | Image border setting
+	// Regorxxx <- Code cleanup | New art styles | Effect per art type | Image border setting
 	getStyleSchema() {
 		return this.styles.map((s) => {
 			return { ...s };
@@ -621,7 +621,7 @@ class Images {
 		};
 		o = this.cache[key];
 		o.img = $.gr(this.cellWidth * n, this.cellWidth * n, true, g => this.createCollage(g, this.cellWidth, this.cellWidth, n, n, cells));
-		this.applyStyleMask(o.img, this.getStyle(this.style.image)); // Regorxxx <- Code cleanup |New img styles ->
+		this.applyStyleMask(o.img, this.getStyle(this.style.image)); // Regorxxx <- Code cleanup | New art styles ->
 		// Regorxxx <- Cut img to avoid artifacts at borders | Use HQ Bicubic interpolation
 		const w = Math.round(this.im.w);
 		if (o.img.Width !== w || o.img.Height !== w) {
@@ -668,7 +668,7 @@ class Images {
 		this.items = [];
 	}
 
-	// Regorxxx <- Code cleanup | New img styles | Branch collage art
+	// Regorxxx <- Code cleanup | New art styles | Branch collage art
 	createCollage(g, cellWidth, cellHeight, rows, columns, cells, imgs) {
 		let x = 0;
 		let y = 0;
@@ -681,7 +681,7 @@ class Images {
 					let img = imgs
 						? imgs[idx]
 						: pop.tree.length && pop.tree[idx] ? this.getImg(pop.tree[idx].key) : null;
-					if (!img) { img = this.stub.noImg; }
+					if (!img) { img = this.stub.noImg[style.type]; }
 					if (img) {
 						let cx = 0;
 						let cy = 0;
@@ -861,9 +861,9 @@ class Images {
 			g.FillEllipse(0.5 + b, 0.5 + b, wh - 1.75 - b * 2, wh - 1.75 - b * 2, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			let r = wh / 10;
 			r *= 1.3;
-			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(100, 100, 100)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(100, 100, 100));
 			r /= 1.3;
-			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255)); // Regorxxx <- Improve img mask to avoid rough edges ->
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
 		this.mask.cdCase = $.gr(wh, wh, true, g => {
@@ -1018,7 +1018,7 @@ class Images {
 						h: this.im.w
 					};
 					if (!item.root) {
-						if (this.stub.noImg) { this.drawArt(gr, art, style, this.stub.noImg, coords, { shadow: true, reflection: art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); } // Regorxxx <- Zoom hover effect ->
+						if (this.stub.noImg[style.type]) { this.drawArt(gr, art, style, this.stub.noImg[style.type], coords, { shadow: true, reflection: art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); } // Regorxxx <- Zoom hover effect ->
 					} else if (!this.style.rootComposite && this.stub.root) {
 						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); // Regorxxx <- Zoom hover effect ->
 					}
@@ -1234,7 +1234,6 @@ class Images {
 			}
 		} else {
 			switch (style.border) {
-				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w - l_w / 2, coords.h - l_w / 2, l_w, col);
@@ -1694,8 +1693,8 @@ class Images {
 				);
 			}
 		}
-		if (art.sleeve) { this.drawImageEffect(image, style, 'sleeve', { x: 0, y: 0, w: image.Width, h: image.Height }); }
 		if (style.type === 'cdcase') { this.drawImageEffect(image, style, 'cdcase', { x: 0, y: 0, w: image.Width, h: image.Height }); }
+		if (art.sleeve) { this.drawImageEffect(image, style, 'sleeve', { x: 0, y: 0, w: image.Width, h: image.Height }); }
 		return image;
 	}
 
@@ -1781,7 +1780,6 @@ class Images {
 
 	drawStyleBorder(gr, style, coords) {
 		switch (style.border) {
-			case 'cd':
 			case 'circular': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
 				gr.DrawEllipse(coords.x + 1, coords.y + 1, coords.w - 2, coords.h - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
@@ -1814,17 +1812,17 @@ class Images {
 	}
 
 	drawStyleShadow(gr, style, coords) {
-		if (this.style.dropShadow && this.shadow) {
+		if (this.style.dropShadow && this.shadow[style.shadow]) {
+			const shadow = this.shadow[style.shadow];
 			if (style.shadow === 'default') { // disabled for blend: not suitable
 				// Regorxxx <- Adjust shadows to non-filling images
-				const h = this.shadow.Height - (this.im.w - coords.h) * 1.15;
-				const w = this.shadow.Width - (this.im.w - coords.w) * 1.15;
-				gr.DrawImage(this.shadow, coords.x, coords.y, w, h, 0, 0, this.shadow.Width, this.shadow.Height);
+				const h = shadow.Height - (this.im.w - coords.h) * 1.15;
+				const w = shadow.Width - (this.im.w - coords.w) * 1.15;
+				gr.DrawImage(shadow, coords.x, coords.y, w, h, 0, 0, shadow.Width, shadow.Height);
 				// Regorxxx ->
-			} else { gr.DrawImage(this.shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, this.shadow.Width, this.shadow.Height); }
+			} else { gr.DrawImage(shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, shadow.Width, shadow.Height); }
 		} else if (this.style.dropGrad) {
 			switch (style.shadow) {
-				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
@@ -1862,11 +1860,11 @@ class Images {
 	}
 
 	drawStyleShadowStub(gr, style, x, y, w, h) {
-		if (this.style.dropShadowStub && this.shadowStub) {
-			gr.DrawImage(this.shadowStub, x, y, this.shadowStub.Width, this.shadowStub.Height, 0, 0, this.shadowStub.Width, this.shadowStub.Height);
+		if (this.style.dropShadowStub && this.shadowStub[style.shadow]) {
+			const shadow = this.shadowStub[style.shadow];
+			gr.DrawImage(shadow, x, y, shadow.Width, shadow.Height, 0, 0, shadow.Width, shadow.Height);
 		} else if (this.style.dropGradStub) {
 			switch (style.shadow) {
-				case 'cd':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(x, y, w, h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
@@ -2404,51 +2402,58 @@ class Images {
 		return panel.grp[ppt.viewBy].type.includes(mostFrequent) ? mostFrequent : '';
 	}
 
-	// Regorxxx <- Code cleanup | New img styles
+	// Regorxxx <- Code cleanup | New art styles
 	getShadow(style) {
 		const xy = this.im.w * 0.02;
 		let wh = style.shadow === 'default' ? this.im.w : this.im.w * 0.985; // draw at actual size if possible as faster; regular have to be resized during draw
 		const sz = this.im.w * 1.17;
 		switch (style.shadow) {
-			case 'cd':
 			case 'circular':
-				this.shadow = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-				this.shadow.StackBlur(4);
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				this.shadow[style.shadow].StackBlur(4);
 				break;
 			case 'star':
-				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2)));
-				this.shadow.StackBlur(4);
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2)));
+				this.shadow[style.shadow].StackBlur(4);
 				break;
 			case 'heart':
-				this.shadow = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
-				this.shadow.StackBlur(4);
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
+				this.shadow[style.shadow].StackBlur(4);
 				break;
 			case 'test':
-				this.shadow = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-				this.shadow.StackBlur(4);
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				this.shadow[style.shadow].StackBlur(4);
 				break;
 			default:
-				this.shadow = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-				this.shadow.StackBlur(5);
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				this.shadow[style.shadow].StackBlur(5);
 				break;
 		}
+	}
+	getShadowStub(style) {
+		const xy = this.im.w * 0.02;
+		let wh = style.shadow === 'default' ? this.im.w : this.im.w * 0.985; // draw at actual size if possible as faster; regular have to be resized during draw
+		const sz = this.im.w * 1.17;
 		wh = this.im.w * 0.985; // always drawn at actual size
 		if (ppt.artId == 4) {
 			if (ppt.curNoArtistImg == 0 || ppt.curNoArtistImg == 2 || style.shadow === 'circular') {
-				this.shadowStub = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-				this.shadowStub.StackBlur(4);
+				this.shadowStub[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				this.shadowStub[style.shadow].StackBlur(4);
 			} else if (ppt.curNoArtistImg == 4) {
-				this.shadowStub = null;
+				this.shadowStub[style.shadow] = null;
 			} else {
-				this.shadowStub = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-				this.shadowStub.StackBlur(5);
+				this.shadowStub[style.shadow] = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				this.shadowStub[style.shadow].StackBlur(5);
 			}
 		} else if (ppt.curNoCoverImg > 2) {
-			this.shadowStub = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
-			this.shadowStub.StackBlur(5);
+			this.shadowStub[style.shadow] = $.gr(sz, sz, true, g => g.FillSolidRect(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+			this.shadowStub[style.shadow].StackBlur(5);
 		} else {
-			this.shadowStub = null;
+			this.shadowStub[style.shadow] = null;
 		}
+	}
+	getStub(stub, art, style) {
+		this.stub.noImg[style.type] = this.format(stub, art, this.getStyle(style.idx, true), this.im.w, this.im.w, this.labels.fade, 'noImg');
 	}
 	// Regorxxx ->
 
@@ -2588,7 +2593,7 @@ class Images {
 					v.handleArr = [];
 					for (const handle of handleArr) {
 						const tag = tfArtId
-							? tfArtId.EvalWithMetadb(handle).split(/\||¦/gi).filter((s) => !s.includes('^@^')).join('').trim() || ''
+							? tfArtId.EvalWithMetadb(handle).split(/[|¦]/gi).filter((s) => !s.includes('^@^')).join('').trim() || ''
 							: handle.Path.split('\\').at(-2) || '';
 						if (tag && !ids.has(tag)) {
 							ids.add(tag);
@@ -2837,7 +2842,15 @@ class Images {
 		this.cellWidth = Math.max(200, this.im.w / 2);
 		this.labels.counts = !this.getOverlay(ppt.itemOverlayType).isCount && ppt.nodeCounts;
 		this.style.y = this.style.vertical ? Math.floor(this.panel.y + (!this.labels.hide && !this.labels.overlay ? ppt.thumbNailGapStnd / 2 : ppt.thumbNailGapCompact / 2)) : this.panel.y;
-		if (this.style.dropShadow) { this.getShadow(this.getStyle(this.style.image)); }
+		// Regorxxx <- Custom TF art
+		if (this.style.dropShadow) {
+			this.getStyleSchema().forEach((s) => {
+				this.getShadow(s);
+				this.getShadowStub(s);
+			});
+
+		}
+		// Regorxxx ->
 
 		if (!this.labels.hide) {
 			if (this.labels.overlay) {
@@ -2862,7 +2875,7 @@ class Images {
 		this.setRoot();
 		if (this.style.rootComposite) this.checkRootImg();
 		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
-		if (stub) { this.stub.noImg = this.format(stub, art, this.getStyle(this.style.image, true), this.im.w, this.im.w, this.labels.fade, 'noImg'); }
+		if (stub) {	this.getStyleSchema().forEach((s) => this.getStub(stub, art, s)); } // Regorxxx <- Custom TF art ->
 		// Regorxxx <- Fix img frame for root images (hover effect)
 		this.stub.root = this.root_img
 			? this.format(this.root_img, art, this.getStyleByType('default'), this.im.w, this.im.w, this.labels.fade, 'root')
@@ -2872,7 +2885,7 @@ class Images {
 		panel.treePaint();
 	}
 
-	// Regorxxx <- Code cleanup | New img styles
+	// Regorxxx <- Code cleanup | New art styles
 	needTrim(bForce, ratio) {
 		return bForce || Math.abs(ratio - 1) >= 0.05;
 	}
@@ -3116,9 +3129,11 @@ class Images {
 	}
 	// Regorxxx ->
 
+	// Regorxxx <- Custom TF art
 	getStyleFromNode(item) {
 		const styleIdx = (panel.styleVariables.find((sv) => item.nm.includes(sv.id)) || { idx: -1 }).idx;
-		return styleIdx !== -1 ? this.getStyle(styleIdx) : void (0);
+		return styleIdx === -1 ? void (0) : this.getStyle(styleIdx);
 	}
+	// Regorxxx ->
 }
 const img = new Images;
