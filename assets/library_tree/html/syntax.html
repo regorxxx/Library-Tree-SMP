@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- 29/10/26 -->
+<!DOCTYPE html> <!-- 02/11/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -93,6 +93,18 @@
 						<br>
 						Same but multi-valued tags are also separated into different nodes within same level.
 					</td>
+				</tr>
+				<tr>
+					<td> <em>$meta_branch_remap{FIELD}</em> </td>
+					<td> Same as %&ltFIELD&gt%, except it does not produce a "?", if the tag does not exist. <br><br> Note it's equivalent to native $meta_branch_remap() function (both notations are allowed). </td>
+					<td> <em>$meta_branch_remap{ARTIST}</em> </td>
+					<td> Splits artists and ignores missing values. </td>
+				</tr>
+				<tr>
+					<td> <em>$meta_branch{FIELD}</em> </td>
+					<td> Same as $meta_branch_remap, but without tag remapping (foobar2000 native one or provided by script). <br><br> Note it's equivalent to native $meta_branch() function (both notations are allowed). </td>
+					<td> <em>$meta_branch{LANGUAGE}</em> </td>
+					<td> Splits language tag, as is (with no full name conversion). </td>
 				</tr>
 				<tr>
 					<td> <em>$stripbranchprefix{%&ltFIELD&gt%}</em> </td>

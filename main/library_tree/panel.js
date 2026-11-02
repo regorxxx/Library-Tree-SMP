@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/10/26
+//02/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -402,9 +402,9 @@ class Panel {
 				);
 			}
 			if (s.includes('$iterate{')) { s = s.replace(/\$iterate({?.*?}|{?)/g, '\'[\'UNKNOWN FUNCTION\']\''); }
-			while (s.includes('$meta_branch_remap(')) {
-				const q = s.match(/\$meta_branch_remap\((.+?)?\)/);
-				if (!q) { s = s.replace(/\$meta_branch_remap(\(?.*?\)|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
+			while (s.includes('$meta_branch_remap(') || s.includes('$meta_branch_remap{')) {
+				const q = s.match(/\$meta_branch_remap[({](.+?)?[)}]/);
+				if (!q) { s = s.replace(/\$meta_branch_remap([({]?.*?[)}]|[({]?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				cache = (q[1] || '').toUpperCase();
 				s = s.replace(
 					q[0],
@@ -416,12 +416,14 @@ class Panel {
 								? '$if2(%<ALBUM>%,%<VENUE>%)'
 								: cache === 'TRACK ARTIST'
 									? '$if($strcmp(%ARTIST%,%ALBUM ARTIST%),$char(8203),%<TRACK ARTIST>%)'
-									: '$if($meta_test(' + q[1] + '),%<' + cache + '>%,$char(8203))'
+									: cache === 'LANGUAGE' && this.remap.language
+										? '$if2(%<LANGUAGE>%,' + this.markers.remap + '?' + this.markers.remap + ')'
+										: '$if($meta_test(' + q[1] + '),%<' + cache + '>%,$char(8203))'
 				);
 			}
-			while (s.includes('$meta_branch(')) {
-				const q = s.match(/\$meta_branch\((.+?)?\)/);
-				if (!q) { s = s.replace(/\$meta_branch(\(?.*?\)|{?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
+			while (s.includes('$meta_branch(') || s.includes('$meta_branch_remap{')) {
+				const q = s.match(/\$meta_branch[({](.+?)?[)}]/);
+				if (!q) { s = s.replace(/\$meta_branch([({]?.*?[)}]|[({]?)/, '\'[\'UNKNOWN FUNCTION\']\''); continue; }
 				s = s.replace(q[0], () => '$if($meta_test(' + q[1] + '),$meta_sep(' + q[1] + ',' + this.markers.softSplitter + '),$char(8203))');
 			}
 			while (s.includes('$nowplaying{')) {
