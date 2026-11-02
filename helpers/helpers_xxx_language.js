@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/10/26
+//31/10/26
 
 /* exported Language */
 
@@ -1009,6 +1009,7 @@ const Language = Object.freeze({
 					j.name = j.name.replace('(macrolanguage)', '[#]')
 						.replace(/\([^()]+\)/, '')
 						.replace('[#]', '(macrolanguage)')
+						.replace('modern ', '')
 						.trim();
 					delete j.Scope;
 					delete j.Language_Type;
