@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/10/26
+//04/11/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -642,7 +642,13 @@ let properties = [
 	['Remap: %LANGUAGE% tag ISO 693', true, 'remapISO693'],
 	// Regorxxx ->
 	['Reset selection clicking on blank regions', true, 'resetSel'], // Regorxxx <- Reset selection on blank regions ->
-	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'] // Regorxxx <- Drag n' Drop minimum distance ->
+	['Drag n\' Drop (internal) minimum distance: auto (0)', 0, 'dragDropMinPx'], // Regorxxx <- Drag n' Drop minimum distance ->
+	// Regorxxx <- Menu options at context menu
+	['Menu: Show playing (context menu)', true, 'menuShowPlay'],
+	['Menu: Show selection (context menu)', true, 'menuShowSel'],
+	['Menu: Show Auto-DJ (context menu)', true, 'menuShowDj'],
+	['Menu: Show Top Tracks (context menu)', true, 'menuShowTop']
+	// Regorxxx ->
 ];
 
 const ppt = new PanelProperties;

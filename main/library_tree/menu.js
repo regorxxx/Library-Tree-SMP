@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//04/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -280,7 +280,7 @@ class MenuItems {
 					});
 					// Regorxxx ->
 					// Regorxxx <- Top tracks
-					{
+					if (ppt.menuShowTop) {
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
 							str: 'Send top tracks' + target,
@@ -303,7 +303,7 @@ class MenuItems {
 							flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
 						});
 						menu.newItem({ separator: true });
-					} else {
+					} else if (ppt.menuShowDj) {
 						menu.newItem({
 							str: 'Start Auto-DJ from panel selection',
 							func: () => panel.startAutoDj(this.items),
@@ -320,15 +320,13 @@ class MenuItems {
 					}
 					// Regorxxx ->
 				}
-				// Regorxxx <- Code cleanup
-				menu.newItem({
-					str: 'Show now playing',
-					func: () => this.setPlaylist(3),
-					flags: this.getPaylistFlag(3),
-				});
-				// Regorxxx ->
-				// Regorxxx <- Show previously playing. Check if item is tracked
-				{
+				// Regorxxx <- Code cleanup | Show previously playing. Check if item is tracked | Menu options at context menu
+				if (ppt.menuShowPlay) {
+					menu.newItem({
+						str: 'Show now playing',
+						func: () => this.setPlaylist(3),
+						flags: this.getPaylistFlag(3)
+					});
 					const prevPlaying = fb.GetPrevPlaying();
 					const handle = prevPlaying ? prevPlaying.handle : null;
 					const item = handle ? panel.list.Find(handle) : -1;
@@ -341,8 +339,8 @@ class MenuItems {
 				// Regorxxx ->
 			}
 			// Regorxxx ->
-			// Regorxxx <- Show selection. Check if item is tracked
-			{
+			// Regorxxx <- Show selection. Check if item is tracked | Menu options at context menu
+			if (ppt.menuShowSel) {
 				const handle = fb.GetFocusItem(true);
 				const item = handle ? panel.list.Find(handle) : -1;
 				menu.newItem({
@@ -352,7 +350,7 @@ class MenuItems {
 				});
 			}
 			// Regorxxx ->
-			menu.newItem({ separator: true }); // Regorxxx <- Menu cleanup ->
+			if (ppt.menuShowSel || ppt.menuShowPlay) { menu.newItem({ separator: true }); } // Regorxxx <- Menu cleanup | Menu options at context menu ->
 		}
 
 		if (this.validItem && (ppt.albumArtOptionsShowContext || panel.imgView)) { // Regorxxx <- Art options at context menu / settings ->
