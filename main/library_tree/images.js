@@ -1,5 +1,5 @@
 ﻿'use strict';
-//30/10/26
+//03/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -97,7 +97,7 @@ class Images {
 			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 0.8 },
 			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 1 },
 			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
-			{ idx: 7, type: 'cd', mask: 'cd', border: 'cd', shadow: 'cd', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 7, type: 'cd', mask: 'cd', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 8, type: 'cdcase', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
 			{ idx: 9, type: 'circularnote', mask: 'circularNote', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 10, type: 'fillnote', mask: 'fillNote', border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
@@ -174,6 +174,8 @@ class Images {
 			note: null,
 			vinyl: null,
 			vinylLabel: null,
+			vinylOverlay: null,
+			vinylLabelOverlay: null,
 			cassette: null,
 			cassetteBorder: null,
 			cassetteOverlay: null,
@@ -779,6 +781,7 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.flareEffect.StackBlur(5);
+
 		this.mask.sleeveEffect = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			// Borders
@@ -830,9 +833,11 @@ class Images {
 			g.FillEllipse(0.5, 0.5, wh - 1.75, wh - 1.75, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.SetSmoothingMode();
 		});
+
 		this.mask.fade = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(175, 175, 175));
 		});
+
 		this.mask.starFill = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
@@ -855,12 +860,34 @@ class Images {
 			g.FillPolygon($.RGBA(0, 0, 0, 225), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.SetSmoothingMode();
 		});
+
 		this.mask.heart = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh, 0, -wh / 20));
 			g.SetSmoothingMode();
 		});
+
+
+		this.mask.circularNote = this.mask.circular;
+		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\cnote.png')
+			.then((img) => {
+				this.mask.circularNote = $.gr(wh, wh, true, g => {
+					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+				});
+			}).catch((error) => console.log(window.FullPanelName + ':\n' + error));
+
+		this.mask.fillNote = $.gr(wh, wh, true, g => g.FillSolidRect(0, 0, wh, wh, $.RGB(0, 0, 0)));
+		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\fnote.png')
+			.then((img) => {
+				this.mask.fillNote = $.gr(wh, wh, true, g => {
+					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
+					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
+				});
+			}).catch((error) => console.log(window.FullPanelName + ':\n' + error));
+
+
 		this.mask.cd = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -874,6 +901,7 @@ class Images {
 			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
+
 		this.mask.cdCase = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			// Spine
@@ -895,24 +923,6 @@ class Images {
 			g.SetSmoothingMode();
 		});
 
-		this.mask.circularNote = this.mask.circular;
-		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\cnote.png')
-			.then((img) => {
-				this.mask.circularNote = $.gr(wh, wh, true, g => {
-					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
-				});
-			}).catch((error) => console.log(window.ScriptName + ':\n' + error));
-
-		this.mask.fillNote = $.gr(wh, wh, true, g => g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255)));
-		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\fnote.png')
-			.then((img) => {
-				this.mask.fillNote = $.gr(wh, wh, true, g => {
-					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
-					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
-				});
-			}).catch((error) => console.log(window.ScriptName + ':\n' + error));
-
 		this.mask.vinylLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -927,7 +937,6 @@ class Images {
 			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
-
 		this.mask.vinylOverlay = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let b = wh / 50 / 3;
@@ -940,6 +949,24 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.vinylOverlay.ApplyMask(this.mask.vinylLabel.InvertColours());
+		this.mask.vinylLabelOverlay = $.gr(wh, wh, true, g => {
+			const r = wh / 4;
+			const h = wh / 6;
+			const textH = this.text.h * ((panel.lines === 2 ? 4 : 3) + 0.25);
+			const c1 = this.labels.overlay && ppt.albumArtLabelMedium && ppt.thumbNailSize > 3
+				? $.RGBA(50, 50, 50, 235)
+				: $.RGBA(200, 200, 200, 30);
+			const c2 = this.labels.overlay && ppt.albumArtLabelMedium && ppt.thumbNailSize > 3
+				? $.RGBA(100, 80, 0, 220)
+				: $.RGBA(200, 180, 50, 30);
+			if (window.Parent === 'foo_uie_jsplitter') {
+				const brush = gdi.Brush(BrushType.LinearGradient, [h, 0], [wh - h, 0], [0, c2, 0.3, c1, 0.7, c1, 1, c2], 1);
+				g.FillRoundRect(wh / 2 - r, h * 1.75 * 2 - 5, r * 2, textH + 10, this.text.h, this.text.h, brush);
+			} else {
+				g.FillGradRect(wh / 2 - r, h * 1.75 * 2 - 5, r * 2, textH + 10, 0, c2, c1, 0.5);
+			}
+		});
+		this.mask.vinylLabelOverlay.ApplyMask(this.mask.vinylLabel);
 
 		this.mask.cassetteLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
@@ -953,7 +980,6 @@ class Images {
 			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
-
 		const cassetteBase = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let h = wh / 6;
@@ -964,7 +990,6 @@ class Images {
 			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
-
 		this.mask.cassetteBorder = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let h = wh / 6;
@@ -974,7 +999,6 @@ class Images {
 		});
 		this.mask.cassetteBorder.ApplyMask(this.mask.cassetteLabel.InvertColours());
 		this.mask.cassetteBorder.ApplyMask(cassetteBase);
-
 		this.mask.cassetteOverlay = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let h = wh / 6;
@@ -989,9 +1013,9 @@ class Images {
 				: $.RGBA(200, 180, 50, 30);
 			if (window.Parent === 'foo_uie_jsplitter') {
 				const brush = gdi.Brush(BrushType.LinearGradient, [h, 0], [wh - h, 0], [0, r, 0.3, l, 0.7, l, 1, r], 1);
-				g.FillRoundRect(h, h * 1.5 + 10, wh - h * 2, h - 10, 10, 10, brush);
+				g.FillRoundRect(h * 0.70, h * 1.5 + 10, wh - h * 0.70 * 2, h - 10, h / 3, h / 3, brush);
 			} else {
-				g.FillGradRect(h, h * 1.5 + 10, wh - h * 2, h - 10, 0, r, l, 0.5);
+				g.FillGradRect(h * 0.70, h * 1.5 + 10, wh - h * 0.70 * 2, h - 10, 0, r, l, 0.5);
 			}
 			for (let i = 0; i < 6; i++) { g.DrawLine(wh / 5, h * 1.75 + 10 * i, wh - wh / 5, h * 1.75 + 10 * i, 2, $.RGBA(0, 0, 0, 50)); }
 			g.FillPolygon($.RGB(30, 25, 25), 0, [wh / 2 - h * 2, wh - h, wh / 2 + h * 2, wh - h, wh / 2 + h * 2 - h / 2, wh - h - h / 2, wh / 2 - h * 2 + h / 2, wh - h - h / 2]);
@@ -1093,7 +1117,7 @@ class Images {
 				const lotCol = this.getLotCol(item, cell);
 				const statsCol = this.getStatsCol(item, cell);
 				// Regorxxx ->
-				const bInMedium = ppt.albumArtLabelMedium && ppt.thumbNailSize > 3 && (style.type === 'cassette' || style.type === 'vinyl');
+				const bInMedium = ppt.albumArtLabelMedium && ppt.thumbNailSize > 3 && (style.type === 'cassette' || style.type === 'vinyl'); // Regorxxx <- Regorxxx New art styles ->
 				this.drawSelBg(gr, art, style, cur_img, box_x, box_y, cell); // Regorxxx <- Zoom hover effect ->
 				this.im.y = this.im.offset + box_y;
 				if (pop.rowStripes && this.labels.right) {
@@ -1115,7 +1139,7 @@ class Images {
 					};
 					const bPaintBorder = art.border && (!cell.bSel || !this.labels.overlay || !style.fillBg);
 					this.drawArt(gr, art, style, cur_img, coords, { border: bPaintBorder, shadow: true, reflection: item.root ? art.reflectionRoot : art.reflection, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); // Regorxxx <- Zoom hover effect ->
-					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
+					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); } // Regorxxx <- Regorxxx New art styles ->
 				} else {
 					coords = {
 						x: box_x + Math.round((this.box.w - this.im.w) / 2),
@@ -1128,11 +1152,11 @@ class Images {
 					} else if (!this.style.rootComposite && this.stub.root) {
 						this.drawArt(gr, art, style, this.stub.root, coords, { reflection: art.reflectionRoot, hover: art.hoverZoom && (cell.bHover || cell.bSel), perspective: art.perspective }); // Regorxxx <- Zoom hover effect ->
 					}
-					if (this.labels.overlay && !bInMedium) {
+					if (this.labels.overlay && !bInMedium) { // Regorxxx <- Regorxxx New art styles ->
 						gr.FillGradRect(coords.x, y2 - 1, coords.w / 2, ui.l.w, 1, $.RGBA(0, 0, 0, 0), ui.col.imgBor);
 						gr.FillGradRect(coords.x + coords.w / 2, y2 - 1, coords.w / 2, ui.l.w, 1, ui.col.imgBor, $.RGBA(0, 0, 0, 0));
 					}
-					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); }
+					if (this.labels.overlayDark && !bInMedium) { this.drawItemOverlayDark(gr, art, item, { x: x2, y: y2, w: coords.w, h: this.overlayHeight }, cell); } // Regorxxx <- Regorxxx New art styles ->
 				}
 				if (art.reflection && art.reflectionStyle === 0) { coords.x -= Math.round(this.bor.pad / 4); }
 				this.drawItemOverlay(gr, art, style, item, { ...coords, box_x, box_y }); // Regorxxx <- Item overlay horizontal alignment ->
@@ -1149,10 +1173,10 @@ class Images {
 					if (ppt.flareImage) { this.drawImageEffect(gr, style, 'flare', coords); } // Regorxxx <- Flare hover effect ->
 				}
 				if (!this.labels.hide) {
-					const x = box_x + this.text.x;
 					let type = 0;
 					if (panel.colMarker) { type = cell.bSel ? 2 : pop.highlight.text && cell.bHover ? 1 : 0; }
 					if (this.labels.overlay) {
+						// Regorxxx <- Regorxxx New art styles
 						y1 = bInMedium
 							? style.type === 'cassette'
 								? this.im.y + this.im.h / 6 * 1.75
@@ -1160,6 +1184,7 @@ class Images {
 									? this.im.y + this.im.h / 6 * 1.75 * 2
 									: this.im.y + this.text.y1
 							: this.im.y + this.text.y1;
+						// Regorxxx ->
 						y2 = y1 + this.text.h * (this.labels.statistics ? 0.93 : 0.9);
 						// Regorxxx <- Zoom hover effect
 						if (art.hoverZoom && (cell.bHover || cell.bSel)) {
@@ -1168,73 +1193,79 @@ class Images {
 							y2 += zoomX / 2;
 						}
 						// Regorxxx ->
-						const y3 = y2 + this.text.h * 0.95;
+						// Regorxxx <- Regorxxx New art styles
+						const y3 = y2 + this.text.h * 0.95 + (bInMedium && style.type === 'cassette' ? this.text.h : 0);
+						const x = box_x + this.text.x + (bInMedium ? this.im.w / 6 : 0) / 2;
+						const w = this.text.w - (bInMedium ? this.im.w / 6 : 0);
+						// Regorxxx ->
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group', style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
+								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, lot, item, x, y2, w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group', style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}
 					} else {
+						const x = box_x + this.text.x;
+						const w = this.text.w;
 						y1 = this.im.y + this.text.y1;
 						y2 = this.im.y + this.text.y2;
 						const y3 = this.im.y + this.text.y3;
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w: this.text.w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
-								pop.cusCol(gr, lot, item, x, y2, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott', style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
+								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, lot, item, x, y2, w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott', style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
-								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, w, this.text.h, flags);
 							} // Regorxxx ->
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w: this.text.w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
 							if (panel.colMarker) {
-								pop.cusCol(gr, grp, item, x, y1, this.text.w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
-								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, this.text.w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
+								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
 							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style  | Customizable stats color
 							if (statistics) {
 								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, this.text.w, this.text.h, flags);
+								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}
@@ -1430,6 +1461,7 @@ class Images {
 			case 'vinyl': {
 				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 				gr.DrawImage(this.mask.vinylOverlay, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.vinylOverlay.Width, this.mask.vinylOverlay.Height);
+				gr.DrawImage(this.mask.vinylLabelOverlay, coords.x, coords.y, coords.w, coords.h, 0, 0, this.mask.vinylLabelOverlay.Width, this.mask.vinylLabelOverlay.Height);
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -3036,7 +3068,8 @@ class Images {
 		this.setRoot();
 		if (this.style.rootComposite) this.checkRootImg();
 		const stub = ppt.artId == 4 ? this.no_artist_img : this.no_cover_img;
-		if (stub) {	this.getStyleSchema().forEach((s) => this.getStub(stub, art, s)); } // Regorxxx <- Custom TF art ->
+		if (stub) { this.getStyleSchema().forEach((s) => this.getStub(stub, art, s)); } // Regorxxx <- Custom TF art ->
+
 		// Regorxxx <- Fix img frame for root images (hover effect)
 		this.stub.root = this.root_img
 			? this.format(this.root_img, art, this.getStyleByType('default'), this.im.w, this.im.w, this.labels.fade, 'root')
