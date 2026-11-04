@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//03/11/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -535,7 +535,7 @@ class Library {
 		this.filterQuery = panel.processCustomTf(stripSort(processed));
 		this.filterSort = getSortObj(processed);
 		this.validFilter = isQuery(this.filterQuery, true);
-		if (!this.validFilter) { console.log(window.ScriptName + ' - Non valid query:' + this.filterQuery); }
+		if (!this.validFilter) { console.log(window.FullPanelName + ' - Non valid query:' + this.filterQuery); }
 	}
 
 	hasFilterQuery() {

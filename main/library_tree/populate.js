@@ -1,5 +1,5 @@
 ﻿'use strict';
-//28/10/26
+//04/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1160,7 +1160,7 @@ class Populate {
 		if (lib.empty) {
 			return gr.GdiDrawText(lib.empty, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
 		}
-		 // Regorxxx <- Search mode ->
+		// Regorxxx <- Search mode ->
 		if (!this.tree.length || !panel.draw) {
 			const text = !panel.search.txt && panel.isSearchLikeSource()
 				? 'Enter a search\n\n'
@@ -1169,7 +1169,7 @@ class Populate {
 					: lib.none;
 			return gr.GdiDrawText(text, ui.font.main, ui.col.text, ui.sz.margin, panel.search.h, panel.tree.w, ui.row.h * 3);
 		}
-		 // Regorxxx ->
+		// Regorxxx ->
 		// Regorxxx <- Rectangle selection on art view
 		if (ppt.selRectArt && (this.selRect.down && this.selRect.x !== this.selRect.w && this.selRect.y !== this.selRect.h)) {
 			const [x, y, w, h] = [this.selRect.x, this.selRect.y, this.selRect.w - this.selRect.x, this.selRect.h - this.selRect.y];
