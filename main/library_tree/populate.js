@@ -10,6 +10,7 @@
 /* global getFiles:readable */
 /* global findTracksAtPlaylist:readable */
 /* global Language:readable */
+/* global addEventListener:readable,removeEventListenerSelf:readable */ // eslint-disable-line no-redeclare
 
 /* exported Populate */
 
@@ -4284,4 +4285,41 @@ class Populate {
 		return this.getBookletFiles(item).count !== 0;
 	}
 	// Regorxxx ->
+
+	// Regorxxx <- External integration
+	async getSimilarTracks(handleList = this.getHandleList(), bCustomSort = false) {
+		const name = 'Infinity-Tools-SMP';
+		let items = await panel.getIntegration(name)
+			.then((panels) => {
+				return Promise.serial(
+					panels,
+					(p) => {
+						return new Promise((resolve) => {
+							addEventListener('on_notify_data', (name, info) => {
+								if (name !== 'Music Map: search by distance receive' || !info || info.targetId !== window.ID || info.sourceName !== p.name) { return; }
+								removeEventListenerSelf();
+								resolve(!info.data ? new FbMetadbHandleList() : new FbMetadbHandleList(info.data[0]));
+							});
+							window.NotifyOthers('Music Map: search by distance', { window: [p.name], id: window.ID, handleList, bCreatePlaylist: false });
+						});
+					},
+					25
+				).then((arr) => {
+					return arr.length > 1
+						? arr.reduce((prev, curr) => { curr && prev.AddRange(curr); return prev; }, new FbMetadbHandleList())
+						: arr[0];
+				});
+			})
+			.catch(() => {
+				fb.ShowPopupMessage('No \'' + name + '\' panels were found, try manually specifying the panel name.', window.ScriptInfo.Name + ': external integration');
+			});
+		if (items && bCustomSort && ppt.similarTracksSorting.length) { items = lib.processCustomSort(items, ppt.similarTracksSorting); }
+		return items;
+	}
+
+	async loadSimilarTracks(bAddToPls, bUseDefaultPls) {
+		const bCustomSort = !!ppt.similarTracksSorting.length;
+		const handleList = await this.getSimilarTracks(this.getHandleList(), bCustomSort);
+		if (handleList) { this.load({ handleList, bAddToPls, bAutoPlay: false, bUseDefaultPls, bInsertToPls: false, bApplySort: false }); }
+	}
 }

@@ -295,6 +295,22 @@ class MenuItems {
 						});
 					}
 					// Regorxxx ->
+					// Regorxxx <- External integration | Menu options at context menu
+					if (ppt.menuShowMusicMap) {
+						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
+						menu.newItem({
+							str: 'Send similar tracks' + target,
+							func: () => this.setPlaylist(8),
+							flags: this.getPaylistFlag(2)
+						});
+						menu.newItem({
+							str: 'Add similar tracks' + target,
+							func: () => this.setPlaylist(9),
+							flags: this.getPaylistFlag(2)
+						});
+						menu.newItem({ separator: true });
+					}
+					// Regorxxx ->
 					// Regorxxx <- Auto-DJ feature
 					if (panel.isAutoDjSource()) {
 						menu.newItem({
@@ -1881,6 +1897,13 @@ class MenuItems {
 			case 6:
 			case 7:
 				pop.loadTopTracks(i === 7, !ppt.sendToCur);
+				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
+				break;
+			// Regorxxx ->
+			// Regorxxx <- External integration
+			case 8:
+			case 9:
+				pop.loadSimilarTracks(i === 9, !ppt.sendToCur);
 				lib.treeState(false, ppt.rememberTree) || panel.treePaint(); // Regorxxx <- Code cleanup | Improve repainting ->
 				break;
 			// Regorxxx ->

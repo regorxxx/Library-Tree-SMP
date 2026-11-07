@@ -123,6 +123,7 @@ class Panel {
 			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')\\b', 'gi') };
 		});
 		// Regorxxx ->
+		this.integration = $.jsonParse(ppt.extPanels, { /* Infinity-tools-SMP */ }); // Regorxxx <- External integration ->
 
 		this.filter = {
 			menu: [],
@@ -3044,6 +3045,23 @@ class Panel {
 		const queries = this.getFilterTypes(filterBy);
 		const sort = queries.map((q) => getSortObj(q)).filter(Boolean).map((s) => s.expression);
 		return queryJoin(queries) + (sort.length ? ' ' + sort.at(-1) : '');
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- External integration
+	getIntegration(scriptName) {
+		return !this.integration[scriptName] || !this.integration[scriptName].length
+			? new Promise((resolve, reject) => {
+				window.NotifyOthers(scriptName + ': ask panel name', window.ID);
+				const clean = setTimeout(() => {
+					clearInterval(check);
+					reject();
+				}, 3000);
+				const check = setInterval(() => {
+					if (this.integration[scriptName] && this.integration[scriptName].length) { clearTimeout(clean); resolve(this.integration[scriptName]); }
+				}, 60);
+			})
+			: Promise.resolve(this.integration[scriptName]);
 	}
 	// Regorxxx ->
 }

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//26/10/26
+//04/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -321,6 +321,17 @@ addEventListener('on_notify_data', (name, info) => {
 		}
 		// Regorxxx ->
 		// Regorxxx <- External integration
+		case window.ScriptInfo.Name + ': set panel name':
+		case 'Scripts: set panel name': {
+			switch (info.scriptName) {
+				case 'Infinity-Tools-SMP': {
+					if (!panel.integration[info.scriptName] || !panel.integration[info.scriptName].length) {
+						panel.integration[info.scriptName] = [{ ...info }];
+					}
+				}
+			}
+			break;
+		}
 		case window.ScriptInfo.Name + ': new':
 		case window.ScriptInfo.Name + ': insert':
 		case window.ScriptInfo.Name + ': add': {

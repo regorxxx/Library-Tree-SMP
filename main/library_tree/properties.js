@@ -647,7 +647,12 @@ let properties = [
 	['Menu: Show playing (context menu)', true, 'menuShowPlay'],
 	['Menu: Show selection (context menu)', true, 'menuShowSel'],
 	['Menu: Show Auto-DJ (context menu)', true, 'menuShowDj'],
-	['Menu: Show Top Tracks (context menu)', true, 'menuShowTop']
+	['Menu: Show Music Map (context menu)', true, 'menuShowMusicMap'],
+	['Menu: Show Top Tracks (context menu)', true, 'menuShowTop'],
+	// Regorxxx ->
+	// Regorxxx <- External integration
+	['Integration: external panels', JSON.stringify({}), 'extPanels'],
+	['Integration: similar tracks sorting', '', 'similarTracksSorting']
 	// Regorxxx ->
 ];
 
