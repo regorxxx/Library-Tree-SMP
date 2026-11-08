@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/11/26
+//08/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -4298,17 +4298,18 @@ class Populate {
 							addEventListener('on_notify_data', (name, info) => {
 								if (name !== 'Music Map: search by distance receive' || !info || info.targetId !== window.ID || info.sourceName !== p.name) { return; }
 								removeEventListenerSelf();
-								resolve(!info.data ? new FbMetadbHandleList() : new FbMetadbHandleList(info.data[0]));
+								resolve(info.data ? new FbMetadbHandleList(info.data[0]) : new FbMetadbHandleList());
 							});
-							window.NotifyOthers('Music Map: search by distance', { window: [p.name], id: window.ID, handleList, bCreatePlaylist: false });
+							window.NotifyOthers('Music Map: search by distance', { window: [p.name], id: window.ID, handleList, recipe: ppt.similarTracksRecipe });
 						});
 					},
 					25
-				).then((arr) => {
-					return arr.length > 1
-						? arr.reduce((prev, curr) => { curr && prev.AddRange(curr); return prev; }, new FbMetadbHandleList())
-						: arr[0];
-				});
+				).catch(() => fb.ShowPopupMessage('Error processing similar tracks.', window.ScriptInfo.Name + ': external integration'));
+			})
+			.then((arr) => {
+				return arr.length > 1
+					? arr.reduce((prev, curr) => { curr && prev.AddRange(curr); return prev; }, new FbMetadbHandleList())
+					: arr[0];
 			})
 			.catch(() => {
 				fb.ShowPopupMessage('No \'' + name + '\' panels were found, try manually specifying the panel name.', window.ScriptInfo.Name + ': external integration');

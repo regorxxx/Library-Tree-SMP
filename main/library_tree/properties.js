@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/11/26
+//08/11/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -648,11 +648,12 @@ let properties = [
 	['Menu: Show selection (context menu)', true, 'menuShowSel'],
 	['Menu: Show Auto-DJ (context menu)', true, 'menuShowDj'],
 	['Menu: Show Music Map (context menu)', true, 'menuShowMusicMap'],
-	['Menu: Show Top Tracks (context menu)', true, 'menuShowTop'],
+	['Menu: Show Top Tracks (context menu)', !!utils.GetPackageInfo('2FCD04DE-E8BD-4EAD-9DCB-A37DAE9033AC'), 'menuShowTop'],
 	// Regorxxx ->
 	// Regorxxx <- External integration
 	['Integration: external panels', JSON.stringify({}), 'extPanels'],
-	['Integration: similar tracks sorting', '', 'similarTracksSorting']
+	['Integration: similar tracks sorting', '', 'similarTracksSorting'],
+	['Integration: similar tracks recipe', 'ext_simil_tracks_graph.json', 'similarTracksRecipe']
 	// Regorxxx ->
 ];
 

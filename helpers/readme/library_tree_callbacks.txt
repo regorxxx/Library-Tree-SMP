@@ -136,8 +136,18 @@ Callbacks:
 	- statisticsName can be matched by entire label (all), user label
 	  only or 'custom-X (...)' labels (custom entries only)
 
+• 'Scripts: set external panel name'
+• 'Library-Tree-SMP: set external panel name'
+	-> { name: string, scriptName: string,  id: string, source: string }
+	- Stores an external panel name for integration (i.e. Music Map)
+	- name is the third party panel name
+	- scriptName is the package/script name (i.e. Infinity-Tools-SMP)
+	- id is the third party panel ID
+	- source should match the Library-Tree-SMP panel ID (or empty)
+
 Example: (copy code below into a new blank panel)
 ---------------------------------------------
+```
 'use strict';
 // Example script to switch Library-Tree-SMP sources depending on the active playlist
 // Library viewer playlist will switch to Library source, otherwise Playlist(s) source is used
@@ -163,3 +173,22 @@ const changeSource = (() => {
 function on_playlist_switch() { changeSource(); }
 
 function on_playlists_changed() { changeSource(); }
+```
+
+Music Map integration (Infinity-Tools-SMP)
+---------------------------------------------
+Will notify other panels at 'Music Map: search by distance'.
+
+• Selection is set to panel selection. If multiple tracks are selected
+then it will process everyone of them.
+
+• No theme is used (since tags come from files).
+
+• Recipe is set to 'ext_simil_tracks_graph.json' by default, but can be
+changed at properties panel. If set to empty, then uses the default recipe.
+
+• Tracks output is sent back to Library Tree after processing at
+'Music Map: search by distance receive'.
+
+• Playlist generation is always managed by Library Tree, following panel
+settings (sorting, playlist name, etc).
