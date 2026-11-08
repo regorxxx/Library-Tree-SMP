@@ -288,6 +288,7 @@ class Populate {
 		let nU = '';
 		const bRemap = Object.keys(panel.remap).some((key) => panel.remap[key]); // Regorxxx <- Language remap ->
 		this.range(br.item).forEach((v) => {
+			if (!lib.node[v]) { return; } // Regorxxx <- Fix foobar tag reloading fest on upgrade to V2 or LargeFieldsConfig change ->
 			n = lib.node[v][l];
 			if (bRemap) { n = lib.remapNodename(n); } // Regorxxx <- Language remap ->
 			nU = n.toUpperCase();

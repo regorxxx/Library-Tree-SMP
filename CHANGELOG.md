@@ -90,6 +90,7 @@
 - Debug: fixed album art profiler logging not respecting related setting in some cases.
 - Fixed UTF-8 script files without BOM not being properly recognized on windows.
 - Fixed crash if D2D drawing mode was enabled on SMP.
+- Fixed crash, on original script, related to library monitoring during upgrade from foobar v1.6.x to v2.x.
 
 ## [3.0.0] - 2026-08-24
 ### Added
