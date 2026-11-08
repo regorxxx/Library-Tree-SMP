@@ -4290,6 +4290,9 @@ class Populate {
 	async getSimilarTracks(handleList = this.getHandleList(), bCustomSort = false) {
 		const name = 'Infinity-Tools-SMP';
 		let items = await panel.getIntegration(name)
+			.catch(() => {
+				fb.ShowPopupMessage('No \'' + name + '\' panels were found, try manually specifying the panel name.', window.ScriptInfo.Name + ': external integration');
+			})
 			.then((panels) => {
 				return Promise.serial(
 					panels,
@@ -4300,20 +4303,20 @@ class Populate {
 								removeEventListenerSelf();
 								resolve(info.data ? new FbMetadbHandleList(info.data[0]) : new FbMetadbHandleList());
 							});
-							window.NotifyOthers('Music Map: search by distance', { window: [p.name], id: window.ID, handleList, recipe: ppt.similarTracksRecipe });
+							const recipe = ppt.similarTracksRecipe.toUpperCase() === '-CUSTOM-' ? null : { recipe: ppt.similarTracksRecipe };
+							window.NotifyOthers('Music Map: search by distance', { window: [p.name], id: window.ID, handleList, ...recipe });
 						});
 					},
 					25
-				).catch(() => fb.ShowPopupMessage('Error processing similar tracks.', window.ScriptInfo.Name + ': external integration'));
+				);
 			})
+			.catch(() => fb.ShowPopupMessage('Error processing similar tracks.', window.ScriptInfo.Name + ': external integration'))
 			.then((arr) => {
 				return arr.length > 1
 					? arr.reduce((prev, curr) => { curr && prev.AddRange(curr); return prev; }, new FbMetadbHandleList())
 					: arr[0];
-			})
-			.catch(() => {
-				fb.ShowPopupMessage('No \'' + name + '\' panels were found, try manually specifying the panel name.', window.ScriptInfo.Name + ': external integration');
 			});
+
 		if (items && bCustomSort && ppt.similarTracksSorting.length) { items = lib.processCustomSort(items, ppt.similarTracksSorting); }
 		return items;
 	}
