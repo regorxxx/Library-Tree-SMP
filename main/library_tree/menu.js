@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/11/26
+//09/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -1293,7 +1293,7 @@ class MenuItems {
 					ppt.statsSorting = false;
 					lib.treeState(false, 2);
 				},
-				flags: !isQueueLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
 				checkItem: ppt.queueSorting && !lib.filterSort && !lib.searchSort
 			});
 		}
@@ -1319,7 +1319,7 @@ class MenuItems {
 					ppt.statsSorting = false;
 					lib.treeState(false, 2);
 				},
-				flags: !isSearchLike || lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
+				flags: lib.filterSort || lib.searchSort ? MF_GRAYED : MF_STRING,
 				checkItem: ppt.searchModeSorting && !lib.filterSort && !lib.searchSort
 			});
 		}
@@ -2017,7 +2017,7 @@ class MenuItems {
 		const caption = 'Panel source name';
 		const def = ppt.panelSelectionPlaylist;
 		// Regorxxx <- Better info. Don't create cache playlists if possible. Chained facets updates.
-		const prompt = 'Enter source panel name:\n\n• To get the name, go to the Library-Tree-SMP panel to be used as source\n• Press Shift + Windows + R. Click and choose \'configure panel\'\n• Paste the panel name or ID, at the top, into here\n• Edit source panel name if required\n• Name is also used for a cache playlist that remembers last open state\n• The cache will be hidden, unless not supported by JS host component\n• For more than one source panel, use pipe separator, e.g. Genre|Artist\n• For chained panels only the immediate parent\'s name is needed';
+		const prompt = 'Enter source panel name:\n\n• To get the name, go to the Library-Tree-SMP panel to be used as source\n• Press Shift + Windows + R. Click and choose \'configure panel\'\n• Paste the panel name or ID, at the top, into here\n• Edit source panel name if required\n• Name is also used for a cache playlist that remembers last open state\n• The cache will be hidden, unless not supported by JS-Host component\n• For more than one source panel, use pipe separator, e.g. Genre|Artist\n• For chained panels only the immediate parent\'s name is needed';
 		// Regorxxx ->
 		const fallback = popUpBox.isHtmlDialogSupported() ? popUpBox.input(caption, prompt, ok_callback, '', def) : true;
 		if (fallback) {
