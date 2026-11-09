@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/10/26
+//09/11/26
 
 /* exported extendGR, checkCompatible */
 
@@ -704,14 +704,14 @@ function checkCompatible(releases = [[{ version: '1.6.1', target: 'foo_spider_mo
 		const formatRelease = (r) => {
 			const isJsHost = r.target === 'foo_spider_monkey_panel' || r.target === 'foo_uie_jsplitter' && r.target !== 'fb';
 			return isJsHost
-				? 'Js Host Component: ' + r.target + ' v' + r.version
+				? 'Js-Host Component: ' + r.target + ' v' + r.version
 				: 'foobar2000: v' + r.version;
 		};
 		console.popup(
 			'This script requires:' + releases.map((r) => Array.isArray(r)
 				? '\n(\n\t' + r.map(formatRelease).join('\n\t\tOR\n\t') + '\n)'
 				: '\n\t' + formatRelease(r)
-			).join('\n\tAND\n\t') + '\n\nCurrent version is:\n\tJs Host Component: ' + window.Parent + ' v' + utils.Version + '\n\tfoobar2000: v' + fb.Version,
+			).join('\n\tAND\n\t') + '\n\nCurrent version is:\n\tJS-Host Component: ' + window.Parent + ' v' + utils.Version + '\n\tfoobar2000: v' + fb.Version,
 			window.Name + ' (' + window.ScriptInfo.Name + ')'
 		);
 	}

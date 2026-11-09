@@ -6,7 +6,7 @@ General notes:
 • Example: window.NotifyOthers('Library-Tree-SMP: do it', { window: [] })
 • Window arg should be an array with desired target panel names to control.
 • If not provided or empty, all panels will execute the action.
-• Panel notifications only work within same JS host (no SMP <-> JSplitter).
+• Panel notifications only work within same JS-Host (no SMP <-> JSplitter).
 • User presets may only be triggered if relevant panel setting is enabled.
 
 Callbacks:
@@ -151,7 +151,7 @@ Example: (copy code below into a new blank panel)
 'use strict';
 // Example script to switch Library-Tree-SMP sources depending on the active playlist
 // Library viewer playlist will switch to Library source, otherwise Playlist(s) source is used
-// Note Panel notifications only work within same JS host (no SMP <-> JSplitter)
+// Note Panel notifications only work within same JS-Host (no SMP <-> JSplitter)
 
 const panelName = '{7D3749BB-45F9-46AF-B114-E7F2F103BB62}'; // Set here your Library-Tree-SMP panel name
 const libraryPls= 'Library Viewer Selection'; // Set here your library viewer playlist name
