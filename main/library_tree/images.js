@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/11/26
+//09/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -757,6 +757,7 @@ class Images {
 
 	createMasks() {
 		const wh = 500;
+		// Flare
 		this.mask.flareCdEffect = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			g.DrawLine(0, 0, wh, wh, 10, $.RGB(255, 255, 255));
@@ -781,7 +782,7 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.flareEffect.StackBlur(5);
-
+		// Sleeve
 		this.mask.sleeveEffect = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			// Borders
@@ -826,18 +827,18 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.sleeveCrackEffect.StackBlur(25);
-
+		// Circular
 		this.mask.circular = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			g.FillEllipse(0.5, 0.5, wh - 1.75, wh - 1.75, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.SetSmoothingMode();
 		});
-
+		// Fade
 		this.mask.fade = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(175, 175, 175));
 		});
-
+		// Star
 		this.mask.starFill = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
@@ -860,24 +861,26 @@ class Images {
 			g.FillPolygon($.RGBA(0, 0, 0, 225), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.SetSmoothingMode();
 		});
-
+		// Heart
 		this.mask.heart = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			g.FillPolygon($.RGBA(0, 0, 0, 255), 0, this.getHeartPoints(wh, wh, 0, -wh / 20));
 			g.SetSmoothingMode();
 		});
-
-
+		// Circular note
+		let file = folders.xxx + 'assets\\library_tree\\images\\mask\\cnote.png';
 		this.mask.circularNote = this.mask.circular;
-		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\cnote.png')
+		gdi.LoadImageAsyncV2(window.Id, file)
 			.then((img) => {
 				this.mask.circularNote = $.gr(wh, wh, true, g => {
 					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
 				});
-			}).catch((error) => console.log(window.FullPanelName + ':\n' + error));
-
+			})
+			.catch((error) => console.log(window.FullPanelName + ':\n' + error + '\n' + file));
+		// Fill note
+		file = folders.xxx + 'assets\\library_tree\\images\\mask\\fnote.png';
 		this.mask.fillNote = $.gr(wh, wh, true, g => g.FillSolidRect(0, 0, wh, wh, $.RGB(0, 0, 0)));
 		gdi.LoadImageAsyncV2(window.Id, folders.xxx + 'assets\\library_tree\\images\\mask\\fnote.png')
 			.then((img) => {
@@ -885,9 +888,9 @@ class Images {
 					g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 					g.DrawImage(img, 0, 0, wh, wh, 0, 0, img.Width, img.Height);
 				});
-			}).catch((error) => console.log(window.FullPanelName + ':\n' + error));
-
-
+			})
+			.catch((error) => console.log(window.FullPanelName + ':\n' + error + '\n' + file));
+		// CD
 		this.mask.cd = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -901,7 +904,7 @@ class Images {
 			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
 			g.SetSmoothingMode();
 		});
-
+		// CD Case
 		this.mask.cdCase = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			// Spine
@@ -922,7 +925,7 @@ class Images {
 			g.DrawLine(0, 0, wh, 0, 5, $.RGB(100, 100, 125));
 			g.SetSmoothingMode();
 		});
-
+		// Vinyl
 		this.mask.vinylLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -967,7 +970,7 @@ class Images {
 			}
 		});
 		this.mask.vinylLabelOverlay.ApplyMask(this.mask.vinylLabel);
-
+		// Cassette
 		this.mask.cassetteLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -1030,7 +1033,7 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.cassetteOverlay.ApplyMask(cassetteBase);
-
+		// Test
 		this.mask.test = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
