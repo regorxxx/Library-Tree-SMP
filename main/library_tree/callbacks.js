@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/11/26
+//09/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -326,6 +326,8 @@ addEventListener('on_notify_data', (name, info) => {
 			switch (info.scriptName) {
 				case 'Infinity-Tools-SMP': {
 					if (info.source && info.source !== window.ID) { break; }
+					const names = ['Music Map Customizable', 'Music Map Basic'];
+					if (!info.subScripts || names.every((name) => !info.subScripts.includes(name))) { break; }
 					if (!panel.integration[info.scriptName] || !panel.integration[info.scriptName].length) {
 						panel.integration[info.scriptName] = [{ ...info }];
 					}

@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/11/26
+//09/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -3055,7 +3055,7 @@ class Panel {
 				window.NotifyOthers(scriptName + ': ask panel name', window.ID);
 				const clean = setTimeout(() => {
 					clearInterval(check);
-					reject();
+					reject(new Error('No \'' + scriptName + '\' panels were found, try manually specifying the panel name.', { cause: 'notFound' }));
 				}, 3000);
 				const check = setInterval(() => {
 					if (this.integration[scriptName] && this.integration[scriptName].length) { clearTimeout(clean); resolve(this.integration[scriptName]); }
