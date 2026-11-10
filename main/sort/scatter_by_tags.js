@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/04/26
+//10/11/26
 
 /* exported scatterByTags, intercalateByTags, shuffleByTags */
 
@@ -323,7 +323,7 @@ function shuffleByTags({
 		for (let i = totalTracks - 1; i >= 0; i--) {
 			tagValues[i].forEach((val) => {
 				let count = countMap.get(val) || 0;
-				countMap.set(val, ++count) ;
+				countMap.set(val, ++count);
 			});
 		}
 		tagValues = tagValues.map((valArr) => {
@@ -359,7 +359,7 @@ function shuffleByTags({
 	valMap.forEach((value, key) => {
 		const total = value.length;
 		if ((totalTracks - total) === (total - 1)) { bSolved = true; solution = key; } // Only 1 exact solution intercalating tracks
-		if (bSolved) { return; }
+		if (bSolved && !bAdvancedShuffle) { return; } // Used by advanced shuffle, it's needed even if a solution is found!
 		const dist = totalTracks / total;
 		const offset = bSolved ? 0 : Math.random() * (totalTracks - total) / total;
 		distMap.set(key, { dist, total, offset });
