@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/26
+//12/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -91,7 +91,7 @@ class MenuManager {
 	}
 
 	load(x, y) {
-		if (!this.menuItems.length) men[this.name]();
+		if (!this.menuItems.length) { men[this.name](); }
 		let i = 0;
 		let ln = this.menuNames.length;
 		while (i < ln) {
@@ -173,6 +173,10 @@ class MenuManager {
 		const v = this.func[idx];
 		if (typeof v === 'function') v();
 	}
+
+	isLastEntrySep() {
+		return !!this.menuItems.at(-1).separator;
+	}
 }
 
 const clearArr = true;
@@ -194,7 +198,7 @@ class MenuItems {
 		this.pl = [];
 		this.r_up = false;
 		this.show_context = false;
-		this.treeExpandLimit = _isFile('C:\\check_local\\1450343922.txt') ? 6000 : $.clamp(ppt.treeExpandLimit, 10, 6000);
+		this.treeExpandLimit = _isFile(folders.userPresets + 'library_tree_theme.txt') ? 6000 : $.clamp(ppt.treeExpandLimit, 10, 6000);
 		this.playlists_changed(true);
 		this.settingsBtnDn = false;
 		this.validItem = false;
@@ -275,12 +279,12 @@ class MenuItems {
 					menu.newItem({
 						str: 'Send to new playlist' + '\tCtrl+Enter',
 						func: () => this.setPlaylist(2),
-						flags: this.getPaylistFlag(2),
-						separator: true
+						flags: this.getPaylistFlag(2)
 					});
 					// Regorxxx ->
 					// Regorxxx <- Top tracks
 					if (ppt.menuShowTop) {
+						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
 							str: 'Send top tracks' + target,
@@ -290,13 +294,13 @@ class MenuItems {
 						menu.newItem({
 							str: 'Add top tracks' + target,
 							func: () => this.setPlaylist(7),
-							flags: this.getPaylistFlag(2),
-							separator: true
+							flags: this.getPaylistFlag(2)
 						});
 					}
 					// Regorxxx ->
 					// Regorxxx <- External integration | Menu options at context menu
 					if (ppt.menuShowMusicMap) {
+						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
 							str: 'Send similar tracks' + target,
@@ -308,18 +312,18 @@ class MenuItems {
 							func: () => this.setPlaylist(9),
 							flags: this.getPaylistFlag(2)
 						});
-						menu.newItem({ separator: true });
 					}
 					// Regorxxx ->
 					// Regorxxx <- Auto-DJ feature
 					if (panel.isAutoDjSource()) {
+						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						menu.newItem({
 							str: 'Remove from Auto-DJ',
 							func: () => panel.removeFromAutoDjSource(this.items),
 							flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
 						});
-						menu.newItem({ separator: true });
 					} else if (ppt.menuShowDj) {
+						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						menu.newItem({
 							str: 'Start Auto-DJ from panel selection',
 							func: () => panel.startAutoDj(this.items),
@@ -332,12 +336,12 @@ class MenuItems {
 							flags: this.items.Count && panel.autoDj.running && panel.autoDj.source ? MF_STRING : MF_GRAYED,
 							hide: !panel.autoDj.running
 						});
-						menu.newItem({ separator: true });
 					}
 					// Regorxxx ->
 				}
 				// Regorxxx <- Code cleanup | Show previously playing. Check if item is tracked | Menu options at context menu
 				if (ppt.menuShowPlay) {
+					if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 					menu.newItem({
 						str: 'Show now playing',
 						func: () => this.setPlaylist(3),
@@ -366,15 +370,15 @@ class MenuItems {
 				});
 			}
 			// Regorxxx ->
-			if (ppt.menuShowSel || ppt.menuShowPlay) { menu.newItem({ separator: true }); } // Regorxxx <- Menu cleanup | Menu options at context menu ->
+			if ((ppt.menuShowSel || ppt.menuShowPlay) && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); } // Regorxxx <- Menu cleanup | Menu options at context menu ->
 		}
 
 		if (this.validItem && (ppt.albumArtOptionsShowContext || panel.imgView)) { // Regorxxx <- Art options at context menu / settings ->
+			if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			menu.newItem({
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
 				func: () => this.setPlaylist(4),
-				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED,
-				separator: !panel.imgView //|| this.show_context && !ui.style.topBarShow
+				flags: !panel.pn_h_auto || ppt.pn_h != ppt.pn_h_min ? MF_STRING : MF_GRAYED
 			});
 		}
 
@@ -387,21 +391,27 @@ class MenuItems {
 					func: () => { ppt.artId = switchArt.idx; this.setPlaylist(5); }
 				});
 			});
-			menu.newItem({ separator: this.show_context && !ui.style.topBarShow });
+			if (this.show_context && !ui.style.topBarShow) { menu.newItem({ separator: true }); }
 		}
 		// Regorxxx ->
 
-		if (this.validItem && !panel.imgView) {
-			['Collapse all\tNum -', 'Expand\tNum *'].forEach((v, i) => menu.newItem({
-				str: v,
-				func: () => this.setTreeState(i),
-				flags: !i || i == 1 && this.expandable ? MF_STRING : MF_GRAYED,
-				separator: i == 1 && this.show_context && (!ppt.settingsShow && !ppt.searchShow && !ppt.filterShow || this.shift)
-			}));
+		// Regorxxx <- Menu cleanup | Menu options at context menu ->
+		if (this.validItem && !panel.imgView && ppt.menuShowExpand) {
+			if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
+			['Collapse all\tNum -', 'Expand\tNum *'].forEach((v, i) => {
+				menu.newItem({
+					str: v,
+					func: () => this.setTreeState(i),
+					flags: !i || i == 1 && this.expandable ? MF_STRING : MF_GRAYED
+				});
+			});
+			if (this.show_context && (!ppt.settingsShow && !ppt.searchShow && !ppt.filterShow || this.shift)) { menu.newItem({ separator: true }); }
 		}
+		// Regorxxx ->
 
+		// Regorxxx <- Booklet icon
 		if (this.validItem && pop.highlight.bookletShow) {
-			menu.newItem({ separator: true });
+			if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			const hasBooklet = pop.tree[this.ix].booklet;
 			const subMenuName = 'Booklet file(s)' + (hasBooklet ? '' : '\t[-N/A-]');
 			menu.newMenu({ menuName: subMenuName, appendTo: 'baseMenu', flags: hasBooklet ? MF_STRING : MF_GRAYED });
@@ -428,6 +438,7 @@ class MenuItems {
 				}
 			}
 		}
+		// Regorxxx ->
 
 		// Regorxxx <- Basic playlist manager
 		if ((this.validItem || !this.settingsBtnDn && ppt.settingsShow) && (panel.isAllPlaylistSource(true) || panel.isFixedPlaylistSource()) && !ppt.plsFlatView) {
@@ -437,9 +448,9 @@ class MenuItems {
 			const locks = isMultiplePls ? parent.map((p) => getLocks(p.idx)) : [getLocks(isValidPls ? parent[0].idx : -1)];
 			const names = parent.map((p) => p.name);
 			const menuName = !this.validItem || isMultiplePls ? 'Playlists' : 'Playlist';
-			if (this.validItem) { menu.newItem({ separator: true }); }
+			if (this.validItem && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			menu.newMenu({ menuName, appendTo: 'baseMenu' });
-			if (!this.validItem) { menu.newItem({ separator: true }); }
+			if (!this.validItem && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			if (this.validItem) {
 				if (isMultiplePls) {
 					menu.newItem({
@@ -742,7 +753,7 @@ class MenuItems {
 		}
 		// Regorxxx ->
 
-		if (panel.imgView && this.show_context && (!ui.style.topBarShow || this.shift)) { menu.newItem({ separator: true }); }
+		if (panel.imgView && this.show_context && (!ui.style.topBarShow || this.shift) && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 
 		menu.newMenu({ menuName: 'Settings', hide: !this.show_context || ui.style.topBarShow && !this.shift });
 

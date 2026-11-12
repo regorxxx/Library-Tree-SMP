@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/11/26
+//12/11/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -647,8 +647,9 @@ let properties = [
 	['Menu: Show playing (context menu)', true, 'menuShowPlay'],
 	['Menu: Show selection (context menu)', true, 'menuShowSel'],
 	['Menu: Show Auto-DJ (context menu)', true, 'menuShowDj'],
-	['Menu: Show Music Map (context menu)', true, 'menuShowMusicMap'],
-	['Menu: Show Top Tracks (context menu)', !!utils.GetPackageInfo('2FCD04DE-E8BD-4EAD-9DCB-A37DAE9033AC'), 'menuShowTop'],
+	['Menu: Show Similar Tracks (context menu)', !!utils.GetPackageInfo('2FCD04DE-E8BD-4EAD-9DCB-A37DAE9033AC'), 'menuShowMusicMap'],
+	['Menu: Show Top Tracks (context menu)', true, 'menuShowTop'],
+	['Menu: Show Expand/Collapse (context menu)', true, 'menuShowExpand'],
 	// Regorxxx ->
 	// Regorxxx <- External integration
 	['Integration: external panels', JSON.stringify({}), 'extPanels'],
@@ -659,7 +660,7 @@ let properties = [
 
 const ppt = new PanelProperties;
 ppt.init('auto', properties);
-if (!_isFile('C:\\check_local\\1450343922.txt')) { ppt.themed = false; }
+if (!_isFile(folders.userPresets + 'library tree\\theme.txt')) { ppt.themed = false; }
 
 if (ppt.get('Tree List View')) {
 	ppt.facetView = ppt.get('Tree List View');
