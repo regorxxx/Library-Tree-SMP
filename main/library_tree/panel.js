@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/26
+//12/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
@@ -2082,8 +2082,8 @@ class Panel {
 		on_colours_changed();
 		if (ui.col.counts) this.colMarker = true;
 		if (ppt.themed && ppt.theme) {
-			const themed_image = `${fb.ProfilePath}settings\\themed\\themed_image.bmp`;
-			if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
+			const themedImg = folders.userPresets + 'library tree\\image.bmp';
+			if (_isFile(themedImg)) { sync.image(gdi.Image(themedImg)); }
 		}
 		this.setNames(); // Regorxxx <- Header on search bar ->
 		but.setSbarIcon();

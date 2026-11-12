@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/26
+//12/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, pop:readable, but:readable, img:readable, search:readable, $:readable, men:readable, vk:readable, folders:readable, sync:readable, tooltip:readable, sbar:readable, explorer:readable */
 /* global isArrayEqual:readable */
@@ -28,7 +28,7 @@ addEventListener('on_colours_changed', (keepCache) => {
 	but.refresh(true);
 	sbar.resetAuto();
 	ui.createImages();
-	if (!ppt.themed) ui.blurReset();
+	if (!ppt.themed) { ui.blurReset(); }
 	window.Repaint();
 });
 
@@ -294,14 +294,14 @@ addEventListener('on_notify_data', (name, info) => {
 			lib.treeState(false, 2);
 			break;
 		case 'newThemeColours':
-			if (!ppt.themed) break;
+			if (!ppt.themed) { break; }
 			ppt.theme = info.theme;
 			ppt.themeBgImage = info.themeBgImage;
 			ppt.themeColour = info.themeColour;
 			on_colours_changed(true);
 			break;
 		case 'Sync col': {
-			if (!ppt.themed) break;
+			if (!ppt.themed) { break; }
 			const themeLight = ppt.themeLight;
 			if (themeLight != info.themeLight) {
 				ppt.themeLight = info.themeLight;
@@ -310,7 +310,7 @@ addEventListener('on_notify_data', (name, info) => {
 			break;
 		}
 		case 'Sync image':
-			if (!ppt.themed) break;
+			if (!ppt.themed) { break; }
 			sync.image(new GdiBitmap(info.image), info.id);
 			break;
 		// Regorxxx <- Don't create cache playlists if possible
@@ -774,7 +774,6 @@ addEventListener('on_selection_changed', () => {
 	setSelection(fb.GetSelection());
 });
 
-const windowMetricsPath = `${fb.ProfilePath}settings\\themed\\windowMetrics.json`;
 addEventListener('on_size', () => {
 	ui.w = window.Width;
 	ui.h = window.Height;
@@ -786,16 +785,17 @@ addEventListener('on_size', () => {
 	ui.calcText(true);
 
 	if (ppt.themed && ppt.theme) {
-		const themed_image = `${fb.ProfilePath}settings\\themed\\themed_image.bmp`;
-		if (_isFile(themed_image)) sync.image(gdi.Image(themed_image));
+		const themedImg = folders.userPresets + 'library tree\\image.bmp';
+		if (_isFile(themedImg)) sync.image(gdi.Image(themedImg));
 	}
 
 	panel.on_size();
-	if (ui.style.topBarShow || ppt.sbarShow) but.refresh(true);
+	if (ui.style.topBarShow || ppt.sbarShow) { but.refresh(true); }
 	sbar.resetAuto();
 	find.on_size();
 
-	if (!ppt.themed) return;
+	if (!ppt.themed) { return; }
+	const windowMetricsPath = folders.userPresets + 'library tree\\windowMetrics.json';
 	const windowMetrics = $.jsonParse(windowMetricsPath, {}, 'file');
 	windowMetrics[window.Name] = {
 		w: ui.w,
@@ -805,7 +805,7 @@ addEventListener('on_size', () => {
 });
 
 function setSelection(handle) {
-	if (!handle || !panel.list.Count) return;
+	if (!handle || !panel.list.Count) { return; }
 	const item = panel.list.Find(handle);
 	let idx = -1;
 	pop.tree.forEach((v, i) => {
