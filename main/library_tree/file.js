@@ -1,5 +1,5 @@
 ﻿'use strict';
-//02/10/26
+//13/11/26
 
 /* exported FileExplorer */
 
@@ -10,7 +10,7 @@
 /* global capitalize:readable */
 /* global Flag:readable */
 /* global fso:readable, _explorer:readable, _deleteFile:readable, _run:readable, _runCmd:readable, parseWinApiError:readable, findRecursiveFile:readable, findRecursiveDirs:readable, _isFolder:readable, _moveFile:readable, getDrive:readable, getDrives:readable, getShortPath:readable */
-/* global opaqueColor:readable, _gr:readable */
+/* global opaqueColor:readable, _gr:readable, _gdiFont:readable */
 /* global _menu:readable */
 /* global Input:readable */
 
@@ -144,7 +144,7 @@ class FileExplorer {
 		this.favPaths = [];
 		this.font = {
 			main: ui.font.main,
-			hover: gdi.Font(ui.font.main.Name, ui.font.main.Size, 4),
+			hover: _gdiFont(ui.font.main.Name, ui.font.main.Size, 4),
 			title: ui.font.search
 		};
 		this.col = {

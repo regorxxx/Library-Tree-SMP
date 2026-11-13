@@ -1,8 +1,9 @@
 ﻿'use strict';
-//27/10/26
+//13/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, tooltip:readable, sbar:readable, img:readable, search:readable, sMenu:readable, men:readable */
 /* global VK_SHIFT:readable, VK_CONTROL:readable, InterpolationMode:readable, SmoothingMode:readable, DT_WORD_ELLIPSIS:readable */
+/* global _gdiFont:readable */
 
 /* exported Buttons, Btn, Tooltip, TooltipTimer, Transition */
 
@@ -89,7 +90,7 @@ class Buttons {
 	createImages() {
 		let sz = this.scr.arrow == 0 ? Math.max(Math.round(ui.sbar.but_h * 1.666667), 1) : 100;
 		const sc = sz / 100;
-		const iconFont = gdi.Font(this.scr.iconFontName, sz, this.scr.iconFontStyle);
+		const iconFont = _gdiFont(this.scr.iconFontName, sz, this.scr.iconFontStyle);
 		this.alpha = ui.sbar.col ? [68, 153, 255] : [75, 192, 228];
 		const hovAlpha = (ui.sbar.col ? (ui.sbar.type ? 51 : 68) : 75) * 0.4;
 		this.scr.hover = ui.sbar.col ? ui.col.text & $.RGBA(255, 255, 255, hovAlpha) : $.RGBA(ui.col.t, ui.col.t, ui.col.t, hovAlpha);

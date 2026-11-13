@@ -444,7 +444,7 @@ function _gdiFont(name, size, style) {
 	}
 	if (fonts[id].Name !== name && !fonts.notFound.includes(name)) { // Display once per session, otherwise it floods the console with the same message...
 		fonts.notFound.push(name);
-		fb.ShowPopupMessage('Missing font: ' + name + '\n\nPlease install the required fonts, default ones can be found at:\nhttps://github.com/regorxxx/foobar2000-assets/tree/main/Fonts\n\nA restart is required after installation!\n\nYou can also put your own font files to be loaded on-the-fly at (only in JSplitter):\n\t' + folders.userFonts + 'fonts\\', window.FullPanelName);
+		fb.ShowPopupMessage('Missing font: ' + name + '\n\nPlease install the required fonts, default ones can be found at:\nhttps://github.com/regorxxx/foobar2000-assets/tree/main/Fonts\n\nA restart is required after installation!\n\nYou can also put your own font files to be loaded on-the-fly at (only in JSplitter):\n\t' + folders.userFonts, window.FullPanelName);
 		console.log('Missing font: ' + name);
 	}
 	return fonts[id];

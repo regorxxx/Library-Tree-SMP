@@ -1,9 +1,9 @@
 ﻿'use strict';
-//12/11/26
+//13/11/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
-/* global invert:readable, opaqueColor:readable, blendColors:readable */
+/* global invert:readable, opaqueColor:readable, blendColors:readable, _gdiFont:readable */
 /* global mostContrastColor:readable */
 /* global folders:readable */
 /* global _isFile:readable */
@@ -46,7 +46,7 @@ class UserInterface {
 			col_h: '',
 			collapse: '',
 			expand: '',
-			font: gdi.Font('Segoe UI Symbol', 11, 0),
+			font: _gdiFont('Segoe UI Symbol', 11, 0),
 			fontStyle: 0,
 			fontName: 'FontAwesome',
 			offset: 0,
@@ -215,7 +215,7 @@ class UserInterface {
 				this.sz.node = Math.round($.clamp(this.sz.node, 7, this.row.h * 1.15));
 				let mod = 0;
 				if (ppt.nodeStyle < 3 && this.sz.node > 15) mod = (this.sz.node % 2) - 1;
-				this.icon.font = gdi.Font(this.icon.fontName, this.sz.node + mod, ppt.nodeStyle == 6 ? this.icon.fontStyle : 0);
+				this.icon.font = _gdiFont(this.icon.fontName, this.sz.node + mod, ppt.nodeStyle == 6 ? this.icon.fontStyle : 0);
 				ppt.zoomNode = Math.round(this.sz.node / ppt.baseFontSize * 100);
 			}
 			pop.createImages();
@@ -252,10 +252,10 @@ class UserInterface {
 
 	createImages() {
 		const cc = $.stringFormat(1, 1);
-		const font1 = gdi.Font('Segoe UI', 270, 1);
-		const font2 = gdi.Font('Segoe UI', 120, 1);
-		const font3 = gdi.Font('Segoe UI', 200, 1);
-		const font4 = gdi.Font('Segoe UI', 90, 1);
+		const font1 = _gdiFont('Segoe UI', 270, 1);
+		const font2 = _gdiFont('Segoe UI', 120, 1);
+		const font3 = _gdiFont('Segoe UI', 200, 1);
+		const font4 = _gdiFont('Segoe UI', 90, 1);
 		const tcol = this.col.text;
 		for (let i = 0; i < 2; i++) {
 			this.img.stub[i] = $.gr(500, 500, true, g => {
@@ -523,14 +523,14 @@ class UserInterface {
 
 		if (ppt.custFontUse && ppt.custFont.length) {
 			const custFont = $.split(ppt.custFont, 1);
-			this.font.main = gdi.Font(custFont[0], Math.max(Math.round($.value(custFont[1], 16, 0)), 1), Math.round($.value(custFont[2], 0, 0)));
+			this.font.main = _gdiFont(custFont[0], Math.max(Math.round($.value(custFont[1], 16, 0)), 1), Math.round($.value(custFont[2], 0, 0)));
 		} else if (this.dui) this.font.main = window.GetFontDUI(2);
 		else this.font.main = window.GetFontCUI(0);
 
 		// Regorxxx <- Code cleanup. Remove ui.id.local references ->
 
 		if (!this.font.main || /tahoma/i.test(this.font.main.Name) && DetectWine()) { // Windows: check still needed (test MS Serif or Modern, neither can be used); Wine: tahoma is default system font, but bold and some unicode characters don't work: if Wine + tahoma detected changed to Segoe UI (if that's not installed, tahoma is still used)
-			this.font.main = gdi.Font('Segoe UI', 16, 0);
+			this.font.main = _gdiFont('Segoe UI', 16, 0);
 			$.trace('Spider Monkey Panel is unable to use your default font. Using Segoe UI at default size & style instead', false);
 		}
 		if (this.font.main.Size != ppt.baseFontSize) ppt.zoomFont = 100;
@@ -538,51 +538,51 @@ class UserInterface {
 
 		this.font.zoomSize = Math.max(Math.round(ppt.baseFontSize * ppt.zoomFont / 100), 1);
 		this.sz.node = this.style.squareNode ? Math.round(this.sz.node_base * ppt.zoomNode / 100) : Math.round(ppt.baseFontSize * ppt.zoomNode / 100);
-		this.font.main = gdi.Font(this.font.main.Name, this.font.zoomSize, this.font.main.Style);
+		this.font.main = _gdiFont(this.font.main.Name, this.font.zoomSize, this.font.main.Style);
 		ppt.zoomFont = Math.round(this.font.zoomSize / ppt.baseFontSize * 100);
 
-		this.font.search = gdi.Font(this.font.main.Name, this.font.main.Size, 0);
-		this.font.find = gdi.Font(this.font.main.Name, this.font.main.Size * 1.5, 1);
+		this.font.search = _gdiFont(this.font.main.Name, this.font.main.Size, 0);
+		this.font.find = _gdiFont(this.font.main.Name, this.font.main.Size * 1.5, 1);
 
 		// Regorxxx <- Code cleanup. Remove ui.id.local references ->
 
-		this.font.label = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 11 / 14) : this.font.main.Size, this.font.main.Style);
-		this.font.small = gdi.Font(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 12 / 14) : this.font.main.Size, this.font.main.Style);
+		this.font.label = _gdiFont(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 11 / 14) : this.font.main.Size, this.font.main.Style);
+		this.font.small = _gdiFont(this.font.main.Name, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.main.Size * 12 / 14) : this.font.main.Size, this.font.main.Style);
 		this.sz.sideMarker = ppt.sideMarkerWidth ? Math.max(ppt.sideMarkerWidth, 1) : 4 * this.l.w;
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
 
 		if (ppt.custAlbumArtGrpFontUse && ppt.custAlbumArtGrpFont.length) {
 			const custFont = $.split(ppt.custAlbumArtGrpFont, 1);
-			this.font.group = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else { this.font.group = gdi.Font(this.font.main.Name, this.font.main.Size, 0); } // Regorxxx <- Change default font styles ->
+			this.font.group = _gdiFont(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
+		} else { this.font.group = _gdiFont(this.font.main.Name, this.font.main.Size, 0); } // Regorxxx <- Change default font styles ->
 
 		if (ppt.custAlbumArtLotFontUse && ppt.custAlbumArtLotFont.length) {
 			const custFont = $.split(ppt.custAlbumArtLotFont, 1);
-			this.font.lot = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else { this.font.lot = gdi.Font('Segoe UI Semibold', this.font.main.Size, 0); }
+			this.font.lot = _gdiFont(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
+		} else { this.font.lot = _gdiFont('Segoe UI Semibold', this.font.main.Size, 0); }
 
 		if (ppt.custAlbumArtDurFontUse && ppt.custAlbumArtDurFont.length) {
 			const custFont = $.split(ppt.custAlbumArtDurFont, 1);
-			this.font.statistics = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
-		} else { this.font.statistics = gdi.Font('Segoe UI', this.font.main.Size, 2); } // Regorxxx <- Change default font styles ->
+			this.font.statistics = _gdiFont(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 2, 0)));
+		} else { this.font.statistics = _gdiFont('Segoe UI', this.font.main.Size, 2); } // Regorxxx <- Change default font styles ->
 
 		// Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11
 		if (ppt.custTooltipFontUse && ppt.custTooltipFont.length) {
 			const custFont = $.split(ppt.custTooltipFont, 1);
-			this.font.mainTooltip = gdi.Font(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else { this.font.mainTooltip = gdi.Font(this.font.main.Name, this.font.main.Size, this.font.main.Style); }
+			this.font.mainTooltip = _gdiFont(custFont[0], this.font.main.Size, Math.round($.value(custFont[1], 1, 0)));
+		} else { this.font.mainTooltip = _gdiFont(this.font.main.Name, this.font.main.Size, this.font.main.Style); }
 
 		if (ppt.custAlbumArtTooltipFontUse && ppt.custAlbumArtTooltipFont.length) {
 			const custFont = $.split(ppt.custAlbumArtTooltipFont, 1);
-			this.font.groupTooltip = gdi.Font(custFont[0], this.font.group.Size, Math.round($.value(custFont[1], 1, 0)));
-		} else { this.font.groupTooltip = gdi.Font(this.font.group.Name, this.font.group.Size, 0); }
+			this.font.groupTooltip = _gdiFont(custFont[0], this.font.group.Size, Math.round($.value(custFont[1], 1, 0)));
+		} else { this.font.groupTooltip = _gdiFont(this.font.group.Name, this.font.group.Size, 0); }
 		// Regorxxx ->
 
 		// Regorxxx <- Custom art overlay font
 		if (ppt.custAlbumArtOverlayFontUse && ppt.custAlbumArtOverlayFont.length) {
 			const custFont = $.split(ppt.custAlbumArtOverlayFont, 1);
-			this.font.tracks = gdi.Font(custFont[0], Math.round(this.font.main.Size * 12 / 14), Math.round($.value(custFont[1], 2, 0)));
-		} else { this.font.tracks = gdi.Font('Arial', Math.round(this.font.main.Size * 12 / 14), 2); }
+			this.font.tracks = _gdiFont(custFont[0], Math.round(this.font.main.Size * 12 / 14), Math.round($.value(custFont[1], 2, 0)));
+		} else { this.font.tracks = _gdiFont('Arial', Math.round(this.font.main.Size * 12 / 14), 2); }
 		// Regorxxx ->
 
 		if (init) return;
@@ -1147,16 +1147,16 @@ class UserInterface {
 
 		const fnm = this.font.main.Name;
 		const fst = this.font.main.Style;
-		this.font.main = gdi.Font(fnm, this.font.zoomSize, fst);
-		this.font.search = gdi.Font(fnm, this.font.zoomSize, 0);
-		this.font.find = gdi.Font(fnm, this.font.zoomSize * 1.5, 1);
-		this.font.label = gdi.Font(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 11 / 14) : this.font.zoomSize, fst);
-		this.font.small = gdi.Font(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 12 / 14) : this.font.zoomSize, fst);
-		this.font.tracks = gdi.Font(this.font.tracks.Name, Math.round(this.font.zoomSize * 12 / 14), this.font.tracks.Style); // Regorxxx <- Custom art overlay font ->
+		this.font.main = _gdiFont(fnm, this.font.zoomSize, fst);
+		this.font.search = _gdiFont(fnm, this.font.zoomSize, 0);
+		this.font.find = _gdiFont(fnm, this.font.zoomSize * 1.5, 1);
+		this.font.label = _gdiFont(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 11 / 14) : this.font.zoomSize, fst);
+		this.font.small = _gdiFont(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 12 / 14) : this.font.zoomSize, fst);
+		this.font.tracks = _gdiFont(this.font.tracks.Name, Math.round(this.font.zoomSize * 12 / 14), this.font.tracks.Style); // Regorxxx <- Custom art overlay font ->
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
-		this.font.group = gdi.Font(this.font.group.Name, this.font.zoomSize, this.font.group.Style);
-		this.font.lot = gdi.Font(this.font.lot.Name, this.font.zoomSize, this.font.lot.Style);
-		this.font.statistics = gdi.Font(this.font.statistics.Name, this.font.zoomSize, this.font.statistics.Style);
+		this.font.group = _gdiFont(this.font.group.Name, this.font.zoomSize, this.font.group.Style);
+		this.font.lot = _gdiFont(this.font.lot.Name, this.font.zoomSize, this.font.lot.Style);
+		this.font.statistics = _gdiFont(this.font.statistics.Name, this.font.zoomSize, this.font.statistics.Style);
 
 		this.calcText(true);
 		panel.on_size();

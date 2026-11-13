@@ -1,9 +1,10 @@
 ﻿'use strict';
-//12/11/26
+//13/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
+/* global _gdiFont:readable */
 /* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
 /* global _qCond:readable, isArrayEqual:readable */
@@ -1919,8 +1920,8 @@ class Panel {
 		let sz = Math.round(12 * $.scale * this.zoomFilter);
 		let mod = 0;
 		if (sz > 15) mod = (sz % 2) - 1;
-		this.filter.font = gdi.Font('Segoe UI', this.zoomFilter > 1.05 ? Math.floor(11 * $.scale * this.zoomFilter) : Math.max(11 * $.scale * this.zoomFilter, 9), 1);
-		this.settings.font = gdi.Font('Segoe UI Symbol', sz + mod, 0);
+		this.filter.font = _gdiFont('Segoe UI', this.zoomFilter > 1.05 ? Math.floor(11 * $.scale * this.zoomFilter) : Math.max(11 * $.scale * this.zoomFilter, 9), 1);
+		this.settings.font = _gdiFont('Segoe UI Symbol', sz + mod, 0);
 		this.settings.icon = '\uE10C';
 		this.settings.offset = Math.round(1 * this.settings.font.Size / 17);
 	}
