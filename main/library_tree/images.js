@@ -1109,9 +1109,9 @@ class Images {
 				const lot = item.lot;
 				// Regorxxx <- Improve statistics tooltip | Don't bind track count to other stats ->
 				const hasStats = Object.hasOwn(item, '_statistics');
-				const statistics = this.labels.statistics
+				const statistics = (this.labels.statistics
 					? (!item.root && this.labels.counts ? item.count + (item.count && hasStats ? ' | ' : '') : '') + (hasStats ? item._statistics : '')
-					: '';
+					: '').replaceAll(' ', '  '); // Replace spaces for compatibility with emoji fonts
 				const statisticsTt = this.labels.statistics
 					? stat.ttFunc
 						? (!item.root && this.labels.counts ? item.count + (item.count && hasStats ? ' | ' : '') : '') + stat.ttFunc(stat.nameTree + ': ' + (typeof item.stats.valueFormat === 'undefined' ? '' : item.stats.valueFormat.toString()))
