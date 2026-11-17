@@ -1,5 +1,5 @@
 ﻿'use strict';
-//12/11/26
+//17/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, search:readable, men:readable, vk:readable, lib:readable, popUpBox:readable, explorer:readable */
 /* global globSettings:readable, folders:readable */
@@ -283,7 +283,7 @@ class MenuItems {
 					});
 					// Regorxxx ->
 					// Regorxxx <- Top tracks
-					if (ppt.menuShowTop) {
+					if (ppt.menuShowTop || this.shift) {
 						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
@@ -299,7 +299,7 @@ class MenuItems {
 					}
 					// Regorxxx ->
 					// Regorxxx <- External integration | Menu options at context menu
-					if (ppt.menuShowMusicMap) {
+					if (ppt.menuShowMusicMap || this.shift) {
 						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						const target = ' (' + (ppt.sendToCur ? 'current' : 'default') + ' playlist)';
 						menu.newItem({
@@ -322,7 +322,7 @@ class MenuItems {
 							func: () => panel.removeFromAutoDjSource(this.items),
 							flags: this.items.Count >= 1 ? MF_STRING : MF_GRAYED
 						});
-					} else if (ppt.menuShowDj) {
+					} else if (ppt.menuShowDj || this.shift) {
 						if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 						menu.newItem({
 							str: 'Start Auto-DJ from panel selection',
@@ -340,7 +340,7 @@ class MenuItems {
 					// Regorxxx ->
 				}
 				// Regorxxx <- Code cleanup | Show previously playing. Check if item is tracked | Menu options at context menu
-				if (ppt.menuShowPlay) {
+				if (ppt.menuShowPlay || this.shift) {
 					if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 					menu.newItem({
 						str: 'Show now playing',
@@ -360,7 +360,7 @@ class MenuItems {
 			}
 			// Regorxxx ->
 			// Regorxxx <- Show selection. Check if item is tracked | Menu options at context menu
-			if (ppt.menuShowSel) {
+			if (ppt.menuShowSel || this.shift) {
 				const handle = fb.GetFocusItem(true);
 				const item = handle ? panel.list.Find(handle) : -1;
 				menu.newItem({
@@ -370,10 +370,10 @@ class MenuItems {
 				});
 			}
 			// Regorxxx ->
-			if ((ppt.menuShowSel || ppt.menuShowPlay) && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); } // Regorxxx <- Menu cleanup | Menu options at context menu ->
+			if ((ppt.menuShowSel || ppt.menuShowPlay || this.shift) && !menu.isLastEntrySep()) { menu.newItem({ separator: true }); } // Regorxxx <- Menu cleanup | Menu options at context menu ->
 		}
 
-		if (this.validItem && (ppt.albumArtOptionsShowContext || panel.imgView)) { // Regorxxx <- Art options at context menu / settings ->
+		if (this.validItem && (ppt.albumArtOptionsShowContext || this.shift || panel.imgView)) { // Regorxxx <- Art options at context menu / settings ->
 			if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			menu.newItem({
 				str: panel.imgView ? (ppt.facetView ? 'Show Text' : 'Show Tree') : 'Show Album Art',
@@ -396,7 +396,7 @@ class MenuItems {
 		// Regorxxx ->
 
 		// Regorxxx <- Menu cleanup | Menu options at context menu ->
-		if (this.validItem && !panel.imgView && ppt.menuShowExpand) {
+		if (this.validItem && !panel.imgView && (ppt.menuShowExpand || this.shift)) {
 			if (!menu.isLastEntrySep()) { menu.newItem({ separator: true }); }
 			['Collapse all\tNum -', 'Expand\tNum *'].forEach((v, i) => {
 				menu.newItem({
