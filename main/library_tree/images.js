@@ -1,5 +1,5 @@
 ﻿'use strict';
-//09/11/26
+//17/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -1092,7 +1092,11 @@ class Images {
 			else { this.column++; }
 		}
 		stack[1].sort((a, b) => b.selIdx - a.selIdx);
-		const stat = this.labels.statistics ? pop.statistics[pop.statisticsShow] : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
+		const stat = this.labels.statistics ? pop.getCurrentStatistic() : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
+		// Regorxxx <- Improve statistics labels | Add emoji support
+		const statsEmoji = stat.useEmoji && ppt.itemShowStatisticsIcon;
+		const statsFont = statsEmoji ? ui.font.emojiArt : ui.font.statistics;
+		// Regorxxx ->
 		stack.flat().forEach((cell) => {
 			const row = this.style.vertical ? Math.floor(cell.i / this.columns) : 0;
 			box_x = this.style.vertical ? Math.floor(this.panel.x + cell.column * this.columnWidth + this.bor.side) : Math.floor(this.panel.x + cell.i * this.columnWidth + this.bor.side - sbar.delta);
@@ -1202,7 +1206,7 @@ class Images {
 						const w = this.text.w - (bInMedium ? this.im.w / 6 : 0);
 						// Regorxxx ->
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: statsFont }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats | Add emoji support ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'lott', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								pop.cusCol(gr, lot, item, x, y2, w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'group', style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
@@ -1210,27 +1214,27 @@ class Images {
 								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, w, this.text.h, style.centerLabel && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color | Add emoji support
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, statsFont) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, w, this.text.h, flags);
+								gr.GdiDrawText(statistics, statsFont, statsCol, x, y3, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: statsFont }); // Regorxxx <- Improve statistics tooltip | Add emoji support ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
 								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color | Add emoji support
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, statsFont) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, w, this.text.h, flags);
+								gr.GdiDrawText(statistics, statsFont, statsCol, x, y2, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}
@@ -1241,7 +1245,7 @@ class Images {
 						y2 = this.im.y + this.text.y2;
 						const y3 = this.im.y + this.text.y3;
 						if (panel.lines == 2) {
-							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats ->
+							this.checkTooltip(gr, item, { x, y1, y2, y3, w }, { tt1: grp, tt2: lot, tt3: statisticsTt, tt4: statistics }, { font1: ui.font.group, font2: ui.font.lot, font3: statsFont }); // Regorxxx <- Improve statistics tooltip | Force tooltip if info is different than raw stats | Add emoji support ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.groupEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 								pop.cusCol(gr, lot, item, x, y2, w, this.text.h, type, cell.bNowPlaying, ui.font.lot, ui.font.lotEllipsisSpace, 'lott', style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
@@ -1249,26 +1253,26 @@ class Images {
 								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 								gr.GdiDrawText(panel.cleanMarkers(lot), ui.font.lot, lotCol, x, y2, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[2] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color
+							// Regorxxx <- Fix third line alignment if 2nd line overflows on crop art style | Customizable stats color | Add emoji support
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, statsFont) <= w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y3, w, this.text.h, flags);
+								gr.GdiDrawText(statistics, statsFont, statsCol, x, y3, w, this.text.h, flags);
 							} // Regorxxx ->
 						} else {
-							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: ui.font.statistics }); // Regorxxx <- Improve statistics tooltip ->
+							this.checkTooltip(gr, item, { x, y1, y2: statistics ? y2 : -1, y3: -1, w }, { tt1: grp, tt2: statisticsTt }, { font1: ui.font.group, font2: statsFont }); // Regorxxx <- Improve statistics tooltip | Add emoji support ->
 							if (panel.colMarker) {
 								pop.cusCol(gr, grp, item, x, y1, w, this.text.h, type, cell.bNowPlaying, ui.font.group, ui.font.mainEllipsisSpace, 'group', style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							} else {
 								gr.GdiDrawText(panel.cleanMarkers(grp), ui.font.group, grpCol, x, y1, w, this.text.h, style.centerLabel && !this.labels.right && !item.tt[1] ? panel.cc : panel.lc);
 							}
-							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style  | Customizable stats color
+							// Regorxxx <- Fix third line alignment if 2nd line overflows  on crop art style  | Customizable stats color | Add emoji support
 							if (statistics) {
-								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, ui.font.statistics) <= this.text.w
+								const flags = style.centerLabel && !this.labels.right && gr.CalcTextWidth(statistics, statsFont) <= this.text.w
 									? panel.cc
 									: panel.lc;
-								gr.GdiDrawText(statistics, ui.font.statistics, statsCol, x, y2, w, this.text.h, flags);
+								gr.GdiDrawText(statistics, statsFont, statsCol, x, y2, w, this.text.h, flags);
 							}
 							// Regorxxx ->
 						}

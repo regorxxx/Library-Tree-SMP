@@ -1,8 +1,8 @@
 ﻿'use strict';
-//13/11/26
+//17/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
-/* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable */
+/* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global _gdiFont:readable */
 /* global escapeRegExpV2:readable */
@@ -39,7 +39,7 @@ class Panel {
 		this.propNames = [];
 		this.newView = true;
 		this.pos = -1;
-		this.rc = DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS;
+		this.rc = DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS | DT_NOCLIP;
 		this.rootName = '';
 		this.rootName1 = '';
 		this.headerName = ''; // Regorxxx <- Header on search bar ->

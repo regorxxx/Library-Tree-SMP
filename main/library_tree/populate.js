@@ -1,5 +1,5 @@
 ﻿'use strict';
-//08/11/26
+//17/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -49,7 +49,24 @@ class Populate {
 		// Regorxxx ->
 		this.sy_sz = 8;
 		this.tree = [];
-		this.tf = {}; // Regorxxx <- New statistics ->
+		// Regorxxx <- New statistics
+		/** * @type {{ added: FbTitleFormat; bitrate: FbTitleFormat; bytes: FbTitleFormat; date: FbTitleFormat; firstPlayed: FbTitleFormat; lastPlayed: FbTitleFormat; pc: FbTitleFormat; popularity: FbTitleFormat; rating: FbTitleFormat; loved: FbTitleFormat; key: FbTitleFormat; openKey: FbTitleFormat; camelotKey: FbTitleFormat; bpm: FbTitleFormat; trackCountry: FbTitleFormat; artistCountry: FbTitleFormat; trackCountryIso: FbTitleFormat; artistCountryIso: FbTitleFormat; custom1Sum: FbTitleFormat; custom2Sum: FbTitleFormat; custom3Sum: FbTitleFormat; custom1Avg: FbTitleFormat; custom2Avg: FbTitleFormat; custom3Avg: FbTitleFormat; custom1MeX: FbTitleFormat; custom2MeX: FbTitleFormat; custom3MeX: FbTitleFormat; }} */
+		this.tf = {};
+		this.tfIcon = {
+			calendar: '📆',
+			key: '𝄞',
+			file: '📁',
+			clock: '🕓',
+			star: '⭐',
+			heart: '💜',
+			brokenHeart: '💔',
+			chart: '📊',
+			numbers: '🔢',
+			speaker: '🎧',
+			list: '🧾',
+			thermometer: '🌡',
+		};
+		// Regorxxx ->
 		this.isDragDrop = false; // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager ->
 		this.isDragDropEmpty = false; // Regorxxx <- Drag n' drop to search box | Drag n' drop to queue | Auto-DJ source | Multiple-playlist flat view | Basic playlist manager ->
 		// Regorxxx <- Rectangle selection on art view
@@ -161,6 +178,10 @@ class Populate {
 			openKey: FbTitleFormat(_t(globTags.openKey)),
 			camelotKey: FbTitleFormat(_t(globTags.camelotKey)),
 			bpm: FbTitleFormat(_t(globTags.bpm)),
+			trackCountry: FbTitleFormat(ppt.tfTrackCountryFlag),
+			artistCountry: FbTitleFormat(ppt.tfArtistCountryFlag),
+			trackCountryIso: FbTitleFormat(ppt.tfTrackCountryIso),
+			artistCountryIso: FbTitleFormat(ppt.tfArtistCountryIso),
 			custom1Sum: FbTitleFormat(ppt.tfCustom1Sum),
 			custom2Sum: FbTitleFormat(ppt.tfCustom2Sum),
 			custom3Sum: FbTitleFormat(ppt.tfCustom3Sum),
@@ -1204,7 +1225,9 @@ class Populate {
 			level = this.inlineRoot ? Math.max(this.tree[b].level - 1, 0) : this.tree[b].level;
 			for (let j = 0; j <= level; j++) row[j] = b;
 		}
-		const statsExtraStr = this.getCurrentStatistic().displayVal || ''; // Regorxxx <- Improve statistics labels ->
+		const stats = this.getCurrentStatistic();
+		const statsExtraStr = stats.displayVal || ''; // Regorxxx <- Improve statistics labels ->
+		const statsEmoji = stats.useEmoji && ppt.itemShowStatisticsIcon; // Regorxxx <- Improve statistics labels ->
 		// Regorxxx <- Booklet indicator
 		const bookletLevel = this.getBookletLevel();
 		const bookletPos = this.highlight.bookletIndicatorPos;
@@ -1425,7 +1448,13 @@ class Populate {
 				}
 				else { gr.GdiDrawText(nm[i], ui.font.main, txt_c, item_x, item_y, w, ui.row.h, panel.lc); }
 				if (this.countsRight || this.statisticsShow) {
-					gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root || !this.label ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc); // Regorxxx <- Improve statistics labels ->
+					// Regorxxx <- Improve statistics labels
+					if (statsEmoji) {
+						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root ? ui.font.emojiTree : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+					} else {
+						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+					}
+					// Regorxxx ->
 				}
 			}
 		}
@@ -3269,6 +3298,10 @@ class Populate {
 					if (typeof value !== 'undefined') {
 						rawValue = value;
 						valueFormat = value = value + (panel.imgView ? ' kbps' : '');
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.numbers;
+							value += ' ' + this.tfIcon.numbers;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3278,6 +3311,10 @@ class Populate {
 					let rawValue, value, valueFormat;
 					rawValue = handleList.CalcTotalDuration();
 					valueFormat = value = utils.FormatDuration(rawValue);
+					if (ppt.itemShowStatisticsIcon && value) {
+						valueFormat += ' ' + this.tfIcon.clock;
+						value += ' ' + this.tfIcon.clock;
+					}
 					return { rawValue, value, valueFormat };
 				}
 			},
@@ -3294,6 +3331,10 @@ class Populate {
 						size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
 						rawValue = size;
 						valueFormat = value = this.formatBytes(size);
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.file;
+							value += ' ' + this.tfIcon.file;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3311,6 +3352,10 @@ class Populate {
 						rawValue = values / ln;
 						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 						if (panel.imgView && this.label) { value = 'Rating ' + value; }
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.star;
+							value += ' ' + this.tfIcon.star;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3328,6 +3373,10 @@ class Populate {
 						rawValue = values / ln;
 						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 						if (panel.imgView && this.label) { value = 'Popularity ' + value; }
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.thermometer;
+							value += ' ' + this.tfIcon.thermometer;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3346,6 +3395,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'First release ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.calendar;
+							value += ' ' + this.tfIcon.calendar;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3364,6 +3417,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'First release ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.calendar;
+							value += ' ' + this.tfIcon.calendar;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3385,6 +3442,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Key ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.key;
+							value += ' ' + this.tfIcon.key;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3406,6 +3467,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Open key ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.key;
+							value += ' ' + this.tfIcon.key;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3427,6 +3492,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Camelot key ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.key;
+							value += ' ' + this.tfIcon.key;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3448,6 +3517,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'BPM ' : ''] + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.chart;
+							value += ' ' + this.tfIcon.chart;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3489,6 +3562,10 @@ class Populate {
 						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
 						if (panel.imgView && this.label) { value = 'Queue ' + value; }
 					}
+					if (ppt.itemShowStatisticsIcon && value) {
+						valueFormat += ' ' + this.tfIcon.list;
+						value += ' ' + this.tfIcon.list;
+					}
 					// Regorxxx ->
 					return { rawValue, value, valueFormat };
 				},
@@ -3510,6 +3587,10 @@ class Populate {
 						value = panel.imgView
 							? (this.label ? 'Played ' : '') + playcount + 'x'
 							: playcount;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.speaker;
+							value += ' ' + this.tfIcon.speaker;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3528,6 +3609,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'First played ' + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.calendar;
+							value += ' ' + this.tfIcon.calendar;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3546,6 +3631,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'Last played ' + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.calendar;
+							value += ' ' + this.tfIcon.calendar;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3564,6 +3653,10 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'Added ' + valueFormat
 							: valueFormat;
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.calendar;
+							value += ' ' + this.tfIcon.calendar;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3580,6 +3673,10 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Loved ' + value; }
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.heart;
+							value += ' ' + this.tfIcon.heart;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3595,8 +3692,9 @@ class Populate {
 					if (ln) {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
-						if (handleList.Count === 1) { value = '💜'; }
+						if (handleList.Count === 1) { value = this.tfIcon.heart; }
 						if (panel.imgView && this.label) { value = 'Loved ' + value; }
+
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3613,7 +3711,7 @@ class Populate {
 						if (ln) {
 							value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 							valueFormat = rawValue = value;
-							value = '💜';
+							value = this.tfIcon.heart;
 							if (panel.imgView && this.label) { value = 'Loved ' + value; }
 						}
 					}
@@ -3628,6 +3726,10 @@ class Populate {
 							rawValue = values / ln;
 							valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 							if (panel.imgView && this.label) { value = 'Rating ' + value; }
+							if (ppt.itemShowStatisticsIcon && value) {
+								valueFormat += ' ' + this.tfIcon.star;
+								value += ' ' + this.tfIcon.star;
+							}
 						}
 					}
 					return { rawValue, value, valueFormat };
@@ -3645,6 +3747,10 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Hated ' + value; }
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.brokenHeart;
+							value += ' ' + this.tfIcon.brokenHeart;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
@@ -3661,10 +3767,40 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Feedback ' + value; }
+						if (ppt.itemShowStatisticsIcon && value) {
+							valueFormat += ' ' + this.tfIcon.heart;
+							value += ' ' + this.tfIcon.heart;
+						}
 					}
 					return { rawValue, value, valueFormat };
 				}
-			}
+			},
+			{
+				name: 'Track country', type: ['File tags'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = ppt.itemShowStatisticsIcon ? this.tf.trackCountry : this.tf.trackCountryIso;
+					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(ppt.itemShowStatisticsIcon ? ' ' : ';')).flat(Infinity).filter(Boolean);
+					const ln = values.length;
+					if (ln) {
+						valueFormat = value = Array.from(new Set(values)).join(ppt.itemShowStatisticsIcon ? '  ' : ', ');
+						if (panel.imgView && this.label) { value = 'Track country ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}, useEmoji: true
+			},
+			{
+				name: 'Artist country', type: ['File tags'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
+					let rawValue, value, valueFormat;
+					const tf = ppt.itemShowStatisticsIcon ? this.tf.artistCountry : this.tf.artistCountryIso;
+					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(ppt.itemShowStatisticsIcon ? ' ' : ';')).flat(Infinity).filter(Boolean);
+					const ln = values.length;
+					if (ln) {
+						valueFormat = value = Array.from(new Set(values)).join(ppt.itemShowStatisticsIcon ? '  ' : ', ');
+						if (panel.imgView && this.label) { value = 'Artist country ' + value; }
+					}
+					return { rawValue, value, valueFormat };
+				}, useEmoji: true
+			},
 		];
 		this.statistics.forEach((s) => s.nameArt = s.nameTree = s.name);
 		{

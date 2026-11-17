@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 12/11/26 -->
+﻿<!DOCTYPE html> <!-- 17/11/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1410,6 +1410,10 @@
 					<div class="info5" style="margin-left:8.5%">Name,Style(0-4)</div>
 					<div id="tooltipFonts"></div>
 					<!-- Regorxxx -->
+					<!-- Regorxxx Add emoji support -->
+					<div class="info5" style="margin-left:8.5%">Name</div>
+					<div id="miscFonts"></div>
+					<!-- Regorxxx -->
 					<div class="info6"><b>Colours (R,G,B):</b></div>
 					<div id="colours1"></div>
 					<a class="tooltip" id="colorPicker" href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Colors/Color_picker_tool#ColorPicker_tool" target="_blank" oncontextmenu="copyToClipboardId('colorPicker')">Colour picker<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a></p>
@@ -2089,7 +2093,7 @@
 			var queueLabels = ['Show now playing track', 'Force sorting by queue idx']; // Regorxxx <- Queue source | Auto-DJ source ->
 			var plsSourceLabels = ['Force sorting by playlist idx']; // Regorxxx <- Support playlist sorting ->
 			var searchModeSortingLabels = ['Force sorting by search idx']; // Regorxxx <- Search mode ->
-			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Album art overlay', 'Main Tooltip', 'Album art Tooltip']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Custom art overlay font ->
+			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Album art overlay', 'Main Tooltip', 'Album art Tooltip', 'Emoji fallback']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Custom art overlay font | Add emoji support ->
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
 			var albumArtTfLabels = ['Custom views (1)', 'Custom views (2)', 'Folder view (1)', 'Folder view (2)', 'View labels (1)', 'View labels (2)']; // Regorxxx <- Custom TF art ->
@@ -2127,7 +2131,7 @@
 			var bookletPosLabels = ['Left', 'Right', 'Left (if no other icon shown)'];
 			// Regorxxx ->
 			// Regorxxx <- New statistics
-			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips'];
+			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips', 'Auto show icons'];
 			var statisticsDecimalsLabels = ['Number of decimals shown'];
 			// Regorxxx ->
 			// Regorxxx <- Send to playlist & select
@@ -2199,10 +2203,10 @@
 					type: ['int', 'int', 'int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
-				// Regorxxx <- Tooltip font | Custom album art overlay track count | Highlight active playlist | Booklet icon | Custom art overlay font
+				// Regorxxx <- Tooltip font | Custom album art overlay track count | Highlight active playlist | Booklet icon | Custom art overlay font | Add emoji support
 				custom: {
-					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custAlbumArtOverlayFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'text', 'text_h', 'textSel', 'nowp', 'apls', 'booklet', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
+					name: ['custFont', 'custAlbumArtGrpFont', 'custAlbumArtLotFont', 'custAlbumArtDurFont', 'custAlbumArtOverlayFont', 'custTooltipFont', 'custAlbumArtTooltipFont', 'custEmojiFont', 'text', 'text_h', 'textSel', 'nowp', 'apls', 'booklet', 'search', 'txt_box', 'bg', 'bg_h', 'bgSel', 'frame', 'bgSelframe', 'counts', 'icon_c', 'icon_e', 'icon_h', 'line', 's_line', 'sideMarker', 'bgTrans', 'textTrackCount', 'bgTrackCount'],
+					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Sorting transliteration | Preserve tree sorting at selection | Performance improvements
@@ -2227,9 +2231,9 @@
 				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'headerTitleShowSource', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'facetView', 'showTracks', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'menuShowTop', 'menuShowMusicMap', 'menuShowDj', 'menuShowPlay', 'menuShowExpand', 'menuShowSel', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistSidemarker', 'highLightBooklet', 'bookletSidemarker', 'bookletIndicator', 'bookletIndicatorOverlay', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options | Booklet icon | Header on search bar | Menu options at context menu ->
-				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
+				statistics: ['labelStatistics', 'tooltipStatistics', 'itemShowStatisticsIcon', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtLabelMedium', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'albumArtNodeCollage', 'albumArtNodeCollageDedup', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', ppt['drawMode_internal'].value === 1 ? 'imgFrontPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1Perspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2Perspective' : null, 'imgFrontSleeve', 'imgBackSleeve', 'imgDiscSleeve', 'imgIconSleeve', 'imgArtistSleeve', 'imgTf1Sleeve', 'imgTf2Sleeve', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered | Branch collage art | New art styles ->
-				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custAlbumArtOverlayFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'bookletUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist | Custom art overlay font ->
+				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custAlbumArtOverlayFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'custEmojiFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'bookletUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist | Custom art overlay font | Add emoji support ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'logArtProfiler', 'logArtCustomTf', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'streamSupport', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Art profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
 			}
 			box.all = Object.values(box).flat(Infinity); // Regorxxx <- New search tab | New TF remap tab | New statistics tab | Code cleanup ->
@@ -3428,7 +3432,7 @@
 				i = 0; { window.statisticsDisplayTree.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsDisplayTree_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsDisplayTreeLabel" for="statisticsDisplayTree_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayTree') + '</label></div>'); }
 				i = 0; { window.statisticsTooltip.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsTooltip_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsTooltipLabel" for="statisticsTooltip_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomTooltip') + '</label></div>'); }
 
-				for (i = 13; i < 15; i++) { window.labelStatistics.insertAdjacentHTML('beforeend', '<div><input id="labelStatistics_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="labelStatistics_checkbox' + i + '" class="checkbox_label">' + statisticsLabels[i] + '</label></div>') };
+				for (i = 13; i < 16; i++) { window.labelStatistics.insertAdjacentHTML('beforeend', '<div><input id="labelStatistics_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="labelStatistics_checkbox' + i + '" class="checkbox_label">' + statisticsLabels[i] + '</label></div>') };
 				window.itemCounts_dropdown.innerHTML = itemCountsLabels[ppt['nodeCounts_internal'].value];
 				i = 0; window.labelStatistics.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label id="statisticsDecimalsLabel" for="statisticsDecimals_container' + i + '" class="inp_label1">' + statisticsDecimalsLabels[i] + '</label><input id="statisticsDecimals_container' + i + '" name="statistics_input" class="input70" /></div>');
 				for (i = 0; i < 3; i++) { window.itemCounts.insertAdjacentHTML('beforeend', '<a onclick="setItemCounts(' + i + ');">' + itemCountsLabels[i] + '</a>'); }
@@ -3575,6 +3579,7 @@
 				i = 0; window.fonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>');
 				for (i = 1; i < 5; i++) { window.albumArtFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
 				for (i = 5; i < 7; i++) { window.tooltipFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
+				for (i = 7; i < 8; i++) { window.miscFonts.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input id="font_checkbox' + i + '" name="custom_checkbox" style="' + cbox + '" type="checkbox" /><input id="font_container' + i + '" name="custom_input" class="input40" /><label for="font_container' + i + '" class="inp_label2">' + fontLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Code cleanup
 				j = 0;

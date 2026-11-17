@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/11/26
+//17/11/26
 
 /* global panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, img:readable, but:readable */
 /* global SmoothingMode:readable */
@@ -585,6 +585,17 @@ class UserInterface {
 		} else { this.font.tracks = _gdiFont('Arial', Math.round(this.font.main.Size * 12 / 14), 2); }
 		// Regorxxx ->
 
+		// Regorxxx <- Add emoji support
+		if (ppt.custEmojiFontUse && ppt.custEmojiFont.length) {
+			const custFont = $.split(ppt.custEmojiFont, 1);
+			this.font.emojiArt = _gdiFont(custFont[0], this.font.statistics.Size, this.font.statistics.Style);
+			this.font.emojiTree = _gdiFont(custFont[0], this.font.small.Size, this.font.label.Style);
+		} else {
+			this.font.emojiArt = _gdiFont('EmojiTwo COLRv0', this.font.statistics.Size, this.font.statistics.Style);
+			this.font.emojiTree = _gdiFont('EmojiTwo COLRv0', this.font.small.Size, this.font.label.Style); // Regorxxx <- Add emoji support ->
+		}
+		// Regorxxx ->
+
 		if (init) return;
 		this.calcText(true);
 	}
@@ -1152,11 +1163,16 @@ class UserInterface {
 		this.font.find = _gdiFont(fnm, this.font.zoomSize * 1.5, 1);
 		this.font.label = _gdiFont(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 11 / 14) : this.font.zoomSize, fst);
 		this.font.small = _gdiFont(fnm, !ppt.treeAutoExpand || ppt.libSource != 2 ? Math.round(this.font.zoomSize * 12 / 14) : this.font.zoomSize, fst);
-		this.font.tracks = _gdiFont(this.font.tracks.Name, Math.round(this.font.zoomSize * 12 / 14), this.font.tracks.Style); // Regorxxx <- Custom art overlay font ->
 		this.sbar.narrowWidth = ppt.narrowSbarWidth == 0 ? $.clamp(Math.floor(this.font.zoomSize / 7), 2, 10) : ppt.narrowSbarWidth;
 		this.font.group = _gdiFont(this.font.group.Name, this.font.zoomSize, this.font.group.Style);
 		this.font.lot = _gdiFont(this.font.lot.Name, this.font.zoomSize, this.font.lot.Style);
 		this.font.statistics = _gdiFont(this.font.statistics.Name, this.font.zoomSize, this.font.statistics.Style);
+
+		this.font.mainTooltip = _gdiFont(this.font.groupTooltip.Name, this.font.zoomSize, this.font.mainTooltip.Style); // Regorxxx <- Custom art overlay font ->
+		this.font.groupTooltip = _gdiFont(this.font.groupTooltip.Name, this.font.zoomSize, this.font.groupTooltip.Style); // Regorxxx <- Custom art overlay font ->
+		this.font.tracks = _gdiFont(this.font.tracks.Name, Math.round(this.font.zoomSize * 12 / 14), this.font.tracks.Style); // Regorxxx <- Custom art overlay font ->
+		this.font.emojiArt = _gdiFont(this.font.emojiArt.Name, this.font.zoomSize, this.font.statistics.Style); // Regorxxx <- Add emoji support ->
+		this.font.emojiTree = _gdiFont(this.font.emojiTree.Name, this.font.small.Size, this.font.label.Style); // Regorxxx <- Add emoji support ->
 
 		this.calcText(true);
 		panel.on_size();
