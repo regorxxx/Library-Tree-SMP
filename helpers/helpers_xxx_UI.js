@@ -1,5 +1,5 @@
 ﻿'use strict';
-//13/11/26
+//17/11/26
 
 /* exported colorBlind, colorbrewer, LEFT, RIGHT, CENTRE, DT_CENTER, SF_CENTRE, LM, TM, nextId, _tt, blendColors, lightenColor, darkenColor, tintColor, opaqueColor, invert, _gdiFont, removeIdFromStr, _textWidth, _textHeight, _textLines, _textLinesWrap, popup, applyAsMask, applyMask, getRed, getBlue, getGreen, getAlpha, applyEffectAsMask, applyEffect, applyEffectAsMaskEffect */
 
@@ -432,7 +432,7 @@ function _gdiFont(name, size, style) {
 	if (!fonts[id]) {
 		if (utils.CheckFont(name)) { fonts[id] = gdi.Font(name, size, style || 0); }
 		else if (utils.LoadFont) {
-			const intFontFiles = [builtInFonts[name], name + '.ttf', name + '.otf'].filter(Boolean);
+			const intFontFiles = [builtInFonts[name.toLowerCase()], name + '.ttf', name + '.otf'].filter(Boolean);
 			const intFontFolders = [folders.userFonts, folders.fonts];
 			intFontFiles.some((intFontFile) => {
 				return intFontFolders.some((path) => {
