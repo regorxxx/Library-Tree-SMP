@@ -83,6 +83,7 @@
 - UI: fixed bug, on original script, related to a crash on album art mode while scrolling in some configurations. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1086764.html#msg1086764).
 - UI: fixed bug, on original script, related to wrong art text alignment when using color codes. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089502.html#msg1089502).
 - UI: fixed bug, on original script, related to D2D draw mode incompatibilities with some themes.
+- UI: fixed bug, on original script, related stats text clipping at right side.
 - UI: fixed branch collage art leaving empty spaces in some cases instead of filling them with dummy art.
 - UI: fixed 'Last played (hour)' overlay not working.
 - Quicksetup: fixed bug, on original script, related to 'Quick Setup: Artist Photos [Labels Right]' preset using View by folder structure instead of an artist view.
