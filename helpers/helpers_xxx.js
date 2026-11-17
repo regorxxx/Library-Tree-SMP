@@ -228,7 +228,8 @@ loadUserDefFile(globFonts);
 
 // Check user-set fonts
 Object.keys(globFonts).forEach((key) => {
-	if (!key.startsWith('_') && !utils.CheckFont(globFonts[key].name)) {
+	const name = globFonts[key].name;
+	if (!key.startsWith('_') && !utils.CheckFont(name)) {
 		if (utils.LoadFont) {
 			const intFontFiles = [builtInFonts[name.toLowerCase()], name + '.ttf', name + '.otf'].filter(Boolean);
 			const intFontFolders = [folders.userFonts, folders.fonts];
@@ -237,7 +238,7 @@ Object.keys(globFonts).forEach((key) => {
 		fb.ShowPopupMessage(
 			'Missing font set at:' +
 			'\n\t' + globFonts._file +
-			'\n\n\t-' + key + ':\t' + globFonts[key].name +
+			'\n\n\t-' + key + ':\t' + name +
 			'\n\n\nEither change the font at the JSON file to one available in your system or install it. Note default fonts are bundled at:' +
 			'\n\t' + folders.xxx + 'fonts\\' +
 			'\n\nYou may also check at:' +
