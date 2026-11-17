@@ -1,0 +1,106 @@
+﻿List view:
+-----------------
+• Ctrl + A: Select all nodes|Select none.
+• Ctrl + <: Invert selected nodes.
+• Ctrl + C: Copy selected tracks.
+• Ctrl + V: Paste selected tracks.
+• Ctrl + E: Set focus at Search box.
+• Enter: Send to current playlist.
+• Shift + Enter: Add to current playlist.
+• Ctrl + Enter: Send to new playlist.
+• Page Up|Page Down: Scroll up|Scroll down.
+• Home|End: Scroll to top|Scroll to bottom.
+• Up|Down: Navigate tree.
+• Left|Right: Collapse|Expand nodes.
+• Alt + Up: Jump to first node within same level.
+• Alt + Down: Jump to last node within same level.
+• Num *: Expand current nodes.
+• Num -: Collapse all nodes.
+
+Quick-Search:
+-------------
+• Tree can be navigated by pressing any char. i.e. pressing 'A'.
+• Multiple presses will jump between nodes with such initial (cycling).
+• Full strings can also be pressed, looking for first match (at start).
+• Pressing Shift|Ctrl first will allow matches at any position.
+• Use Up|Down keys to navigate between all found matches.
+• Asymmetric search and transliteration.
+
+Drag n' drop (tracks):
+----------------------
+• Standard: add selection to playlist.
+• On Search Box: add query based on tracks (Ctrl|Alt modifiers).
+• On Playback Queue: add tracks to playback queue (Ctrl modifier).
+
+Search Box:
+--------------
+• RegExp support: /[expression]/[flags], flags can be any of 'gimsuyt'.
+	∙ Flag 't' applies transliteration to tag values before matching.
+• Query sorting support: sorting expressions can be used along queries.
+	∙ Ascending: [...] SORT ASCENDING BY [...] | [...] SORT BY [...]
+	∙ Ascending: [...] SORT ASCENDING BY [...]
+	∙ Descending:  [...] SORT DESCENDING BY [...]
+	∙ Sorting without filtering: ALL SORT BY [...] | SORT BY [...]
+• Ctrl + A: Select all.
+• Ctrl + C: Copy selected text.
+• Ctrl + V: Paste selected text.
+• Ctrl + X: Cut selected text.
+• Back: Delete left characters.
+• Delete: Delete right characters.
+• Ctrl + Back: Delete left word.
+• Enter: Search.
+• Ctrl + Z: Undo.
+• Ctrl + Y: Redo.
+• Esc: Cancel search (and clean input).
+• Home: Set cursor at left.
+• End: Set cursor at right.
+• Left|Right: Move cursor.
+• Up|Down: Scroll search history.
+
+Panel Sorting:
+----------------------
+• Sorting is applied directly from View TF pattern.
+• Can be overridden by query expressions at Search box and Filters.
+• Check also Sorting submenu for further options.
+• Specific sources have additional settings (e.g. Playback Queue).
+• Selection sorting can be set independently (e.g. sending to playlist).
+• If not specified, selection sorting will use panel sorting by default.
+• Panel Sorting priority: Search box > Filter > Source > View
+
+Playlist sources:
+----------------------
+• By default shows all tracks mixed, like library sources.
+• Sorting is applied directly from View TF pattern.
+• There is a setting to sort by playlist idx.
+• Multi-branch playlist view splits tracks into their playlists.
+• Playlist manager features when multi-branch playlist view is enabled.
+
+Queue sources:
+----------------------
+• Sorting is applied by playback queue idx (configurable).
+• Display comes from View TF pattern.
+• Now playing track can be shown (configurable).
+• Check 'Playback queue' statistics to show idx.
+• Recommended to use TITLE-based view TFs (with single level branching).
+
+Search mode:
+----------------------
+• Works like foobar2000 search: empty at startup. i.e. no results.
+• Use the search box to fill the list with matches.
+• Filters work while a search is active.
+• Best used as popup panel (foo_flowin) and 'Remember on exit' disabled.
+
+UI:
+----------------------
+• Ctrl + Alt + Mouse Wheel to resize UI elements under mouse.
+• Double click scrollbar thumb to show now playing/focused item.
+• Double click scrollbar buttons to scroll to top/bottom.
+
+Transliteration support:
+-----------------------
+• Greek, Cyrillic, Chinese (Pinyin), Japanese (Katakana and Hiragana).
+• Each language usage can be independently switched.
+
+SMP / JSplitter Panel:
+----------------------
+• Shift + Win + R. Click: open SMP panel menu.
