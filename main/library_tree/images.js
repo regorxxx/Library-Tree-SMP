@@ -1094,7 +1094,7 @@ class Images {
 		stack[1].sort((a, b) => b.selIdx - a.selIdx);
 		const stat = this.labels.statistics ? pop.getCurrentStatistic() : null; // Regorxxx <- New statistics | Code cleanup | Improve statistics tooltip ->
 		// Regorxxx <- Improve statistics labels | Add emoji support
-		const statsEmoji = stat.useEmoji && ppt.itemShowStatisticsIcon;
+		const statsEmoji = stat && stat.useEmoji && ppt.itemShowStatisticsIcon;
 		const statsFont = statsEmoji ? ui.font.emojiArt : ui.font.statistics;
 		// Regorxxx ->
 		stack.flat().forEach((cell) => {
