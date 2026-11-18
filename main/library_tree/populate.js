@@ -1784,7 +1784,7 @@ class Populate {
 							case 2: {
 								const type = panel.search.txt ? 'search' : panel.hasFilterActive() ? 'filter' : 'standard';
 								const key = this.getKey(v);
-								count = v.count = this.branchCount(v, !!v.root, true, false, key, type);
+								count = v.count = this.branchCount(v, !!v.root, true, false, key, type) || this.trackCount(v.item);
 								v.count += v.count > 1 ? ' items' : ' item';
 								break;
 							}
