@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 17/11/26 -->
+﻿<!DOCTYPE html> <!-- 18/11/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -2090,7 +2090,7 @@
 			var folderSortingFbLabels = ['Prefer native sorting for library sources'];
 			var sortingTransLabels = ['Transliterate values to Latin', 'Transliterate values to Latin'];
 			// Regorxxx  ->
-			var queueLabels = ['Show now playing track', 'Force sorting by queue idx']; // Regorxxx <- Queue source | Auto-DJ source ->
+			var queueLabels = ['Force sorting by queue idx', 'Show now playing track', 'Show past played tracks. 0-Disabled']; // Regorxxx <- Queue source | Auto-DJ source ->
 			var plsSourceLabels = ['Force sorting by playlist idx']; // Regorxxx <- Support playlist sorting ->
 			var searchModeSortingLabels = ['Force sorting by search idx']; // Regorxxx <- Search mode ->
 			var fontLabels = ['Main', 'Album art group line 1', 'Album art group line 2', 'Album art statistics line', 'Album art overlay', 'Main Tooltip', 'Album art Tooltip', 'Emoji fallback']; // Regorxxx <- Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Custom art overlay font | Add emoji support ->
@@ -2131,7 +2131,7 @@
 			var bookletPosLabels = ['Left', 'Right', 'Left (if no other icon shown)'];
 			// Regorxxx ->
 			// Regorxxx <- New statistics
-			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips', 'Auto show icons'];
+			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips', 'Auto show icons (+ Flag emojis)'];
 			var statisticsDecimalsLabels = ['Number of decimals shown'];
 			// Regorxxx ->
 			// Regorxxx <- Send to playlist & select
@@ -2173,10 +2173,10 @@
 			}
 
 			input = {
-				// Regorxxx <- Top tracks | Throttle selection playlist update | Performance improvements
+				// Regorxxx <- Top tracks | Throttle selection playlist update | Performance improvements | Queue source
 				behaviour: {
-					name: ['plsRefreshLimit', 'autoExpandLimit', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl', 'dragDropMinPx'],
-					type: ['int', 'int', 'text', 'text', 'text', 'text', 'text', 'int']
+					name: ['plsRefreshLimit', 'autoExpandLimit', 'queuePastPlayed', 'libPlaylist', 'customSort', 'topTracksFilter', 'topTracksSorting', 'topTracksRemDupl', 'dragDropMinPx'],
+					type: ['int', 'int', 'int', 'text', 'text', 'text', 'text', 'text', 'int']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Drag n' drop to search box | Customizable quicksearch timer
@@ -2227,7 +2227,7 @@
 
 			box = {
 				presets: ['presetRulesOnSourceUse', 'presetRulesOnViewUse', 'presetRulesOnFilterUse', 'presetRulesOnPlsUse', 'presetRulesOnNotifyUse'], // Regorxxx <- Presets tab | Preset rules ->
-				behaviour: ['searchMode', 'plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueNowPlaying', 'queueSorting', 'searchModeSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources | Search mode ->
+				behaviour: ['searchMode', 'plsActions', 'sbarWinMetrics', 'smooth', 'touchControl', 'sbarWinDarkThemeFix', 'autoCollapse', 'treeAutoExpandSingle', 'treeAutoExpand', 'rememberTree', 'rememberView', 'rememberPreSearch', 'rememberSelForce', 'fullLineSelection', 'autoPlay', 'resetSel', 'stndModeFollowSelection', 'flowModeFollowSelection', 'folderSortingFb', 'folderSortingTrans', 'viewSortingTrans', 'plsSorting', 'queueSorting', 'queueNowPlaying', 'searchModeSorting', 'activateOnChange', 'libPlaylistCreate', 'smartSort', 'selectAdded'], // Regorxxx <- Send to playlist & select | Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Queue source | Auto-DJ source | Scrollbar on windows style improvements | Preserve tree sorting at selection | Support playlist sorting | Reset selection on blank regions | Switch forced selection remember | Mouse actions on playlist sources | Search mode ->
 				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'headerTitleShowSource', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'facetView', 'showTracks', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'menuShowTop', 'menuShowMusicMap', 'menuShowDj', 'menuShowPlay', 'menuShowExpand', 'menuShowSel', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistSidemarker', 'highLightBooklet', 'bookletSidemarker', 'bookletIndicator', 'bookletIndicatorOverlay', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options | Booklet icon | Header on search bar | Menu options at context menu ->
@@ -3273,7 +3273,8 @@
 				for (i = 0; i < plsSourceLabels.length; i++) { window.plsSource.insertAdjacentHTML('beforeend', '<div><input id="plsSource_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="plsSource_checkbox' + i + '" class="checkbox_label">' + plsSourceLabels[i] + '</label></div>'); }
 				// Regorxxx ->
 				// Regorxxx <- Queue source | Auto-DJ source
-				for (i = 0; i < queueLabels.length; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
+				for (i = 0; i < 2; i++) { window.queue.insertAdjacentHTML('beforeend', '<div><input id="queue_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="queue_checkbox' + i + '" class="checkbox_label">' + queueLabels[i] + '</label></div>'); }
+				i = 2; window.queue.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="queue_container' + i + '" class="inp_label1">' + queueLabels[i] + '</label><input id="queue_container' + i + '" name="behaviour_input" class="input75" /></div>');
 				// Regorxxx ->
 				// Regorxxx <- Search mode
 				for (i = 0; i < searchModeSortingLabels.length; i++) { window.searchModeSorting.insertAdjacentHTML('beforeend', '<div><input id="panel.searchModeSorting()_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="panel.searchModeSorting()_checkbox' + i + '" class="checkbox_label">' + searchModeSortingLabels[i] + '</label></div>'); }

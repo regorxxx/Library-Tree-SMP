@@ -1,5 +1,5 @@
 ﻿'use strict';
-//03/11/26
+//18/11/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -681,14 +681,30 @@ class Library {
 				case 2: this.list = this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
 				// Regorxxx <- Queue source
 				case 3: {
-					if (ppt.queueNowPlaying) {
-						this.list = new FbMetadbHandleList();
+					this.list = new FbMetadbHandleList();
+					if (ppt.queuePastPlayed > 0) {
+						const pp = fb.GetQueryItems(fb.GetLibraryItems(), globQuery.lastPlayedFunc.replaceAll('#QUERYEXPRESSION#', 'DURING LAST 7 DAYS'));
+						if (pp.Count) {
+							pp.OrderByFormat(fb.TitleFormat(globTags.lastPlayed), -1);
+							pp.RemoveRange(ppt.queuePastPlayed, pp.Count);
+							pp.Reverse();
+							this.list.AddRange(pp);
+							if (ppt.queueNowPlaying) {
+								const np = fb.GetNowPlaying();
+								if (np) {
+									pp.Sort();
+									if (pp.BSearch(np) === -1) { this.list.Add(np); }
+								}
+							}
+						} else if (ppt.queueNowPlaying) {
+							const np = fb.GetNowPlaying();
+							if (np) { this.list.Add(np); }
+						}
+					} else if (ppt.queueNowPlaying) {
 						const np = fb.GetNowPlaying();
 						if (np) { this.list.Add(np); }
-						this.list.AddRange(plman.GetPlaybackQueueHandles());
-					} else {
-						this.list = plman.GetPlaybackQueueHandles();
 					}
+					this.list.AddRange(plman.GetPlaybackQueueHandles());
 					break;
 				}
 				// Regorxxx ->
@@ -899,14 +915,30 @@ class Library {
 			case 2: this.list = handleList || this.cache || plman.GetPlaylistItems(plman.FindPlaylist(ppt.lastPanelSelectionPlaylist)); break;
 			// Regorxxx <- Queue source
 			case 3: {
-				if (ppt.queueNowPlaying) {
-					this.list = new FbMetadbHandleList();
+				this.list = new FbMetadbHandleList();
+				if (ppt.queuePastPlayed > 0) {
+					const pp = fb.GetQueryItems(fb.GetLibraryItems(), globQuery.lastPlayedFunc.replaceAll('#QUERYEXPRESSION#', 'DURING LAST 7 DAYS'));
+					if (pp.Count) {
+						pp.OrderByFormat(fb.TitleFormat(globTags.lastPlayed), -1);
+						pp.RemoveRange(ppt.queuePastPlayed, pp.Count);
+						pp.Reverse();
+						this.list.AddRange(pp);
+						if (ppt.queueNowPlaying) {
+							const np = fb.GetNowPlaying();
+							if (np) {
+								pp.Sort();
+								if (pp.BSearch(np) === -1) { this.list.Add(np); }
+							}
+						}
+					} else if (ppt.queueNowPlaying) {
+						const np = fb.GetNowPlaying();
+						if (np) { this.list.Add(np); }
+					}
+				} else if (ppt.queueNowPlaying) {
 					const np = fb.GetNowPlaying();
 					if (np) { this.list.Add(np); }
-					this.list.AddRange(plman.GetPlaybackQueueHandles());
-				} else {
-					this.list = plman.GetPlaybackQueueHandles();
 				}
+				this.list.AddRange(plman.GetPlaybackQueueHandles());
 				break;
 			}
 			// Regorxxx ->

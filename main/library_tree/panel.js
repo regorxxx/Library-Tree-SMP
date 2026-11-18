@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/26
+//18/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable */
@@ -1059,10 +1059,12 @@ class Panel {
 	}
 
 	// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter
-	reOpen() {
+	reOpen(type) {
 		removeEventListeners('on_paint'); // Avoid library processing
-		lib.logTree();
-		ppt.set('Library Tree Dialog Box Reopen', true);
+		if (type === 'apply') {
+			lib.logTree();
+			ppt.set('Library Tree Dialog Box Reopen', true);
+		}
 		return window.Reload();
 	}
 	// Regorxxx ->
@@ -1097,18 +1099,20 @@ class Panel {
 				this.getFields(ppt.viewBy, ppt.filterBy, true);
 				// Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter | Multiple filters support
 				if (this.setViewIndex(viewName, viewType) === -1 || !this.getFilterIndexes(this.filter.mode, filterNames, filterTypes).length) {
-					return this.reOpen();
+					return this.reOpen(type);
 				} else { this.getFields(ppt.viewBy, ppt.filterBy); }
 				// Regorxxx ->
 			}
 			const filterDuplBy = ppt.filterDuplBy; // Regorxxx <- Global duplicates filter ->
+			const queuePastPlayed = ppt.queuePastPlayed; // Regorxxx <- Global duplicates filter ->
 			// const refl = ppt.filterDuplBy; // Regorxxx <- Global duplicates filter ->
 			if (new_ppt) this.updateProp($.jsonParse(new_ppt, {}), 'value');
-			if (new_cfgWindow) ppt.set('Library Tree Dialog Box', new_cfgWindow);
+			if (new_cfgWindow) { ppt.set('Library Tree Dialog Box', new_cfgWindow); }
 			ppt.set('Library Tree Dialog Box Reopen', false); // Regorxxx <- Fix HTML options panel error on panel reload when changing current library view or filter ->
 			if (type == 'reset') { this.updateProp(ppt, 'default_value'); }
 
-			if (ppt.filterDupl && filterDuplBy !== ppt.filterDuplBy) { return this.reOpen(); } // Regorxxx <- Global duplicates filter ->
+			if (ppt.filterDupl && filterDuplBy !== ppt.filterDuplBy) { return this.reOpen(type); } // Regorxxx <- Global duplicates filter ->
+			if (this.isQueueLikeSource() && queuePastPlayed !== ppt.queuePastPlayed) { return this.reOpen(type); } // Regorxxx <- Global duplicates filter ->
 			// Regorxxx <- Branch collage art ->
 			if (this.imgView && ppt.albumArtNodeCollage && new_ppt && type === 'apply') {
 				if (img.timer.load) {
@@ -1960,7 +1964,7 @@ class Panel {
 			key = v[0].replace('_internal', '');
 			if (ppt[key] !== v[1][value]) {
 				ppt[key] = v[1][value];
-				if (isPlsLike && key === 'plsSorting' || isQueueLike && key === 'queueSorting') { // Regorxxx <- Queue source | Support playlist sorting ->
+				if (isPlsLike && key === 'plsSorting' || isQueueLike && (key === 'queueSorting' || key === 'queuePastPlayed' || 'queueNowPlaying')) { // Regorxxx <- Queue source | Support playlist sorting ->
 					bRefreshLib = true;
 				}
 			}
@@ -2041,6 +2045,8 @@ class Panel {
 			v.count = '';
 			delete v.statistics;
 			delete v._statistics;
+			delete v.stats;
+			delete v.tt;
 		});
 		this.prefix = ppt.prefix.split('|'); // Regorxxx <- Fix values on reset ->
 		// Regorxxx <- Sorting transliteration
@@ -2056,7 +2062,6 @@ class Panel {
 			lib.logTree();
 		}
 		// Regorxxx ->
-		img.setRoot();
 		ppt.zoomImg = Math.round($.clamp(ppt.zoomImg, 10, 500));
 
 		let o = this.imgView ? 'verticalAlbumArtPad' : 'verticalPad';
@@ -2077,7 +2082,7 @@ class Panel {
 		sbar.duration.step = Math.round(sbar.duration.full * 2 / 3);
 		sbar.duration.bar = sbar.duration.full;
 		sbar.duration.barFast = sbar.duration.step;
-		if (!ppt.butCustIconFont.length) ppt.butCustIconFont = 'Segoe UI Symbol';
+		if (!ppt.butCustIconFont.length) { ppt.butCustIconFont = 'Segoe UI Symbol'; }
 		ui.setSbar();
 		pop.nodeStyle = ppt.nodeStyle; // Regorxxx <- Fix crash on node change ->
 		on_colours_changed();
@@ -2134,12 +2139,10 @@ class Panel {
 		}
 		if (!bRefreshLib && (!this.isSearchLikeSource() || this.search.txt)) { lib.rootNodes(1, true); } // Regorxxx <- Apply relevant changes on properties update | Search mode ->
 		this.pn_h_auto = ppt.pn_h_auto && ppt.rootNode;
-		if (this.pn_h_auto) {
-			window.MaxHeight = window.MinHeight = ppt.pn_h;
-		}
-		if (this.pn_h_auto && !this.imgView && ppt.pn_h == ppt.pn_h_min && this.tree[0]) pop.clearChild(this.tree[0]);
+		if (this.pn_h_auto) { window.MaxHeight = window.MinHeight = ppt.pn_h; }
+		if (this.pn_h_auto && !this.imgView && ppt.pn_h == ppt.pn_h_min && this.tree[0]) { pop.clearChild(this.tree[0]); }
 		pop.checkAutoHeight();
-		if (sbar.scroll > sbar.max_scroll) sbar.checkScroll(sbar.max_scroll);
+		if (sbar.scroll > sbar.max_scroll) { sbar.checkScroll(sbar.max_scroll); }
 		window.Repaint();
 	}
 

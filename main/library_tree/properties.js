@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/26
+//18/11/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -399,6 +399,7 @@ let properties = [
 	['Library Source: Playing Playlist Fallback Stopped', false, 'playlistFallbackStop'], // Regorxxx <- Active/Playing/All playlist source ->
 	['Library Source: Playback Queue force sorting', true, 'queueSorting'], // Regorxxx <- Queue source ->
 	['Library Source: Playback Queue show now playing', true, 'queueNowPlaying'], // Regorxxx <- Queue source ->
+	['Library Source: Playback Queue show past played', 0, 'queuePastPlayed'], // Regorxxx <- Queue source ->
 	['Library Source: Use cache (experimental)', true, 'libSourceCache'], // Regorxxx <- Internal cache of views ->
 	['Library Source: Stats sorting', false, 'statsSorting'], // Regorxxx <- Sort by Stats ->
 	['Library Source: Reverse sorting', false, 'reverseSorting'], // Regorxxx <- Sort by Stats ->

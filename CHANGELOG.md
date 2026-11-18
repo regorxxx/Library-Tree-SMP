@@ -27,6 +27,7 @@
 - Filters: added support for multiple filters at the same time by pressing Shift at the filter menu. They are internally joined as '(FILTER1) AND (FILTER2) AND (...)'. In case a filter also has a SORT BY expression, it will be added to the end of the queries; If multiple filters has sorting expressions, then the last one will be preferred (so selection order via menus matters in such case). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1087544.html#msg1087544).
 - Filters: added new default filter query expressions like: 'Recently Modified', ...
 - Sources: added new system file explorer source based on [WSH Tree Explorer by Br3tt](https://www.deviantart.com/br3tt/art/WSH-Tree-Explorer-1-7-196023730).
+- Sources: new setting to show past played items on queue sources, hard-limited to last 7 days. Number of items shown can be set at 'Behaviour' tag (HTML options panel) and 'Library Source: Playback Queue show past played' (properties panel); setting it to 0 disables it.
 - Sorting: added new setting (at 'Views' submenu) to sort tree by statistics and also to reverse sorting (which can be used in conjunction of any other sorting setting).
 - Sorting: reverse sorting now works for any view and along any other sorting method.
 - Sorting: folder view can now be sorted using sorting submenu.
@@ -61,6 +62,7 @@
 - UI: greatly improved repainting while loading art and jumping to random tracks on library (for example using flow mode). See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1089137.html#msg1089137).
 - UI: root node settings will be lost after update due to a property rename.
 - HTML: cleanup of 'Display' tab, with some options moved to its own sub-section. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1088610.html#msg1088610).
+- HTML: improvements to panel reloading in some situations after clicking Ok/Apply.
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Album art: branch collage art now also supports same-level branching ('¦'). New search mode-related view TFs use it.
 - Syntax: $iterate{} now also allows backticks (`), in addition to single quotes ('), to escape the TF function. Syntax docs have been updated to reflect the change, along more examples and tips.

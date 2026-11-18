@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/26
+//18/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -285,16 +285,16 @@ class Populate {
 	}
 	// Regorxxx ->
 
-	arrayToRange(array) {
-		return array.slice().sort((a, b) => { return a - b; }).reduce((ranges, value) => {
-			const lastIndex = ranges.length - 1;
-			if (lastIndex === -1 || ranges[lastIndex].max !== value - 1) {
-				ranges.push({ min: value, max: value });
-			} else {
-				ranges[lastIndex].max = value;
-			}
-			return ranges;
-		}, []).map(function (range) { return range.min === range.max ? range.min.toString() : range.min + '-' + range.max; });
+	arrayToRange(array, bConsecutive = true) {
+		return array.slice()
+			.sort((a, b) => a - b)
+			.reduce((ranges, value) => {
+				const lastIndex = ranges.length - 1;
+				if (lastIndex === -1 || ranges[lastIndex].max !== value - 1 && bConsecutive) { ranges.push({ min: value, max: value }); }
+				else { ranges[lastIndex].max = value; }
+				return ranges;
+			}, [])
+			.map((range) => range.min === range.max ? range.min.toString() : range.min + '-' + range.max);
 	}
 
 	// Regorxxx <- Preserve tree sorting at selection
@@ -3536,18 +3536,30 @@ class Populate {
 					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
 					const count = handleList.Count;
 					const queueCount = queueHandles.Count;
+					const lastPlayed = ppt.queuePastPlayed > 0 ? fb.TitleFormat(globTags.lastPlayed).EvalWithMetadbs(handleList) : null;
+					const now = Date.now(), timeStr = 'min ago', timeFactor = (1000 * 60);
 					for (let i = 0; i < count; i++) {
-						if (np && handleList[i].Compare(np)) { indices.add(0); }
+						let bDone;
+						if (np && handleList[i].Compare(np)) { indices.add(0); bDone = true; }
 						for (let k = 0; k < queueCount; k++) {
-							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); }
+							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); bDone = true; }
+						}
+						if (!bDone && ppt.queuePastPlayed > 0) {
+							const val = Math.floor((now - new Date(lastPlayed[i])) / timeFactor);
+							indices.add(val + timeStr);
 						}
 					}
 					const ln = indices.size;
 					if (ln) {
 						if (ln === 1) { index = indices.values().next().value.toString(); }
 						else {
-							index = this.arrayToRange([...indices]);
-							index.join();
+							index = [...indices];
+							index = index.some((v) => typeof v === 'string')
+								? [
+									this.arrayToRange(index.filter((v) => !Number.isInteger(v)).map((v) => v.replace(timeStr, '')), false) + timeStr,
+									this.arrayToRange(index.filter((v) => Number.isInteger(v)))
+								].join(', ')
+								: this.arrayToRange(index);
 						}
 					}
 					if (index === '0') {
