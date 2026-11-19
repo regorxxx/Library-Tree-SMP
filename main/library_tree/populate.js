@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/11/26
+//19/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1065,12 +1065,17 @@ class Populate {
 					const next_text = !!text[i + 2];
 					let ellipsis_corr = 0;
 					let roomForEllipsis = true;
-					if (next_text && cur_w < w && w - cur_w < ellipsisSpace) roomForEllipsis = false;
+					if (next_text && cur_w < w && w - cur_w < ellipsisSpace) { roomForEllipsis = false; }
 					if (!roomForEllipsis) {
 						text[i + 2] = '';
 						ellipsis_corr = ellipsisSpace;
 					}
-					col[i] = i > 0 ? (text[i - 1]).split('`') : (!panel.imgView || !img.labels.overlayDark ? ui.col.txtArr : [$.RGB(240, 240, 240), ui.col.text_h, ui.col.text]);
+					col[i] = i > 0
+						? (text[i - 1]).split('`')
+						: (!panel.imgView || !img.labels.overlayDark
+							? ui.col.txtArr
+							: [$.RGB(240, 240, 240), ui.col.text_h, ui.col.text]
+						);
 					col_x[i] = x;
 					col_w[i] = w - x - ellipsis_corr > ellipsis_corr ? w - x - ellipsis_corr : w - x;
 					x += w_arr[i];
@@ -1333,7 +1338,7 @@ class Populate {
 						gr.FillSolidRect(sel_x + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? 0 : ui.l.w), item_y + ui.l.wc, sel_w + (!item.sel || (this.sbarShow == 1 && ui.sbar.type == 2) ? ui.l.w : -ui.l.w), ui.row.h - ui.l.w, item.sel ? ui.col.bgSel_h : ui.col.bg_h);
 					}
 				}
-				if (this.highlight.row == 1 && this.row.i == i && !sbar.draw_timer) gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.sideMarker);
+				if (this.highlight.row == 1 && this.row.i == i && !sbar.draw_timer) { gr.FillSolidRect(ui.l.w, item_y, ui.sz.sideMarker, ui.row.h, ui.col.sideMarker); }
 
 				if (ui.style.squareNode && ui.col.line) {
 					if (item.top) row[level] = i;
@@ -1351,7 +1356,7 @@ class Populate {
 									l_y += ui.row.h / 2;
 									l_h -= ui.row.h / 2;
 								}
-								if (i <= this.row.lineMax[depth] && (!this.inlineRoot || item.level)) gr.FillSolidRect(l_x, l_y, ui.l.w, l_h, ui.col.line);
+								if (i <= this.row.lineMax[depth] && (!this.inlineRoot || item.level)) { gr.FillSolidRect(l_x, l_y, ui.l.w, l_h, ui.col.line); }
 							}
 						}
 						if (item.bot) { row[level] = void (0); }
@@ -1376,8 +1381,8 @@ class Populate {
 						const y2 = Math.round(panel.search.h - sbar.delta) + Math.ceil(ui.row.h * (i + 0.5)) - ui.l.wf;
 						gr.FillSolidRect(item_x + ui.l.s2, y2, ui.l.s3, ui.l.w, ui.col.line);
 					}
-				} else if (!item.track && (!this.inlineRoot || item.level)) this.drawNode(gr, item, item_x, item_y, item.child.length < 1, this.m.br == i, item.sel);
-				if (!this.inlineRoot || item.level) item_x += ui.icon.w + (this.fullLineSelection ? 0 : ui.l.wf);
+				} else if (!item.track && (!this.inlineRoot || item.level)) { this.drawNode(gr, item, item_x, item_y, item.child.length < 1, this.m.br == i, item.sel); }
+				if (!this.inlineRoot || item.level) { item_x += ui.icon.w + (this.fullLineSelection ? 0 : ui.l.wf); }
 				const w = panel.tree.w - item_x - ui.sz.sel - item.count_w;
 				this.checkTooltip(item, item_x, item_y, item.name_w, w);
 				if (this.fullLineSelection && item.id != this.id) {
@@ -1465,10 +1470,10 @@ class Populate {
 		const y2 = Math.round(y);
 		switch (this.nodeStyle) {
 			case 0:
-				if (!this.highlight.node && item > 1) item -= 2;
+				if (!this.highlight.node && item > 1) { item -= 2; }
 				x = Math.round(x);
 				y = Math.round(y);
-				if (this.nd[item]) gr.DrawImage(this.nd[item], x, y, this.nd[item].Width, this.nd[item].Height, 0, 0, this.nd[item].Width, this.nd[item].Height);
+				if (this.nd[item]) { gr.DrawImage(this.nd[item], x, y, this.nd[item].Width, this.nd[item].Height, 0, 0, this.nd[item].Width, this.nd[item].Height); }
 				break;
 			case 1:
 			case 2:
@@ -1479,7 +1484,7 @@ class Populate {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : this.highlight.node ? ui.col.icon_h : ui.col.icon_e, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
 					} else {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						if (this.nodeStyle == 1) gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.nodeStyle == 1) { gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc); }
 					}
 				} else {
 					if (hover) {
@@ -1492,19 +1497,19 @@ class Populate {
 				}
 				break;
 			case 3: case 4: {
-				if (!this.highlight.row && this.fullLineSelection) x += ui.l.w;
+				if (!this.highlight.row && this.fullLineSelection) { x += ui.l.w; }
 				const y3 = Math.round(y + (ui.row.h - this.sy_sz) / 2 - 2);
 				gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 				if (parent) {
 					if (hover) {
-						if (this.highlight.node) gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_h, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						else gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e & 0xCFffffff, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.highlight.node) { gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_h, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc); }
+						else { gr.DrawString(ui.icon.expand2, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_e & 0xCFffffff, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc); }
 					} else {
 						gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
-						if (this.nodeStyle == 3) gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc);
+						if (this.nodeStyle == 3) { gr.DrawString(ui.icon.expand, ui.icon.font, selCol ? ui.col.textSel : ui.col.icon_c, x + 1, y2, panel.tree.w - x, ui.row.h, panel.s_lc); }
 					}
-				} else if (hover && this.highlight.node) gr.DrawImage(selCol ? this.triangle.select : this.triangle.highlight, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.highlight.Width, this.triangle.highlight.Height);
-				else gr.DrawImage(selCol ? this.triangle.select : this.triangle.expand, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.expand.Width, this.triangle.expand.Height);
+				} else if (hover && this.highlight.node) { gr.DrawImage(selCol ? this.triangle.select : this.triangle.highlight, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.highlight.Width, this.triangle.highlight.Height); }
+				else { gr.DrawImage(selCol ? this.triangle.select : this.triangle.expand, x - ui.icon.offset, y3, this.sy_sz, this.sy_sz, 0, 0, this.triangle.expand.Width, this.triangle.expand.Height); }
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -3298,7 +3303,7 @@ class Populate {
 					if (typeof value !== 'undefined') {
 						rawValue = value;
 						valueFormat = value = value + (panel.imgView ? ' kbps' : '');
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.numbers;
 							value += ' ' + this.tfIcon.numbers;
 						}
@@ -3311,7 +3316,7 @@ class Populate {
 					let rawValue, value, valueFormat;
 					rawValue = handleList.CalcTotalDuration();
 					valueFormat = value = utils.FormatDuration(rawValue);
-					if (ppt.itemShowStatisticsIcon && value) {
+					if (ppt.itemShowStatisticsIcon > 1 && value) {
 						valueFormat += ' ' + this.tfIcon.clock;
 						value += ' ' + this.tfIcon.clock;
 					}
@@ -3331,7 +3336,7 @@ class Populate {
 						size = size.map(v => Number.parseInt(v)).reduce((a, b) => a + b, 0);
 						rawValue = size;
 						valueFormat = value = this.formatBytes(size);
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.file;
 							value += ' ' + this.tfIcon.file;
 						}
@@ -3352,7 +3357,7 @@ class Populate {
 						rawValue = values / ln;
 						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 						if (panel.imgView && this.label) { value = 'Rating ' + value; }
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.star;
 							value += ' ' + this.tfIcon.star;
 						}
@@ -3373,7 +3378,7 @@ class Populate {
 						rawValue = values / ln;
 						valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 						if (panel.imgView && this.label) { value = 'Popularity ' + value; }
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.thermometer;
 							value += ' ' + this.tfIcon.thermometer;
 						}
@@ -3395,7 +3400,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'First release ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.calendar;
 							value += ' ' + this.tfIcon.calendar;
 						}
@@ -3417,7 +3422,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'First release ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.calendar;
 							value += ' ' + this.tfIcon.calendar;
 						}
@@ -3442,7 +3447,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Key ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.key;
 							value += ' ' + this.tfIcon.key;
 						}
@@ -3467,7 +3472,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Open key ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.key;
 							value += ' ' + this.tfIcon.key;
 						}
@@ -3492,7 +3497,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'Camelot key ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.key;
 							value += ' ' + this.tfIcon.key;
 						}
@@ -3517,7 +3522,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? [v.root ? 'BPM ' : ''] + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.chart;
 							value += ' ' + this.tfIcon.chart;
 						}
@@ -3574,7 +3579,7 @@ class Populate {
 						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
 						if (panel.imgView && this.label) { value = 'Queue ' + value; }
 					}
-					if (ppt.itemShowStatisticsIcon && value) {
+					if (ppt.itemShowStatisticsIcon > 1 && value) {
 						valueFormat += ' ' + this.tfIcon.list;
 						value += ' ' + this.tfIcon.list;
 					}
@@ -3599,7 +3604,7 @@ class Populate {
 						value = panel.imgView
 							? (this.label ? 'Played ' : '') + playcount + 'x'
 							: playcount;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.speaker;
 							value += ' ' + this.tfIcon.speaker;
 						}
@@ -3621,7 +3626,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'First played ' + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.calendar;
 							value += ' ' + this.tfIcon.calendar;
 						}
@@ -3643,7 +3648,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'Last played ' + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.calendar;
 							value += ' ' + this.tfIcon.calendar;
 						}
@@ -3665,7 +3670,7 @@ class Populate {
 						value = panel.imgView && this.label
 							? 'Added ' + valueFormat
 							: valueFormat;
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.calendar;
 							value += ' ' + this.tfIcon.calendar;
 						}
@@ -3685,7 +3690,7 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Loved ' + value; }
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.heart;
 							value += ' ' + this.tfIcon.heart;
 						}
@@ -3738,7 +3743,7 @@ class Populate {
 							rawValue = values / ln;
 							valueFormat = value = $.round(rawValue, ppt.ratingDecimals).toFixed(ppt.ratingDecimals); // Regorxxx <- Rating decimals
 							if (panel.imgView && this.label) { value = 'Rating ' + value; }
-							if (ppt.itemShowStatisticsIcon && value) {
+							if (ppt.itemShowStatisticsIcon > 1 && value) {
 								valueFormat += ' ' + this.tfIcon.star;
 								value += ' ' + this.tfIcon.star;
 							}
@@ -3759,7 +3764,7 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Hated ' + value; }
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.brokenHeart;
 							value += ' ' + this.tfIcon.brokenHeart;
 						}
@@ -3779,7 +3784,7 @@ class Populate {
 						value = Math.abs(values.map(v => Number.parseFloat(v)).reduce((a, b) => a + b, 0));
 						valueFormat = rawValue = value;
 						if (panel.imgView && this.label) { value = 'Feedback ' + value; }
-						if (ppt.itemShowStatisticsIcon && value) {
+						if (ppt.itemShowStatisticsIcon > 1 && value) {
 							valueFormat += ' ' + this.tfIcon.heart;
 							value += ' ' + this.tfIcon.heart;
 						}
@@ -3790,11 +3795,12 @@ class Populate {
 			{
 				name: 'Track country', type: ['File tags'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
 					let rawValue, value, valueFormat;
-					const tf = ppt.itemShowStatisticsIcon ? this.tf.trackCountry : this.tf.trackCountryIso;
-					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(ppt.itemShowStatisticsIcon ? ' ' : ';')).flat(Infinity).filter(Boolean);
+					const bUseFlags = ppt.itemShowStatisticsIcon === 1 || ppt.itemShowStatisticsIcon === 3;
+					const tf = bUseFlags ? this.tf.trackCountry : this.tf.trackCountryIso;
+					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(bUseFlags ? ' ' : ';')).flat(Infinity).filter(Boolean);
 					const ln = values.length;
 					if (ln) {
-						valueFormat = value = Array.from(new Set(values)).join(ppt.itemShowStatisticsIcon ? '  ' : ', ');
+						valueFormat = value = Array.from(new Set(values)).join(bUseFlags ? '  ' : ',  ');
 						if (panel.imgView && this.label) { value = 'Track country ' + value; }
 					}
 					return { rawValue, value, valueFormat };
@@ -3803,11 +3809,12 @@ class Populate {
 			{
 				name: 'Artist country', type: ['File tags'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ''), evalFunc: (handleList) => {
 					let rawValue, value, valueFormat;
-					const tf = ppt.itemShowStatisticsIcon ? this.tf.artistCountry : this.tf.artistCountryIso;
-					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(ppt.itemShowStatisticsIcon ? ' ' : ';')).flat(Infinity).filter(Boolean);
+					const bUseFlags = ppt.itemShowStatisticsIcon === 1 || ppt.itemShowStatisticsIcon === 3;
+					const tf = bUseFlags ? this.tf.artistCountry : this.tf.artistCountryIso;
+					let values = tf.EvalWithMetadbs(handleList).map((v) => v.split(bUseFlags ? ' ' : ';')).flat(Infinity).filter(Boolean);
 					const ln = values.length;
 					if (ln) {
-						valueFormat = value = Array.from(new Set(values)).join(ppt.itemShowStatisticsIcon ? '  ' : ', ');
+						valueFormat = value = Array.from(new Set(values)).join(bUseFlags ? '  ' : ',  ');
 						if (panel.imgView && this.label) { value = 'Artist country ' + value; }
 					}
 					return { rawValue, value, valueFormat };

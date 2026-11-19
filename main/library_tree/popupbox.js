@@ -1,5 +1,5 @@
 ﻿'use strict';
-//04/05/26
+//19/11/26
 
 /* global ppt:readable, $:readable, WshShell:readable */
 /* global folders:readable, soFeat:readable */
@@ -14,7 +14,7 @@ class PopUpBox {
 
 	// Methods
 
-	config(cfg, ppt, cfgWindow, ok_callback) {
+	config(cfg, ppt, cfgWindow, okCallback, previewTfCallback) { // Regorxxx <- TF preview ->
 		// Regorxxx <- Preset rules
 		const playlistIds = JSON.stringify(
 			plman.PlaylistCount > 0
@@ -23,7 +23,7 @@ class PopUpBox {
 		);
 		// Regorxxx ->
 		utils.ShowHtmlDialog(0, this.configHtmlCode, {
-			data: [cfg, ppt, cfgWindow, ok_callback, void (0), folders.xxx + 'assets\\library_tree\\html', playlistIds], // Regorxxx <- Root path | Preset rules ->
+			data: [cfg, ppt, cfgWindow, okCallback, void (0), folders.xxx + 'assets\\library_tree\\html', playlistIds, previewTfCallback], // Regorxxx <- Root path | Preset rules | TF preview ->
 			resizable: true
 		});
 	}

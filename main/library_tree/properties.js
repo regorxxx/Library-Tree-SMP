@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/11/26
+//19/11/26
 
 /* global $:readable */
 /* global folders:readable */ // helpers\helpers_xxx.js
@@ -533,12 +533,13 @@ let properties = [
 	['Statistics Show', 0, 'itemShowStatistics'],
 	['Statistics Show Last', 0, 'itemShowStatisticsLast'],
 	['Statistics Label Show', true, 'labelStatistics'],
+	['Statistics Show Icon 0-None 1-Flags 2-All 3-All+Flags', 3, 'itemShowStatisticsIcon'], // Regorxxx <- Add emoji support ->
 	// Regorxxx <- Default TF for compatibility with all stats components
 	['Statistics Titleformat Added', _b('$date(' + _t(globTags.sortAdded) + ')'), 'tfAdded'],
 	['Statistics Titleformat Date', _b(_t(globTags.date)), 'tfDate'],
 	['Statistics Titleformat First Played', _b('$date(' + _t(globTags.sortFirstPlayed) + ')'), 'tfFirstPlayed'],
 	['Statistics Titleformat Last Played', _b('$date(' + _t(globTags.sortLastPlayed) + ')'), 'tfLastPlayed'],
-	['Statistics Titleformat Playcount DataPinningScheme|Field', '%ARTIST%%ALBUM%%DISCNUMBER%%TRACKNUMBER%%TITLE%|' + _t(globTags.playCount), 'tfPc'],
+	['Statistics Titleformat Playcount DataPinningScheme|Field', '%ARTIST%%ALBUM%%DISCNUMBER%%TRACKNUMBER%%TITLE%%DATE%|' + _t(globTags.playCount), 'tfPc'],
 	['Statistics Titleformat Rating', '[$if2(' + _t(globTags.rating) + ',%2003_RATING%)]', 'tfRating'],
 	['Statistics Titleformat Loved', '[$if2(' + _t(globTags.feedback) + ',%2003_LOVED%,%LFM_LOVED%)]', 'tfLoved'],
 	['Statistics Titleformat Track Country Flag', _b(_t('COUNTRYFLAG_EMOJI')), 'tfTrackCountryFlag'],
@@ -562,7 +563,6 @@ let properties = [
 	['Statistics Titleformat Custom tooltip', ' tracks with lyrics| tracks| tracks| DR| BPMs|| DR| BPMs| ', 'tfCustomTooltip'],
 	['Statistics Titleformat Custom display art', '🗒|🔝★|🎸|<DR>|<BPM>|<★>|<DR>|<BPM>|<★>', 'tfCustomDisplayArt'],
 	['Statistics Titleformat Custom display tree', 'Lyrics|Top Rated|Instrumental tracks|Avg. Dynamic Range|Avg. BPM|Avg. Score|Weighted-Dynamic Range|Weighted-BPM|Weighted-Rating', 'tfCustomDisplayTree'],
-	['Statistics Show Icon', true, 'itemShowStatisticsIcon'],
 	// Regorxxx ->
 	['Statistics Titleformat Popularity', '[$meta(Track Statistics Last.fm,5[score])]', 'tfPopularity'],
 	['Statistics Tooltips Show', true, 'tooltipStatistics'],

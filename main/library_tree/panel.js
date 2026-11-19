@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/11/26
+//19/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable */
@@ -7,7 +7,7 @@
 /* global _gdiFont:readable */
 /* global escapeRegExpV2:readable */
 /* global removeEventListeners:readable */
-/* global _qCond:readable, isArrayEqual:readable */
+/* global _qCond:readable, isArrayEqual:readable, isFbMetadbHandle:readable */
 /* global queryJoin:readable, getHandleTags:readable, getHandleListTags:readable, queryCombinationsExpand:readable, logicDic:readable, sanitizeTagTfo:readable, queryReplaceWithStatic:readable, toFbDateString:readable, getSortObj:readable */
 /* global _resolvePath:readable, _isFile:readable */
 
@@ -258,27 +258,34 @@ class Panel {
 
 	// Regorxxx <- Expose TF formatting for arbitrary input | Expand TF support | Merge now playing and selected as fallback | Expose custom prefixes as tag | Custom TF art
 	eval(n, type) {
-		let handle, tfo;
-		switch (type) {
-			case 'nowplaying':
-				if (!n || !fb.IsPlaying) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.GetNowPlaying();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
-			case 'selected':
-				if (!n) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.GetFocusItem();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
-			case 'nowplayingorselected':
-				if (!n) return '';
-				tfo = FbTitleFormat(n);
-				if (fb.IsPlaying && fb.PlaybackLength <= 0) return tfo.Eval();
-				handle = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
-				return handle ? tfo.EvalWithMetadb(handle) : '';
+		if (n) {
+			const tfo = new FbTitleFormat(n);
+			let handle;
+			switch (type) {
+				case 'nowplaying':
+					if (!fb.IsPlaying) { return ''; }
+					if (fb.IsPlaying && fb.PlaybackLength <= 0) { return tfo.Eval(); }
+					handle = fb.GetNowPlaying();
+					return handle ? tfo.EvalWithMetadb(handle) : '';
+				case 'selected':
+					if (fb.IsPlaying && fb.PlaybackLength <= 0) { return tfo.Eval(); }
+					handle = fb.GetFocusItem();
+					return handle ? tfo.EvalWithMetadb(handle) : '';
+				case 'nowplayingorselected':
+					if (fb.IsPlaying && fb.PlaybackLength <= 0) { return tfo.Eval(); }
+					handle = fb.IsPlaying ? fb.GetNowPlaying() : fb.GetFocusItem();
+					return handle ? tfo.EvalWithMetadb(handle) : '';
+				default: {
+					handle = type;
+					if (isFbMetadbHandle(handle)) {
+						return tfo.EvalWithMetadb(handle);
+					} else if (handle instanceof FbMetadbHandleList) {
+						return tfo.EvalWithMetadbs(handle);
+					}
+				}
+			}
 		}
+		return '';
 	}
 
 	isNoHandleCustomTf(s, node) {
@@ -1070,7 +1077,7 @@ class Panel {
 	// Regorxxx ->
 
 	open(page) {
-		const ok_callback = (new_cfg, new_ppt, type, new_cfgWindow) => {
+		const okCallback = (new_cfg, new_ppt, type, new_cfgWindow) => {
 			if (new_cfg) {
 				let cfg = $.jsonParse(new_cfg, []);
 				this.clear('both');
@@ -1136,7 +1143,7 @@ class Panel {
 		const pptStr = JSON.stringify(ppt)
 			.replace(/:\\"\.\//gi, ':\\"' + folders.xxx.replace(/\\/gi, '/')); // Adjust relative paths
 		if (popUpBox.isHtmlDialogSupported()) {
-			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, ok_callback);
+			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, okCallback, this.previewTf.bind(this)); // Regorxxx <- TF preview ->
 		} else {
 			popUpBox.ok = false;
 			$.trace('options dialog isn\'t available with current operating system. All settings in options are available in panel properties. Common settings are on the menu.');
@@ -3066,6 +3073,19 @@ class Panel {
 				}, 60);
 			})
 			: Promise.resolve(this.integration[scriptName]);
+	}
+	// Regorxxx ->
+
+	// Regorxxx <- TF preview
+	previewTf(n) {
+		if (!pop.sel_items.length) { return '-N/A-'; }
+		try {
+			const item = pop.tree[pop.sel_items[0]];
+			const handle = pop.getHandleList(void (0), [pop.sel_items[0]])[0];
+			return this.eval(this.processCustomTf(n, item), handle);
+		} catch (e) { // eslint-disable-line no-unused-vars
+			return '-N/A-';
+		}
 	}
 	// Regorxxx ->
 }

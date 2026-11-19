@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 18/11/26 -->
+﻿<!DOCTYPE html> <!-- 19/11/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -1215,13 +1215,43 @@
 			<!-- Regorxxx -->
 		</div>
 
-		<!-- Regorxxx New statistics tab | Improve statistics labels -->
+		<!-- Regorxxx New statistics tab | Improve statistics labels | Add emoji support -->
 		<div id="statistics" class="tabcontent">
 			<div class="row">
 				<div class="column50">
-					<div class="div_text2">Title format</div>
-					<div class="info5"><i>Title format for some can be set below</i></div>
+					<div class="div_text2">Display</div>
+					<div id="labelStatistics"></div>
+					<div class="info3" style="margin:0.5em 0 0;">Statistics icons:</div>
+					<span class="dropdown"><a id="itemShowStatisticsIcon_dropdown" class="dropbtn" href="#" onclick="return toggle('itemShowStatisticsIcon');"></a>
+						<span id="itemShowStatisticsIcon" class="dropdown-content"></span>
+					</span>
+					<div class="div_text2">Item counts</div>
+					<span class="dropdown"><a id="itemCounts_dropdown" class="dropbtn" href="#" onclick="return toggle('itemCounts');"></a>
+						<span id="itemCounts" class="dropdown-content"></span>
+					</span>
+					<div id="countsRight" style="padding-top:0.5em;"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="counts_help" onclick="showHelp('counts_text');return false;">Item counts help</button></div>
+					<div id="counts_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">The first available entry at Settings > Statistics will follow the option chosen, showing either no values, total number of track or items at every node.<br><br>Alignment is only available while using this mode, greyed out for any other.
+						</div>
+						<div><br></div>
+					</div>
+					<div class="div_text2">Built-in Title format</div>
+					<div class="info5"><i>Title format for bult-in stats can be set below</i></div>
 					<div id="statisticsTf"></div>
+					<div id="statisticsPreview1"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="stats_help" onclick="showHelp('stats_text');return false;">Statistics help</button></div>
+					<div id="stats_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Can be any real number from -&#x221E; to &#x221E; (not included)<br>&emsp;&#x25E6; Use X&gt;1 for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
+						<div><br></div>
+					</div>
+				</div>
+
+				<div class="column50">
+					<div class="div_text2">Custom Title format</div>
+					<div class="info5"><i>Title format for custom-X slots can be set below</i></div>
+					<div id="statisticsCustomTf"></div>
+					<div id="statisticsPreview2"></div>
 					<br>
 					<div id="statisticsPmean"></div>
 					<div class="div_text2">Custom labels</div>
@@ -1236,27 +1266,6 @@
 					<div class="div_text2">Custom tooltip text</div>
 					<div class="info5"><i>Custom-X slots tooltips are shown at mouse over. Separated by |</i></div>
 					<div id="statisticsTooltip"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><button id="stats_help" onclick="showHelp('stats_text');return false;">Statistics help</button></div>
-					<div id="stats_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4">There are some hardcoded statistics (like duration, ...), partially customizable ones (rating, ...) and fully customizable slots. The latter can use your own TF expressions, names and tooltip text, which will be shown at the menu entries and labels used by the panel.<br><br>&#x2022; Sum: for every node, sum of values from all their children<br>&#x2022; Average: for every node, arithmetic mean from all their children (1-power mean)<br>&#x2022; P-Meanˣ: for every node, <a class="tooltip" id="pmean" href="https://en.wikipedia.org/wiki/Generalized_mean" target="_blank" oncontextmenu="copyToClipboardId('pmean')">X-power mean<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a> from all their children<br>&emsp;&#x25E6; X exponent sets desired bias<br>&emsp;&#x25E6; Can be any real number from -&#x221E; to &#x221E; (not included)<br>&emsp;&#x25E6; Use X&gt;1 for higher values bias<br>&emsp;&#x25E6; Use X&lt;1 for lower values bias<br>&emsp;&#x25E6; Harmonic mean (X=-1), Geometric mean (X=0), Arithmetic mean (X=1), ...<br>&#x2022; Decimals setting applies to rating, popularity and custom slots<br>&#x2022; Tooltip text is always shown as: '[label]: [value|-N/A-][text]<br>&emsp;&#x25E6; e.g. 'Lyrics: 0 tracks with lyrics'</div>
-						<div><br></div>
-					</div>
-				</div>
-
-				<div class="column50">
-					<div class="div_text2">Display</div>
-					<div id="labelStatistics"></div>
-					<div class="div_text2">Item counts</div>
-					<span class="dropdown"><a id="itemCounts_dropdown" class="dropbtn" href="#" onclick="return toggle('itemCounts');"></a>
-						<span id="itemCounts" class="dropdown-content"></span>
-					</span>
-					<div id="countsRight" style="padding-top:0.5em;"></div>
-					<div style="display:inline-block; padding-top:0.7em;"><button id="counts_help" onclick="showHelp('counts_text');return false;">Item counts help</button></div>
-					<div id="counts_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
-						<div class="info4">The first available entry at Settings > Statistics will follow the option chosen, showing either no values, total number of track or items at every node.<br><br>Alignment is only available while using this mode, greyed out for any other.
-						</div>
-						<div><br></div>
-					</div>
 				</div>
 			</div>
 			<br>
@@ -1815,6 +1824,15 @@
 			window.close();
 		}
 
+		function getPreview(id, previewId) {
+			var ev;
+			if (cur.page == "statistics") {
+				value = document.getElementById(id).value;
+				ev = previewTfCallback && previewTfCallback(value);
+				if (document.getElementById(previewId) && id != previewId) { document.getElementById(previewId).value = ev; }
+			}
+		}
+
 		function remove(n) {
 			n.parentNode && n.parentNode.removeChild(n);
 		}
@@ -1981,6 +1999,7 @@
 		var new_id = 100;
 		var parsed_args;
 		var props_callback;
+		var previewTfCallback; // Regorxxx <- TF preview ->
 		var rootPath; // Regorxxx <- Root path ->
 		var plsIds = []; // Regorxxx <- Preset rules ->
 		var ppt = {};
@@ -2097,7 +2116,6 @@
 			var highLightLabels = ['None', 'Side marker', 'Accent', 'Frame', 'Always pointer (no hand)', 'Highlight nodes', 'Highlight text'];
 			var indexLetterLabels = ['Show on scrollbar drag', 'Number of characters (0 = auto)', 'Auto-detect leading year (overrides above number)'];
 			var albumArtTfLabels = ['Custom views (1)', 'Custom views (2)', 'Folder view (1)', 'Folder view (2)', 'View labels (1)', 'View labels (2)']; // Regorxxx <- Custom TF art ->
-			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			var metricsLabels = ['Margin', 'Tree indent', 'Line padding tree', 'Line padding album art', 'Margin overide top/bottom (no top bar)', 'Side marker width (0 = auto)'];
 			var nodeLabels = ['Squares', 'Arrows', 'Arrows Light', 'Triangles', 'Triangles Light', 'Signs', 'Custom'];
 			var playlistLabels = ['Default', 'Activate when changed', 'Always create playlist even if unused by action']; // Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5 | Preserve tree sorting at selection ->
@@ -2131,8 +2149,12 @@
 			var bookletPosLabels = ['Left', 'Right', 'Left (if no other icon shown)'];
 			// Regorxxx ->
 			// Regorxxx <- New statistics
-			var statisticsLabels = ['Rating', 'Popularity', 'Date', 'Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)', 'Auto show labels', 'Auto show tooltips', 'Auto show icons (+ Flag emojis)'];
+			var statisticsLabels = ['Rating', 'Loved', 'Popularity', 'Date', 'First Played', 'Last Played', 'Playcount (pin|tag)', 'Country Flag (track)', 'Country Flag (artist)', 'Country ISO (track)', 'Country ISO (artist)'];
+			var statisticsCustomLabels = ['Custom-1 (sum)', 'Custom-2 (sum)', 'Custom-3 (sum)', 'Custom-1 (avg)', 'Custom-2 (avg)', 'Custom-3 (avg)', 'Custom-1 (p-mean)', 'Custom-2 (p-mean)', 'Custom-3 (p-mean)', 'Exponent (p-mean)'];
+			var statisticsDisplayLabels = ['Auto show labels', 'Auto show tooltips'];
+			var statisticsIconLabels = ['None (+ ISO)', 'Flags', 'All + ISO', 'All + Flags'];
 			var statisticsDecimalsLabels = ['Number of decimals shown'];
+			var itemCountsLabels = ['Hide', '# Tracks', '# Items', 'Align right (tree / text)'];
 			// Regorxxx ->
 			// Regorxxx <- Send to playlist & select
 			var selectAddedToPlsLabels = ['Send to playlist and select items'];
@@ -2193,8 +2215,8 @@
 				},
 				// Regorxxx ->
 				statistics: {
-					name: ['tfRating', 'tfPopularity', 'tfDate', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomDisplayVal', 'tfCustomDisplayArt', 'tfCustomDisplayTree', 'tfCustomTooltip', 'ratingDecimals'],
-					type: ['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'text', 'text', 'text', 'int']
+					name: ['ratingDecimals', 'tfRating', 'tfLoved', 'tfPopularity', 'tfDate', 'tfFirstPlayed', 'tfLastPlayed', 'tfPc', 'tfTrackCountryFlag', 'tfArtistCountryFlag', 'tfTrackCountryIso', 'tfArtistCountryIso', 'tfCustom1Sum', 'tfCustom2Sum', 'tfCustom3Sum', 'tfCustom1Avg', 'tfCustom2Avg', 'tfCustom3Avg', 'tfCustom1MeX', 'tfCustom2MeX', 'tfCustom3MeX', 'expCustomMeX', 'tfCustomLabels', 'tfCustomDisplayVal', 'tfCustomDisplayArt', 'tfCustomDisplayTree', 'tfCustomTooltip'],
+					type: ['int', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'int', 'text', 'text', 'text', 'text', 'text']
 				},
 				// Regorxxx ->
 				// Regorxxx <- Custom TF art
@@ -2231,7 +2253,7 @@
 				remap: ['remapISO693'], // Regorxxx <- New TF remap tab | Language remap ->
 				search: ['findTrans', 'searchEnter', 'searchRefreshTf'], // Regorxxx <- Quicksearch transliteration | New search tab ->
 				display: ['searchShow', 'filterShow', 'multiBtnShow', 'settingsShow', 'headerTitleShowSource', 'swapCol', 'autoFill', 'recItemImage', 'themeSelImage', 'inlineRoot', 'showSource', 'nodeLines', 'colLineDark', 'rowStripes', 'facetView', 'showTracks', 'albumArtOptionsShowContext', 'albumArtOptionsShowSettings', 'menuShowTop', 'menuShowMusicMap', 'menuShowDj', 'menuShowPlay', 'menuShowExpand', 'menuShowSel', 'highLightNowplaying', 'nowPlayingSidemarker', 'nowPlayingIndicator', 'highLightActivePlaylist', 'activePlaylistSidemarker', 'highLightBooklet', 'bookletSidemarker', 'bookletIndicator', 'bookletIndicatorOverlay', 'frameImage', 'frameImageRoot', 'flareImage', 'mousePointerOnly', 'highLightNode', 'highLightText'], // Regorxxx <- Filter / View / Source button | New statistics tab | Flare hover effect | Fix img frame for root images (hover effect) | Highlight active playlist | Now playing options | Booklet icon | Header on search bar | Menu options at context menu ->
-				statistics: ['labelStatistics', 'tooltipStatistics', 'itemShowStatisticsIcon', 'countsRight'], // Regorxxx <- New statistics tab ->
+				statistics: ['labelStatistics', 'tooltipStatistics', 'countsRight'], // Regorxxx <- New statistics tab ->
 				albumArt: ['albumArtFlipLabels', 'albumArtLabelMedium', 'itemOverlayCountForce', 'albumArtDiskCache', 'albumArtPreLoad', 'albumArtDiskCacheAlpha', 'albumArtFlowMode', 'artTreeSameView', 'albumArtNodeCollage', 'albumArtNodeCollageDedup', 'imgFrontRefl', 'imgBackRefl', 'imgDiscRefl', 'imgIconRefl', 'imgArtistRefl', 'imgTf1Refl', 'imgTf2Refl', 'imgFrontReflRoot', 'imgBackReflRoot', 'imgDiscReflRoot', 'imgIconReflRoot', 'imgArtistReflRoot', 'imgTf1ReflRoot', 'imgTf2ReflRoot', 'imgFrontBorder', 'imgBackBorder', 'imgDiscBorder', 'imgIconBorder', 'imgArtistBorder', 'imgTf1Border', 'imgTf2Border', 'imgFrontShadow', 'imgBackShadow', 'imgDiscShadow', 'imgIconShadow', 'imgArtistShadow', 'imgTf1Shadow', 'imgTf2Shadow', 'imgFrontMute', 'imgBackMute', 'imgDiscMute', 'imgIconMute', 'imgArtistMute', 'imgTf1Mute', 'imgTf2Mute', 'imgFrontEdgeGlow', 'imgBackEdgeGlow', 'imgDiscEdgeGlow', 'imgIconEdgeGlow', 'imgArtistEdgeGlow', 'imgTf1EdgeGlow', 'imgTf2EdgeGlow', 'imgFrontBloom', 'imgBackBloom', 'imgDiscBloom', 'imgIconBloom', 'imgArtistBloom', 'imgTf1Bloom', 'imgTf2Bloom', 'imgFrontBlur', 'imgBackBlur', 'imgDiscBlur', 'imgIconBlur', 'imgArtistBlur', 'imgTf1Blur', 'imgTf2Blur', 'imgFrontVignette', 'imgBackVignette', 'imgDiscVignette', 'imgIconVignette', 'imgArtistVignette', 'imgTf1Vignette', 'imgTf2Vignette', ppt['drawMode_internal'].value === 1 ? 'imgFrontGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistGrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1GrayScale' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2GrayScale' : null, 'imgFrontHoverZoom', 'imgBackHoverZoom', 'imgDiscHoverZoom', 'imgIconHoverZoom', 'imgArtistHoverZoom', 'imgTf1HoverZoom', 'imgTf2HoverZoom', ppt['drawMode_internal'].value === 1 ? 'imgFrontPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgBackPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgDiscPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgIconPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgArtistPerspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf1Perspective' : null, ppt['drawMode_internal'].value === 1 ? 'imgTf2Perspective' : null, 'imgFrontSleeve', 'imgBackSleeve', 'imgDiscSleeve', 'imgIconSleeve', 'imgArtistSleeve', 'imgTf1Sleeve', 'imgTf2Sleeve', 'thumbNailVCenter', 'albumArtLetter', 'albumArtYearAuto', 'selRectArt'].filter(Boolean), // Regorxxx <- Rectangle selection on art view | Effect per art type | Thumbnail Vertically centered | Branch collage art | New art styles ->
 				custom: ['custFontUse', 'custAlbumArtGrpFontUse', 'custAlbumArtLotFontUse', 'custAlbumArtDurFontUse', 'custAlbumArtOverlayFontUse', 'custTooltipFontUse', 'custAlbumArtTooltipFontUse', 'custEmojiFontUse', 'textUse', 'text_hUse', 'textSelUse', 'nowpUse', 'aplsUse', 'bookletUse', 'searchUse', 'txt_boxUse', 'bgUse', 'bg_hUse', 'bgSelUse', 'frameUse', 'bgSelframeUse', 'countsUse', 'icon_cUse', 'icon_eUse', 'icon_hUse', 'lineUse', 's_lineUse', 'sideMarkerUse', 'bgTransUse', 'textTrackCountUse', 'bgTrackCountUse'], // Regorxxx <- Custom album art overlay track count | Highlight active playlist | Custom art overlay font | Add emoji support ->
 				advanced: ['sbarFullHeight', 'panelInternalCache', 'libSourceChained', 'logLibProfiler', 'logArtProfiler', 'logArtCustomTf', 'winNode', 'blurAutofill', 'libAutoSync', 'libSourceCache', 'plsPopEmpty', 'streamSupport', 'pn_h_auto', 'autoDjStopRepeat'] // Regorxxx <- Library profiling | Art profiling | Don't create cache playlists if possible | Chained facets updates | Tooltip font | https://github.com/regorxxx/Library-Tree-SMP/issues/11 | Internal cache of views | Multiple-playlist flat view | Basic playlist manager ->
@@ -2246,7 +2268,7 @@
 				remap: [], // Regorxxx <- New TF remap tab ->
 				search: [], // Regorxxx <- Drag n' drop to search box ->
 				display: [],
-				statistics: ['itemShowStatistics'], // Regorxxx <- New statistics tab ->
+				statistics: ['itemShowStatisticsIcon', 'itemShowStatistics'], // Regorxxx <- New statistics tab | Add emoji support ->
 				albumArt: ['albumArtLabelType', 'imgStyleFront', 'imgStyleBack', 'imgStyleDisc', 'imgStyleIcon', 'imgStyleArtist', 'imgStyleTf1', 'imgStyleTf2', 'imgFrontReflStyle', 'imgBackReflStyle', 'imgDiscReflStyle', 'imgIconReflStyle', 'imgArtistReflStyle', 'imgTf1ReflStyle', 'imgTf2ReflStyle'], // Regorxxx <- Custom TF art | Effect per art type ->
 				custom: [],
 				advanced: []
@@ -2256,6 +2278,7 @@
 			props_callback = parsed_args[4];
 			rootPath = parsed_args[5]; // Regorxxx <- Root path ->
 			plsIds = JSON.parse(parsed_args[6]); // Regorxxx <- Preset rules ->
+			previewTfCallback = parsed_args[7]; // Regorxxx <- TF preview ->
 
 			function setSbarShow(n) {
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[n];
@@ -2332,6 +2355,14 @@
 				ppt['nodeStyle_internal'].value = n;
 				window.node.style.display = 'none';
 			}
+
+			// Regorxxx <- Add emoji support
+			function setItemShowStatisticsIcon(n) {
+				window.itemShowStatisticsIcon_dropdown.innerHTML = statisticsIconLabels[n];
+				ppt['itemShowStatisticsIcon_internal'].value = n;
+				window.itemShowStatisticsIcon.style.display = 'none';
+			}
+			// Regorxxx ->
 
 			function setItemCounts(n) {
 				window.itemCounts_dropdown.innerHTML = itemCountsLabels[n];
@@ -3425,23 +3456,38 @@
 			}
 
 			function setStatistcs() {
-				for (i = 0; i < 12; i++) { window.statisticsTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsTf_container' + i + '" name="statistics_input" class="input70" /><label for="statisticsTf_container' + i + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>'); }
-				i = 12; { window.statisticsPmean.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPmean_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsPmeanLabel" for="statisticsPmean_container' + i + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>'); }
+				// Built-in
+				for (i = 0; i < statisticsLabels.length; i++) {
+					var id = 'statisticsTf_container' + i;
+					window.statisticsTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf1\');"/><label for="' + id + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>');
+				}
+				// Preview
+				window.statisticsPreview1.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPreviewTf1" name="previewTf1" class="input70" readonly/><label for="previewTf1" class="inp_label2"><u>Preview (click on rows)</u></label></div>');
+				// Custom
+				for (i = 0; i < statisticsCustomLabels.length - 1; i++) {
+					var id = 'statisticsCustomTf_container' + i;
+					window.statisticsCustomTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf2\');"/><label for="' + id + '" class="inp_label2">' + statisticsCustomLabels[i] + '</label></div>');
+				}
+				i = statisticsCustomLabels.length - 1; { window.statisticsPmean.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPmean_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsPmeanLabel" for="statisticsPmean_container' + i + '" class="inp_label2">' + statisticsCustomLabels[i] + '</label></div>'); }
 				i = 0; { window.statisticsNames.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsNames_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsNamesLabel" for="statisticsNames_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomLabels') + '</label></div>'); }
 				i = 0; { window.statisticsValues.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsValues_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsValuesLabel" for="statisticsValues_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayVal') + '</label></div>'); }
 				i = 0; { window.statisticsDisplayArt.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsDisplayArt_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsDisplayArtLabel" for="statisticsDisplayArt_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayArt') + '</label></div>'); }
 				i = 0; { window.statisticsDisplayTree.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsDisplayTree_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsDisplayTreeLabel" for="statisticsDisplayTree_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomDisplayTree') + '</label></div>'); }
 				i = 0; { window.statisticsTooltip.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsTooltip_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsTooltipLabel" for="statisticsTooltip_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomTooltip') + '</label></div>'); }
-
-				for (i = 13; i < 16; i++) { window.labelStatistics.insertAdjacentHTML('beforeend', '<div><input id="labelStatistics_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="labelStatistics_checkbox' + i + '" class="checkbox_label">' + statisticsLabels[i] + '</label></div>') };
-				window.itemCounts_dropdown.innerHTML = itemCountsLabels[ppt['nodeCounts_internal'].value];
+				// Preview
+				window.statisticsPreview2.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPreviewTf2" name="previewTf2" class="input70" readonly/><label for="previewTf2" class="inp_label2"><u>Preview (click on rows)</u></label></div>');
+				// Others
+				for (i = 0; i < statisticsDisplayLabels.length; i++) { window.labelStatistics.insertAdjacentHTML('beforeend', '<div><input id="labelStatistics_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="labelStatistics_checkbox' + i + '" class="checkbox_label">' + statisticsDisplayLabels[i] + '</label></div>') };
 				i = 0; window.labelStatistics.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label id="statisticsDecimalsLabel" for="statisticsDecimals_container' + i + '" class="inp_label1">' + statisticsDecimalsLabels[i] + '</label><input id="statisticsDecimals_container' + i + '" name="statistics_input" class="input70" /></div>');
-				for (i = 0; i < 3; i++) { window.itemCounts.insertAdjacentHTML('beforeend', '<a onclick="setItemCounts(' + i + ');">' + itemCountsLabels[i] + '</a>'); }
+				window.itemShowStatisticsIcon_dropdown.innerHTML = statisticsIconLabels[ppt['itemShowStatisticsIcon_internal'].value]; // Regorxxx <- Add emoji support ->
+				for (i = 0; i < statisticsIconLabels.length; i++) { window.itemShowStatisticsIcon.insertAdjacentHTML('beforeend', '<a onclick="setItemShowStatisticsIcon(' + i + ');">' + statisticsIconLabels[i] + '</a>'); } // Regorxxx <- Add emoji support ->
+				window.itemCounts_dropdown.innerHTML = itemCountsLabels[ppt['nodeCounts_internal'].value];
+				for (i = 0; i < itemCountsLabels.length; i++) { window.itemCounts.insertAdjacentHTML('beforeend', '<a onclick="setItemCounts(' + i + ');">' + itemCountsLabels[i] + '</a>'); }
 				i = 3; window.countsRight.insertAdjacentHTML('beforeend', '<div><input id="itemCounts_checkbox' + i + '" name="statistics_checkbox" style="' + cbox + '" type="checkbox" /><label for="itemCounts_checkbox' + i + '" class="checkbox_label">' + itemCountsLabels[i] + '</label></div>');
 			}
 
 			function getStatisticsSlots(pptKey) {
-				var slots = statisticsLabels.filter(function (l) { return l.startsWith('Custom-'); }).length;
+				var slots = statisticsCustomLabels.filter(function (l) { return l.startsWith('Custom-'); }).length;
 				var missing = slots - ppt[pptKey + '_internal'].value.split('|').length;
 				return slots + ' slots' + (missing === 0 ? '' : ' (' + (missing > 0 ? 'missing' : 'extra') + ' ' + Math.abs(missing) + ')');
 			}
@@ -3651,7 +3697,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setHeaderTitle && setNode && setItemCounts && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setHeaderTitle && setNode && setItemCounts && setItemShowStatisticsIcon && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -4387,6 +4433,7 @@
 			['altClick_dropdown', 'altClick'],
 			['click_dropdown', 'click'],
 			['dblClick_dropdown', 'dblClick'],
+			['itemShowStatisticsIcon_dropdown', 'itemShowStatisticsIcon'], // Regorxxx <- Add emoji support ->
 			['itemCounts_dropdown', 'itemCounts'],
 			['mbtnClick_dropdown', 'mbtnClick'],
 			['keystroke_dropdown', 'keystroke'],
