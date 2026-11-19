@@ -1,11 +1,12 @@
 ﻿Filters and Views:
 ------------------
-• Panel has a huge list of view and filters by default, but those
-unused can be hidden at the 'More settings' to clean-up the filter menu.
+• Panel has a huge list of view and filters by default but those
+unused can be hidden at 'More settings' to clean-up the menus.
 
 • Remember separators may be added to submenus as needed.
 
-• Set panel to D2D draw mode to display emojis (check properties panel).
+• To display emojis, D2D draw mode is required (enabled by
+default in JSplitter). Check properties panel.
 
 Album art:
 ------------------
