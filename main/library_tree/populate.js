@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/11/26
+//23/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -286,6 +286,7 @@ class Populate {
 	// Regorxxx ->
 
 	arrayToRange(array, bConsecutive = true) {
+		if (!array.length) { return ''; }
 		return array.slice()
 			.sort((a, b) => a - b)
 			.reduce((ranges, value) => {
@@ -3549,7 +3550,7 @@ class Populate {
 						for (let k = 0; k < queueCount; k++) {
 							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); bDone = true; }
 						}
-						if (!bDone && ppt.queuePastPlayed > 0) {
+						if (!bDone && ppt.queuePastPlayed > 0 && lastPlayed[i] && lastPlayed[i] !== 'N/A') {
 							const val = Math.floor((now - new Date(lastPlayed[i])) / timeFactor);
 							indices.add(val + timeStr);
 						}
@@ -3563,7 +3564,7 @@ class Populate {
 								? [
 									this.arrayToRange(index.filter((v) => !Number.isInteger(v)).map((v) => v.replace(timeStr, '')), false) + timeStr,
 									this.arrayToRange(index.filter((v) => Number.isInteger(v)))
-								].join(', ')
+								].filter(Boolean).join(', ')
 								: this.arrayToRange(index);
 						}
 					}
