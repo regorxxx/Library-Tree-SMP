@@ -57,9 +57,11 @@ $cut(%artist%,1)|%artist%|$if2(%album%,εXtra)|[[%discnumber%.]%tracknumber%. ][
 
 ## Requirements (only one host component required)
  1. [Spider Monkey Panel or JSplitter](../../wiki/SMP-vs-JSplitter-notes): JavaScript host component required to install this. Available in x86 and x64.
- 2. [Playback Statistics](https://www.foobar2000.org/components/view/foo_playcount): Some statistics and filters will only work if present.
- 3. [Enhanced Playback Statistics](https://www.foobar2000.org/components/view/foo_enhanced_playcount): Some statistics and filters will only work if present.
- 4. [Required fonts](https://github.com/regorxxx/foobar2000-assets/tree/main/Fonts): FontAwesome, Segoe UI, Arial Unicode MS
+
+## Optional support
+ 1. [Playback Statistics](https://www.foobar2000.org/components/view/foo_playcount): Some statistics (rating/playback) and filters will only work if present.
+ 2. [Enhanced Playback Statistics](https://www.foobar2000.org/components/view/foo_enhanced_playcount): Some statistics (rating/playback) and filters will only work if present.
+ 3. [Country Flags](https://github.com/smoralis/foo_countryflags): Some statistics (artist flags) and filters will only work if present.
 
 ## Installation
 See [Wiki](../../wiki/Installation) or the [_INSTALLATION (txt)](../main/_INSTALLATION.txt).
