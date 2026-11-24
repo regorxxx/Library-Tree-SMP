@@ -1,5 +1,5 @@
 ﻿'use strict';
-//19/11/26
+//24/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
 /* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable */
@@ -102,10 +102,11 @@ class Panel {
 		};
 		// Regorxxx ->
 		// Regorxxx <- Custom TF art
+		/** @type {{idx: number, replacer: function, id: string, regExp: RegExp, type: string}[]} */
 		this.artVariables = img.art.map((art) => {
 			const idx = art.idx;
 			const id = this.markers.artType + idx + this.markers.artType;
-			const artVar = { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id };
+			const artVar = { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, type: art.type };
 			if (typeof art.cacheName === 'function') {
 				artVar.regExp = new RegExp('\\$(?:' + escapeRegExpV2(art.type) + '|' + escapeRegExpV2(art.cacheName(false)) + '|' + escapeRegExpV2(art.cacheName(true)) + ')\\b', 'gi');
 			} else {
@@ -118,10 +119,11 @@ class Panel {
 		});
 		// Regorxxx ->
 		// Regorxxx <- Custom TF art
+		/** @type {{idx: number, replacer: function, id: string, regExp: RegExp, type: string}[]} */
 		this.styleVariables = img.styles.map((style) => {
 			const idx = style.idx;
 			const id = this.markers.artStyle + idx + this.markers.artStyle;
-			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')\\b', 'gi') };
+			return { idx, replacer: () => this.imgView ? id + '$not(0)' : '-N/A-', id, regExp: new RegExp('\\$(?:' + escapeRegExpV2(style.type) + ')\\b', 'gi'), type: style.type };
 		});
 		// Regorxxx ->
 		this.integration = $.jsonParse(ppt.extPanels, { /* Infinity-tools-SMP */ }); // Regorxxx <- External integration ->
@@ -281,6 +283,9 @@ class Panel {
 						return tfo.EvalWithMetadb(handle);
 					} else if (handle instanceof FbMetadbHandleList) {
 						return tfo.EvalWithMetadbs(handle);
+					} else {
+						handle = fb.GetSelection();
+						return handle ? tfo.EvalWithMetadb(handle) : tfo.Eval(true);
 					}
 				}
 			}
@@ -312,10 +317,10 @@ class Panel {
 					: lib.playlistSourceRoot
 				: null;
 			const sourceName = s.includes('$sourcename') && sourceParent
-				? sourceParent.map((p) => p.name).join('\', \'')
+				? sourceParent.map((p) => p.name).join(', ')
 				: '';
 			const sourceId = s.includes('$sourceid') && sourceParent
-				? sourceParent.map((p) => p.guid).join('\', \'')
+				? sourceParent.map((p) => p.guid).join(', ')
 				: '';
 			// Needs replacer functions to skip usage of special replacement patterns ($, ...), since tags may have such strings
 			const iconRe = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{200D}]/gu;
@@ -333,8 +338,8 @@ class Panel {
 				.replace(/\$sourcenameortype/gi, () => sanitizeTagTfo(sourceName || sourceType || '-N/A-'))
 				.replace(/\$sourceid/gi, () => sanitizeTagTfo(sourceId || '-N/A-'))
 				.replace(/\$sourceplaying/gi, () => fb.IsPlaying && node && sourceParent.some((p) => plman.PlayingPlaylist === p.idx) ? '$not(0)' : '')
-				.replace(/\$viewname/gi, () => sanitizeTagTfo(this.cleanDisplay(this.viewName) || '-N/A-'))
-				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.cleanDisplay(this.getFilterNames().join('\', \'')) || '-N/A-')) // Regorxxx <- Multiple filters support | Code cleanup ->
+				.replace(/(?:\$viewname|%view_name%)/gi, () => sanitizeTagTfo(this.getDisplayViewName() || '-N/A-'))
+				.replace(/\$filtername/gi, () => sanitizeTagTfo(this.cleanDisplay(this.getFilterNames().join(', ')) || '-N/A-')) // Regorxxx <- Multiple filters support | Code cleanup ->
 				.replace(/%ISPLAYING%/gi, () => fb.IsPlaying ? '$not(0)' : '')
 				.replace(/%ISPAUSED%/gi, () => fb.isPaused ? '$not(0)' : '');
 			this.artVariables.forEach((art) => s = s.replace(art.regExp, art.replacer));
@@ -1796,8 +1801,8 @@ class Panel {
 	}
 
 	setView(i, treeArtToggle) {
-		if (this.colMarker) this.draw = false;
-		if (this.search.txt) lib.upd_search = true;
+		if (this.colMarker) { this.draw = false; }
+		if (this.search.txt) { lib.upd_search = true; }
 		// Regorxxx <- Preset rules
 		const viewBy = i < this.grp.length ? i : ppt.viewBy;
 		if (ppt.presetRulesOnViewUse) {
@@ -2093,7 +2098,7 @@ class Panel {
 		ui.setSbar();
 		pop.nodeStyle = ppt.nodeStyle; // Regorxxx <- Fix crash on node change ->
 		on_colours_changed();
-		if (ui.col.counts) this.colMarker = true;
+		if (ui.col.counts) { this.colMarker = true; }
 		if (ppt.themed && ppt.theme) {
 			const themedImg = folders.userPresets + 'library tree\\image.bmp';
 			if (_isFile(themedImg)) { sync.image(gdi.Image(themedImg)); }

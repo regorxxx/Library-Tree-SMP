@@ -1,5 +1,5 @@
 ﻿'use strict';
-//17/11/26
+//24/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -1407,7 +1407,6 @@ class Images {
 				}
 				case 'test': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.DrawEllipse(coords.x, coords.y, coords.w - l_w / 2, coords.h - l_w / 2, l_w, col);
 					break;
 				}
 				default: {
@@ -1978,7 +1977,6 @@ class Images {
 			}
 			case 'test': {
 				gr.SetSmoothingMode(SmoothingMode.HighQuality);
-				gr.DrawEllipse(coords.x + 1, coords.y + 1, coords.w - 2, coords.h - 2, 1, ui.col.imgBor); // Regorxxx <- Improve img mask to avoid rough edges ->
 				gr.SetSmoothingMode();
 				break;
 			}
@@ -2030,7 +2028,6 @@ class Images {
 				}
 				case 'test': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -2078,7 +2075,6 @@ class Images {
 				}
 				case 'test': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.DrawEllipse(x, y, w, h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					gr.SetSmoothingMode();
 					break;
 				}
@@ -2621,7 +2617,6 @@ class Images {
 				break;
 			}
 			case 'test':
-				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
 				this.shadow[style.shadow].StackBlur(4);
 				break;
 			default:
@@ -2807,7 +2802,7 @@ class Images {
 			} else if (plsBranch && ppt.plsPopEmpty) {
 				v.key = utils.MD5('Dummy node' + (panel.lines == 1 ? (arr[0] || 'Unknown') : ((arr[0] || 'Unknown') + ' - ' + (arr[1] || 'Unknown'))) + ppt.artId);
 				// Regorxxx <- New overlay styles | Date fallback
-				switch (overlay.type) {
+				switch (overlay.type) { // NOSONAR
 					case 'none': break;
 					default: {
 						if (overlay.tf && !overlay.isCount) { v[overlay.itemKey] = '   -   '; }

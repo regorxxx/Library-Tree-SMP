@@ -1,5 +1,5 @@
 ﻿'use strict';
-//23/11/26
+//24/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -1456,9 +1456,9 @@ class Populate {
 				if (this.countsRight || this.statisticsShow) {
 					// Regorxxx <- Improve statistics labels
 					if (statsEmoji) {
-						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root ? ui.font.emojiTree : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, item.root ? ui.font.label : ui.font.emojiTree, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
 					} else {
-						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, !item.root ? ui.font.small : ui.font.label, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
+						gr.GdiDrawText(this.statisticsShow ? item.statistics + statsExtraStr : item.count, item.root ? ui.font.label : ui.font.small, txt_co, item_x, item_y, panel.tree.w - item_x, ui.row.h, panel.rc);
 					}
 					// Regorxxx ->
 				}
@@ -1998,15 +1998,15 @@ class Populate {
 	}
 
 	lbtn_dblclk(x, y) {
-		if (this.autoPlay.click > 2 && panel.isStandardSource()) return;
+		if (this.autoPlay.click > 2 && panel.isStandardSource()) { return; }
 		if (vk.k('alt')) {
 			this.mbtnDblClickOrAltDblClick(x, y, '', 'alt');
 			return;
 		}
 		this.dbl_clicked = true;
-		if (y < panel.search.h) return;
+		if (y < panel.search.h) { return; }
 		let ix = this.get_ix(x, y, true, false);
-		if (ix >= this.tree.length || ix < 0) return;
+		if (ix >= this.tree.length || ix < 0) { return; }
 		const item = this.tree[ix];
 		switch (this.clicked_on) {
 			case 'node':
@@ -2071,9 +2071,9 @@ class Populate {
 					}
 				}
 				// Regorxxx ->
-				if (!this.dblClickAction || this.autoPlay.click == 2) return;
+				if (!this.dblClickAction || this.autoPlay.click == 2) { return; }
 				if (this.dblClickAction != 2 || this.dblClickAction == 2 && item.track || this.dblClickAction == 2 && panel.imgView) {
-					if (!this.autoFill.mouse) this.send(item, x, y);
+					if (!this.autoFill.mouse) { this.send(item, x, y); }
 					let pl_stnd_idx = panel.createLibPlaylist();
 					if (ppt.sendToCur) { pl_stnd_idx = plman.ActivePlaylist; }
 					else { plman.ActivePlaylist = pl_stnd_idx; }
@@ -2359,7 +2359,7 @@ class Populate {
 		this.selection_holder.SetSelection(this.selList);
 		const plnIsValid = pl_stnd_idx != -1 && pl_stnd_idx < plman.PlaylistCount;
 		const pllockRemoveOrAdd = plnIsValid ? plman.GetPlaylistLockedActions(pl_stnd_idx).includes('RemoveItems') || plman.GetPlaylistLockedActions(pl_stnd_idx).includes('ReplaceItems') || plman.GetPlaylistLockedActions(pl_stnd_idx).includes('AddItems') : false;
-		if (!bAddToPls && pllockRemoveOrAdd) return;
+		if (!bAddToPls && pllockRemoveOrAdd) { return; }
 		if (fb.IsPlaying && !bAddToPls) {
 			if (ppt.actionMode == 1) {
 				const pl_playing = panel.getLibPlaylistPlayingName();
@@ -2403,7 +2403,7 @@ class Populate {
 					}
 				}
 				if (pid == -1) {
-					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
+					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) { plman.UndoBackup(pl_stnd_idx); }
 					plman.ClearPlaylist(pl_stnd_idx);
 					plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
 					if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
@@ -2414,7 +2414,7 @@ class Populate {
 					const it = items.Clone();
 					items.RemoveRange(np_item, items.Count);
 					it.RemoveRange(0, np_item + 1);
-					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
+					if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) { plman.UndoBackup(pl_stnd_idx); }
 					plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
 					plman.InsertPlaylistItems(pl_stnd_idx, plman.PlaylistItemCount(pl_stnd_idx), it);
 					if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(0, items.Count + it.Count), true); } // Regorxxx <- Send to playlist & select ->
@@ -2428,7 +2428,7 @@ class Populate {
 			plman.EnsurePlaylistItemVisible(pl_stnd_idx, f_ix);
 			if (ppt.selectAdded) { plman.SetPlaylistSelection(pl_stnd_idx, $.range(f_ix, items.Count - 1), true); } // Regorxxx <- Send to playlist & select ->
 		} else {
-			if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) plman.UndoBackup(pl_stnd_idx);
+			if (plman.PlaylistItemCount(pl_stnd_idx) < 5000) { plman.UndoBackup(pl_stnd_idx); }
 			plman.ClearPlaylist(pl_stnd_idx);
 			plman.InsertPlaylistItems(pl_stnd_idx, 0, items);
 			plman.SetPlaylistFocusItem(pl_stnd_idx, 0);
@@ -2757,7 +2757,7 @@ class Populate {
 
 	on_focus(p_is_focused) {
 		this.is_focused = p_is_focused;
-		if (p_is_focused && this.selList && this.selList.Count) this.selection_holder.SetSelection(this.selList);
+		if (p_is_focused && this.selList && this.selList.Count) { this.selection_holder.SetSelection(this.selList); }
 	}
 
 	setPlaylist(ix, item) {
@@ -4269,7 +4269,7 @@ class Populate {
 	track(plLoaded) {
 		const list = this.getHandleList();
 		this.notifySelection(list);
-		if (!plLoaded) this.selection_holder.SetSelection(list);
+		if (!plLoaded) { this.selection_holder.SetSelection(list); }
 	}
 
 	trackCount(item) {
