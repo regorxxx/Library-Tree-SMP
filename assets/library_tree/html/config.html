@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> <!-- 19/11/26 -->
+﻿<!DOCTYPE html> <!-- 24/11/26 -->
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 
 <head>
@@ -731,7 +731,8 @@
 			<span class="alignRightH">Pattern</span>
 			<div style="clear:both;"></div>
 			<div id="view"></div>
-			<div class="info1">Selected items will be displayed in the menu. A separator may be added by setting name to 'separator' and pattern to any non-empty string.</div>
+			<div id="viewPreview1"></div>
+			<div class="info1">Selected items will be displayed in the menu. A separator may be added by setting name to 'separator' and pattern to any non-empty string. Preview box will display track values following panel settings. </div>
 			<!-- Regorxxx Text cleanup -->
 			<div style="display:inline-block; padding-top:0em;"><button id="syntax_help" onclick="showHelp('syntax_text');return false;">Show Multi-Panel Mode (Facets) & Extended Syntax Help</button></div><a class="tooltip" id="tfReference" href="https://wiki.hydrogenaud.io/index.php?title=Foobar2000:Title_Formatting_Reference" target="_blank" oncontextmenu="copyToClipboardId('tfReference')">foobar2000 Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>&emsp;&emsp;<a class="tooltip" id="ltReference1" href="syntax.html#view_summary" target="_blank" oncontextmenu="copyToClipboardId('ltReference1')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a>
 			<div id="syntax_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
@@ -982,6 +983,12 @@
 					<div class="div_text1">Playlist</div>
 					<div id="playlist"></div>
 					<div id="playlistSort"></div>
+					<div id="behaviourPreview1"></div>
+					<div style="display:inline-block; padding-top:0.7em;"><button id="playlist_help" onclick="showHelp('playlist_text');return false;">Playlist help</button></div>
+					<div id="playlist_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
+						<div class="info4">&#x2022; See <a class="tooltip" id="ltReference5" href="syntax.html#sorting_summary" target="_blank" oncontextmenu="copyToClipboardId('ltReference5')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br><br><b><u>Playlist name:</u></b><br>&#x2022; Expression is evaluated as global TF.<br>&#x2022; Using track's tags is not recommended nor supported.<br>&#x2022; Intended usage: $viewname, etc.<br><br><b><u>Playlist sorting:</u></b><br>&#x2022; See Top tracks help for advanced sorting tips.
+						</div>
+					</div>
 					<div class="div_text4">Target playlist for send to playlist:</div>
 					<div id="targetPlaylist"></div>
 					<!-- Regorxxx Send to playlist & select -->
@@ -997,6 +1004,7 @@
 					<div id="topTracksFilter"></div>
 					<div id="topTracksSorting"></div>
 					<div id="topTracksRemDupl"></div>
+					<div id="behaviourPreview2"></div>
 					<div style="display:inline-block; padding-top:0.7em;"><button id="topTracks_help" onclick="showHelp('topTracks_text');return false;">Top tracks help</button></div>
 					<div id="topTracks_text" style="display:none; padding:0.7em; background-color:Gainsboro;">
 						<div class="info4"><b><u>Usage:</u></b><br><br>Uses an additional query filter and sorting for current selection on top of the current view/filter.<br><br>&#x2022; Found at the Context menu or mouse action (at left)<br>&#x2022; Target playlist follows global settings above<br>&#x2022; Supports $nowplaying{}, $selected{}, ... for query and sort<br>&#x2022; Use '$rand()' as sorting to shuffle<br>&#x2022; Leave sorting empty to follow panel sorting<br>&#x2022; Selection is deduplicated to filter versions of same songs<br>&#x2022; Set duplicates removal to '[]' to skip processing; leaving it empty '' will use default settings instead<br><br><b><u>Sorting extended syntax:</u></b><br><br>&#x2022; See <a class="tooltip" id="ltReference3" href="syntax.html#sorting_summary" target="_blank" oncontextmenu="copyToClipboardId('ltReference3')">Library-Tree-SMP Title format reference<span class="tooltiptext">L. Click to open in IE<br>R. Click to copy</span></a><br><br>&#x2022; <b>$harmonicsort{bShuffle}</b> - Sorting by incremental KEY<br><br>&#x2022; <b>$harmonicmix{bShuffle}</b> - Sorting by harmonic mixing rules<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>true</i>, <i>1</i>, any string or empty to shuffle<br>&emsp;&#x2219; Set <b>bShuffle</b> to <i>false</i> or <i>0</i> to skip shuffling<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$harmonicmix{true}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$harmonicmix{}</i><br><br>&#x2022; <b>$shufflebytags{tagName,sortBias,sortDir}</b> - Scatters tracks with same tag values semi-randomly<br>&emsp;&#x2219; <b>tagName</b> can be set to any tag -<i>ARTIST</i>- or array of tags -<i>["ARTIST","ALBUM ARTIST"]</i>-<br>&emsp;&#x2219; <b>sortBias</b> can set to: <i>playcount, rating, popularity, lastplayed, key, key6acentered, random, none</i>. Or omitted (<i>random</i> used)<br>&emsp;&#x2219; <b>sortDir</b> can be set to <i>1</i>, <i>-1</i> or omitted (<i>1</i> used)<br>&emsp;&#x2219; Example:<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"],random,1}</i><br>&emsp;&emsp;or<br>&emsp;&emsp;<i>$shufflebytags{["ARTIST","ALBUM ARTIST"]}</i>
@@ -1576,7 +1584,7 @@
 				};
 				var toInteger = function (value) {
 					var number = Number(value);
-					if (isNaN(number)) { return 0; }
+					if (isNaN(number)) { return 0; } // NOSONAR
 					if (number === 0 || !isFinite(number)) { return number; }
 					return (number > 0 ? 1 : -1) * Math.floor(Math.abs(number));
 				};
@@ -1824,13 +1832,37 @@
 			window.close();
 		}
 
-		function getPreview(id, previewId) {
+		function getPreview(id, previewId, type) {
+			var value = id === null ? '' : document.getElementById(id).value;
 			var ev;
-			if (cur.page == "statistics") {
-				value = document.getElementById(id).value;
-				ev = previewTfCallback && previewTfCallback(value);
-				if (document.getElementById(previewId) && id != previewId) { document.getElementById(previewId).value = ev; }
+			switch (type) {
+				case 'view':
+					ev = previewViewTfCallback && previewViewTfCallback(value);
+					break;
+				case 'pls':
+					ev = previewPlsTfCallback && previewPlsTfCallback(value);
+					break;
+				case 'sort':
+					ev = previewSortTfCallback && previewSortTfCallback(value);
+					break;
+				case 'tf':
+					ev = previewTfCallback && previewTfCallback(value);
+					break;
+				case 'querybool':
+					ev = previewQueryCallback && (previewQueryCallback(value, true) + ' tracks');
+					break;
+				case 'querycount':
+					ev = previewQueryCallback && (previewQueryCallback(value, false) + ' tracks');
+					break;
+				default:
+					ev = 'Preview (click on rows)';
+					break;
 			}
+			if (document.getElementById(previewId) && id != previewId) { document.getElementById(previewId).value = ev; }
+		}
+
+		function cleanPreview(previewId) {
+			getPreview(null, previewId, 'clean');
 		}
 
 		function remove(n) {
@@ -2000,6 +2032,10 @@
 		var parsed_args;
 		var props_callback;
 		var previewTfCallback; // Regorxxx <- TF preview ->
+		var previewQueryCallback; // Regorxxx <- TF preview ->
+		var previewViewTfCallback; // Regorxxx <- TF preview ->
+		var previewPlsTfCallback; // Regorxxx <- TF preview ->
+		var previewSortTfCallback; // Regorxxx <- TF preview ->
 		var rootPath; // Regorxxx <- Root path ->
 		var plsIds = []; // Regorxxx <- Preset rules ->
 		var ppt = {};
@@ -2279,6 +2315,10 @@
 			rootPath = parsed_args[5]; // Regorxxx <- Root path ->
 			plsIds = JSON.parse(parsed_args[6]); // Regorxxx <- Preset rules ->
 			previewTfCallback = parsed_args[7]; // Regorxxx <- TF preview ->
+			previewViewTfCallback = parsed_args[8]; // Regorxxx <- TF preview ->
+			previewPlsTfCallback = parsed_args[9]; // Regorxxx <- TF preview ->
+			previewSortTfCallback = parsed_args[10]; // Regorxxx <- TF preview ->
+			previewQueryCallback = parsed_args[11]; // Regorxxx <- TF preview ->
 
 			function setSbarShow(n) {
 				window.sbarShow_dropdown.innerHTML = sbarShowLabels[n];
@@ -3310,16 +3350,19 @@
 				// Regorxxx <- Search mode
 				for (i = 0; i < searchModeSortingLabels.length; i++) { window.searchModeSorting.insertAdjacentHTML('beforeend', '<div><input id="panel.searchModeSorting()_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="panel.searchModeSorting()_checkbox' + i + '" class="checkbox_label">' + searchModeSortingLabels[i] + '</label></div>'); }
 				// Regorxxx ->
-				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="playlist_container' + i + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="playlist_container' + i + '" name="behaviour_input" class="input75" /></div>');
-				window.playlist.insertAdjacentHTML('beforeend', '<div class="info4">Use %VIEW_NAME% for name of current view</div>');
+				var id = 'playlist_container' + i;
+				i = 0; window.playlist.insertAdjacentHTML('beforeend', '<div class="input_cnt2"><label for="' + id + '" class="inp_label1">' + playlistLabels[i] + '</label><input id="' + id + '" name="behaviour_input" class="input75" onclick="getPreview(\'' + id + '\',\'behaviourPreviewTf1\',\'pls\');" onfocusout="cleanPreview(\'behaviourPreviewTf1\');" /></div>');
 				i = 1; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5  ->
 				i = 2; window.playlist.insertAdjacentHTML('beforeend', '<div><input id="playlist_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlist_checkbox' + i + '" class="checkbox_label">' + playlistLabels[i] + '</label></div>');
 				// Regorxxx ->
-				window.playlistSort.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="playlistSort_container1" class="inp_label1">' + playlistSortLabels[0] + '</label><input id="playlistSort_container1" name="behaviour_input" class="input75" /></div>');
+				id = 'playlistSort_container1';
+				window.playlistSort.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="' + id + '" class="inp_label1">' + playlistSortLabels[0] + '</label><input id="' + id + '" name="behaviour_input" class="input75" onclick="getPreview(\'' + id + '\',\'behaviourPreviewTf1\',\'sort\');" onfocusout="cleanPreview(\'behaviourPreviewTf1\');" /></div>');
 				// Regorxxx <- Preserve tree sorting at selection
 				i = 0; window.playlistSort.insertAdjacentHTML('beforeend', '<div><input id="playlistSort_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="playlistSort_checkbox' + i + '" class="checkbox_label">' + playlistSortLabels[1 + i] + '</label></div>');
 				// Regorxxx ->
+				// Preview
+				window.behaviourPreview1.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="behaviourPreviewTf1" name="previewTf1" class="input75" value="Preview (click on rows)" readonly/></div>');
 				for (i = 0; i < 2; i++) {
 					window.targetPlaylist.insertAdjacentHTML('beforeend', '<div><input id="sendToCur' + i + '" name="sendToCur" style="' + cbox + '" type="radio" /><label for="sendToCur' + i + '" class="checkbox_label">' + targetPlaylistLabels[i] + '</label></div>');
 				}
@@ -3327,9 +3370,11 @@
 				i = 0; window.selectAddedToPls.insertAdjacentHTML('beforeend', '<div><input id="selectAdded_checkbox' + i + '" name="behaviour_checkbox" style="' + cbox + '" type="checkbox" /><label for="selectAdded_checkbox' + i + '" class="checkbox_label">' + selectAddedToPlsLabels[i] + '</label></div>');
 				// Regorxxx ->
 				// Regorxxx <- Top tracks
-				i = 0; window.topTracksFilter.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="topTracks_container' + i + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="topTracks_container' + i + '" name="behaviour_input" class="input75" /></div>');
-				i = 1; window.topTracksSorting.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="topTracks_container' + i + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="topTracks_container' + i + '" name="behaviour_input" class="input75" /></div>');
-				i = 2; window.topTracksRemDupl.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="topTracks_container' + i + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="topTracks_container' + i + '" name="behaviour_input" class="input75" /></div>');
+				i = 0; id = 'topTracks_container' + i; window.topTracksFilter.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="' + id + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="' + id + '" name="behaviour_input" class="input75" onclick="getPreview(\'' + id + '\',\'behaviourPreviewTf2\',\'querycount\');" onfocusout="cleanPreview(\'behaviourPreviewTf2\');" /></div>');
+				i = 1; id = 'topTracks_container' + i; window.topTracksSorting.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="' + id + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="' + id + '" name="behaviour_input" class="input75" onclick="getPreview(\'' + id + '\',\'behaviourPreviewTf2\',\'sort\');" onfocusout="cleanPreview(\'behaviourPreviewTf2\');" /></div>');
+				i = 2; id = 'topTracks_container' + i; window.topTracksRemDupl.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="' + id + '" class="inp_label1">' + topTracksLabels[i] + '</label><input id="' + id + '" name="behaviour_input" class="input75" onclick="getPreview(\'' + id + '\',\'behaviourPreviewTf2\',\'sort\');" onfocusout="cleanPreview(\'behaviourPreviewTf2\');" /></div>');
+				// Preview
+				window.behaviourPreview2.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="behaviourPreviewTf2" name="previewTf2" class="input75" value="Preview (click on rows)" readonly/></div>');
 				// Regorxxx ->
 				// Regorxxx <- Drag n' Drop minimum distance
 				i = 0; window.dragDropMinPx.insertAdjacentHTML('beforeend', '<div class="input_cnt3"><label for="dragDrop_container' + i + '" class="inp_label1">Min. distance to start drag n\' drop (px). <i>0-Automatic</i></label><input id="dragDrop_container' + i + '" name="behaviour_input" class="input75" /></div>');
@@ -3457,16 +3502,17 @@
 
 			function setStatistcs() {
 				// Built-in
+				var id;
 				for (i = 0; i < statisticsLabels.length; i++) {
-					var id = 'statisticsTf_container' + i;
-					window.statisticsTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf1\');"/><label for="' + id + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>');
+					id = 'statisticsTf_container' + i;
+					window.statisticsTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf1\',\'tf\');" onfocusout="cleanPreview(\'statisticsPreviewTf1\');" /><label for="' + id + '" class="inp_label2">' + statisticsLabels[i] + '</label></div>');
 				}
 				// Preview
 				window.statisticsPreview1.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPreviewTf1" name="previewTf1" class="input70" readonly/><label for="previewTf1" class="inp_label2"><u>Preview (click on rows)</u></label></div>');
 				// Custom
 				for (i = 0; i < statisticsCustomLabels.length - 1; i++) {
-					var id = 'statisticsCustomTf_container' + i;
-					window.statisticsCustomTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf2\');"/><label for="' + id + '" class="inp_label2">' + statisticsCustomLabels[i] + '</label></div>');
+					id = 'statisticsCustomTf_container' + i;
+					window.statisticsCustomTf.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="' + id + '" name="statistics_input" class="input70" onclick="getPreview(\'' + id + '\',\'statisticsPreviewTf2\',\'tf\');" onfocusout="cleanPreview(\'statisticsPreviewTf2\');" /><label for="' + id + '" class="inp_label2">' + statisticsCustomLabels[i] + '</label></div>');
 				}
 				i = statisticsCustomLabels.length - 1; { window.statisticsPmean.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsPmean_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsPmeanLabel" for="statisticsPmean_container' + i + '" class="inp_label2">' + statisticsCustomLabels[i] + '</label></div>'); }
 				i = 0; { window.statisticsNames.insertAdjacentHTML('beforeend', '<div class="input_cnt5"><input id="statisticsNames_container' + i + '" name="statistics_input" class="input70" /><label id="statisticsNamesLabel" for="statisticsNames_container' + i + '" class="inp_label2">' + getStatisticsSlots('tfCustomLabels') + '</label></div>'); }
@@ -3697,7 +3743,7 @@
 			document.getElementById("btn_up").disabled = true;
 			document.getElementById("btn_apply").disabled = true;
 
-			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setHeaderTitle && setNode && setItemCounts && setItemShowStatisticsIcon && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels) { void (0); }; // NOSONAR disable unused functions
+			if (setSbarShow && setsbarType && setSbarCol && setSbarIcon && setContextMenu && setNoArtistImage && setRootImage && setNoCoverImage && setRoot && setHeaderTitle && setNode && setItemCounts && setItemShowStatisticsIcon && setHoverBg && setOverlay && setSearchSend && setDragValOpDefault && setDragValOpCtrl && setDragValOpAlt && setDragTagOpDefault && setDragTagOpCtrl && setDragTagOpAlt && setDragTrackOpDefault && setDragTrackOpCtrl && setDragTrackOpAlt && setDragQueryOpDefault && setDragQueryOpShift && setTheme && setThumbSize && setClickAction && setDblClickAction && setMbtnClickAction && setAltClickAction && setKeyAction && setPresetRuleWithInput && toggleSubmenu && setPresetRules && hidePresetRules && addPresetRule && deletePresetRule && movePresetRule && setFolderSorting && setViewSorting && setAutoDjTrackPicking && setStatisticsLabels && setStatisticsValues && setStatisticsTooltip && setOverlayVAlign && setOverlayHAlign && setStatisticsDisplayArt && setStatisticsDisplayTree && setAlbumArtPreferHandle && bookletPosLabels && setBookletPos) { void (0); }; // NOSONAR disable unused functions
 		}
 
 		function setCheckboxes(page, value) {
@@ -3946,11 +3992,20 @@
 		}
 
 		function setViews(clear) {
-			if (clear) document.getElementById("view").innerHTML = '';
-			for (i = 0; i < cfg[0].length; i++) {
-				if (i < cfg[0].length - 1) window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt' + i + '"><input name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" /><input name="input_view" class="input71" /></div>')
-				else window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_folderView"><input id="checkbox_folderView" name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" /><input name="input_view" class="input71" readonly /></div>')
+			if (clear) {
+				document.getElementById("view").innerHTML = '';
+				document.getElementById("viewPreview1").innerHTML = '';
 			}
+			for (i = 0; i < cfg[0].length; i++) {
+				if (i < cfg[0].length - 1) {
+					var id = 'viewCustomTf_container' + i;
+					window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt' + i + '"><input name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" onclick="getPreview(\'' + id + '\',\'viewPreviewTf1\',\'view\');" onfocusout="cleanPreview(\'viewPreviewTf1\');" /><input id="' + id + '" name="input_view" class="input71" onclick="getPreview(\'' + id + '\',\'viewPreviewTf1\',\'view\');" onfocusout="cleanPreview(\'viewPreviewTf1\');" /></div>');
+				} else {
+					window.view.insertAdjacentHTML('beforeend', '<div class="input_cnt1" id="view_cnt_folderView"><input id="checkbox_folderView" name="viewCheckbox" style="' + cbox + '" type="checkbox" /><input id="view_container' + i + '" name="view_name" class="input21" /><input name="input_view" class="input71" readonly /></div>');
+				}
+			}
+			// Preview
+			window.viewPreview1.insertAdjacentHTML('beforeend', '<div class="input_cnt1"><input style="' + cbox + ';visibility: hidden;" type="checkbox" /><input id="viewPreviewTf1" name="previewTf1" class="input21" style="width:94.25%;" value="Preview (click on rows)" readonly/></div>');
 		}
 
 
@@ -4511,6 +4566,7 @@
 		window.ltReference2.href = rootPath + '\\' + window.ltReference2.href.replace('about:', '');
 		window.ltReference3.href = rootPath + '\\' + window.ltReference3.href.replace('about:', '');
 		window.ltReference4.href = rootPath + '\\' + window.ltReference4.href.replace('about:', '');
+		window.ltReference5.href = rootPath + '\\' + window.ltReference5.href.replace('about:', '');
 		// Regorxxx ->
 
 		window.document.body.focus();

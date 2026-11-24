@@ -1157,7 +1157,7 @@ class Panel {
 		const pptStr = JSON.stringify(ppt)
 			.replace(/:\\"\.\//gi, ':\\"' + folders.xxx.replace(/\\/gi, '/')); // Adjust relative paths
 		if (popUpBox.isHtmlDialogSupported()) {
-			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, okCallback, this.previewTf.bind(this)); // Regorxxx <- TF preview ->
+			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, okCallback, this.previewTf.bind(this), this.previewViewTf.bind(this), this.previewPlsTf.bind(this), this.previewSortTf.bind(this), this.previewQuery.bind(this)); // Regorxxx <- TF preview ->
 		} else {
 			popUpBox.ok = false;
 			$.trace('options dialog isn\'t available with current operating system. All settings in options are available in panel properties. Common settings are on the menu.');
@@ -3092,12 +3092,66 @@ class Panel {
 	// Regorxxx ->
 
 	// Regorxxx <- TF preview
-	previewTf(n) {
+	previewTf(s) {
 		if (!pop.sel_items.length) { return '-N/A-'; }
 		try {
 			const item = pop.tree[pop.sel_items[0]];
 			const handle = pop.getHandleList(void (0), [pop.sel_items[0]])[0];
-			return this.eval(this.processCustomTf(n, item), handle);
+			return this.eval(this.processCustomTf(s, item), handle);
+		} catch (e) { // eslint-disable-line no-unused-vars
+			return '-N/A-';
+		}
+	}
+
+	previewSortTf(s) {
+		if (!pop.sel_items.length) { return '-N/A-'; }
+		try {
+			const item = pop.tree[pop.sel_items[0]];
+			const handle = pop.getHandleList(void (0), [pop.sel_items[0]])[0];
+			s = s.replace('$rand()', '$not(0)' + Math.randomInt(0, 2**32-1));
+			let tf = this.processCustomTf(s, item).trim();
+			const sortMatches = /~#sort\d+/g.exec(tf) || [];
+			sortMatches.forEach((match) => {
+				tf += '$get(' + match + ')';
+			});
+			return this.eval(tf, handle);
+		} catch (e) { // eslint-disable-line no-unused-vars
+			return '-N/A-';
+		}
+	}
+
+	previewViewTf(s) {
+		let view = this.processViewTf(s).view;
+		view = lib.remapNodename(this.previewTf(view), true)
+			.replaceAll(this.markers.splitter, '|')
+			.replaceAll('@@', this.markers.splitter)
+			.replaceAll(this.markers.softSplitter, this.markers.splitter)
+			.replace(/#@#(.*?)\s{2}#@#/gi, '$nodisplay{$1}')
+			.replace(/@!#(-?\d+`-?\d+`-?\d+)@!#/gi, '$colour{$1}')
+			.replace(/~?#!#(.*?)#!#/gi, '<$1>')
+			.replace(/~?#!#(.*?)#!#/gi, '<$1>');
+		this.artVariables.forEach((art) => view = view.replaceAll(art.id, '$art{' + art.type + '}'));
+		this.styleVariables.forEach((style) => view = view.replaceAll(style.id, '$art{' + style.type + '}'));
+		return view;
+	}
+
+	previewPlsTf(s) {
+		return this.getLibPlaylistName(s);
+	}
+
+	previewQuery(s, bOutBool = true) {
+		if (!pop.sel_items.length) { return '-N/A-'; }
+		try {
+			const item = pop.tree[pop.sel_items[0]];
+			const handles = pop.getHandleList();
+			s = s.replace('$rand()', '$not(0)' + Math.randomInt(0, 2**32-1));
+			let tf = this.processCustomTf(s, item).trim();
+			const sortMatches = /~#sort\d+/g.exec(tf) || [];
+			sortMatches.forEach((match) => {
+				tf += '$get(' + match + ')';
+			});
+			const out = fb.GetQueryItems(handles, tf).Count;
+			return bOutBool ? out > 0 : out;
 		} catch (e) { // eslint-disable-line no-unused-vars
 			return '-N/A-';
 		}
