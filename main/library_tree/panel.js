@@ -530,131 +530,140 @@ class Panel {
 	}
 	// Regorxxx ->
 
-	// Regorxxx <- Expand TF support on view patterns
+	// Regorxxx <- Expand TF support on view patterns | TF preview
 	getView(view) {
 		this.view = view;
 		if (!this.folderView) {
-			let ix1 = -1;
-			let ix2 = -1;
-			const findClosingBrace = (str, pos) => {
-				let depth = 1;
-				for (let l = pos + 1; l < str.length; l++) {
-					switch (str[l]) {
-						case '{':
-							depth++;
-							break;
-						case '}':
-							if (--depth == 0) return l;
-							break;
-					}
-				}
-				return -1;
-			};
-			const indexOfAll = (str, item) => {
-				const indices = [];
-				for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
-				return indices.reverse();
-			};
-			this.statistics = /play_?count|(?:auto)?_?rating/i.test(this.view); // Regorxxx <- Statistics identification should not be case-sensitive ->
-			this.view = this.processCustomTf(this.view); // Regorxxx <- Expose custom prefixes as tag ->
-			if (this.view.includes('%<') || this.view.includes(this.markers.splitter)) { this.multiProcess = true; }
-			if (this.multiProcess) {
-				if (this.view.includes('$swapbranchprefix{') || this.view.includes('$stripbranchprefix{')) this.multiPrefix = true;
-				if (ppt.smartSort) { this.playlistSort = this.cleanViewTf(this.view); } // Regorxxx <- Preserve tree sorting at selection | Smart sorting based on view ->
-			}
-			while (this.view.includes('$stripbranchprefix{')) {
-				ix1 = this.view.indexOf('$stripbranchprefix{');
-				ix2 = findClosingBrace(this.view, ix1 + 18);
-				const mvIndices = indexOfAll(this.view, '%<');
-				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
-				mvIndices.forEach(v => {
-					if (v > ix1 && v < ix2) this.view = this.view.slice(0, v) + '~~' + this.view.slice(v);
-				});
-				this.sortBy = this.sortBy.replace(/\$stripbranchprefix{/, '$$stripprefix(').replace(/~~%/, '%');
-				this.view = this.view.replace(/\$stripbranchprefix{/, '$$stripprefix(');
-			}
-			while (this.view.includes('$swapbranchprefix{')) {
-				ix1 = this.view.indexOf('$swapbranchprefix{');
-				ix2 = findClosingBrace(this.view, ix1 + 17);
-				const mvIndices = indexOfAll(this.view, '%<');
-				this.sortBy = this.view = $.replaceAt(this.view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
-				mvIndices.forEach(v => {
-					if (v > ix1 && v < ix2) this.view = this.view.slice(0, v) + '~' + this.view.slice(v);
-				});
-				this.sortBy = this.sortBy.replace(/\$swapbranchprefix{/, '$$swapprefix(').replace(/~%/, '%');
-				this.view = this.view.replace(/\$swapbranchprefix{/, '$$swapprefix(');
-			}
-			this.sortBy = this.sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
-			this.view = this.view.replace(new RegExp('\\s*' + this.markers.splitter + '\\s*', 'g'), this.markers.softSplitter);
-			if (this.remap.language) { this.view = this.view.replace(/(%<?LANGUAGE>?%)/gi, this.markers.remap + '$1' + this.markers.remap); } // Regorxxx <- Language remap ->
-			if (this.multiProcess) {
-				this.sortBy = this.sortBy.replace(/[<>]/g, '');
-				const baseTag = [];
-				const origTag = [];
-				const rxp = this.multiPrefix ? /(~~%<|~%<|%<).*?>%/g : /%<.*?>%/g;
-				let cur_match;
-				while ((cur_match = rxp.exec(this.view))) {
-					origTag.push(cur_match[0]);
-					baseTag.push(cur_match[0].replace('~~%', '%').replace('~%', '%').replace(/[<>]/g, ''));
-				}
-				origTag.forEach((v, i) => {
-					const qMark = baseTag[i];
-					this.view = this.view.replace(new RegExp(v), '$if2(' + v + ',' + qMark + ')');
-				});
-				this.view = this.view
-					.replace(/%<album artist>%/i, () => '$if3(%<#ALBUM ARTIST#>%,%<#ARTIST#>%,%<#COMPOSER#>%,%<#PERFORMER#>%)')
-					.replace(/%<album>%/i, () => '$if2(%<#ALBUM#>%,%<#VENUE#>%)')
-					.replace(/%<artist>%/i, () => '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)')
-					.replace(/<#/g, '<')
-					.replace(/#>/g, '>');
-			}
-			if (this.multiProcess) {
-				this.view = this.view.replace(/%</g, this.markers.multiProcess + '$$meta_sep(')
-					.replace(/>%/g, ',' + this.markers.metaSep + ')' + this.markers.multiProcess);
-			}
-			this.sortBy = this.sortBy.replace(/\|/g, this.markers.splitter);
-			this.view = this.view.replace(/\|/g, this.markers.splitter);
-			if (this.view.includes('$nodisplay{')) { this.noDisplay = true; }
-
-			while (this.view.includes('$nodisplay{')) {
-				ix1 = this.view.indexOf('$nodisplay{');
-				ix2 = this.view.indexOf('}', ix1);
-				const sub1 = this.view.substring(0, ix1 + 11);
-				const sub2 = this.view.substring(ix1 + 11, ix2);
-				const sub3 = this.view.substring(ix2);
-				this.view = sub1 + sub2.replace(/[\u00a6|]/g, '') + sub3;
-				ix1 = this.view.indexOf('$nodisplay{');
-				ix2 = this.view.indexOf('}', ix1);
-				this.view = $.replaceAt(this.view, ix2, '  ' + this.markers.noDisplay);
-				this.view = this.view.replace('$nodisplay{', this.markers.noDisplay);
-			}
-			if (this.colMarker) {
-				while (this.view.includes('$colour{')) {
-					ix1 = this.view.indexOf('$colour{');
-					ix2 = this.view.indexOf('}', ix1);
-					this.view = $.replaceAt(this.view, ix2, this.markers.col);
-					this.view = this.view.replace('$colour{', this.markers.col);
-				}
-				const colView = this.view.split(this.markers.col);
-				colView.forEach((v, i, arr) => {
-					if (i % 2 === 1) {
-						const colSplit = v.split(',');
-						arr[i] = this.markers.col + (ui.setMarkerCol(colSplit[0]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240))) + '`' + (ui.setMarkerCol(colSplit[1]) || (ppt.highLightText ? ui.col.text_h : (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240)))) + '`' + (ui.setMarkerCol(colSplit[2]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.textSel : ui.col.text)) + this.markers.col;
-					}
-				});
-				this.view = colView.join('');
-			}
-			if (ui.col.counts) this.colMarker = true;
-			if (this.colMarker) this.sortBy = this.sortBy.replace(/\$colour{.*?}/g, '');
-			while (this.sortBy.includes('$nodisplay{')) {
-				ix1 = this.sortBy.indexOf('$nodisplay{');
-				ix2 = this.sortBy.indexOf('}', ix1);
-				this.sortBy = $.replaceAt(this.sortBy, ix2, '  ');
-				this.sortBy = this.sortBy.replace('$nodisplay{', '  ');
-			}
-			this.sortBy = this.sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
+			({ view: this.view, statistics: this.statistics, sortBy: this.sortBy, playlistSort: this.playlistSort, multiPrefix: this.multiPrefix, multiProcess: this.multiProcess, noDisplay: this.noDisplay, colMarker: this.colMarker } = this.processViewTf(this.view));
 		}
 		return this.view;
+	}
+
+	processViewTf(view, node) {
+		let sortBy = view;
+		let playlistSort = '';
+		const statistics = /play_?count|(?:auto)?_?rating/i.test(view); // Regorxxx <- Statistics identification should not be case-sensitive ->;
+		let ix1 = -1;
+		let ix2 = -1;
+		let multiProcess = false, multiPrefix = false, noDisplay = false, colMarker = false;
+		const findClosingBrace = (str, pos) => {
+			let depth = 1;
+			for (let l = pos + 1; l < str.length; l++) {
+				switch (str[l]) {
+					case '{':
+						depth++;
+						break;
+					case '}':
+						if (--depth == 0) return l;
+						break;
+				}
+			}
+			return -1;
+		};
+		const indexOfAll = (str, item) => {
+			const indices = [];
+			for (let pos = str.indexOf(item); pos !== -1; pos = str.indexOf(item, pos + 1)) indices.push(pos);
+			return indices.reverse();
+		};
+		view = this.processCustomTf(view, node); // Regorxxx <- Expose custom prefixes as tag ->
+		if (view.includes('$colour{')) { colMarker = true; }
+		if (view.includes('%<') || view.includes(this.markers.splitter)) { multiProcess = true; }
+		if (multiProcess) {
+			if (view.includes('$swapbranchprefix{') || view.includes('$stripbranchprefix{')) { multiPrefix = true; }
+			if (ppt.smartSort) { playlistSort = this.cleanViewTf(view); } // Regorxxx <- Preserve tree sorting at selection | Smart sorting based on view ->
+		}
+		while (view.includes('$stripbranchprefix{')) {
+			ix1 = view.indexOf('$stripbranchprefix{');
+			ix2 = findClosingBrace(view, ix1 + 18);
+			const mvIndices = indexOfAll(view, '%<');
+			sortBy = view = $.replaceAt(view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
+			mvIndices.forEach(v => {
+				if (v > ix1 && v < ix2) view = view.slice(0, v) + '~~' + view.slice(v);
+			});
+			sortBy = sortBy.replace(/\$stripbranchprefix{/, '$$stripprefix(').replace(/~~%/, '%');
+			view = view.replace(/\$stripbranchprefix{/, '$$stripprefix(');
+		}
+		while (view.includes('$swapbranchprefix{')) {
+			ix1 = view.indexOf('$swapbranchprefix{');
+			ix2 = findClosingBrace(view, ix1 + 17);
+			const mvIndices = indexOfAll(view, '%<');
+			sortBy = view = $.replaceAt(view, ix2, ',' + this.prefix.join(',') + ')'); // Regorxxx <- Code cleanup ->
+			mvIndices.forEach(v => {
+				if (v > ix1 && v < ix2) view = view.slice(0, v) + '~' + view.slice(v);
+			});
+			sortBy = sortBy.replace(/\$swapbranchprefix{/, '$$swapprefix(').replace(/~%/, '%');
+			view = view.replace(/\$swapbranchprefix{/, '$$swapprefix(');
+		}
+		sortBy = sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
+		view = view.replace(new RegExp('\\s*' + this.markers.splitter + '\\s*', 'g'), this.markers.softSplitter);
+		if (this.remap.language) { view = view.replace(/(%<?LANGUAGE>?%)/gi, this.markers.remap + '$1' + this.markers.remap); } // Regorxxx <- Language remap ->
+		if (multiProcess) {
+			sortBy = sortBy.replace(/[<>]/g, '');
+			const baseTag = [];
+			const origTag = [];
+			const rxp = multiPrefix ? /(~~%<|~%<|%<).*?>%/g : /%<.*?>%/g;
+			let cur_match;
+			while ((cur_match = rxp.exec(view))) {
+				origTag.push(cur_match[0]);
+				baseTag.push(cur_match[0].replace('~~%', '%').replace('~%', '%').replace(/[<>]/g, ''));
+			}
+			origTag.forEach((v, i) => {
+				const qMark = baseTag[i];
+				view = view.replace(new RegExp(v), '$if2(' + v + ',' + qMark + ')');
+			});
+			view = view
+				.replace(/%<album artist>%/i, () => '$if3(%<#ALBUM ARTIST#>%,%<#ARTIST#>%,%<#COMPOSER#>%,%<#PERFORMER#>%)')
+				.replace(/%<album>%/i, () => '$if2(%<#ALBUM#>%,%<#VENUE#>%)')
+				.replace(/%<artist>%/i, () => '$if3(%<ARTIST>%,%<ALBUM ARTIST>%,%<COMPOSER>%,%<PERFORMER>%)')
+				.replace(/<#/g, '<')
+				.replace(/#>/g, '>');
+		}
+		if (multiProcess) {
+			view = view.replace(/%</g, this.markers.multiProcess + '$$meta_sep(')
+				.replace(/>%/g, ',' + this.markers.metaSep + ')' + this.markers.multiProcess);
+		}
+		sortBy = sortBy.replace(/\|/g, this.markers.splitter);
+		view = view.replace(/\|/g, this.markers.splitter);
+		if (view.includes('$nodisplay{')) { noDisplay = true; }
+
+		while (view.includes('$nodisplay{')) {
+			ix1 = view.indexOf('$nodisplay{');
+			ix2 = view.indexOf('}', ix1);
+			const sub1 = view.substring(0, ix1 + 11);
+			const sub2 = view.substring(ix1 + 11, ix2);
+			const sub3 = view.substring(ix2);
+			view = sub1 + sub2.replace(/[\u00a6|]/g, '') + sub3;
+			ix1 = view.indexOf('$nodisplay{');
+			ix2 = view.indexOf('}', ix1);
+			view = $.replaceAt(view, ix2, '  ' + this.markers.noDisplay);
+			view = view.replace('$nodisplay{', this.markers.noDisplay);
+		}
+		if (colMarker) {
+			while (view.includes('$colour{')) {
+				ix1 = view.indexOf('$colour{');
+				ix2 = view.indexOf('}', ix1);
+				view = $.replaceAt(view, ix2, this.markers.col);
+				view = view.replace('$colour{', this.markers.col);
+			}
+			const colView = view.split(this.markers.col);
+			colView.forEach((v, i, arr) => {
+				if (i % 2 === 1) {
+					const colSplit = v.split(',');
+					arr[i] = this.markers.col + (ui.setMarkerCol(colSplit[0]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240))) + '`' + (ui.setMarkerCol(colSplit[1]) || (ppt.highLightText ? ui.col.text_h : (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.text : $.RGB(240, 240, 240)))) + '`' + (ui.setMarkerCol(colSplit[2]) || (!ppt.albumArtShow || ppt.albumArtLabelType != 4 ? ui.col.textSel : ui.col.text)) + this.markers.col;
+				}
+			});
+			view = colView.join('');
+		}
+		if (ui.col.counts) { colMarker = true; }
+		if (colMarker) { sortBy = sortBy.replace(/\$colour{.*?}/g, ''); }
+		while (sortBy.includes('$nodisplay{')) {
+			ix1 = sortBy.indexOf('$nodisplay{');
+			ix2 = sortBy.indexOf('}', ix1);
+			sortBy = $.replaceAt(sortBy, ix2, '  ');
+			sortBy = sortBy.replace('$nodisplay{', '  ');
+		}
+		sortBy = sortBy.replace(new RegExp(this.markers.splitter, 'g'), '  ');
+		return { view, statistics, sortBy, playlistSort, multiPrefix, multiProcess, noDisplay, colMarker };
 	}
 	// Regorxxx ->
 
@@ -2907,12 +2916,13 @@ class Panel {
 		return this.isPlaylistSource() && isArrayEqual([plman.FindPlaylist(this.getLibPlaylistName())], this.getPlaylistSource());
 	}
 
-	getLibPlaylistName() {
-		return ppt.libPlaylist.replace(/%VIEW_NAME%/gi, () => this.viewName);
+	getLibPlaylistName(s = ppt.libPlaylist) {
+		if (typeof s !== 'string') { return ''; }
+		return this.eval(this.processCustomTf(s));
 	}
 
-	getLibPlaylistPlayingName() {
-		return ppt.libPlaylist.replace(/%VIEW_NAME%/gi, () => this.viewName) + ' (playing)';
+	getLibPlaylistPlayingName(s = ppt.libPlaylist) {
+		return this.getLibPlaylistName(s) + ' (playing)';
 	}
 
 	createLibPlaylist() {

@@ -2334,6 +2334,13 @@ class Populate {
 	load({ handleList, bAddToPls = false, bAutoPlay = false, bUseDefaultPls = false, bInsertToPls = false, bApplySort = true } = {}) {
 		let np_item = -1;
 		let pid = -1;
+		// Regorxxx <- Expand TF support
+		const items = bApplySort
+			? this.sortIfNeeded(!handleList || Array.isArray(handleList) ? this.getHandleList() : handleList.Clone())
+			: !handleList || Array.isArray(handleList) ? this.getHandleList() : handleList.Clone();
+		// Regorxxx ->
+		this.selList = items.Clone();
+		this.selection_holder.SetSelection(this.selList);
 		const pl_stnd = panel.getLibPlaylistName();
 		// Regorxxx <- Default playlist being always created even when unused | https://github.com/regorxxx/Library-Tree-SMP/issues/5
 		let pl_stnd_idx;
@@ -2350,13 +2357,6 @@ class Populate {
 			bAutoPlay = false;
 			bAddToPls = true;
 		}
-		// Regorxxx <- Expand TF support
-		const items = bApplySort
-			? this.sortIfNeeded(!handleList || Array.isArray(handleList) ? this.getHandleList() : handleList.Clone())
-			: !handleList || Array.isArray(handleList) ? this.getHandleList() : handleList.Clone();
-		// Regorxxx ->
-		this.selList = items.Clone();
-		this.selection_holder.SetSelection(this.selList);
 		const plnIsValid = pl_stnd_idx != -1 && pl_stnd_idx < plman.PlaylistCount;
 		const pllockRemoveOrAdd = plnIsValid ? plman.GetPlaylistLockedActions(pl_stnd_idx).includes('RemoveItems') || plman.GetPlaylistLockedActions(pl_stnd_idx).includes('ReplaceItems') || plman.GetPlaylistLockedActions(pl_stnd_idx).includes('AddItems') : false;
 		if (!bAddToPls && pllockRemoveOrAdd) { return; }
