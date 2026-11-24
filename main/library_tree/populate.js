@@ -3532,64 +3532,6 @@ class Populate {
 				}
 			},
 			{
-				name: 'Playback queue', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : ''), evalFunc: (handleList) => {
-					// Regorxxx <- Now playing index | Duplicated idx bug on original script
-					let rawValue, value, valueFormat;
-					/** @type {string|string[]} */
-					let index = '';
-					let indices = new Set();
-					const queueHandles = plman.GetPlaybackQueueHandles();
-					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
-					const count = handleList.Count;
-					const queueCount = queueHandles.Count;
-					const lastPlayed = ppt.queuePastPlayed > 0 ? fb.TitleFormat(globTags.lastPlayed).EvalWithMetadbs(handleList) : null;
-					const now = Date.now(), timeStr = 'min ago', timeFactor = (1000 * 60);
-					for (let i = 0; i < count; i++) {
-						let bDone;
-						if (np && handleList[i].Compare(np)) { indices.add(0); bDone = true; }
-						for (let k = 0; k < queueCount; k++) {
-							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); bDone = true; }
-						}
-						if (!bDone && ppt.queuePastPlayed > 0 && lastPlayed[i] && lastPlayed[i] !== 'N/A') {
-							const val = Math.floor((now - new Date(lastPlayed[i])) / timeFactor);
-							indices.add(val + timeStr);
-						}
-					}
-					const ln = indices.size;
-					if (ln) {
-						if (ln === 1) { index = indices.values().next().value.toString(); }
-						else {
-							index = [...indices];
-							index = index.some((v) => typeof v === 'string')
-								? [
-									this.arrayToRange(index.filter((v) => !Number.isInteger(v)).map((v) => v.replace(timeStr, '')), false) + timeStr,
-									this.arrayToRange(index.filter((v) => Number.isInteger(v)))
-								].filter(Boolean).join(', ')
-								: this.arrayToRange(index);
-						}
-					}
-					if (index === '0') {
-						rawValue = 0;
-						valueFormat = String.fromCodePoint(9654); /* ▶ */
-						value = panel.imgView && this.label
-							? 'Now playing'
-							: valueFormat;
-					} else if (index && index.length > 0) {
-						const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
-						rawValue = index;
-						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
-						if (panel.imgView && this.label) { value = 'Queue ' + value; }
-					}
-					if (ppt.itemShowStatisticsIcon > 1 && value) {
-						valueFormat += ' ' + this.tfIcon.list;
-						value += ' ' + this.tfIcon.list;
-					}
-					// Regorxxx ->
-					return { rawValue, value, valueFormat };
-				},
-				clearedOnQueueChange: true
-			},
-			{
 				name: 'Playcount', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-N/A-' : ' listens'), evalFunc: (handleList) => {
 					let rawValue, value, valueFormat;
 					let playcount = this.tf.pc.EvalWithMetadbs(handleList);
@@ -3820,6 +3762,165 @@ class Populate {
 					}
 					return { rawValue, value, valueFormat };
 				}, useEmoji: true
+			},
+			{
+				name: 'Playback queue', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : ''), evalFunc: (handleList) => {
+					// Regorxxx <- Now playing index | Duplicated idx bug on original script
+					let rawValue, value, valueFormat;
+					/** @type {string|string[]} */
+					let index = '';
+					let indices = new Set();
+					const queueHandles = plman.GetPlaybackQueueHandles();
+					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
+					const count = handleList.Count;
+					const queueCount = queueHandles.Count;
+					for (let i = 0; i < count; i++) {
+						if (np && handleList[i].Compare(np)) { indices.add(0); }
+						for (let k = 0; k < queueCount; k++) {
+							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); }
+						}
+					}
+					const ln = indices.size;
+					if (ln) {
+						if (ln === 1) { index = indices.values().next().value.toString(); }
+						else { index = this.arrayToRange([...indices]); }
+					}
+					if (index === '0') {
+						rawValue = 0;
+						valueFormat = String.fromCodePoint(9654); /* ▶ */
+						value = panel.imgView && this.label
+							? 'Now playing'
+							: valueFormat;
+					} else if (index && index.length > 0) {
+						const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
+						rawValue = index;
+						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+						if (panel.imgView && this.label) { value = 'Queue ' + value; }
+					}
+					if (ppt.itemShowStatisticsIcon > 1 && value) {
+						valueFormat += ' ' + this.tfIcon.list;
+						value += ' ' + this.tfIcon.list;
+					}
+					// Regorxxx ->
+					return { rawValue, value, valueFormat };
+				},
+				clearedOnQueueChange: true
+			},
+			{
+				name: 'Playback queue (+ min ago)', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : ''), evalFunc: (handleList) => {
+					// Regorxxx <- Now playing index | Duplicated idx bug on original script
+					let rawValue, value, valueFormat;
+					/** @type {string|string[]} */
+					let index = '';
+					let indices = new Set();
+					const queueHandles = plman.GetPlaybackQueueHandles();
+					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
+					const count = handleList.Count;
+					const queueCount = queueHandles.Count;
+					const lastPlayed = ppt.queuePastPlayed > 0 ? fb.TitleFormat(globTags.lastPlayed).EvalWithMetadbs(handleList) : null;
+					const now = Date.now(), timeStr = 'min ago', timeFactor = (1000 * 60);
+					for (let i = 0; i < count; i++) {
+						let bDone;
+						if (np && handleList[i].Compare(np)) { indices.add(0); bDone = true; }
+						for (let k = 0; k < queueCount; k++) {
+							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); bDone = true; }
+						}
+						if (!bDone && ppt.queuePastPlayed > 0 && lastPlayed[i] && lastPlayed[i] !== 'N/A') {
+							const val = Math.floor((now - new Date(lastPlayed[i])) / timeFactor);
+							indices.add(val + timeStr);
+						}
+					}
+					const ln = indices.size;
+					if (ln) {
+						if (ln === 1) { index = indices.values().next().value.toString(); }
+						else {
+							index = [...indices];
+							index = index.some((v) => typeof v === 'string')
+								? [
+									this.arrayToRange(index.filter((v) => !Number.isInteger(v)).map((v) => v.replace(timeStr, '')), false) + timeStr,
+									this.arrayToRange(index.filter((v) => Number.isInteger(v)))
+								].filter(Boolean).join(', ')
+								: this.arrayToRange(index);
+						}
+					}
+					if (index === '0') {
+						rawValue = 0;
+						valueFormat = String.fromCodePoint(9654); /* ▶ */
+						value = panel.imgView && this.label
+							? 'Now playing'
+							: valueFormat;
+					} else if (index && index.length > 0) {
+						const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
+						rawValue = index;
+						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+						if (panel.imgView && this.label) { value = 'Queue ' + value; }
+					}
+					if (ppt.itemShowStatisticsIcon > 1 && value) {
+						valueFormat += ' ' + this.tfIcon.list;
+						value += ' ' + this.tfIcon.list;
+					}
+					// Regorxxx ->
+					return { rawValue, value, valueFormat };
+				},
+				clearedOnQueueChange: true
+			},
+			{
+				name: 'Playback queue (+ time ago)', type: ['Playback'], showTrackCount: false, showTooltip: true, ttFunc: (t) => t + (t.endsWith(': ') ? '-not queued-' : ''), evalFunc: (handleList) => {
+					// Regorxxx <- Now playing index | Duplicated idx bug on original script
+					let rawValue, value, valueFormat;
+					/** @type {string|string[]} */
+					let index = '';
+					let indices = new Set();
+					const queueHandles = plman.GetPlaybackQueueHandles();
+					const np = fb.IsPlaying ? fb.GetNowPlaying() : null;
+					const count = handleList.Count;
+					const queueCount = queueHandles.Count;
+					const lastPlayed = ppt.queuePastPlayed > 0 ? fb.TitleFormat(globTags.lastPlayed).EvalWithMetadbs(handleList) : null;
+					const now = Date.now(), timeStr = ' ago';
+					for (let i = 0; i < count; i++) {
+						let bDone;
+						if (np && handleList[i].Compare(np)) { indices.add(0); bDone = true; }
+						for (let k = 0; k < queueCount; k++) {
+							if (handleList[i].Compare(queueHandles[k])) { indices.add(k + 1); bDone = true; }
+						}
+						if (!bDone && ppt.queuePastPlayed > 0 && lastPlayed[i] && lastPlayed[i] !== 'N/A') {
+							const val = utils.FormatDuration((now - new Date(lastPlayed[i])) / 1000);
+							indices.add(val + timeStr);
+						}
+					}
+					const ln = indices.size;
+					if (ln) {
+						if (ln === 1) { index = indices.values().next().value.toString(); }
+						else {
+							index = [...indices];
+							index = index.some((v) => typeof v === 'string')
+								? [
+									this.arrayToRange(index.filter((v) => !Number.isInteger(v)).map((v) => v.replace(timeStr, '')), false) + timeStr,
+									this.arrayToRange(index.filter((v) => Number.isInteger(v)))
+								].filter(Boolean).join(', ')
+								: this.arrayToRange(index);
+						}
+					}
+					if (index === '0') {
+						rawValue = 0;
+						valueFormat = String.fromCodePoint(9654); /* ▶ */
+						value = panel.imgView && this.label
+							? 'Now playing'
+							: valueFormat;
+					} else if (index && index.length > 0) {
+						const bIsNowPlaying = Array.isArray(index) && index[0] === '0';
+						rawValue = index;
+						valueFormat = value = bIsNowPlaying ? [String.fromCodePoint(9654), ...index.slice(1)] : index;
+						if (panel.imgView && this.label) { value = 'Queue ' + value; }
+					}
+					if (ppt.itemShowStatisticsIcon > 1 && value) {
+						valueFormat += ' ' + this.tfIcon.list;
+						value += ' ' + this.tfIcon.list;
+					}
+					// Regorxxx ->
+					return { rawValue, value, valueFormat };
+				},
+				clearedOnQueueChange: true
 			},
 		];
 		this.statistics.forEach((s) => s.nameArt = s.nameTree = s.name);
