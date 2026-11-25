@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/11/26
+//25/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, lib:readable, but:readable, img:readable, search:readable, timer:readable, $:readable, men:readable, vk:readable, tooltip:readable, globFonts:readable, sbar:readable */
 
@@ -2796,7 +2796,7 @@ class Populate {
 		let item = -1;
 		switch (vkey) {
 			case vk.left:
-				if (panel.imgView) panel.pos -= 1;
+				if (panel.imgView) { panel.pos -= 1; }
 				panel.pos = $.clamp(panel.pos, 0, this.tree.length - 1);
 				this.row.i = -1;
 				this.m.i = -1;
@@ -2821,7 +2821,7 @@ class Populate {
 					this.m.i = panel.pos = item.ix;
 				} else {
 					item = this.tree[this.tree[panel.pos].par];
-					if (item) this.clearChild(item);
+					if (item) { this.clearChild(item); }
 					this.setTreeSel(item.ix);
 					this.m.i = panel.pos = item.ix;
 				}
