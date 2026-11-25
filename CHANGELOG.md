@@ -69,6 +69,9 @@
 - HTML: added preview rows for TF input boxes at 'Statistics' tab, which are updated on click according to last panel selection. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1091076.html#msg1091076).
 - HTML: added preview rows at 'Views' tab, following tree/art modes, which are updated on click according to last panel selection. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1091437.html#msg1091437).
 - HTML: added preview rows at 'Behaviour' tab, for Playlist name, Playlist sorting, Top tracks query (# of tracks) and sorting, which are updated on click according to last panel selection. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1091437.html#msg1091437).
+- HTML: added preview rows at 'Filters' tab, which are updated on click according to last panel selection. Queries show the # of tracks for current source and evaluated expression (in case you use custom syntax). See [here]().
+- HTML: added preview rows at 'Album Art' tab, for custom TF styles, which are updated on click according to last panel selection. See [here]().
+- HTML: added preview rows at 'Search' tab, for drag n' drop tags TF, which are updated on click according to last panel selection. Shows the built query following all settings. See [here]().
 - Album art: reworked automatic image caching size limits to be compatible with JSplitter v4.2.0+ or v3.9.0+ new memory management system. Feature is still compatible with old versions or other JS-Hosts.
 - Album art: branch collage art now also supports same-level branching ('¦'). New search mode-related view TFs use it.
 - Syntax: $iterate{} now also allows backticks (`), in addition to single quotes ('), to escape the TF function. Syntax docs have been updated to reflect the change, along more examples and tips.

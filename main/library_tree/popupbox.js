@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/11/26
+//25/11/26
 
 /* global ppt:readable, $:readable, WshShell:readable */
 /* global folders:readable, soFeat:readable */
@@ -14,7 +14,7 @@ class PopUpBox {
 
 	// Methods
 
-	config(cfg, ppt, cfgWindow, okCallback, previewTfCallback, previewViewTfCallback, previewPlsTfCallback, previewSortTfCallback, previewQueryCallback) { // Regorxxx <- TF preview ->
+	config(cfg, ppt, cfgWindow, okCallback, previewTfCallback, previewViewTfCallback, previewPlsTfCallback, previewSortTfCallback, previewQueryCallback, previewDragDropCallback) { // Regorxxx <- TF preview ->
 		// Regorxxx <- Preset rules
 		const playlistIds = JSON.stringify(
 			plman.PlaylistCount > 0
@@ -23,7 +23,7 @@ class PopUpBox {
 		);
 		// Regorxxx ->
 		utils.ShowHtmlDialog(0, this.configHtmlCode, {
-			data: [cfg, ppt, cfgWindow, okCallback, void (0), folders.xxx + 'assets\\library_tree\\html', playlistIds, previewTfCallback, previewViewTfCallback, previewPlsTfCallback, previewSortTfCallback, previewQueryCallback], // Regorxxx <- Root path | Preset rules | TF preview ->
+			data: [cfg, ppt, cfgWindow, okCallback, void (0), folders.xxx + 'assets\\library_tree\\html', playlistIds, previewTfCallback, previewViewTfCallback, previewPlsTfCallback, previewSortTfCallback, previewQueryCallback, previewDragDropCallback], // Regorxxx <- Root path | Preset rules | TF preview ->
 			resizable: true
 		});
 	}

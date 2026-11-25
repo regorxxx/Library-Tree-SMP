@@ -1,8 +1,8 @@
 ﻿'use strict';
-//24/11/26
+//25/11/26
 
 /* global ui:readable, ppt:readable, pop:readable, but:readable, $:readable, sbar:readable, img:readable, lib:readable, popUpBox:readable, pluralize:readable, sync:readable, search:readable, timer:readable */
-/* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable */
+/* global dropMask:readable, DT_RIGHT:readable, DT_CENTER:readable, DT_VCENTER:readable, DT_SINGLELINE:readable, DT_NOPREFIX:readable, DT_END_ELLIPSIS:readable, DT_CALCRECT:readable, DT_NOCLIP:readable, MK_CONTROL:readable */
 /* global folders:readable, globQuery:readable, globTags:readable */
 /* global _gdiFont:readable */
 /* global escapeRegExpV2:readable */
@@ -1157,7 +1157,7 @@ class Panel {
 		const pptStr = JSON.stringify(ppt)
 			.replace(/:\\"\.\//gi, ':\\"' + folders.xxx.replace(/\\/gi, '/')); // Adjust relative paths
 		if (popUpBox.isHtmlDialogSupported()) {
-			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, okCallback, this.previewTf.bind(this), this.previewViewTf.bind(this), this.previewPlsTf.bind(this), this.previewSortTf.bind(this), this.previewQuery.bind(this)); // Regorxxx <- TF preview ->
+			popUpBox.config(JSON.stringify([this.dialogGrps, this.dialogFiltGrps, this.defViewPatterns, this.defFilterPatterns]), pptStr, cfgWindow, okCallback, this.previewTf.bind(this), this.previewViewTf.bind(this), this.previewPlsTf.bind(this), this.previewSortTf.bind(this), this.previewQuery.bind(this), this.previewDragDrop.bind(this)); // Regorxxx <- TF preview ->
 		} else {
 			popUpBox.ok = false;
 			$.trace('options dialog isn\'t available with current operating system. All settings in options are available in panel properties. Common settings are on the menu.');
@@ -3093,10 +3093,11 @@ class Panel {
 
 	// Regorxxx <- TF preview
 	previewTf(s) {
-		if (!pop.sel_items.length) { return '-N/A-'; }
+		if (!pop.lastSelMul.length) { return '-N/A-'; }
 		try {
-			const item = pop.tree[pop.sel_items[0]];
-			const handle = pop.getHandleList(void (0), [pop.sel_items[0]])[0];
+			const ix = pop.last_sel === -1 ? pop.lastSelMul.at(-1) : pop.last_sel;
+			const item = pop.tree[ix];
+			const handle = pop.getHandleList(void (0), [pop.last_sel])[0];
 			return this.eval(this.processCustomTf(s, item), handle);
 		} catch (e) { // eslint-disable-line no-unused-vars
 			return '-N/A-';
@@ -3106,8 +3107,9 @@ class Panel {
 	previewSortTf(s) {
 		if (!pop.sel_items.length) { return '-N/A-'; }
 		try {
-			const item = pop.tree[pop.sel_items[0]];
-			const handle = pop.getHandleList(void (0), [pop.sel_items[0]])[0];
+			const ix = pop.last_sel === -1 ? pop.lastSelMul.at(-1) : pop.last_sel;
+			const item = pop.tree[ix];
+			const handle = pop.getHandleList(void (0), [ix])[0];
 			s = s.replace('$rand()', '$not(0)' + Math.randomInt(0, 2**32-1));
 			let tf = this.processCustomTf(s, item).trim();
 			const sortMatches = /~#sort\d+/g.exec(tf) || [];
@@ -3139,22 +3141,37 @@ class Panel {
 		return this.getLibPlaylistName(s);
 	}
 
-	previewQuery(s, bOutBool = true) {
-		if (!pop.sel_items.length) { return '-N/A-'; }
+	previewQuery(s, bSel = true) {
+		let out;
+		if (!pop.sel_items.length) { out = { handleList: null, match: '-N/A-' , count: '-N/A-', query: s }; }
 		try {
-			const item = pop.tree[pop.sel_items[0]];
-			const handles = pop.getHandleList();
+			const ix = pop.last_sel === -1 ? pop.lastSelMul.at(-1) : pop.last_sel;
+			const item = pop.tree[ix];
+			const handles = bSel ? pop.getHandleList() : this.list;
 			s = s.replace('$rand()', '$not(0)' + Math.randomInt(0, 2**32-1));
 			let tf = this.processCustomTf(s, item).trim();
 			const sortMatches = /~#sort\d+/g.exec(tf) || [];
 			sortMatches.forEach((match) => {
 				tf += '$get(' + match + ')';
 			});
-			const out = fb.GetQueryItems(handles, tf).Count;
-			return bOutBool ? out > 0 : out;
+			const found = fb.GetQueryItems(handles, tf);
+			out = { handleList: found, match: found.Count > 0 , count: found.Count, query: tf };
 		} catch (e) { // eslint-disable-line no-unused-vars
-			return '-N/A-';
+			out = { handleList: null, match: '-N/A-' , count: '-N/A-', query: s };
 		}
+		return JSON.stringify(out);
+	}
+
+	previewDragDrop(mask) {
+		if (!pop.sel_items.length) { return '-N/A-'; }
+		if (typeof mask === 'string') {
+			switch (mask) {
+				case 'alt': mask = 32; break;
+				case 'ctrl': mask = MK_CONTROL; break;
+				default: mask = 0; break;
+			}
+		}
+		return search.getDragDropExpression(pop.getHandleList(), 0, mask);
 	}
 	// Regorxxx ->
 }
