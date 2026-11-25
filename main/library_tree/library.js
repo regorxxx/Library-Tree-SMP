@@ -1,5 +1,5 @@
 ﻿'use strict';
-//18/11/26
+//25/11/26
 
 /* global panel:readable, ppt:readable, $:readable, sbar:readable, pop:readable, img:readable, but:readable, lib:readable, search:readable, setSelection:readable, ui:readable, Language:readable */
 
@@ -423,7 +423,7 @@ class Library {
 				const bSearchChanged = bSearchMatch && panel.processCustomTf(panel.search.txt) !== this.searchQueryID;
 				if (bFilterChanged || bSearchChanged || bViewMatch) {
 					if (!ppt.rememberTree && !ppt.reset) this.logTree();
-					else if (ppt.rememberTree) this.logFilter();
+					else if (ppt.rememberTree) { this.logFilter(); }
 					if (panel.search.txt) lib.upd_search = true;
 					const items = bViewMatch && !bFilterChanged && !bSearchChanged && !panel.isPanelSource()
 						? this.full_list
@@ -503,7 +503,7 @@ class Library {
 		if (ppt.rememberTree) {
 			this.exp = ppt.get(this.rememberViewProp(), JSON.stringify({}));
 			this.exp = $.jsonParse(this.exp, {});
-		} else ppt.set(panel.imgView ? 'Tree Image' + (panel.search.txt ? ' Search' : '') : 'Tree' + (panel.search.txt ? ' Search' : ''), null);
+		} else { ppt.set(panel.imgView ? 'Tree Image' + (panel.search.txt ? ' Search' : '') : 'Tree' + (panel.search.txt ? ' Search' : ''), null); }
 	}
 
 	expandArr(arr) {
@@ -811,6 +811,12 @@ class Library {
 		if (profiler) { profiler.Print(this.list.Count + ' tracks ->'); } // Regorxxx <- Library profiling ->
 		if (pop.is_focused) { window.SetCursor(IDC_ARROW); }
 		panel.setDummyTrack(this.list); // Regorxxx <- Multiple-playlist flat view | Basic playlist manager ->
+		// Regorxxx <- Restore last selection fix
+		if (lib.sel.length && !pop.lastSelMul.length) {
+			pop.getTreeSel();
+			if (pop.last_sel === -1) { pop.last_sel = pop.lastSelMul.at(-1); }
+		}
+		// Regorxxx ->
 	}
 
 	isMainChanged(handleList) {
@@ -1093,9 +1099,9 @@ class Library {
 				}
 				this.scr = this.exp[key].scr || [];
 				this.sel = this.exp[key].sel || [];
-				if (!treeArtToggle) panel.search.txt = this.exp[key].s_txt || '';
+				if (!treeArtToggle) { panel.search.txt = this.exp[key].s_txt || ''; }
 				panel.calcText();
-				if (!bypass) but.setSearchBtnsHide();
+				if (!bypass) { but.setSearchBtnsHide(); }
 				window.Repaint();
 			} else {
 				this.exp = {};

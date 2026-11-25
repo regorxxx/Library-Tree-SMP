@@ -93,6 +93,7 @@
 - UI: fixed bug, on original script, related to D2D draw mode incompatibilities with some themes.
 - UI: fixed bug, on original script, related stats text clipping at right side.
 - UI: fixed bug, on original script, where items on album art mode showed a '0 items' count when level had no child items (despite having tracks) if using '# items' setting as node count.
+- UI: fixed bug, on original script, where last selection on panel reload/startup was not properly internally set (despite UI reflecting it).
 - UI: fixed branch collage art leaving empty spaces in some cases instead of filling them with dummy art.
 - UI: fixed 'Last played (hour)' overlay not working.
 - Quicksetup: fixed bug, on original script, related to 'Quick Setup: Artist Photos [Labels Right]' preset using View by folder structure instead of an artist view.
