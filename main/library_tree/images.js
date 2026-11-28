@@ -1,5 +1,5 @@
 ﻿'use strict';
-//27/11/26
+//28/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -1302,7 +1302,7 @@ class Images {
 			if (effects.shadow) { this.drawStyleShadow(gr, style, { ...coords, x: coords.x - offsetX }); }
 			if (effects.reflection) { this.drawReflection(gr, art, image, coords); }
 		}
-		gr.SetInterpolationMode(InterpolationMode.NearestNeighbor);
+		gr.SetInterpolationMode(effects.hover ? InterpolationMode.HighQualityBicubic : InterpolationMode.NearestNeighbor);
 		if (effects.perspective && pos.hv !== 'middle') { image = this.applyPerspective(image, coords); }
 		gr.DrawImage(image, coords.x - offsetX, coords.y, coords.w, coords.h, 0, 0, image.Width, image.Height);
 		gr.SetInterpolationMode();
