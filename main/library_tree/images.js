@@ -1,5 +1,5 @@
 ﻿'use strict';
-//24/11/26
+//27/11/26
 
 /* global ui:readable, panel:readable, ppt:readable, $:readable, vk:readable, sbar:readable, pop:readable, pluralize:readable, lib:readable */
 /* global folders:readable, globTags:readable, soFeat:readable */
@@ -94,14 +94,14 @@ class Images {
 			{ idx: 1, type: 'crop', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
 			{ idx: 2, type: 'circular', mask: 'circular', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 3, type: 'starfill', mask: 'starFill', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.065, overlayOffsetH: 0, fillBg: true, collageCondense: 0.9 },
-			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 0.8 },
-			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'star', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 1 },
+			{ idx: 4, type: 'stareffect', mask: 'starEffect', border: 'star', shadow: 'stareffect', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 0.8 },
+			{ idx: 5, type: 'staroutline', mask: 'starOutline', border: 'star', shadow: 'staroutline', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.1, overlayOffsetH: 0.05, fillBg: true, collageCondense: 1 },
 			{ idx: 6, type: 'heart', mask: 'heart', border: 'heart', shadow: 'heart', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
-			{ idx: 7, type: 'cd', mask: 'cd', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 7, type: 'cd', mask: 'cd', border: 'circular', shadow: 'cd', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 8, type: 'cdcase', mask: void (0), border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
 			{ idx: 9, type: 'circularnote', mask: 'circularNote', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 10, type: 'fillnote', mask: 'fillNote', border: 'crop', shadow: 'crop', collageLine: true, centerLabel: false, centerTrackCount: false, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: false, collageCondense: 1 },
-			{ idx: 11, type: 'vinyl', mask: 'vinylLabel', border: 'circular', shadow: 'circular', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
+			{ idx: 11, type: 'vinyl', mask: 'vinylLabel', border: 'circular', shadow: 'vinyl', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 12, type: 'cassette', mask: 'cassetteLabel', border: 'cassette', shadow: 'cassette', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 			{ idx: 13, type: 'test', mask: 'test', border: 'test', shadow: 'test', collageLine: false, centerLabel: true, centerTrackCount: true, overlayOffsetV: 0.05, overlayOffsetH: 0, fillBg: true, collageCondense: 0.8 },
 		];
@@ -748,11 +748,22 @@ class Images {
 	}
 
 	getHeartPoints(w, h, x = 0, y = 0) {
-		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 60, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
+		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 80, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
 	}
 
 	getTestPoints(w, h, x = 0, y = 0) {
-		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 60, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
+		return getHeartPoints(w + w / 16 * (1 + 1 / 2), 80, x - w / 16 * (1 + 1 / 2) / 2 - 0.5, y - h / 16 * (1 + 1 + 1 / 2) / 2);
+	}
+
+	paintCassetteBase(g, wh) {
+		g.SetSmoothingMode(SmoothingMode.HighQuality);
+		const h = wh / 6;
+		g.FillRoundRect(0.5 + h / 2, h * 1.5, wh - 0.5 - h, wh - h * 3, h / 2, h / 2, $.RGB(0, 0, 0));
+		const d = h * 2 / 3;
+		g.FillRoundRect(0.5 + h * 1.5, wh / 2 - h / 3, wh - 0.5 - h * 3, d, h / 3, h / 3, $.RGB(100, 100, 100));
+		g.FillEllipse(0.5 + h * 1.5, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+		g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+		g.SetSmoothingMode();
 	}
 
 	createMasks() {
@@ -850,14 +861,14 @@ class Images {
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			const bw = wh / 5;
 			g.FillPolygon($.RGBA(0, 0, 0, 25), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
-			g.DrawPolygon($.RGBA(0, 0, 0, 255), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.DrawPolygon($.RGBA(0, 0, 0, 255), bw * 1.25, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.SetSmoothingMode();
 		});
 		this.mask.starEffect = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.AntiAlias);
 			const bw = wh / 5;
-			g.DrawPolygon($.RGBA(0, 0, 0, 125), bw, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
+			g.DrawPolygon($.RGBA(0, 0, 0, 125), bw * 1.25, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.FillPolygon($.RGBA(0, 0, 0, 225), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, -(wh - bw * 4) / 2, -(wh - bw * 4) / 2));
 			g.SetSmoothingMode();
 		});
@@ -926,6 +937,12 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		// Vinyl
+		const vinylHole = $.gr(wh, wh, true, g => {
+			g.SetSmoothingMode(SmoothingMode.HighQuality);
+			const r = wh / 4 / 6.7 / 1.3;
+			g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(255, 255, 255));
+			g.SetSmoothingMode();
+		});
 		this.mask.vinylLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
@@ -943,6 +960,7 @@ class Images {
 		this.mask.vinylOverlay = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let b = wh / 50 / 3;
+			g.FillEllipse(0.5, 0.5, wh, wh - 1.75, $.RGB(55, 55, 60)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			g.FillEllipse(0.5 + b, 0.5 + b, wh - b * 2, wh - 1.75 - b * 2, $.RGB(0, 0, 0)); // Regorxxx <- Improve img mask to avoid rough edges ->
 			let r = wh / 3.5;
 			for (let i = 0; i < 6; i++) {
@@ -952,6 +970,7 @@ class Images {
 			g.SetSmoothingMode();
 		});
 		this.mask.vinylOverlay.ApplyMask(this.mask.vinylLabel.InvertColours());
+		this.mask.vinylOverlay.ApplyMask(vinylHole);
 		this.mask.vinylLabelOverlay = $.gr(wh, wh, true, g => {
 			const r = wh / 4;
 			const h = wh / 6;
@@ -974,25 +993,12 @@ class Images {
 		this.mask.cassetteLabel = $.gr(wh, wh, true, g => {
 			g.FillSolidRect(0, 0, wh, wh, $.RGB(255, 255, 255));
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
-			let h = wh / 6;
+			const h = wh / 6;
 			g.FillRoundRect(0.5, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGB(170, 170, 170));
-			g.FillRoundRect(0.5 + h / 2, h * 1.5, wh - 0.5 - h, wh - h * 3, h / 2, h / 2, $.RGB(0, 0, 0));
-			const d = h * 2 / 3;
-			g.FillRoundRect(0.5 + h * 1.5, wh / 2 - h / 3, wh - 0.5 - h * 3, d, h / 3, h / 3, $.RGB(100, 100, 100));
-			g.FillEllipse(0.5 + h * 1.5, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
-			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
+			this.paintCassetteBase(g, wh);
 			g.SetSmoothingMode();
 		});
-		const cassetteBase = $.gr(wh, wh, true, g => {
-			g.SetSmoothingMode(SmoothingMode.HighQuality);
-			let h = wh / 6;
-			g.FillRoundRect(0.5 + h / 2, h * 1.5, wh - 0.5 - h, wh - h * 3, h / 2, h / 2, $.RGB(0, 0, 0));
-			const d = h * 2 / 3;
-			g.FillRoundRect(0.5 + h * 1.5, wh / 2 - h / 3, wh - 0.5 - h * 3, d, h / 3, h / 3, $.RGB(100, 100, 100));
-			g.FillEllipse(0.5 + h * 1.5, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
-			g.FillEllipse(wh - 0.5 - h * 1.5 - d, wh / 2 - h / 3, d, d, $.RGB(255, 255, 255));
-			g.SetSmoothingMode();
-		});
+		const cassetteBase = $.gr(wh, wh, true, g => this.paintCassetteBase(g, wh));
 		this.mask.cassetteBorder = $.gr(wh, wh, true, g => {
 			g.SetSmoothingMode(SmoothingMode.HighQuality);
 			let h = wh / 6;
@@ -1990,38 +1996,41 @@ class Images {
 	drawStyleShadow(gr, style, coords) {
 		if (this.style.dropShadow && this.shadow[style.shadow]) {
 			const shadow = this.shadow[style.shadow];
-			if (style.shadow === 'default') { // disabled for blend: not suitable
-				// Regorxxx <- Adjust shadows to non-filling images
-				const h = shadow.Height - (this.im.w - coords.h) * 1.15;
-				const w = shadow.Width - (this.im.w - coords.w) * 1.15;
-				gr.DrawImage(shadow, coords.x, coords.y, w, h, 0, 0, shadow.Width, shadow.Height);
-				// Regorxxx ->
-			} else { gr.DrawImage(shadow, coords.x, coords.y, Math.ceil(coords.w * 1.15), Math.ceil(coords.h * 1.15), 0, 0, shadow.Width, shadow.Height); }
+			const h = shadow.Height - (this.im.w - coords.h) * 1.15;
+			const w = shadow.Width - (this.im.w - coords.w) * 1.15;
+			gr.DrawImage(shadow, coords.x, coords.y, w, h, 0, 0, shadow.Width, shadow.Height);
 		} else if (this.style.dropGrad) {
 			switch (style.shadow) {
+				case 'cd':
+				case 'vinyl':
 				case 'circular': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.DrawEllipse(coords.x, coords.y, coords.w, coords.h, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					gr.SetSmoothingMode();
 					break;
 				}
+				case 'stareffect':
+				case 'staroutline':
 				case 'star': {
-					coords.w += 1;
+					coords.w += 2;
+					coords.y += 1;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
 					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, getStarPoints(coords.w * 2, 6, 1.5, coords.x - coords.w / 2, coords.y - coords.h / 2));
 					gr.SetSmoothingMode();
 					break;
 				}
 				case 'heart': {
-					coords.w += 6;
-					coords.y -= 3;
+					coords.w += 4;
+					coords.y -= 2;
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
-					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(coords.w, coords.h, coords.x - 3, coords.y - coords.h / 20));
+					gr.FillPolygon($.RGBA(0, 0, 0, 32), 0, this.getHeartPoints(coords.w, coords.h, coords.x, coords.y - coords.h / 20));
 					gr.SetSmoothingMode();
 					break;
 				}
 				case 'cassette': {
 					gr.SetSmoothingMode(SmoothingMode.AntiAlias);
+					coords.x += 1;
+					coords.y += 1;
 					const h = coords.w / 6;
 					gr.DrawRoundRect(coords.x + 0.5, coords.y + h, coords.w - 0.5, coords.w - h * 2, h / 2, h / 2, 4 * $.scale, $.RGBA(0, 0, 0, 32));
 					break;
@@ -2597,26 +2606,66 @@ class Images {
 		let wh = style.shadow === 'default' ? this.im.w : this.im.w * 0.985; // draw at actual size if possible as faster; regular have to be resized during draw
 		const sz = this.im.w * 1.17;
 		switch (style.shadow) {
+			case 'cd':
+			case 'vinyl':
 			case 'circular':
 				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(0, 0, 0, 128)));
+				if (style.shadow === 'cd') {
+					const cd = $.gr(sz, sz, true, g => {
+						g.FillEllipse(0, 0, this.im.w - 2, this.im.w - 2, $.RGB(255, 255, 255));
+						const r = wh / 10;
+						g.FillEllipse(wh / 2 - r, wh / 2 - r, r * 2, r * 2, $.RGB(0, 0, 0));
+						g.FillEllipse((xy + wh) / 2 - r, (xy + wh) / 2 - r, xy + r * 2, xy + r * 2, $.RGB(255, 255, 255));
+					});
+					this.shadow[style.shadow].ApplyMask(cd);
+				} else if (style.shadow === 'vinyl') {
+					const vinyl = $.gr(sz, sz, true, g => {
+						g.SetSmoothingMode(SmoothingMode.HighQuality);
+						const r = wh / 4 / 6.7 / 1.3;
+						g.FillEllipse((xy + wh) / 2 - r, (xy + wh) / 2 - r, xy + r * 2, xy + r * 2, $.RGB(255, 255, 255));
+						g.SetSmoothingMode();
+					});
+					this.shadow[style.shadow].ApplyMask(vinyl);
+				}
 				this.shadow[style.shadow].StackBlur(4);
 				break;
+			case 'stareffect':
 			case 'star':
-				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getStarPoints(wh * 2, 6, 1.5, -wh / 2, -wh / 2)));
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, getStarPoints(wh * 2, 6, 1.5, xy - wh / 2, xy - wh / 2)));
+				if (style.shadow === 'stareffect') {
+					const star = $.gr(sz, sz, true, g => g.FillPolygon($.RGB(255, 255, 255), 0, getStarPoints(wh * 2, 6, 1.5, (this.im.w - 2.5 - wh) - wh / 2, (this.im.w - 2.5 - wh) - wh / 2)));
+					this.shadow[style.shadow].ApplyMask(star);
+				}
+				this.shadow[style.shadow].StackBlur(4);
+				break;
+			case 'staroutline':
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => {
+					const bw = wh / 5;
+					g.FillPolygon($.RGBA(0, 0, 0, 25), 0, getStarPoints((wh - bw * 2) * 2, 6, 1.5, xy - (wh - bw * 4) / 2, xy - (wh - bw * 4) / 2));
+					g.DrawPolygon($.RGBA(0, 0, 0, 128), bw * 1.25, getStarPoints((wh - bw * 2) * 2, 6, 1.5, xy - (wh - bw * 4) / 2, xy - (wh - bw * 4) / 2));
+				});
 				this.shadow[style.shadow].StackBlur(4);
 				break;
 			case 'heart':
-				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, 0, - wh / 20)));
-				this.shadow[style.shadow].StackBlur(4);
+				wh *= 1.02;
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => {
+					g.SetSmoothingMode(SmoothingMode.AntiAlias);
+					g.FillPolygon($.RGBA(0, 0, 0, 128), 0, this.getHeartPoints(wh, wh, xy / 2, xy / 2 - wh / 20));
+					g.SetSmoothingMode();
+				});
+				this.shadow[style.shadow].StackBlur(5);
 				break;
 			case 'cassette': {
 				const h = wh / 6;
 				wh *= 1.03;
 				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillRoundRect(0, h, wh - 0.5, wh - h * 2, h / 2, h / 2, $.RGBA(0, 0, 0, 128)));
+				const cassetteBase = $.gr(sz, sz, true, g => this.paintCassetteBase(g, wh));
+				this.shadow[style.shadow].ApplyMask(cassetteBase);
 				this.shadow[style.shadow].StackBlur(4);
 				break;
 			}
 			case 'test':
+				this.shadow[style.shadow] = $.gr(sz, sz, true, g => g.FillEllipse(xy, xy, wh, wh, $.RGBA(50, 50, 50, 128)));
 				this.shadow[style.shadow].StackBlur(4);
 				break;
 			default:

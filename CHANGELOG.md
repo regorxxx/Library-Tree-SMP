@@ -86,6 +86,7 @@
 	* 'Library-Tree-SMP: search' -> { window: string[], search: string, clear: boolean, enter: boolean }
 ### Removed
 ### Fixed
+- Album art: changed interpolation mode when using Zoom on hover effect to minimize resize artifacts on shapes with curves. See [here](https://hydrogenaudio.org/index.php/topic,129076.msg1091706.html#msg1091706).
 - Statistics: fixed bug, on original script, related to tag updates not triggering a source refresh while using statistics. For ex. rating changes not being reflected on rating stats on real time.
 - UI: fixed bug, on original script, related to some mouse actions not being available on panel reload unless focus was changed first to another panel. It was a JS-Host limitation, and should be fixed if using JSplitter v4.2.0+ or v3.9.0+.
 - UI: fixed bug, on original script, where filter button could grow indefinitely according to filter name, even over other elements or the total window width. Maximum size is now 1/3 of the window width.
